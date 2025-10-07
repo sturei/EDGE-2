@@ -5,7 +5,7 @@ using ::testing::Contains;
 
 #include "utils/graph.h"
 
-// Define a simple class to represent a map of cities connected by roads, using the PropertyGraph class
+// Define a simple class to represent a map of cities connected by roads
 struct Map
 {
     std::string name;
@@ -13,7 +13,7 @@ struct Map
     std::vector<std::string> roads;
     e2::Graph connections;
 
-    // Here are some (not optimized) utilities to help with testing
+    // Some (not optimized) utilities to help with testing
     size_t cityIndex(const std::string& city) const {
         for (size_t i = 0; i < cities.size(); ++i) {
             if (cities[i] == city) return i;
@@ -48,7 +48,7 @@ struct Map
     }
 };
 
-// Define a simple atlas containing some maps, to help with testing  
+// Define a simple atlas containing some maps
 struct Atlas
 {
     std::vector<Map> maps;
@@ -85,6 +85,25 @@ struct Atlas
     }    
 };
 
+// a few not very efficient utilities to help with testing. These might be helped by adding iterators to the graph class in the future.
+std::vector<size_t> getOutEdges(const e2::Graph& g, size_t u) {
+    std::vector<size_t> outEdges;
+    const auto& vertex = g.vertex(u);
+    for (size_t i = 0; i < vertex.outDegree; ++i) {
+        outEdges.push_back(vertex.outEdge(i).target);
+    }
+    return outEdges;
+} 
+std::vector<size_t> getInEdges(const e2::Graph& g, size_t u) {
+    std::vector<size_t> inEdges;
+    const auto& vertex = g.vertex(u);
+    for (size_t i = 0; i < vertex.inDegree; ++i) {
+        inEdges.push_back(vertex.inEdge(i).source);
+    }
+    return inEdges;
+}
+// end of utilities
+
 class GraphTest : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -116,41 +135,41 @@ TEST_F(GraphTest, Size) {
 }
          
 TEST_F(GraphTest, OutEdges) {
-  std::vector<size_t> outEdges0 = graph->vertex(0).outEdges;
+  std::vector<size_t> outEdges0 = getOutEdges(*graph, 0);
   EXPECT_EQ(outEdges0.size(), 2);
   EXPECT_THAT(outEdges0, Contains(1));
   EXPECT_THAT(outEdges0, Contains(2));
 
-  std::vector<size_t> outEdges2 = graph->vertex(2).outEdges;
+  std::vector<size_t> outEdges2 = getOutEdges(*graph, 2);
   EXPECT_EQ(outEdges2.size(), 2);
   EXPECT_THAT(outEdges2, Contains(0));
   EXPECT_THAT(outEdges2, Contains(3));
 
-  std::vector<size_t> outEdges3 = graph->vertex(3).outEdges;
+  std::vector<size_t> outEdges3 = getOutEdges(*graph, 3);
   EXPECT_EQ(outEdges3.size(), 1);
   EXPECT_THAT(outEdges3, Contains(3));
 
-  std::vector<size_t> outEdges4 = graph->vertex(4).outEdges;
+  std::vector<size_t> outEdges4 = getOutEdges(*graph, 4);
   EXPECT_EQ(outEdges4.size(), 0);
 
 }
 
 TEST_F(GraphTest, InEdges) {
-  std::vector<size_t> inEdges0 = graph->vertex(0).inEdges;
+  std::vector<size_t> inEdges0 = getInEdges(*graph, 0);
   EXPECT_EQ(inEdges0.size(), 1);
   EXPECT_THAT(inEdges0, Contains(2));
 
-  std::vector<size_t> inEdges2 = graph->vertex(2).inEdges;
+  std::vector<size_t> inEdges2 = getInEdges(*graph, 2);
   EXPECT_EQ(inEdges2.size(), 2);
   EXPECT_THAT(inEdges2, Contains(0));
   EXPECT_THAT(inEdges2, Contains(1));
 
-  std::vector<size_t> inEdges3 = graph->vertex(3).inEdges;
+  std::vector<size_t> inEdges3 = getInEdges(*graph, 3);
   EXPECT_EQ(inEdges3.size(), 2);
   EXPECT_THAT(inEdges3, Contains(2));
   EXPECT_THAT(inEdges3, Contains(3));
 
-  std::vector<size_t> inEdges4 = graph->vertex(4).inEdges;
+  std::vector<size_t> inEdges4 = getInEdges(*graph, 4);
   EXPECT_EQ(inEdges4.size(), 0);
 
 }
@@ -166,26 +185,16 @@ TEST_F(GraphTest, AddEdgeOutOfBounds) {
   EXPECT_EQ(graph->vertex(0).outDegree, 2);
 }
 
-TEST_F(GraphTest, PropertyInvariants) {
-  // There should be the same number of outEdges and outEdgeProperties for each vertex, etc
-  for (size_t u = 0; u < graph->numVertices(); ++u) {
-      EXPECT_EQ(graph->vertex(u).outEdges.size(), graph->vertex(u).outEdgeProperties.size());
-      EXPECT_EQ(graph->vertex(u).inEdges.size(), graph->vertex(u).inEdgeProperties.size());
-  }
-  // There should be the same number of vertex properties as vertices
-  EXPECT_EQ(graph->numVertices(), graph->vertexProperties().size());   
-}
-
 TEST_F(GraphTest, PropertyValues) {
   // Check some specific property values in the first map of the atlas
   const Map& m1 = atlas->maps[0];
   const e2::Graph& g1 = m1.connections;
   EXPECT_EQ(g1.graphProperty(), 0);
-  EXPECT_EQ(m1.cities[g1.vertexProperties()[0]], "A");
-  EXPECT_EQ(m1.cities[g1.vertexProperties()[1]], "B");
-  EXPECT_EQ(m1.roads[g1.vertex(0).outEdgeProperties[0]], "AB");
-  EXPECT_EQ(m1.roads[g1.vertex(0).outEdgeProperties[1]], "AC");
-  EXPECT_EQ(m1.roads[g1.vertex(2).outEdgeProperties[1]], "CD");
+  EXPECT_EQ(m1.cities[g1.vertex(0).vertexProperty], "A");
+  EXPECT_EQ(m1.cities[g1.vertex(1).vertexProperty], "B");
+  EXPECT_EQ(m1.roads[g1.vertex(0).outEdge(0).edgeProperty], "AB");
+  EXPECT_EQ(m1.roads[g1.vertex(0).outEdge(1).edgeProperty], "AC");
+  EXPECT_EQ(m1.roads[g1.vertex(2).outEdge(1).edgeProperty], "CD");
 }
 
 TEST_F(GraphTest, Accessors) {

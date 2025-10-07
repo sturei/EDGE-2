@@ -19,8 +19,8 @@
  * removeVertex
  * removeEdge
  * X(X&) and operator=
- * cleanup by not returning references to internal vectors publicly - reduces the surace area of the api so client code will be less varied
- * Note that indexes will be unstable over modification operations (bar adding vertices/edges), owing to the use of vectors to store vertices and edges.
+ * maybe add iterators
+ * Note that indexes and iterators will be unstable over modification operations (bar adding vertices/edges), owing to the use of vectors to store vertices and edges.
  */
 
 namespace e2 {
@@ -42,6 +42,9 @@ namespace e2 {
             }
         }
 
+        /**
+         * Accessors provdiding read-only views of the graph's structure and properties without returning references to any underlying data structures.
+        */
         struct EdgeView {
             size_t index; // index of this edge in the in or out edges of its vertex
             size_t source;
@@ -50,21 +53,33 @@ namespace e2 {
         };
 
         struct VertexView {
-            size_t index; // index of this vertex in the graph
-
-            const std::vector<size_t>& outEdges;
-            const std::vector<size_t>& outEdgeProperties;
-            size_t outDegree;
-            const std::vector<size_t>& inEdges;
-            const std::vector<size_t>& inEdgeProperties;
-            size_t inDegree;
-            size_t vertexProperty;
-            EdgeView outEdge(size_t i) const {
-                return EdgeView{ i, index, outEdges[i], outEdgeProperties[i] };
-            }
-            EdgeView inEdge(size_t i) const {
-                return EdgeView{ i, inEdges[i], index, inEdgeProperties[i] };
-            }
+            public:
+                size_t index; // index of this vertex in the graph
+                size_t outDegree;
+                size_t inDegree;
+                size_t vertexProperty;
+                EdgeView outEdge(size_t i) const {
+                    return EdgeView{ i, index, outEdges[i], outEdgeProperties[i] };
+                }
+                EdgeView inEdge(size_t i) const {
+                    return EdgeView{ i, inEdges[i], index, inEdgeProperties[i] };
+                }
+            private:
+                friend class e2::Graph;
+                VertexView( size_t idx,
+                            const std::vector<size_t>& outE,
+                            const std::vector<size_t>& outEP,
+                            size_t outD,
+                            const std::vector<size_t>& inE,
+                            const std::vector<size_t>& inEP,
+                            size_t inD,
+                            size_t vP)
+                    : index(idx), outEdges(outE), outEdgeProperties(outEP), outDegree(outD),
+                    inEdges(inE), inEdgeProperties(inEP), inDegree(inD), vertexProperty(vP) {}
+                const std::vector<size_t>& outEdges;
+                const std::vector<size_t>& outEdgeProperties;
+                const std::vector<size_t>& inEdges;
+                const std::vector<size_t>& inEdgeProperties;
         };
 
         size_t numVertices() const {
@@ -72,15 +87,12 @@ namespace e2 {
         }
 
         VertexView vertex(size_t u) const {
-            return VertexView{ u, m_vertices[u].outEdges, m_vertices[u].outEdgeProperties, m_vertices[u].outEdges.size(),
-                              m_vertices[u].inEdges, m_vertices[u].inEdgeProperties, m_vertices[u].inEdges.size(),
-                              m_vertexProperties[u] };
+            return VertexView{ u, 
+                m_vertices[u].outEdges, m_vertices[u].outEdgeProperties, m_vertices[u].outEdges.size(),
+                m_vertices[u].inEdges, m_vertices[u].inEdgeProperties, m_vertices[u].inEdges.size(),
+                m_vertexProperties[u] };
         }
 
-        const std::vector<size_t>& vertexProperties() const {
-            return m_vertexProperties;
-        }
-        
         size_t graphProperty() const {
             return m_graphProperty;
         }
