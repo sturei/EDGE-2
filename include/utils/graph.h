@@ -20,7 +20,7 @@
  * removeEdge
  * X(X&) and operator=
  * maybe add iterators
- * Note that indexes and iterators will be unstable over modification operations (bar adding vertices/edges), owing to the use of vectors to store vertices and edges.
+ * Note that indexes and iterators will be unstable over structural modifications (bar adding vertices/edges), owing to the use of vectors to store vertices and edges.
  */
 
 namespace e2 {

@@ -29,6 +29,8 @@ FetchContent_MakeAvailable(googletest)
 set(SOURCES
     src/utils/hello.test.cpp
     src/utils/graph.test.cpp
+    src/utils/vec3d.test.cpp
+    src/utils/geom3d.test.cpp
 )
 
 

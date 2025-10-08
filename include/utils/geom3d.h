@@ -1,0 +1,92 @@
+
+#pragma once
+#include "utils/vec3d.h"
+
+/**
+ * Representation of simple geometries in 3D space.
+ * Implementation notes:
+ * The style is "fat storage, thin interfaces" - all the types have identical memory layouts, yet each type has its own methods.
+ * This style pays a penalty in terms of memory usage, but should be a performance win because of better data locality, assuming 
+ * that related data will be stored together.
+ * I think the data is rich enough to represent: point, line, circle, ellipse, plane, sphere, cylinder, cone, torus with a defined parameterization on each.
+ * More complex geometries, e.g. swept surfaces, meshes, NURBS, will be represented differently (probably with a "rep" concept in the owning cell).
+ * All methods honour value semantics.
+ * TODO: support parametrizations where applicable (probably using non-member functions to avoid polluting the classes). Will need to add secondary directions and scales where applicable.
+*/
+
+namespace e2 {
+    class Geom3d {
+        private:
+            Vec3d m_pos; // position of the geometry in 3D space
+            Vec3d m_dir; // primary direction/orientation of the geometry in 3D space, if applicable. Not necessarily a unit vector.
+            Vec3d m_dir2; // secondary direction/orientation of the geometry in 3D space, if applicable. Not necessarily a unit vector.
+            double m_scale = 1; // primary size/extent of the geometry in 3D space, if applicable
+            double m_scale2 = 1; // secondary size/extent of the geometry in 3D space, if applicable
+        public:
+            Geom3d() : m_pos(0,0,0), m_dir(1,0,0), m_dir2(0,1,0), m_scale(1), m_scale2(1) {}
+            Geom3d(const Vec3d& pos, const Vec3d& dir, const Vec3d& dir2, double scale, double scale2)
+                : m_pos(pos), m_dir(dir), m_dir2(dir2), m_scale(scale), m_scale2(scale2) {}  
+            const Vec3d& position() const { return m_pos; }
+            const Vec3d& direction() const { return m_dir; }
+            const Vec3d& direction2() const { return m_dir2; }
+            double scale() const { return m_scale; }
+            double scale2() const { return m_scale2; } 
+    };
+
+    class Plane3d {
+        private:
+            Geom3d m_geom; // position and orientation of the plane in 3D space
+        public:
+            Plane3d() : m_geom() {}
+            Plane3d(const Vec3d& pos, const Vec3d& normal)
+                : m_geom(pos, normal, Vec3d(0,0,0), 1, 1) {}  
+            const Vec3d& position() const { return m_geom.position(); }
+            const Vec3d& normal() const { return m_geom.direction(); }          
+    };
+
+    class Sphere3d {
+        private:
+            Geom3d m_geom; // position and size of the sphere in 3D space
+        public:
+            Sphere3d() : m_geom() {}
+            Sphere3d(const Vec3d& center, double radius)
+                : m_geom(center, Vec3d(0,0,0), Vec3d(0,0,0), radius, 1) {}  
+            const Vec3d& center() const { return m_geom.position(); }
+            double radius() const { return m_geom.scale(); }          
+    };
+
+    class Point3d {
+        private:
+            Geom3d m_geom; // position of the point in 3D space
+        public:
+            Point3d() : m_geom() {}
+            Point3d(const Vec3d& pos)
+                : m_geom(pos, Vec3d(0,0,0), Vec3d(0,0,0), 1, 1) {}  
+            const Vec3d& position() const { return m_geom.position(); }         
+    };
+
+    class Line3d {
+        private:
+            Geom3d m_geom; // position and direction of the line in 3D space
+        public:
+            Line3d() : m_geom() {}
+            Line3d(const Vec3d& pos, const Vec3d& dir)
+                : m_geom(pos, dir, Vec3d(0,0,0), 1, 1) {}  
+            const Vec3d& position() const { return m_geom.position(); }
+            const Vec3d& direction() const { return m_geom.direction(); }          
+    };
+
+    class Circle3d {
+        private:
+            Geom3d m_geom; // position, orientation and size of the circle in 3D space
+        public:
+            Circle3d() : m_geom() {}
+            Circle3d(const Vec3d& center, const Vec3d& normal, double radius)
+                : m_geom(center, normal, Vec3d(0,0,0), radius, 1) {}  
+            const Vec3d& center() const { return m_geom.position(); }
+            const Vec3d& normal() const { return m_geom.direction(); }          
+            double radius() const { return m_geom.scale(); }          
+    };
+
+};
+
