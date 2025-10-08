@@ -26,6 +26,9 @@
 namespace e2 {
     class Graph {
     public:
+
+        Graph() {}
+        
         Graph(size_t numVertices, size_t graphProperty = -1, const std::vector<size_t>& vertexProperties = Graph::nullVertexProperties)
             : m_vertices(numVertices), m_graphProperty(graphProperty), m_vertexProperties(vertexProperties) {
             if (m_vertexProperties.empty()) {
@@ -110,6 +113,6 @@ namespace e2 {
 
         std::vector<VertexImpl> m_vertices;
         std::vector<size_t> m_vertexProperties;
-        size_t m_graphProperty;
+        size_t m_graphProperty = -1;
     };
 };

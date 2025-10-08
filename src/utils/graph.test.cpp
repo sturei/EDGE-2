@@ -108,17 +108,17 @@ class GraphTest : public ::testing::Test {
  protected:
   void SetUp() override {
 
-    // "graph" is for testing basic graph functionality (without properties)
-    graph = new e2::Graph(5);
-    graph->addEdge(0, 1);
-    graph->addEdge(0, 2);
-    graph->addEdge(1, 2);
-    graph->addEdge(2, 0);
-    graph->addEdge(2, 3);
-    graph->addEdge(3, 3);
+      // "graph" is for testing basic graph functionality (without properties)
+      graph = new e2::Graph(5);
+      graph->addEdge(0, 1);
+      graph->addEdge(0, 2);
+      graph->addEdge(1, 2);
+      graph->addEdge(2, 0);
+      graph->addEdge(2, 3);
+      graph->addEdge(3, 3);
 
-    // "atlas" is for testing property functionality
-    atlas = new Atlas();    
+      // "atlas" is for testing property functionality
+      atlas = new Atlas();    
     }
 
     void TearDown() override {
@@ -129,6 +129,29 @@ class GraphTest : public ::testing::Test {
     Atlas* atlas;
 };
 
+TEST_F(GraphTest, DefaultConstructor) {
+  e2::Graph g;
+  EXPECT_EQ(g.numVertices(), 0);
+} 
+
+TEST_F(GraphTest, ParameterizedConstructor) {
+  e2::Graph g1(3);
+  EXPECT_EQ(g1.numVertices(), 3);
+  EXPECT_EQ(g1.graphProperty(), -1);
+  EXPECT_EQ(g1.vertex(0).vertexProperty, -1);
+  EXPECT_EQ(g1.vertex(1).vertexProperty, -1);
+  EXPECT_EQ(g1.vertex(2).vertexProperty, -1);
+
+  size_t graphProperty = 42;
+  std::vector<size_t> vertexProperties = { 5, 12, 13 };
+  e2::Graph g2(3, graphProperty, vertexProperties);
+  EXPECT_EQ(g2.numVertices(), 3);
+  EXPECT_EQ(g2.graphProperty(), graphProperty);
+  EXPECT_EQ(g2.vertex(0).vertexProperty, 5);
+  EXPECT_EQ(g2.vertex(1).vertexProperty, 12);
+  EXPECT_EQ(g2.vertex(2).vertexProperty, 13);  
+
+} 
 
 TEST_F(GraphTest, Size) {
   EXPECT_EQ(graph->numVertices(), 5);
