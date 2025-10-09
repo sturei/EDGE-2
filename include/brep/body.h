@@ -25,7 +25,8 @@
  * Currently, only simple geometries are supported. Complex geometries will be supported later, probably using a "rep" concept (i.e. a pointer to an external representation).
  * It would probably be a good idea to be able to create the connectivity graph from the cells and cocells whenever needed. And perhaps to update it incrementally as cells and cocells are added/removed
  * TODO:
- * add "dimension" to cell
+ * add "dimension" to cell. And body?
+ * add "name" to body? And cell?
  * add all the functions like kSkeleton etc (maybe do those as non-members)
  * maybe support exotic pointsets like pierced plane - can be done by having cells that are active, but with a flag indicating that the pointset they define should be excluded from the body's pointset
  */
