@@ -31,6 +31,7 @@ set(SOURCES
     src/utils/graph.test.cpp
     src/utils/vec3d.test.cpp
     src/utils/geom3d.test.cpp
+    src/brep/body.test.cpp
 )
 
 

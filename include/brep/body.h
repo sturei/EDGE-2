@@ -7,7 +7,7 @@
  * A Body is composed of Cells of various dimensions.
  * Each Cell represents an open, connected subset of the geometry it lies on.
  * Each Cell is bounded by lower-dimensional cells.
- * Each Cell has an "active" flag indicating whether the cell should be considered part of the pointset or not.
+ * Each Cell has an "active" flag indicating whether the cell should be considered or not.
  * Boundaries-of-boundaries are also considered boundaries of the cell.
  * The collection of cells that bound a given cell are called the cell's "boundary".
  * The collection of cells that a given cell bounds are called the cell's "star".
@@ -24,6 +24,10 @@
  * Implementation notes:
  * Currently, only simple geometries are supported. Complex geometries will be supported later, probably using a "rep" concept (i.e. a pointer to an external representation).
  * It would probably be a good idea to be able to create the connectivity graph from the cells and cocells whenever needed. And perhaps to update it incrementally as cells and cocells are added/removed
+ * TODO:
+ * add "dimension" to cell
+ * add all the functions like kSkeleton etc (maybe do those as non-members)
+ * maybe support exotic pointsets like pierced plane - can be done by having cells that are active, but with a flag indicating that the pointset they define should be excluded from the body's pointset
  */
 namespace e2 {
     class Cell {
@@ -40,19 +44,22 @@ namespace e2 {
     class Cocell {
         public:
             Cocell() {}
-            Cocell(size_t boundaryCell, size_t starCell, int sense ) : m_boundaryCell(boundaryCell), m_starCell(starCell), m_sense(sense) {}
+            Cocell(size_t starCell, size_t boundaryCell, int sense ) : m_starCell(starCell), m_boundaryCell(boundaryCell), m_sense(sense) {}
             int sense() const { return m_sense; }
-            size_t boundaryCell() const { return m_boundaryCell; }
             size_t starCell() const { return m_starCell; }
+            size_t boundaryCell() const { return m_boundaryCell; }
         private:
-            int m_sense = 0; // 0 for internal boundary, +1 or -1 for external boundary according to which side the cell it bounds lies on
-            size_t m_boundaryCell = -1; // index of the cell in the body's cells vector that this cocell bounds
             size_t m_starCell = -1; // index of the cell in the body's cells vector that this cocell is part of the boundary of
+            size_t m_boundaryCell = -1; // index of the cell in the body's cells vector that this cocell bounds
+            int m_sense = 0; // 0 for internal boundary, +1 or -1 for external boundary according to which side the cell it bounds lies on
     };
 
     class Body {
         public:
-            Body() {}
+            Body() : m_graphNeedsUpdate(false) {}
+            Body(const std::vector<Cell>& cells, const std::vector<Cocell>& cocells = {}) : m_cells(cells), m_cocells(cocells) {
+                updateGraph();
+            }
             const std::vector<Cell>& cells() const { return m_cells; }
             const std::vector<Cocell>& cocells() const { return m_cocells; }
             const e2::Graph& graph() const { return m_graph; }
@@ -69,13 +76,14 @@ namespace e2 {
             }
             void updateGraph() {
                 if (m_graphNeedsUpdate) {
-                    // For now, just rebuild the graph from scratch
-                    // Don't need vertex properties, because v[i].property would be just cells[i] anyway.
+                    // For now, just rebuild the graph from scratch. Incremental update can come later.
+                    // Have not used vertex properties here for now, because cells[v[i].property] would be just cells[i] anyway.
                     m_graph = e2::Graph(m_cells.size()); 
                     for (size_t i = 0; i < m_cocells.size(); ++i) {
                         const auto& cocell = m_cocells[i];
-                        // edge property is the index of the cocell
-                        m_graph.addEdge(cocell.boundaryCell(), cocell.starCell(), i);
+                        // Edge property is the index of the cocell.
+                        // Edge added star->boundary by convention, but actually doesn't matter because the graph internally connects in both directions
+                        m_graph.addEdge(cocell.starCell(), cocell.boundaryCell(), i);
                     }
                     m_graphNeedsUpdate = false;
                 }

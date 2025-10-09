@@ -79,19 +79,19 @@ namespace e2 {
             double radius() const { return Geom3d::scale(); }          
     };
 
-    const Plane3d& geomAsPlane(const Geom3d& g){
+    inline const Plane3d& geomAsPlane(const Geom3d& g){
         return static_cast<const Plane3d&>(g);
     }
-    const Sphere3d& geomAsSphere(const Geom3d& g){
+    inline const Sphere3d& geomAsSphere(const Geom3d& g){
         return static_cast<const Sphere3d&>(g);
     }
-    const Point3d& geomAsPoint(const Geom3d& g){
+    inline const Point3d& geomAsPoint(const Geom3d& g){
         return static_cast<const Point3d&>(g);
     }
-    const Line3d& geomAsLine(const Geom3d& g){
+    inline const Line3d& geomAsLine(const Geom3d& g){
         return static_cast<const Line3d&>(g);
     }
-    const Circle3d& geomAsCircle(const Geom3d& g){
+    inline const Circle3d& geomAsCircle(const Geom3d& g){
         return static_cast<const Circle3d&>(g);
     }
 };
