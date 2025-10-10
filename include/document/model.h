@@ -2,13 +2,11 @@
 #include "brep/body.h"
 
 /**
- * The Model class represents some specific application domain.
- * Different types of models may be supported, e.g. boundary representation (BRep), constructive solid geometry (CSG), voxel models etc.
- * Implementation notes:
- * Currently, only BRep models are supported.
+ * Currently, only BRep models are supported. In future, other types of models may be supported, e.g. csg modelsvolumetric models, graphics models etc.
+ * A BRepModel is a collection of Bodies. The BRepModel owns its own copies of the bodies it contains.
  * The expectation is that a BRepModel will be created initially with 1 or a few empty bodies, and then those bodies will be populated by subsequent state changes.
  * There will probably be a copy constructor and operator= for undo/redo support.
- * The accessor that returns a reference to an internal structure will probably be removed.
+ * The accessor that returns a reference to the vector of bodies (an internal structure) will probably be removed in future.
  */
 
 namespace e2 {

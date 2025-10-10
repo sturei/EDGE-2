@@ -33,6 +33,7 @@ set(SOURCES
     src/utils/geom3d.test.cpp
     src/brep/body.test.cpp
     src/document/model.test.cpp
+    src/document/store.test.cpp
 )
 
 
