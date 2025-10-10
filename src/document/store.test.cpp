@@ -12,14 +12,13 @@ struct ZooModelFixture : public Model{
 class StoreTest : public ::testing::Test {
  protected:
   void SetUp() override {
-      model = new ZooModelFixture();
-      store = new Store(model);
+      std::unique_ptr<Model> zooModel(new ZooModelFixture());
+      store = new Store(zooModel);
     }
 
     void TearDown() override {
-      delete store;  // also deletes model
+      delete store;
     }
-    ZooModelFixture* model;
     Store* store;
 };
 
