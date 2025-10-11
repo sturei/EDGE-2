@@ -21,6 +21,19 @@
  * X(X&) and operator=
  * maybe add iterators
  * Note that indexes and iterators will be unstable over structural modifications (bar adding vertices/edges), owing to the use of vectors to store vertices and edges.
+ * Thinking about cache usage:
+ * My 2017 iMac sysctl -a | grep "l.*cachesize" gives:
+ *   hw.l1icachesize: 32768
+ *   hw.l1dcachesize: 32768
+ *   hw.l2cachesize: 262144
+ *   hw.l3cachesize: 8388608
+ * At time of writing, a VertexImpl is 96 bytes. Vertex properties add another 8 bytes per vertex. So a vertex with properties is 104 bytes.
+ * An edge (out-edge and in-edge pair) is 16 bytes. Edge properties add another 16 bytes per edge pair. So an edge with properties is 32 bytes.
+ * L1d cache is 32kB, which is 32768/104 = 340 VertexImpl objects.
+ * L2 cache is 256kB, which is 262144/104 = 2520 VertexImpl objects.
+ * L3 cache is 8MB, which is 8388608/104 = 80640 VertexImpl objects.
+ * A graph with 100 vertices and 200 edges is 100*104 + 200*32 = 16kB (not counting the graph structure itself), which fits in L1 cache.
+ * A graph with 1000 vertices and 2000 edges is 164kB (not counting the graph structure itself), which fits in L2 cache but not L1 cache.    
  */
 
 namespace e2 {
@@ -110,7 +123,6 @@ namespace e2 {
             std::vector<size_t> outEdgeProperties;
             std::vector<size_t> inEdgeProperties;
         };
-
         std::vector<VertexImpl> m_vertices;
         std::vector<size_t> m_vertexProperties;
         size_t m_graphProperty = -1;

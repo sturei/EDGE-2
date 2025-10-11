@@ -10,6 +10,8 @@ TEST(Geom3dTest, DefaultConstructor) {
     EXPECT_EQ(g.direction2(), Vec3d(0,1,0));
     EXPECT_EQ(g.scale(), 1.0);
     EXPECT_EQ(g.scale2(), 1.0);
+
+    //printf("sizeof(Geom3d): %zu\n", sizeof(Geom3d));
 }   
 
 TEST(Geom3dTest, ParameterizedConstructor) {

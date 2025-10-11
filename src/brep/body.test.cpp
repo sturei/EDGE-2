@@ -37,6 +37,9 @@ TEST(CellTest, CellDefaultConstructor) {
     Cell cell;
     // Cell has a default Geom3d at origin. Perhaps in future it will have rubber geometry by default.
     EXPECT_EQ(cell.support().position().x(), 0);
+    
+    // printf("sizeof(Cell): %zu\n", sizeof(Cell));
+
 };
 
 TEST(CellTest, CellParameterizedConstructor) {
@@ -53,6 +56,9 @@ TEST(CocellTest, CocellDefaultConstructor) {
     EXPECT_EQ(cocell.sense(), 0);
     EXPECT_EQ(cocell.starCell(), -1);
     EXPECT_EQ(cocell.boundaryCell(), -1);
+
+    // printf("sizeof(Cocell): %zu\n", sizeof(Cocell));
+
 };
 
 TEST(CocellTest, CocellParameterizedConstructor) {

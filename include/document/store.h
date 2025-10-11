@@ -14,6 +14,8 @@
  * The stateChangeCallback should make all the changes it needs to the model, and then return.
  * If context is needed, use a pointer-to-member of a class containing the relevant context, or use a lambda that captures the relevant context.
  * The stateChangeCallback is called by the Store's changeState method. This is the ONLY recommended way for clients to gain write-access to the model.
+ * Implementation notes:
+ * The intent of the design is that each store is an independent resource, that can be locked/unlocked independently of the other stores.
  * In future, changeState will check for locks etc before calling the stateChangeCallback.
  * The postStateChangeCallback is a function that takes no arguments and returns void. It is called by changeState after the stateChangeCallback has returned, to notify observers of the change.
  */

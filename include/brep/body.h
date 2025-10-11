@@ -29,6 +29,19 @@
  * add "name" to body? And cell?
  * add all the functions like kSkeleton etc (maybe do those as non-members)
  * maybe support exotic pointsets like pierced plane - can be done by having cells that are active, but with a flag indicating that the pointset they define should be excluded from the body's pointset
+ * Thinking about cache usage:
+ * My 2017 iMac sysctl -a | grep "l.*cachesize" gives:
+ *   hw.l1icachesize: 32768
+ *   hw.l1dcachesize: 32768
+ *   hw.l2cachesize: 262144
+ *   hw.l3cachesize: 8388608
+ * At time of writing, a Cell is 96 bytes. A cocell is 24 bytes.
+ * L1d cache is 32kB, which is 32768/96 = 340 Cell objects or 1365 Cocell objects.
+ * L2 cache is 256kB, which is 262144/96 = 2730 Cell objects or 10922 Cocell objects.
+ * L3 cache is 8MB, which is 8388608/96 = 87381 Cell objects or 349525 Cocell objects.
+ * A body with 100 cells and 200 cocells is 100*96 + 200*24 = 14kB (+16kB for the graph), which fits in L1 cache.
+ * A body with 500 cells and 1000 cocells is 70kB (+82kB for the graph), which fits in L2 cache but not L1 cache.
+ * For scale, a cube has 27 cells and 46 cocells.
  */
 namespace e2 {
     class Cell {

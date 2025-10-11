@@ -132,6 +132,9 @@ class GraphTest : public ::testing::Test {
 TEST_F(GraphTest, DefaultConstructor) {
   e2::Graph g;
   EXPECT_EQ(g.numVertices(), 0);
+
+  // printf("sizeof(Graph::VertexImpl): %zu\n", sizeof(e2::Graph::VertexImpl));
+
 } 
 
 TEST_F(GraphTest, ParameterizedConstructor) {
