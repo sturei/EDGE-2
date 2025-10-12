@@ -33,7 +33,20 @@ namespace e2 {
                     delete pair.second;
                 }
             }
+            Store* storeAt(const std::string& key) {
+                return m_stores.at(key);
+            }
+            void registerActionFunction(const std::string& actionType, std::function<void(Document*, void*)> actionFunction) {
+                m_actionFunctions[actionType] = actionFunction;
+            }
+            void dispatchAction(const ActionSpec& action) {
+                auto it = m_actionFunctions.find(action.type);
+                if (it != m_actionFunctions.end()) {
+                    it->second(this, action.payload);
+                }
+            }   
         private:
             std::map<std::string, Store*> m_stores; // Document takes ownership of the stores
+            std::map<std::string, std::function<void(Document*, void*)>> m_actionFunctions; // map of action type to action function
     };
 };  
