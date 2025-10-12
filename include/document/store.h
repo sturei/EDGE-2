@@ -4,7 +4,7 @@
 
 /**
  * Store handles lifecyle events on Models.
- * It takes ownership of the model it is given. Note: unique_ptr is used to enforce single ownership, but it seems a bit clunky. Might be better to use a regular pointer and a comment!
+ * It takes ownership of the model it is given.
  * It provides read-only access to the model through const accessors, and write access to the model via a state change callback.
  * It provides a notification mechanism (post change callback) to notify observers of changes to the model.
  * In future, it will provide undo/redo functionality, and probably serialization, locking and other lifecycle management functionality.
@@ -24,20 +24,24 @@ namespace e2 {
 
     class Store {
         public:
-            Store(std::unique_ptr<Model>& model, std::function<void()> postStateChangeCallback = nullptr) : m_model(std::move(model)), m_postStateChangeCallback(postStateChangeCallback) {}
+            Store(Model* model, std::function<void()> postStateChangeCallback = nullptr) : m_model(model), m_postStateChangeCallback(postStateChangeCallback) {}
+            ~Store() {
+                delete m_model;
+            }
+            // changeState provides write access to the model via a callback function.
             void changeState(std::function<void(Model*)> stateChangeCallback) {
                 if (m_model) {
-                    stateChangeCallback(m_model.get());
+                    stateChangeCallback(m_model);
                     if (m_postStateChangeCallback) {
                         m_postStateChangeCallback();
                     }
                 }   
             }
             const Model* model() const {
-                return m_model.get();
+                return m_model;
             }
         private:
-            std::unique_ptr<Model> m_model = nullptr;
+            Model* m_model = nullptr;    // Store owns the model
             std::function<void()> m_postStateChangeCallback = nullptr;
     };
 

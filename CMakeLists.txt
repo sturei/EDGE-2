@@ -34,6 +34,7 @@ set(SOURCES
     src/brep/body.test.cpp
     src/document/model.test.cpp
     src/document/store.test.cpp
+    src/document/document.test.cpp
 )
 
 

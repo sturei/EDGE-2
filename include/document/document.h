@@ -1,0 +1,39 @@
+#pragma once
+#include <map>
+#include <string>
+#include "document/store.h"
+
+/**
+ * The Document class provides access to the application data model.
+ * State changes to the data model are made via actions.
+ * Each action is dispatched to the Document as a Plain Old Data (POD) structure {type, payload*} pair.
+ * The document in turn invokes a registered "action function" corresponding to the action type. The action function takes the payload
+ * as input and performs some operations that modify the application state via a state change callback on one or more stores.
+ * Implementation notes:
+ * The Document class contains a map of Stores, each Store containing a Model. Stores handle lifecycle events on Models.
+ * The Document class takes ownerahip of the stores it is given.
+ * Actions are intended to be asynchronous and stores are intended to be independently lockable. Not yet implemented.
+ * Various levels of error checking, logging etc will be added later.
+ * Actions are chainable (one action function can call another action function via the appropriate interface on the Document). Not implemented yet!
+ * A series of actions is intended to be replayable - not implemented yet!
+ */
+
+namespace e2 {
+    class ActionSpec {
+        public:
+            std::string type;
+            void* payload = nullptr; // pointer to a POD structure containing the action payload
+    };
+    class Document {
+        public:
+            Document() {}
+            Document(const std::map<std::string, Store*>& stores) : m_stores(stores) {}
+            ~Document() {
+                for (auto& pair : m_stores) {
+                    delete pair.second;
+                }
+            }
+        private:
+            std::map<std::string, Store*> m_stores; // Document takes ownership of the stores
+    };
+};  

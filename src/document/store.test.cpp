@@ -12,7 +12,7 @@ struct ZooModelFixture : public Model{
 class StoreTest : public ::testing::Test {
  protected:
   void SetUp() override {
-      std::unique_ptr<Model> zooModel(new ZooModelFixture());
+      Model* zooModel = new ZooModelFixture();
       store = new Store(zooModel);
     }
 
