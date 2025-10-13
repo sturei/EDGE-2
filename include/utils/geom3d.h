@@ -32,6 +32,14 @@ namespace e2 {
             const Vec3d& direction2() const { return m_dir2; }
             double scale() const { return m_scale; }
             double scale2() const { return m_scale2; } 
+            friend std::ostream& operator<<(std::ostream& os, const Geom3d& g) {
+                os << "Geom3d(pos=" << g.m_pos
+                   << ", dir=" << g.m_dir
+                   << ", dir2=" << g.m_dir2
+                   << ", scale=" << g.m_scale
+                   << ", scale2=" << g.m_scale2 << ")";
+                return os;
+            }
     };
 
     class Plane3d : public Geom3d {
@@ -40,7 +48,12 @@ namespace e2 {
             Plane3d(const Vec3d& pos, const Vec3d& normal)
                 : Geom3d(pos, normal, Vec3d(0,0,0), 1, 1) {}  
             const Vec3d& position() const { return Geom3d::position(); }
-            const Vec3d& normal() const { return Geom3d::direction(); }          
+            const Vec3d& normal() const { return Geom3d::direction(); }    
+            friend std::ostream& operator<<(std::ostream& os, const Plane3d& p) {
+                os << "Plane3d(pos=" << p.position()
+                   << ", normal=" << p.normal() << ")";
+                return os;
+             }
     };
 
     class Sphere3d : public Geom3d {
@@ -49,7 +62,12 @@ namespace e2 {
             Sphere3d(const Vec3d& center, double radius)
                 : Geom3d(center, Vec3d(0,0,0), Vec3d(0,0,0), radius, 1) {}  
             const Vec3d& center() const { return Geom3d::position(); }
-            double radius() const { return Geom3d::scale(); }          
+            double radius() const { return Geom3d::scale(); }
+            friend std::ostream& operator<<(std::ostream& os, const Sphere3d& s) {
+                os << "Sphere3d(center=" << s.center()
+                   << ", radius=" << s.radius() << ")";
+                return os;
+             }          
     };
 
     class Point3d : public Geom3d {
@@ -57,7 +75,11 @@ namespace e2 {
             Point3d() : Geom3d() {}
             Point3d(const Vec3d& pos)
                 : Geom3d(pos, Vec3d(0,0,0), Vec3d(0,0,0), 1, 1) {}  
-            const Vec3d& position() const { return Geom3d::position(); }         
+            const Vec3d& position() const { return Geom3d::position(); }
+            friend std::ostream& operator<<(std::ostream& os, const Point3d& p) {
+                os << "Point3d(pos=" << p.position() << ")";
+                return os;
+            }   
     };
 
     class Line3d : public Geom3d {
@@ -66,7 +88,12 @@ namespace e2 {
             Line3d(const Vec3d& pos, const Vec3d& dir)
                 : Geom3d(pos, dir, Vec3d(0,0,0), 1, 1) {}  
             const Vec3d& position() const { return Geom3d::position(); }
-            const Vec3d& direction() const { return Geom3d::direction(); }          
+            const Vec3d& direction() const { return Geom3d::direction(); }
+            friend std::ostream& operator<<(std::ostream& os, const Line3d& l) {
+                os << "Line3d(pos=" << l.position()
+                   << ", dir=" << l.direction() << ")";
+                return os;
+             }          
     };
 
     class Circle3d : public Geom3d {
@@ -76,7 +103,13 @@ namespace e2 {
                 : Geom3d(center, normal, Vec3d(0,0,0), radius, 1) {}  
             const Vec3d& center() const { return Geom3d::position(); }
             const Vec3d& normal() const { return Geom3d::direction(); }          
-            double radius() const { return Geom3d::scale(); }          
+            double radius() const { return Geom3d::scale(); }
+            friend std::ostream& operator<<(std::ostream& os, const Circle3d& c) {
+                os << "Circle3d(center=" << c.center()
+                   << ", normal=" << c.normal()
+                   << ", radius=" << c.radius() << ")";
+                return os;
+             }          
     };
 
     inline const Plane3d& geomAsPlane(const Geom3d& g){

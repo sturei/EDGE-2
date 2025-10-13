@@ -13,7 +13,7 @@
  * The run() method reads actions from stdin, dispatches them to the Document, and writes responses to stdout.
  * The action format is JSON.
  * Other IPC mechanisms could be supported in future, e.g. files, sockets, shared memory etc.
- * The DocumentService class takes ownership of the Document it is given.
+ * The DocumentService class takes ownership of the Document it is given. TODO:consider passing it in to run() instead. So it is a service provider rather than owner.
  */
 
 namespace e2 {
@@ -42,10 +42,8 @@ namespace e2 {
                     m_document->dispatchAction(action);
 
                     // write a response to the output stream
-                    // TODO: create operator < for Model, Store, Document etc or json output, and send that to the output stream
-
-                    // For now, just echo the input line to output stream
-                    outputStream << "Received action: " << line << std::endl;
+                    // For now, output the document to the output stream. Later, output a more structured response.
+                    outputStream << "Response: " << *m_document << std::endl;
                 }
             }
         private:

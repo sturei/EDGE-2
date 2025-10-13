@@ -37,9 +37,6 @@ TEST(CellTest, CellDefaultConstructor) {
     Cell cell;
     // Cell has a default Geom3d at origin. Perhaps in future it will have rubber geometry by default.
     EXPECT_EQ(cell.support().position().x(), 0);
-    
-    // printf("sizeof(Cell): %zu\n", sizeof(Cell));
-
 };
 
 TEST(CellTest, CellParameterizedConstructor) {
@@ -50,15 +47,26 @@ TEST(CellTest, CellParameterizedConstructor) {
     EXPECT_EQ(cell.support().position().z(), 6);
 };
 
+TEST(CellTest, CellTest_OstreamOperator) {
+    Point3d pt(Vec3d(4, 5, 6));
+    Cell cell(pt);
+    std::ostringstream oss;
+    oss << cell;
+    std::string cellStr = oss.str();
+
+    // std::cout << "Cell output:\n" << cellStr << std::endl; //--- IGNORE ---
+
+    // Check that the output string contains some expected substrings
+    EXPECT_NE(cellStr.find("active=1"), std::string::npos);
+    EXPECT_NE(cellStr.find("pos=(4, 5, 6)"), std::string::npos);
+};
+
 TEST(CocellTest, CocellDefaultConstructor) {
     Cocell cocell;
     // Default cocell is not connected to any cells.
     EXPECT_EQ(cocell.sense(), 0);
     EXPECT_EQ(cocell.starCell(), -1);
     EXPECT_EQ(cocell.boundaryCell(), -1);
-
-    // printf("sizeof(Cocell): %zu\n", sizeof(Cocell));
-
 };
 
 TEST(CocellTest, CocellParameterizedConstructor) {
@@ -69,6 +77,23 @@ TEST(CocellTest, CocellParameterizedConstructor) {
     EXPECT_EQ(cocell.sense(), sense);
     EXPECT_EQ(cocell.starCell(), starCell);
     EXPECT_EQ(cocell.boundaryCell(), boundaryCell);
+};
+
+TEST(CocellTest, CocellTest_OstreamOperator) {
+    int starCell = 2;
+    int boundaryCell = 3;
+    int sense = -1;
+    Cocell cocell(starCell, boundaryCell, sense);
+    std::ostringstream oss;
+    oss << cocell;
+    std::string cocellStr = oss.str();
+
+    //std::cout << "Cocell output:\n" << cocellStr << std::endl; --- IGNORE ---
+
+    // Check that the output string contains some expected substrings
+    EXPECT_NE(cocellStr.find("starCell=2"), std::string::npos);
+    EXPECT_NE(cocellStr.find("boundaryCell=3"), std::string::npos);
+    EXPECT_NE(cocellStr.find("sense=-1"), std::string::npos);
 };
 
 TEST_F(BodyTest, BodyDefaultConstructor) {
@@ -151,6 +176,19 @@ TEST_F(BodyTest, GraphFromFixtureAcorn) {
     EXPECT_EQ(v.outDegree, 0);
     EXPECT_EQ(v.inDegree, 0);
 }
+
+TEST_F(BodyTest, OstreamOutputOperator) {
+    Body body(acornBodyFixture->cells, acornBodyFixture->cocells);
+    std::ostringstream oss;
+    oss << body;
+    std::string bodyStr = oss.str();
+
+    // std::cout << "Body output:\n" << bodyStr << std::endl; // --- IGNORE ---
+
+    // Check that the output string contains some expected substrings
+    EXPECT_NE(bodyStr.find("Body with 1 cells and 0 cocells."), std::string::npos);
+}
+
 
 
 

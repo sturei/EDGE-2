@@ -6,6 +6,12 @@ using namespace e2;
 
 struct ZooModelFixture : public Model{
     std::vector<std::string> animals;
+    void print(std::ostream& os) const override {
+        os << "ZooModel with " << animals.size() << " animals." << std::endl;
+        for (const auto& animal : animals) {
+            os << "  Animal: " << animal << std::endl;
+        }
+    }
 };
 
 class DocumentTest : public ::testing::Test {
@@ -76,3 +82,16 @@ TEST_F(DocumentTest, RegisterAndDispatchAction) {
     EXPECT_EQ(zooModel->animals.size(), 1);
     EXPECT_EQ(zooModel->animals[0], "Giraffe");
 };
+
+TEST_F(DocumentTest, OstreamOutputOperator) {
+    std::ostringstream oss;
+    oss << *document;
+    std::string docStr = oss.str();
+
+    // std::cout << "Document output:\n" << docStr << std::endl; // --- IGNORE ---
+
+    // Check that the output string contains some expected substrings
+    EXPECT_NE(docStr.find("Document with 1 stores."), std::string::npos);
+    EXPECT_NE(docStr.find("ZooModel with 0 animals."), std::string::npos);
+}   
+

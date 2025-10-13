@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 /**
  * Vec3d represents a 3D vector assumed to be a point or direction in 3D space.
@@ -17,9 +18,12 @@ namespace e2 {
             bool operator==(const Vec3d& other) const {
                 return m_x == other.m_x && m_y == other.m_y && m_z == other.m_z;
             }
+            friend std::ostream& operator<<(std::ostream& os, const Vec3d& v) {
+                os << "(" << v.m_x << ", " << v.m_y << ", " << v.m_z << ")";
+                return os;
+            }
         private:
             double m_x=0, m_y=0, m_z=0;
-        // TODO: Add methods as needed
     };
 };
 

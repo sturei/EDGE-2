@@ -41,15 +41,15 @@ namespace e2 {
     public:
 
         Graph() {}
-        
-        Graph(size_t numVertices, size_t graphProperty = -1, const std::vector<size_t>& vertexProperties = Graph::nullVertexProperties)
+
+        Graph(size_t numVertices, size_t graphProperty = 0, const std::vector<size_t>& vertexProperties = Graph::nullVertexProperties)
             : m_vertices(numVertices), m_graphProperty(graphProperty), m_vertexProperties(vertexProperties) {
             if (m_vertexProperties.empty()) {
-                m_vertexProperties = std::vector<size_t>(numVertices, -1);
+                m_vertexProperties = std::vector<size_t>(numVertices, 0);
             }
         }
 
-        void addEdge(size_t u, size_t v, size_t edgeProperty = -1) {
+        void addEdge(size_t u, size_t v, size_t edgeProperty = 0) {
             if (u < numVertices() && v < numVertices()) {
                 m_vertices[u].outEdges.push_back(v);
                 m_vertices[u].outEdgeProperties.push_back(edgeProperty);
@@ -113,6 +113,28 @@ namespace e2 {
             return m_graphProperty;
         }
 
+        friend std::ostream& operator<<(std::ostream& os, const Graph& g) {
+            os << "Graph property: " << g.graphProperty() << "\n";
+            os << "Vertices: " << g.numVertices() << "\n";
+            for (size_t u = 0; u < g.numVertices(); ++u) {
+                auto v = g.vertex(u);
+                os << "  Vertex " << v.index << " (property: " << v.vertexProperty << "):\n";
+                os << "    OutEdges (" << v.outDegree << "):";
+                for (size_t i = 0; i < v.outDegree; ++i) {
+                    auto e = v.outEdge(i);
+                    os << " [" << e.target << " prop:" << e.edgeProperty << "]";
+                }
+                os << "\n";
+                os << "    InEdges (" << v.inDegree << "):";
+                for (size_t i = 0; i < v.inDegree; ++i) {
+                    auto e = v.inEdge(i);
+                    os << " [" << e.source << " prop:" << e.edgeProperty << "]";
+                }
+                os << "\n";
+            }
+            return os;
+        }
+
     private:
 
         inline static std::vector<size_t> nullVertexProperties;  // TODO: make this a static member of the class and define it in the graph.cpp file. Inline variables are C++17 btw
@@ -125,6 +147,6 @@ namespace e2 {
         };
         std::vector<VertexImpl> m_vertices;
         std::vector<size_t> m_vertexProperties;
-        size_t m_graphProperty = -1;
+        size_t m_graphProperty = 0;
     };
 };

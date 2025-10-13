@@ -132,18 +132,15 @@ class GraphTest : public ::testing::Test {
 TEST_F(GraphTest, DefaultConstructor) {
   e2::Graph g;
   EXPECT_EQ(g.numVertices(), 0);
-
-  // printf("sizeof(Graph::VertexImpl): %zu\n", sizeof(e2::Graph::VertexImpl));
-
 } 
 
 TEST_F(GraphTest, ParameterizedConstructor) {
   e2::Graph g1(3);
   EXPECT_EQ(g1.numVertices(), 3);
-  EXPECT_EQ(g1.graphProperty(), -1);
-  EXPECT_EQ(g1.vertex(0).vertexProperty, -1);
-  EXPECT_EQ(g1.vertex(1).vertexProperty, -1);
-  EXPECT_EQ(g1.vertex(2).vertexProperty, -1);
+  EXPECT_EQ(g1.graphProperty(), 0);
+  EXPECT_EQ(g1.vertex(0).vertexProperty, 0);
+  EXPECT_EQ(g1.vertex(1).vertexProperty, 0);
+  EXPECT_EQ(g1.vertex(2).vertexProperty, 0);
 
   size_t graphProperty = 42;
   std::vector<size_t> vertexProperties = { 5, 12, 13 };
@@ -249,6 +246,19 @@ TEST_F(GraphTest, Accessors) {
   EXPECT_EQ(roadsSP.size(), 1);
   EXPECT_THAT(roadsSP, Contains("SP"));
 
+  }
+
+  TEST_F(GraphTest, StreamOutputOperator) {
+      // Just a basic test to check that the Graph can be output to a stream.
+      std::ostringstream oss;
+      oss << *graph;
+      std::string graphStr = oss.str();
+
+      // Check that the output string contains some expected substrings
+      EXPECT_NE(graphStr.find("Graph property: 0"), std::string::npos);
+      EXPECT_NE(graphStr.find("Vertices: 5"), std::string::npos);
+      EXPECT_NE(graphStr.find("Vertex 0 (property: 0):"), std::string::npos);
+      EXPECT_NE(graphStr.find("Vertex 3 (property: 0):"), std::string::npos);
   }
 
   

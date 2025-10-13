@@ -4,8 +4,15 @@
 
 using namespace e2;
 
-struct ZooModelFixture : public Model{
+// consider moving ZooModelFixture and addAnimal to a shared test utils file if needed elsewhere
+struct ZooModelFixture : public Model {
     std::vector<std::string> animals;
+    void print(std::ostream& os) const override {
+        os << "ZooModel with " << animals.size() << " animals." << std::endl;
+        for (const auto& animal : animals) {
+            os << "  Animal: " << animal << std::endl;
+        }
+    }
 };
 
 namespace DocumentServiceTestActions {
@@ -66,6 +73,10 @@ TEST_F(DocumentServiceTest, Run) {
     documentService->run(output, input, error);
     std::string outputStr = output.str();
     std::string errorStr = error.str(); 
+
+    // std::cout << "Output stream:\n" << outputStr << std::endl; // --- IGNORE ---
+    // std::cout << "Error stream:\n" << errorStr << std::endl; // --- IGNORE ---
+
     EXPECT_TRUE(outputStr.find("Giraffe") != std::string::npos);          
     EXPECT_EQ(errorStr, "");
 };

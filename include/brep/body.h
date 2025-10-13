@@ -27,6 +27,10 @@
  * TODO:
  * add "dimension" to cell. And body?
  * add "name" to body? And cell?
+ * add "attributes" field to cell, encapsulating color, material, physical properties etc.
+ * add "type" to cell, e.g. point, line, circle, plane, sphere, mesh, NURBS surface etc.
+ * add "rep" to cell for complex geometries
+ * use the type in the ostream operator<<
  * add all the functions like kSkeleton etc (maybe do those as non-members)
  * maybe support exotic pointsets like pierced plane - can be done by having cells that are active, but with a flag indicating that the pointset they define should be excluded from the body's pointset
  * Thinking about cache usage:
@@ -50,6 +54,10 @@ namespace e2 {
             Cell(const Geom3d& support, bool active = true) : m_support(support), m_active(active) {}
             bool isActive() const { return m_active; }
             const Geom3d& support() const { return m_support; }
+            friend std::ostream& operator<<(std::ostream& os, const Cell& cell) {
+                os << "Cell(active=" << cell.m_active << ", support=" << cell.m_support << ")";
+                return os;
+            }
         private:
             Geom3d m_support; // the geometry upon which the cell lies
             bool m_active = true; // whether the cell is part of the pointset or not
@@ -62,6 +70,10 @@ namespace e2 {
             int sense() const { return m_sense; }
             size_t starCell() const { return m_starCell; }
             size_t boundaryCell() const { return m_boundaryCell; }
+            friend std::ostream& operator<<(std::ostream& os, const Cocell& cocell) {
+                os << "Cocell(starCell=" << cocell.m_starCell << ", boundaryCell=" << cocell.m_boundaryCell << ", sense=" << cocell.m_sense << ")";
+                return os;
+            }
         private:
             size_t m_starCell = -1; // index of the cell in the body's cells vector that this cocell is part of the boundary of
             size_t m_boundaryCell = -1; // index of the cell in the body's cells vector that this cocell bounds
@@ -101,6 +113,16 @@ namespace e2 {
                     }
                     m_graphNeedsUpdate = false;
                 }
+            }
+            friend std::ostream& operator<<(std::ostream& os, const Body& body) {
+                os << "Body with " << body.m_cells.size() << " cells and " << body.m_cocells.size() << " cocells." << std::endl;
+                for (size_t i = 0; i < body.m_cells.size(); ++i) {
+                    os << "  Cell " << i << ": " << body.m_cells[i] << std::endl;
+                }
+                for (size_t i = 0; i < body.m_cocells.size(); ++i) {
+                    os << "  Cocell " << i << ": " << body.m_cocells[i] << std::endl;
+                }
+                return os;
             }
         private:
             std::vector<Cell> m_cells; // all the cells in the body

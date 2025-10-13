@@ -40,6 +40,14 @@ namespace e2 {
             const Model* model() const {
                 return m_model;
             }
+            friend std::ostream& operator<<(std::ostream& os, const Store& store) {
+                if (store.m_model) {
+                    os << *(store.m_model);
+                } else {
+                    os << "Store with no model.";
+                }
+                return os;
+            }
         private:
             Model* m_model = nullptr;    // Store owns the model
             std::function<void()> m_postStateChangeCallback = nullptr;

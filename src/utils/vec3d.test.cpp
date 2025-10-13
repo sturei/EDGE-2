@@ -23,4 +23,10 @@ TEST(Vec3dTest, EqualityOperator) {
     EXPECT_TRUE(v1 == v2);
     EXPECT_FALSE(v1 == v3);
 }
+TEST(Vec3dTest, StreamOutputOperator) {
+    Vec3d v(1.0, 2.0, 3.0);
+    std::ostringstream oss;
+    oss << v;
+    EXPECT_EQ(oss.str(), "(1, 2, 3)");
+}
 

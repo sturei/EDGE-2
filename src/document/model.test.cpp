@@ -37,5 +37,24 @@ TEST(BRepModelTest, RemoveBody) {
     EXPECT_EQ(model.bodies().size(), 3);        
     model.removeBody(1);
     EXPECT_EQ(model.bodies().size(), 2);        
-};  
+};
+
+TEST(BRepModelTest, StreamOutputOperator) {
+    BRepModel model;
+    Body body1;
+    Body body2;
+    model.addBody(body1);
+    model.addBody(body2);
+
+    std::ostringstream oss;
+    oss << model;
+    std::string modelStr = oss.str();
+
+    //std::cout << "BRepModel output:\n" << modelStr << std::endl; --- IGNORE ---
+
+    // Check that the output string contains some expected substrings
+    EXPECT_NE(modelStr.find("BRepModel with 2 bodies."), std::string::npos);
+    EXPECT_NE(modelStr.find("Body with 0 cells and 0 cocells."), std::string::npos);
+}   
+
 

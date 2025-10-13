@@ -49,6 +49,14 @@ namespace e2 {
                 if (it != m_actionFunctions.end()) {
                     it->second(this, action.payload);
                 }
+            }
+            friend std::ostream& operator<<(std::ostream& os, const Document& doc) {
+                os << "Document with " << doc.m_stores.size() << " stores." << std::endl;
+                for (const auto& pair : doc.m_stores) {
+                    os << "Store key: " << pair.first << std::endl;
+                    os << *(pair.second) << std::endl;
+                }
+                return os;
             }   
         private:
             std::map<std::string, Store*> m_stores; // Document takes ownership of the stores

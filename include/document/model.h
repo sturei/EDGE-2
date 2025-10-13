@@ -14,7 +14,11 @@ namespace e2 {
     class Model {
     public:
         virtual ~Model() {};
-        // Add pure virtual functions as needed
+        virtual void print(std::ostream& os) const = 0;
+        friend std::ostream& operator<<(std::ostream& os, const Model& m) {
+            m.print(os);
+            return os;
+        }
     };
 
     class BRepModel : public Model {
@@ -33,6 +37,12 @@ namespace e2 {
             // Note that this invalidates all indexes after the removed body.
             if (index < m_bodies.size()) {
                 m_bodies.erase(m_bodies.begin() + index);
+            }
+        }
+        void print(std::ostream& os) const override {
+            os << "BRepModel with " << m_bodies.size() << " bodies." << std::endl;
+            for (const auto& body : m_bodies) {
+                os << body << std::endl;
             }
         }
     private:
