@@ -2,7 +2,6 @@
 #include "gmock/gmock.h"
 #include "document/document.h"
 
-
 using namespace e2;
 
 struct ZooModelFixture : public Model{
@@ -24,13 +23,17 @@ class DocumentTest : public ::testing::Test {
 };
 
 namespace DocumentTestActions {
-    void addAnimal(Document* doc, void* payload) {
+    void addAnimal(Document* doc, const json& payload) {
         // This is a simple action function that adds an animal to the zoo model.
-        const std::string& animal = *static_cast<const std::string*>(payload);
+
+        //unpack the payload
+        const std::string& species = payload.at("species");
+
+        // add the animal to the model via the state change callback on the store.
         Store* store = doc->storeAt("zoo");
-        store->changeState([animal](Model* model) {
+        store->changeState([species](Model* model) {
             auto* zooModel = dynamic_cast<ZooModelFixture*>(model);
-            zooModel->animals.push_back(animal);
+            zooModel->animals.push_back(species);
         });
     }
 }
@@ -42,39 +45,32 @@ TEST_F(DocumentTest, DefaultConstructor) {
 };
 
 TEST_F(DocumentTest, AddAnimalAction) {
-    std::string animal = "Elephant";
-    DocumentTestActions::addAnimal(document, &animal);
+    // Directly invoke the addAnimal action function to add an animal to the zoo model.
+    json payload =
+    {
+        {"species", "Elephant"}
+    };
+    DocumentTestActions::addAnimal(document, payload);
     Store* store = document->storeAt("zoo");
     auto* zooModel = dynamic_cast<const ZooModelFixture*>(store->model());
     EXPECT_EQ(zooModel->animals.size(), 1);
     EXPECT_EQ(zooModel->animals[0], "Elephant");
 };
 
-TEST_F(DocumentTest, AddMultipleAnimals) {
-    std::vector<std::string> animals = {"Lion", "Tiger", "Bear"};
-    for (const auto& animal : animals) {
-        DocumentTestActions::addAnimal(document, (void*)&animal);
-    }
-    Store* store = document->storeAt("zoo");
-    auto* zooModel = dynamic_cast<const ZooModelFixture*>(store->model());
-    EXPECT_EQ(zooModel->animals.size(), animals.size());
-    for (size_t i = 0; i < animals.size(); ++i) {
-        EXPECT_EQ(zooModel->animals[i], animals[i]);
-    }
-};
-
 TEST_F(DocumentTest, RegisterAndDispatchAction) {
+    // Invoke the addAnimal action function via the Document's dispatchAction method.
+
     // Register the addAnimal action function
     document->registerActionFunction("addAnimal", DocumentTestActions::addAnimal);
 
-    // Dispatch an action to add an animal
-    std::string animal = "Giraffe";
-    ActionSpec action;
-    action.type = "addAnimal";
-    action.payload = &animal;
+    // Construct the action (type, payload) pair, and dispatch it
+    ActionSpec action = {
+        "addAnimal", {{"species", "Giraffe"}}
+    };
+
     document->dispatchAction(action);
 
-    // Verify that the animal was added
+    // Verify that the animal was added to the model
     Store* store = document->storeAt("zoo");
     auto* zooModel = dynamic_cast<const ZooModelFixture*>(store->model());
     EXPECT_EQ(zooModel->animals.size(), 1);

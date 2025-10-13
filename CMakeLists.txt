@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 ##################
 # Dependencies
+# This works for cmake. If VSCode (with CMake Tools) extension can't find the new include paths, try closing and reopening the workspace (close the window, new window, open recent)
 ##################
 
 #
@@ -21,6 +22,13 @@ FetchContent_Declare(
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+
+#
+# nlohmann/json
+# See https://json.nlohmann.me/integration/cmake
+#
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 ##################
 # Sources
@@ -60,6 +68,7 @@ enable_testing()
 target_link_libraries(e2_test
   GTest::gtest_main
   GTest::gmock_main
+  nlohmann_json::nlohmann_json
 )
 
 include(GoogleTest)

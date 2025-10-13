@@ -1,7 +1,11 @@
 #pragma once
 #include <map>
 #include <string>
+#include <nlohmann/json.hpp>
+
 #include "document/store.h"
+
+using json = nlohmann::json;
 
 /**
  * The Document class provides access to the application data model.
@@ -23,7 +27,7 @@ namespace e2 {
     class ActionSpec {
         public:
             std::string type;
-            void* payload = nullptr; // pointer to a POD structure containing the action payload
+            json payload;
     };
     class Document {
         public:
@@ -37,7 +41,7 @@ namespace e2 {
             Store* storeAt(const std::string& key) {
                 return m_stores.at(key);
             }
-            void registerActionFunction(const std::string& actionType, std::function<void(Document*, void*)> actionFunction) {
+            void registerActionFunction(const std::string& actionType, std::function<void(Document*, const json&)> actionFunction) {
                 m_actionFunctions[actionType] = actionFunction;
             }
             void dispatchAction(const ActionSpec& action) {
@@ -48,6 +52,6 @@ namespace e2 {
             }   
         private:
             std::map<std::string, Store*> m_stores; // Document takes ownership of the stores
-            std::map<std::string, std::function<void(Document*, void*)>> m_actionFunctions;
+            std::map<std::string, std::function<void(Document*, const json&)>> m_actionFunctions;
     };
 };  

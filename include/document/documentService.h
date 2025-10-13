@@ -27,9 +27,25 @@ namespace e2 {
                 // reads from m_inputStream, writes to m_outputStream and m_errorStream
                 std::string line;
                 while (std::getline(inputStream, line)) {
+
+                    if (line.empty()) {
+                        continue; // skip empty lines
+                    }
+
+                    // TODO: add error handling, logging etc
+
+                    // parse the input line. Each line is expected to be a complete JSON action.
+                    auto jsonAction = json::parse(line);
+                    ActionSpec action { jsonAction.at("type"), jsonAction.at("payload")};
+
+                    // dispatch the action to the document
+                    m_document->dispatchAction(action);
+
+                    // write a response to the output stream
+                    // TODO: create operator < for Model, Store, Document etc or json output, and send that to the output stream
+
                     // For now, just echo the input line to output stream
                     outputStream << "Received action: " << line << std::endl;
-                    // In future, parse the action, dispatch it to the document, and write the response
                 }
             }
         private:

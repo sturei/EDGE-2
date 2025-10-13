@@ -9,13 +9,17 @@ struct ZooModelFixture : public Model{
 };
 
 namespace DocumentServiceTestActions {
-    void addAnimal(Document* doc, void* payload) {
+    void addAnimal(Document* doc, const json& payload) {
         // This is a simple action function that adds an animal to the zoo model.
-        const std::string& animal = *static_cast<const std::string*>(payload);
+
+        //unpack the payload
+        const std::string& species = payload.at("species");
+
+        // add the animal to the model via the state change callback on the store.
         Store* store = doc->storeAt("zoo");
-        store->changeState([animal](Model* model) {
+        store->changeState([species](Model* model) {
             auto* zooModel = dynamic_cast<ZooModelFixture*>(model);
-            zooModel->animals.push_back(animal);
+            zooModel->animals.push_back(species);
         });
     }
 }
@@ -23,7 +27,9 @@ namespace DocumentServiceTestActions {
 class DocumentServiceTest : public ::testing::Test {
  protected:
   void SetUp() override {
-Model* zooModel = new ZooModelFixture();
+        // Implementation notes:
+        // As a unit test, probably this should have used a Mock Document instead.
+        Model* zooModel = new ZooModelFixture();
         Store* zooStore = new Store(zooModel);            // store takes ownership of the model
         Document* document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
         documentService = new DocumentService(document);     // documentService takes ownership of the document
@@ -44,12 +50,17 @@ TEST_F(DocumentServiceTest, DefaultConstructor) {
 
 TEST_F(DocumentServiceTest, Run) {
 
-    // TODO: find a nice way to make json literals.
-
-    std::string actions = "{\"type\":\"addAnimal\", \"payload\" : \"Giraffe\"}";
-
+    // a single-line JSON text with type, payload pair
+    std::string actionText = std::string(R"(
+    {
+        "type": "addAnimal",
+        "payload": { "species": "Giraffe" }
+    }
+    )");
+    actionText.erase(remove(actionText.begin(), actionText.end(), '\n'), actionText.end());
+    
     // Simulate input and output streams using stringstreams
-    std::istringstream input(actions);
+    std::istringstream input(actionText);
     std::ostringstream output;
     std::ostringstream error;
     documentService->run(output, input, error);
