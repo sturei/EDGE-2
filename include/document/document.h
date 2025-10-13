@@ -12,10 +12,11 @@
  * Implementation notes:
  * The Document class contains a map of Stores, each Store containing a Model. Stores handle lifecycle events on Models.
  * The Document class takes ownerahip of the stores it is given.
- * Actions are intended to be asynchronous and stores are intended to be independently lockable. Not yet implemented.
+ * Actions are intended to be asynchronous and stores are intended to be independently lockable. Not implemented yet!
  * Various levels of error checking, logging etc will be added later.
  * Actions are chainable (one action function can call another action function via the appropriate interface on the Document). Not implemented yet!
  * A series of actions is intended to be replayable - not implemented yet!
+ * Consider moving ActionSpec inside Document, because it is specific to Document.
  */
 
 namespace e2 {
@@ -47,6 +48,6 @@ namespace e2 {
             }   
         private:
             std::map<std::string, Store*> m_stores; // Document takes ownership of the stores
-            std::map<std::string, std::function<void(Document*, void*)>> m_actionFunctions; // map of action type to action function
+            std::map<std::string, std::function<void(Document*, void*)>> m_actionFunctions;
     };
 };  

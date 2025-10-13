@@ -35,6 +35,7 @@ set(SOURCES
     src/document/model.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
+    src/document/documentService.test.cpp
 )
 
 
