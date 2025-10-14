@@ -14,6 +14,7 @@
  * The action format is JSON.
  * Other IPC mechanisms could be supported in future, e.g. files, sockets, shared memory etc.
  * The DocumentService class takes ownership of the Document it is given. TODO:consider passing it in to run() instead. So it is a service provider rather than owner.
+ * todo: add a logging stream, separate from stderr.
  */
 
 namespace e2 {
@@ -27,6 +28,8 @@ namespace e2 {
                 // reads from m_inputStream, writes to m_outputStream and m_errorStream
                 std::string line;
                 while (std::getline(inputStream, line)) {
+
+                    // errorStream << "Received input: " << line << std::endl;
 
                     if (line.empty()) {
                         continue; // skip empty lines

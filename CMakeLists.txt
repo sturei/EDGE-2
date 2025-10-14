@@ -35,6 +35,10 @@ FetchContent_MakeAvailable(json)
 ##################
 
 set(SOURCES
+    src/main/modellingService_main.cpp
+)
+
+set(TEST_SOURCES
     src/utils/hello.test.cpp
     src/utils/graph.test.cpp
     src/utils/vec3d.test.cpp
@@ -52,9 +56,17 @@ set(SOURCES
 ##################
 
 add_executable(e2_test
-  ${SOURCES}
+  ${TEST_SOURCES}
 )
 target_include_directories(e2_test
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+add_executable(e2_modellingService
+  ${SOURCES}
+)
+target_include_directories(e2_modellingService
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
 )
@@ -65,10 +77,16 @@ target_include_directories(e2_test
 
 enable_testing()
 
+target_link_libraries(e2_modellingService
+  PRIVATE
+    nlohmann_json::nlohmann_json
+)
+
 target_link_libraries(e2_test
-  GTest::gtest_main
-  GTest::gmock_main
-  nlohmann_json::nlohmann_json
+  PRIVATE
+    GTest::gtest_main
+    GTest::gmock_main
+    nlohmann_json::nlohmann_json
 )
 
 include(GoogleTest)
