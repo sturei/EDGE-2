@@ -29,7 +29,7 @@ namespace DocumentServiceTestActions {
             zooModel->animals.push_back(species);
         });
     }
-    ActionDef addAnimalDef = {"addAnimal", addAnimal};
+    Document::ActionDef addAnimalDef = {"addAnimal", addAnimal};
 }
 
 class DocumentServiceTest : public ::testing::Test {

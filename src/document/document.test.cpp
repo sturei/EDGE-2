@@ -42,7 +42,7 @@ namespace DocumentTestActions {
             zooModel->animals.push_back(species);
         });
     }
-    ActionDef addAnimalDef = {"addAnimal", addAnimal};
+    Document::ActionDef addAnimalDef = {"addAnimal", addAnimal};
 }
 
 TEST_F(DocumentTest, DefaultConstructor) {
@@ -71,7 +71,7 @@ TEST_F(DocumentTest, RegisterAndDispatchAction) {
     document->registerActionFunction(DocumentTestActions::addAnimalDef);
 
     // Construct the action (type, payload) pair, and dispatch it
-    ActionSpec action = {
+    Document::ActionSpec action = {
         "addAnimal", {{"species", "Giraffe"}}
     };
 

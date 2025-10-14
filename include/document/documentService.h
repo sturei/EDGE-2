@@ -32,7 +32,7 @@ namespace e2 {
 
                 // parse the input line. Each line is expected to be a complete JSON action.
                 auto jsonAction = json::parse(line);
-                ActionSpec action { jsonAction.at("type"), jsonAction.at("payload")};
+                Document::ActionSpec action { jsonAction.at("type"), jsonAction.at("payload")};
 
                 // dispatch the action to the document
                 document->dispatchAction(action);

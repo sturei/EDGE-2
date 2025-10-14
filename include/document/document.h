@@ -27,17 +27,19 @@ using json = nlohmann::json;
 
 namespace e2 {
     
-    struct ActionSpec {
-        std::string type;
-        json payload;
-    };
-    class Document;
-    struct ActionDef {
-        std::string type;
-        std::function<void(Document*, const json&)> function;
-    };
     class Document {
         public:
+
+            struct ActionSpec {
+                std::string type;
+                json payload;
+            };
+            
+            struct ActionDef {
+                std::string type;
+                std::function<void(Document*, const json&)> function;
+            };
+    
             Document() {}
             Document(const std::map<std::string, Store*>& stores) : m_stores(stores) {}
             ~Document() {
