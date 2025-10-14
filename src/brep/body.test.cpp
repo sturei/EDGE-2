@@ -1,36 +1,26 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "brep/body.h"
+#include "brep/body.fixtures.h"
 
 using namespace e2;
-
-struct BodyFixture {
-    std::vector<Cell> cells;
-    std::vector<Cocell> cocells;
-};
 
 class BodyTest : public ::testing::Test {
     protected:
         void SetUp() override {
-
             // An empty body - no cells
-            emptyBodyFixture = new BodyFixture();
+            emptyBodyFixture = BodyFixtures::createEmptyBody();
 
             // An acorn body - one cell, which is a point
-            acornBodyFixture = new BodyFixture{
-                {
-                    Cell(Point3d(Vec3d(1,2,3)))
-                },
-                {}
-            };
+            acornBodyFixture = BodyFixtures::createAcornBody();
         };
 
         void TearDown() override {
             delete emptyBodyFixture;
             delete acornBodyFixture;
         }
-        BodyFixture* emptyBodyFixture;
-        BodyFixture* acornBodyFixture;
+        Body* emptyBodyFixture;
+        Body* acornBodyFixture;
 };
 
 TEST(CellTest, CellDefaultConstructor) {
@@ -148,29 +138,28 @@ TEST_F(BodyTest, AddCocell) {
 }
 
 TEST_F(BodyTest, BodyFromFixtureEmpty) {
-    Body body(emptyBodyFixture->cells, emptyBodyFixture->cocells);
-    EXPECT_EQ(body.cells().size(), 0);
-    EXPECT_EQ(body.cocells().size(), 0);
-    EXPECT_EQ(body.graphNeedsUpdate(), false);
+    Body* body = emptyBodyFixture;
+    EXPECT_EQ(body->cells().size(), 0);
+    EXPECT_EQ(body->cocells().size(), 0);
+    EXPECT_EQ(body->graphNeedsUpdate(), false);
 }
 
 TEST_F(BodyTest, BodyFromFixtureAcorn) {
-    Body body(acornBodyFixture->cells, acornBodyFixture->cocells);
-    EXPECT_EQ(body.cells().size(), 1);
-    EXPECT_EQ(body.cells()[0].support().position(), Vec3d(1,2,3));
-    EXPECT_EQ(body.cocells().size(), 0);
-    EXPECT_EQ(body.graphNeedsUpdate(), false);
+    Body* body = acornBodyFixture;
+    EXPECT_EQ(body->cells().size(), 1);
+    EXPECT_EQ(body->cells()[0].support().position(), Vec3d(1,2,3));
+    EXPECT_EQ(body->cocells().size(), 0);
+    EXPECT_EQ(body->graphNeedsUpdate(), false);
 }
 
 TEST_F(BodyTest, GraphFromFixtureEmpty) {
-    Body body(emptyBodyFixture->cells, emptyBodyFixture->cocells);
-    Graph graph = body.graph();
+    const Graph& graph = emptyBodyFixture->graph();
     EXPECT_EQ(graph.numVertices(), 0);
 }
 
 TEST_F(BodyTest, GraphFromFixtureAcorn) {
-    Body body(acornBodyFixture->cells, acornBodyFixture->cocells);
-    Graph graph = body.graph();
+    Body* body = acornBodyFixture;
+    const Graph& graph = body->graph();
     EXPECT_EQ(graph.numVertices(), 1);
     Graph::VertexView v = graph.vertex(0);
     EXPECT_EQ(v.outDegree, 0);
@@ -178,9 +167,9 @@ TEST_F(BodyTest, GraphFromFixtureAcorn) {
 }
 
 TEST_F(BodyTest, OstreamOutputOperator) {
-    Body body(acornBodyFixture->cells, acornBodyFixture->cocells);
+    Body* body = acornBodyFixture;
     std::ostringstream oss;
-    oss << body;
+    oss << *body;
     std::string bodyStr = oss.str();
 
     // std::cout << "Body output:\n" << bodyStr << std::endl; // --- IGNORE ---

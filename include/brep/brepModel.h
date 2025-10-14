@@ -7,6 +7,7 @@
  * The expectation is that a BRepModel will be created initially with 1 or a few empty bodies, and then those bodies will be populated by subsequent state changes.
  * There will probably be a copy constructor and operator= for undo/redo support.
  * The accessor that returns a reference to the vector of bodies (an internal structure) will probably be removed.
+ * Probably will change from vector<Body to vector<Body*>. Probably the best model is to have each body as packed arrays of cells and cocells, but bodies being independent.
  */
 
 namespace e2 {
