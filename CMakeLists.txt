@@ -44,7 +44,7 @@ set(TEST_SOURCES
     src/utils/vec3d.test.cpp
     src/utils/geom3d.test.cpp
     src/brep/body.test.cpp
-    src/document/model.test.cpp
+    src/brep/brepModel.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/documentService.test.cpp

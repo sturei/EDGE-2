@@ -1,7 +1,7 @@
 #include "document/documentService.h"
 #include "document/document.h"
 #include "document/store.h"
-#include "document/model.h"
+#include "brep/brepModel.h"
 
 using namespace e2;
 

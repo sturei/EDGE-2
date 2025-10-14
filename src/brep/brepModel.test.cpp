@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "document/model.h"
+#include "brep/brepModel.h"
 
 using namespace e2;
 
