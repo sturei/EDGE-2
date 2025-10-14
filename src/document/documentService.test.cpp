@@ -38,21 +38,14 @@ class DocumentServiceTest : public ::testing::Test {
         // As a unit test, probably this should have used a Mock Document instead.
         Model* zooModel = new ZooModelFixture();
         Store* zooStore = new Store(zooModel);            // store takes ownership of the model
-        Document* document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
-        documentService = new DocumentService(document);     // documentService takes ownership of the document
+        document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
         document->registerActionFunction("addAnimal", DocumentServiceTestActions::addAnimal);
     }
 
     void TearDown() override {
-      delete documentService;
+        delete document;
     }
-    DocumentService *documentService;
-};
-
-TEST_F(DocumentServiceTest, DefaultConstructor) {
-    DocumentService docService(nullptr);
-    // Just a basic test to check that the DocumentService can be constructed.
-    EXPECT_TRUE(true);
+    Document *document;
 };
 
 TEST_F(DocumentServiceTest, Run) {
@@ -70,7 +63,7 @@ TEST_F(DocumentServiceTest, Run) {
     std::istringstream input(actionText);
     std::ostringstream output;
     std::ostringstream error;
-    documentService->run(output, input, error);
+    DocumentService::run(document, input, output, error);
     std::string outputStr = output.str();
     std::string errorStr = error.str(); 
 
