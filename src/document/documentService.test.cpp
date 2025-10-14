@@ -29,6 +29,7 @@ namespace DocumentServiceTestActions {
             zooModel->animals.push_back(species);
         });
     }
+    ActionDef addAnimalDef = {"addAnimal", addAnimal};
 }
 
 class DocumentServiceTest : public ::testing::Test {
@@ -39,7 +40,7 @@ class DocumentServiceTest : public ::testing::Test {
         Model* zooModel = new ZooModelFixture();
         Store* zooStore = new Store(zooModel);            // store takes ownership of the model
         document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
-        document->registerActionFunction("addAnimal", DocumentServiceTestActions::addAnimal);
+        document->registerActionFunction(DocumentServiceTestActions::addAnimalDef);
     }
 
     void TearDown() override {

@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 #include <string>
+#include <functional>
+#include <iostream>
 #include <nlohmann/json.hpp>
 
 #include "document/store.h"
@@ -24,10 +26,15 @@ using json = nlohmann::json;
  */
 
 namespace e2 {
-    class ActionSpec {
-        public:
-            std::string type;
-            json payload;
+    
+    struct ActionSpec {
+        std::string type;
+        json payload;
+    };
+    class Document;
+    struct ActionDef {
+        std::string type;
+        std::function<void(Document*, const json&)> function;
     };
     class Document {
         public:
@@ -41,8 +48,8 @@ namespace e2 {
             Store* storeAt(const std::string& key) {
                 return m_stores.at(key);
             }
-            void registerActionFunction(const std::string& actionType, std::function<void(Document*, const json&)> actionFunction) {
-                m_actionFunctions[actionType] = actionFunction;
+            void registerActionFunction(const ActionDef& action) {
+                m_actionFunctions[action.type] = action.function;
             }
             void dispatchAction(const ActionSpec& action) {
                 auto it = m_actionFunctions.find(action.type);
