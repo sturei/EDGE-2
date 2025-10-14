@@ -44,9 +44,8 @@ namespace e2 {
                     // dispatch the action to the document
                     m_document->dispatchAction(action);
 
-                    // write a response to the output stream
                     // For now, output the document to the output stream. Later, output a more structured response.
-                    outputStream << "Response: " << *m_document << std::endl;
+                    outputStream << *m_document << std::endl;
                 }
             }
         private:
