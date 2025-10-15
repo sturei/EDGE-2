@@ -14,10 +14,15 @@
  * Cells are connected to their boundaries, and vice versa, by Cocells. 
  * Each cocell connects a cell to one of its boundary cells, and connects a boundary cell to one of its star cells.
  * Thus the body consists of a graph of cells connected by cocells.
- * An internal boundary (same cell on both sides) has sense 0; an external boundary has sense +1 or -1 according to which side the cell it bounds lies on.
  * The geometry upon which a given cell sits is called the cell's "support"
  * The subset of a cell's boundary with specified dimension k is called the cell's "k-boundary".
  * The subset of a body that is the collection of cells of dimension less than or equal to k are called the body's "k-skeleton"
+ * Cocells whose boundary is one dimension lower than their star are assigned a sense according to which side their star lies on.
+ * Think of each cocell as having a natural direction with respect to the cell it bounds (its star) and the boundary it lies on (its boundary).
+ * The natural direction of a 0D cocell (covertex) is the tangent T of its star's support.
+ * The natural direction of a 2D cocell (coface) is the normal N of its boundary's support.
+ * The natural direction of a 1D cocell (coedge) is the cross product of the tangent T of its boundary's support and the normal N of its star's support, i.e. T x N.
+ * The sense of cocell is +1 if its natural direction points away from its star, -1 if it points towards, and 0 if the boundary cell is an internal boundary (i.e. it bounds the same cell on both sides)
  * Bibliography:
  * Rossignac and O'Connor, "SGC: A dimension-independent model for pointsets with internal structures and 
  * incomplete boundaries", in Geometric Modeling for Product Engineering, Wozny, Turner and Preiss (eds), Elsevier, 1990.

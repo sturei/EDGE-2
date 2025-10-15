@@ -12,7 +12,7 @@ class BodyTest : public ::testing::Test {
             emptyBodyFixture = BodyFixtures::createEmptyBody();
 
             // An acorn body - one cell, which is a point
-            acornBodyFixture = BodyFixtures::createAcornBody();
+            acornBodyFixture = BodyFixtures::createAcornBody(Vec3d(1,2,3));
         };
 
         void TearDown() override {
