@@ -22,7 +22,7 @@ namespace e2 {
             std::string line;
             while (std::getline(inputStream, line)) {
 
-                // errorStream << "Received input: " << line << std::endl;
+                //errorStream << "Received input: " << line << std::endl;
 
                 if (line.empty()) {
                     continue; // skip empty lines
@@ -35,10 +35,15 @@ namespace e2 {
                 Document::ActionSpec action { jsonAction.at("type"), jsonAction.at("payload")};
 
                 // dispatch the action to the document
-                document->dispatchAction(action);
+                if (!document->dispatchAction(action)) {
+                    //errorStream << "Unknown action type: " << action.type << std::endl;
+                }
 
-                // For now, output the document to the output stream. Later, output a more structured response.
-                outputStream << *document << std::endl;
+                //errorStream << "***" << *document << std::endl;
+
+                // Give a single-line response acknowledging that the action has been processed. 
+                // Later this may becomes more sophisticated, e.g. return a success/failure with maybe an action to getLastError or similar.
+                outputStream << "Action [" << action.type << "] processed" << std::endl;
             }
         }
     };

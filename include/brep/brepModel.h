@@ -32,8 +32,8 @@ namespace e2 {
         }
         void print(std::ostream& os) const override {
             os << "BRepModel with " << m_bodies.size() << " bodies." << std::endl;
-            for (const auto& body : m_bodies) {
-                os << body << std::endl;
+            for (size_t i = 0; i < m_bodies.size(); ++i) {
+                os << "  Body " << i << ": " << m_bodies[i] << std::endl;
             }
         }
     private:

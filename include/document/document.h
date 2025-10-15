@@ -34,7 +34,7 @@ namespace e2 {
                 std::string type;
                 json payload;
             };
-            
+
             struct ActionDef {
                 std::string type;
                 std::function<void(Document*, const json&)> function;
@@ -53,11 +53,13 @@ namespace e2 {
             void registerActionFunction(const ActionDef& action) {
                 m_actionFunctions[action.type] = action.function;
             }
-            void dispatchAction(const ActionSpec& action) {
+            bool dispatchAction(const ActionSpec& action) {
                 auto it = m_actionFunctions.find(action.type);
                 if (it != m_actionFunctions.end()) {
                     it->second(this, action.payload);
+                    return true;
                 }
+                return false;
             }
             friend std::ostream& operator<<(std::ostream& os, const Document& doc) {
                 os << "Document with " << doc.m_stores.size() << " stores." << std::endl;

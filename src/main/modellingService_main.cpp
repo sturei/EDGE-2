@@ -2,6 +2,7 @@
 #include "document/document.h"
 #include "document/store.h"
 #include "brep/brepModel.h"
+#include "brep/body.actions.h"
 
 using namespace e2;
 
@@ -16,11 +17,13 @@ using namespace e2;
 
 int main(int argc, char* argv[]) {
 
+    // Create the initial document and its stores
     Model* brepModel = new BRepModel();
     Store* brepStore = new Store(brepModel);                      // store takes ownership of the model
     Document* document = new Document({{"brep", brepStore}});     // document takes ownership of the store
 
-    // TODO: document->registerActionFunction("addAnimal", DocumentServiceTestActions::addAnimal);
+    // Register action functions with the document
+    document->registerActionFunction(e2::BodyActions::addEmptyBodyDef);
 
     // Run the DocumentService, which by default reads from stdin and writes to stdout and stderr
     DocumentService::run(document);

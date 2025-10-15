@@ -71,6 +71,6 @@ TEST_F(DocumentServiceTest, Run) {
     // std::cout << "Output stream:\n" << outputStr << std::endl; // --- IGNORE ---
     // std::cout << "Error stream:\n" << errorStr << std::endl; // --- IGNORE ---
 
-    EXPECT_TRUE(outputStr.find("Giraffe") != std::string::npos);          
+    EXPECT_TRUE(outputStr.find("processed") != std::string::npos);          
     EXPECT_EQ(errorStr, "");
 };
