@@ -4,13 +4,13 @@ An experimental shape modeller
 
 ## Prequisites (instructions for MacOS)
 
-First, install Homebrew. For reference, the line below was copied from https://brew.sh/ in Oct 2025.
+First, install Homebrew for installing the prereqs. For reference, the line below was copied from https://brew.sh/ in Oct 2025.
 
 ```
 % /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Then:
+Then install CMake for building the code, Github Desktop for interacting with Github, VSCode for development the code and Magnum for OpenGL Graphics.
 
 ```
 % brew install cmake
@@ -22,8 +22,16 @@ Then:
 ## Download and inspect the project
 
 1. open Github Desktop and log in to github
-2. File > Clone Repository. Select EDGE-2
-3. Open in VSCode
+2. File > Clone Repository. Select EDGE-2 and the path to your Github projects.
+3. Open Folder in VSCode and select EDGE-2
+4. Switch Intellisense to use the tag parser. The new parser doesn't work very well with namespaces
+
+```
+Go to Code, Settings, Settings, Workspace, Extensions, C/C++, Intellisense
+Locate "C_Cpp: Intelli Sense Engine"
+From the dropdown, select Tag Parser
+Restart VSCode when asked to do so
+```
 
 ## Build and test the project
 

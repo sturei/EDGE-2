@@ -30,11 +30,17 @@ FetchContent_MakeAvailable(googletest)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
+#
+# magnum
+# See   https://doc.magnum.graphics/magnum/getting-started.html#cmake
+#
+find_package(Magnum REQUIRED GL Sdl2Application)
+
 ##################
 # Sources
 ##################
 
-set(SOURCES
+set(MODELLING_SERVICE_SOURCES
     src/main/modellingService_main.cpp
 )
 
@@ -75,7 +81,7 @@ target_link_libraries(e2_test
 # modelling service
 #
 add_executable(e2_modellingService
-  ${SOURCES}
+  ${MODELLING_SERVICE_SOURCES}
 )
 target_include_directories(e2_modellingService
     PRIVATE 
@@ -90,6 +96,12 @@ target_link_libraries(e2_modellingService
 #
 # graphics service (to be added)
 #
+add_executable(HelloMagnum src/main/helloMagnum_main.cpp)
+target_link_libraries(HelloMagnum PRIVATE
+    Magnum::Application
+    Magnum::GL
+    Magnum::Magnum)
+
 
 ################
 # Testing
