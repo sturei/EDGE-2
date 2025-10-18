@@ -16,31 +16,36 @@ Then:
 % brew install cmake
 % brew install --cask github
 % brew install --cask visual-studio-code
+% brew install mosra/magnum/magnum
 ```
 
-## Usage
-
-# download and inspect the project
+## Download and inspect the project
 
 1. open Github Desktop and log in to github
 2. File > Clone Repository. Select EDGE-2
 3. Open in VSCode
 
-# build and test the project
+## Build and test the project
+
 ```
 % cd <path_to_your_github_projects>/EDGE-2
-% mkdir build
-% cd build
+% mkdir build && cd build
 % cmake ..
 % make
 % ctest
 ```
 
-# delete any generated files
+## Run the modelling service interactively
+
+```
+% ../scripts/e2_modellingService.zsh
+```
+
+## In case you want a clean start before rebuilding everything
+
 ```
 % git clean -dxf
 ```
-
 
 ## License
 

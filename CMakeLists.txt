@@ -50,11 +50,13 @@ set(TEST_SOURCES
     src/document/documentService.test.cpp
 )
 
-
 ##################
 # Targets
 ##################
 
+#
+# testing
+#
 add_executable(e2_test
   ${TEST_SOURCES}
 )
@@ -62,26 +64,6 @@ target_include_directories(e2_test
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
 )
-
-add_executable(e2_modellingService
-  ${SOURCES}
-)
-target_include_directories(e2_modellingService
-    PRIVATE 
-        ${PROJECT_SOURCE_DIR}/include
-)
-
-################
-# Testing
-################
-
-enable_testing()
-
-target_link_libraries(e2_modellingService
-  PRIVATE
-    nlohmann_json::nlohmann_json
-)
-
 target_link_libraries(e2_test
   PRIVATE
     GTest::gtest_main
@@ -89,5 +71,33 @@ target_link_libraries(e2_test
     nlohmann_json::nlohmann_json
 )
 
+#
+# modelling service
+#
+add_executable(e2_modellingService
+  ${SOURCES}
+)
+target_include_directories(e2_modellingService
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(e2_modellingService
+  PRIVATE
+    nlohmann_json::nlohmann_json
+)
+
+
+#
+# graphics service (to be added)
+#
+
+################
+# Testing
+################
+
+#
+# Enable testing with GoogleTest and CTest
+#
+enable_testing()
 include(GoogleTest)
 gtest_discover_tests(e2_test)
