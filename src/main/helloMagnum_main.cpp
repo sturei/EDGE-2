@@ -11,12 +11,11 @@
 //
 /////
 
-using namespace Magnum;
+namespace GL = Magnum::GL;
 
 // Implementation notes:
 // I had to mess around a bit with explicit namespacing to get avoid wiggly lines in VSCode.
 // Actually this was causing errors often, so I switched Intellisense to use the tag parser only.
-
 
 class MyApplication: public Magnum::Platform::Sdl2Application {
     public:
@@ -34,9 +33,9 @@ MyApplication::MyApplication(const Arguments& arguments): Sdl2Application(argume
 
     using namespace Magnum::Math::Literals;
 
-    Magnum::GL::Renderer::setClearColor(0xa5c9ea_rgbf);
+    GL::Renderer::setClearColor(0xa5c9ea_rgbf);
 
-    Debug{} << "Hello! This application is running on"
+    Magnum::Debug{} << "Hello! This application is running on"
             << GL::Context::current().version() << "using"
             << GL::Context::current().rendererString();
 
@@ -45,7 +44,7 @@ MyApplication::MyApplication(const Arguments& arguments): Sdl2Application(argume
 }
 
 void MyApplication::drawEvent() {
-    GL::defaultFramebuffer.clear(GL::FramebufferClear::Color);
+    GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
 
     /* TODO: Add your drawing code here */
 
