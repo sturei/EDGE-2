@@ -34,7 +34,7 @@ FetchContent_MakeAvailable(json)
 # magnum
 # See   https://doc.magnum.graphics/magnum/getting-started.html#cmake
 #
-find_package(Magnum REQUIRED GL Sdl2Application)
+find_package(Magnum REQUIRED GL Shaders Sdl2Application)
 
 ##################
 # Sources
@@ -100,7 +100,9 @@ add_executable(HelloMagnum src/main/helloMagnum_main.cpp)
 target_link_libraries(HelloMagnum PRIVATE
     Magnum::Application
     Magnum::GL
-    Magnum::Magnum)
+    Magnum::Magnum
+    Magnum::Shaders
+)
 
 
 ################
