@@ -17,8 +17,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 #
 include(FetchContent)
 FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
@@ -31,10 +31,17 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 FetchContent_MakeAvailable(json)
 
 #
-# magnum
+# Magnum
 # See   https://doc.magnum.graphics/magnum/getting-started.html#cmake
 #
-find_package(Magnum REQUIRED GL Shaders Sdl2Application)
+find_package(Magnum REQUIRED 
+    GL
+    MeshTools
+    Primitives
+    Shaders
+    Trade
+    Sdl2Application
+)
 
 ##################
 # Sources
@@ -94,15 +101,19 @@ target_link_libraries(e2_modellingService
 
 
 #
-# graphics service (to be added)
+# graphics services (to be added)
 #
 add_executable(HelloMagnum src/main/helloMagnum_main.cpp)
 target_link_libraries(HelloMagnum PRIVATE
     Magnum::Application
     Magnum::GL
     Magnum::Magnum
+    Magnum::MeshTools
+    Magnum::Primitives
     Magnum::Shaders
+    Magnum::Trade
 )
+
 
 
 ################

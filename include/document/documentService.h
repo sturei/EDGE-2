@@ -20,7 +20,7 @@ namespace e2 {
         void run(Document* document, std::istream& inputStream = std::cin, std::ostream& outputStream = std::cout,std::ostream& errorStream = std::cerr) {
             // reads from m_inputStream, writes to m_outputStream and m_errorStream
             std::string line;
-            while (std::getline(inputStream, line)) {
+            while (std::getline(inputStream, line)) {                   // TODO: some non-blocking way to check for input?
 
                 //errorStream << "Received input: " << line << std::endl;
 
