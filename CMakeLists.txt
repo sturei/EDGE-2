@@ -37,8 +37,10 @@ FetchContent_MakeAvailable(json)
 find_package(Magnum REQUIRED 
     GL
     MeshTools
+    DebugTools
     Primitives
     Shaders
+    SceneGraph
     Trade
     Sdl2Application
 )
@@ -61,6 +63,9 @@ set(TEST_SOURCES
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/documentService.test.cpp
+)
+
+set(GUI_SOURCES
 )
 
 ##################
@@ -101,15 +106,24 @@ target_link_libraries(e2_modellingService
 
 
 #
-# graphics services (to be added)
+# GUI
 #
-add_executable(HelloMagnum src/main/helloMagnum_main.cpp)
+add_executable(HelloMagnum 
+    src/main/helloMagnum_main.cpp
+    src/gui/helloMagnum/ArcBall.cpp
+)
+target_include_directories(HelloMagnum
+    PRIVATE 
+        ${PROJECT_SOURCE_DIR}/include
+)
 target_link_libraries(HelloMagnum PRIVATE
     Magnum::Application
     Magnum::GL
     Magnum::Magnum
     Magnum::MeshTools
+    Magnum::DebugTools
     Magnum::Primitives
+    Magnum::SceneGraph
     Magnum::Shaders
     Magnum::Trade
 )
