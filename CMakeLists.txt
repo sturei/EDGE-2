@@ -143,31 +143,6 @@ target_link_libraries(e2_desktopApp PRIVATE
     nlohmann_json::nlohmann_json
 )
 
-#
-# HelloMagnum application
-#
-add_executable(HelloMagnum 
-    src/main/helloMagnum_main.cpp
-    src/gui/helloMagnum/ArcBall.cpp
-)
-target_include_directories(HelloMagnum
-    PRIVATE 
-        ${PROJECT_SOURCE_DIR}/include
-)
-target_link_libraries(HelloMagnum PRIVATE
-    Magnum::Application
-    Magnum::GL
-    Magnum::Magnum
-    Magnum::MeshTools
-    Magnum::DebugTools
-    Magnum::Primitives
-    Magnum::SceneGraph
-    Magnum::Shaders
-    Magnum::Trade
-)
-
-
-
 ################
 # Testing
 ################
