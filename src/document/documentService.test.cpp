@@ -60,16 +60,14 @@ TEST_F(DocumentServiceTest, Run) {
     )");
     actionText.erase(remove(actionText.begin(), actionText.end(), '\n'), actionText.end());
     
-    // Simulate input and output streams using stringstreams
-    // Oops - can't do this anymore. Need to modify DocumentService to take input and output streams as parameters, and bypass the poll in case of stringstream.
-    //std::istringstream input(actionText);
-    //std::ostringstream output;
-    //bool waitForInput = false;
-    //DocumentService::run(document, input, output);
-    //std::string outputStr = output.str();
+    // Simulate input and output streams using stringstreams. Only works in blocking mode.
+    std::istringstream input(actionText);
+    std::ostringstream output;
+    bool blocking = true;
+    DocumentService::runOnce(document, blocking, input, output);
+    std::string outputStr = output.str();
     //std::cout << "Output stream:\n" << outputStr << std::endl; // --- IGNORE ---
-    //EXPECT_TRUE(outputStr.find("ACK: success") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("ACK: success") != std::string::npos);
 
-    EXPECT_TRUE(true);
 };
 

@@ -51,8 +51,11 @@ namespace e2 {
             return true;
         }
 
-        void runOnce(Document* document, bool blocking = true) {
+        void runOnce(Document* document, bool blocking = true, std::istream& input = std::cin, std::ostream& output = std::cout) {
             // Reads from stdin if there is anything there to read, writes to stdout.
+            // NOTE: this method uses stdin directly, rather than the input and output streams passed as parameters, because of the use of poll() to check for input availability.
+            // For testing purposes only, clients can pass in stringstreams for input and output, so long as blocking is true. Sorry!
+
 
             bool inputIsAvailable = false;
             if (!blocking){
@@ -73,35 +76,35 @@ namespace e2 {
                 // Read input and process it. getLine will block and wait for input if there is no input available.
                 // Always acknowledge the input on stdout, even if it is invalid. Clients may be waiting for a response.
                 std::string line;
-                if (!std::getline(std::cin, line)) {
-                    std::cout << "ACK: invalid stream or EOF" << std::endl;
+                if (!std::getline(input, line)) {
+                    output << "ACK: invalid stream or EOF" << std::endl;
                     return;
                 }
                 if (line.empty()) {
-                    std::cout << "ACK: empty line" << std::endl;
+                    output << "ACK: empty line" << std::endl;
                     return;
                 }
                 // std::cerr << "Received input: [" << line << "]" << std::endl;        //--- IGNORE ---
                 Document::ActionSpec action;
                 if (!parseAction(line, action)) {
-                    std::cout << "ACK: parse error" << std::endl;
+                    output << "ACK: parse error" << std::endl;
                     return; 
                 }
                 if (!dispatchAction(document, action)) {
-                    std::cout << "ACK: dispatch error" << std::endl;
+                    output << "ACK: dispatch error" << std::endl;
                     return;
                 }
-                std::cout << "ACK: success" << std::endl;
+                output << "ACK: success" << std::endl;
                 return;
             }
             // std::cerr << "No input available" << std::endl;        //--- IGNORE ---
         }   
 
-        void run(Document* document, bool blocking = true) {
+        void run(Document* document, bool blocking = true, std::istream& input = std::cin, std::ostream& output = std::cout) {
             // implementation note: the assumption is that this is used in case of a dedicated service process, so we can block waiting for input
             // alternatively, could have a non-blocking mode and a sleep interval, or similar.
             while (true) {
-                runOnce(document);
+                runOnce(document, blocking, input, output);
             }
         }
     };
