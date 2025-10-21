@@ -2,7 +2,11 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <poll.h>
+#include <nlohmann/json.hpp>
 #include "document/document.h"
+
+using json = nlohmann::json;
 
 /**
  * DocumentService enables interprocess communication with a live Document
@@ -17,6 +21,73 @@
 
 namespace e2 {
     namespace DocumentService {
+
+        bool parseAction(const std::string& line, Document::ActionSpec& action) {
+            try
+            {
+                json jsonAction = json::parse(line);
+                //std::cerr << "Parsed input to json: " << jsonAction.dump() << std::endl;    //--- IGNORE ---
+                action.type = jsonAction.at("type");
+                action.payload = jsonAction.at("payload");
+            }
+            catch (const json::parse_error& e)
+            {
+                //std::cerr << "Error parsing json at byte " << e.byte << std::endl;    //--- IGNORE ---
+                return false;
+            }
+            catch (const json::out_of_range& e)
+            {
+                //std::cerr << "Error unpacking json" << std::endl;  //--- IGNORE ---
+                return false;
+            }
+            return true;
+        }
+
+        bool dispatchAction(Document* document, const Document::ActionSpec& action) {
+            if (!document->dispatchAction(action)) {
+                //std::cerr << "Failed to dispatch action. Is \"" << action.type << "\" action registered?" << std::endl;  //--- IGNORE ---
+                return false;
+            }
+            return true;
+        }
+
+        void runOnce(Document* document) {
+
+            // reads from stdin, writes to stdout and stderr
+
+            const size_t len = 1;
+            const int timeoutMillis = 0;    // 0 = non-blocking
+            pollfd cinfd[len];
+            cinfd[0].fd = fileno(stdin);
+            cinfd[0].events = POLLIN;
+            // to avoid blocking, only read the line if it is available. See http://www.coldestgame.com/site/blog/cybertron/non-blocking-reading-stdin-c
+            if (poll(cinfd, len, timeoutMillis))
+            {
+                // Input is available. Read and process it.
+                // Always acknowledge the input on stdout, even if it is invalid. Clients may be waiting for a response.
+                std::string line;
+                if (!std::getline(std::cin, line)) {
+                    std::cout << "ACK: invalid stream or EOF" << std::endl;
+                    return;
+                }
+                if (line.empty()) {
+                    std::cout << "ACK: empty line" << std::endl;
+                    return;
+                }
+                // std::cerr << "Received input: [" << line << "]" << std::endl;        //--- IGNORE ---
+                Document::ActionSpec action;
+                if (!parseAction(line, action)) {
+                    std::cout << "ACK: parse error" << std::endl;
+                    return; 
+                }
+                if (!dispatchAction(document, action)) {
+                    std::cout << "ACK: dispatch error" << std::endl;
+                    return;
+                }
+                std::cout << "ACK: success" << std::endl;
+            }
+        }   
+
         void run(Document* document, std::istream& inputStream = std::cin, std::ostream& outputStream = std::cout,std::ostream& errorStream = std::cerr) {
             // reads from m_inputStream, writes to m_outputStream and m_errorStream
             std::string line;

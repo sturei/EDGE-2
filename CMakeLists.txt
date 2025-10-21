@@ -104,9 +104,33 @@ target_link_libraries(e2_modellingService
     nlohmann_json::nlohmann_json
 )
 
+#
+# e2_desktopApp application
+#
+add_executable(e2_desktopApp 
+    src/gui/magnum/ArcBall.cpp
+    src/gui/magnum/MyApplication.cpp
+    src/main/desktopApp_main.cpp
+)
+target_include_directories(e2_desktopApp
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+target_link_libraries(e2_desktopApp PRIVATE
+    Magnum::Application
+    Magnum::GL
+    Magnum::Magnum
+    Magnum::MeshTools
+    Magnum::DebugTools
+    Magnum::Primitives
+    Magnum::SceneGraph
+    Magnum::Shaders
+    Magnum::Trade
+    nlohmann_json::nlohmann_json
+)
 
 #
-# GUI
+# HelloMagnum application
 #
 add_executable(HelloMagnum 
     src/main/helloMagnum_main.cpp

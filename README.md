@@ -49,6 +49,14 @@ Restart VSCode when asked to do so
 % ../scripts/e2_modellingService.zsh
 ```
 
+## Debugging in VSCode
+
+```
+Install the CMake Tools extension
+From the left toolbar, you need to set the Launch Target and the Debug Target to the target you want to debug
+Also configure launch.json for the debugger to point to the executable and the cwd in build
+Note that VSCode's Integrated Terminal is not supported in the mac default llvm debugger. I think stdin can be redirected from a file, however, using arguments "<" or similar.
+```
 ## In case you want a clean start before rebuilding everything
 
 ```
