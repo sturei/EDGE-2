@@ -1,6 +1,6 @@
 /**
- * This is the main program for the edge2 desktop app (e2_desktopApp)
- * It uses the Magnum framework.
+ * This is the main program for the edge2 desktop app.
+ * It uses the Magnum framework for the GUI, and the DocumentService for handling actions input from the console
  */
 
 #include "document/documentService.h"

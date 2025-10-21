@@ -52,8 +52,7 @@ namespace e2 {
         }
 
         void runOnce(Document* document) {
-
-            // reads from stdin, writes to stdout and stderr
+            // Reads from stdin if there is anything there to read, writes to stdout.
 
             const size_t len = 1;
             const int timeoutMillis = 0;    // 0 = non-blocking
@@ -85,36 +84,14 @@ namespace e2 {
                     return;
                 }
                 std::cout << "ACK: success" << std::endl;
+                return;
             }
+            // std::cerr << "No input available" << std::endl;        //--- IGNORE ---
         }   
 
-        void run(Document* document, std::istream& inputStream = std::cin, std::ostream& outputStream = std::cout,std::ostream& errorStream = std::cerr) {
-            // reads from m_inputStream, writes to m_outputStream and m_errorStream
-            std::string line;
-            while (std::getline(inputStream, line)) {                   // TODO: some non-blocking way to check for input?
-
-                //errorStream << "Received input: " << line << std::endl;
-
-                if (line.empty()) {
-                    continue; // skip empty lines
-                }
-
-                // TODO: add error handling, logging etc
-
-                // parse the input line. Each line is expected to be a complete JSON action.
-                auto jsonAction = json::parse(line);
-                Document::ActionSpec action { jsonAction.at("type"), jsonAction.at("payload")};
-
-                // dispatch the action to the document
-                if (!document->dispatchAction(action)) {
-                    //errorStream << "Unknown action type: " << action.type << std::endl;
-                }
-
-                //errorStream << "***" << *document << std::endl;
-
-                // Give a single-line response acknowledging that the action has been processed. 
-                // Later this may becomes more sophisticated, e.g. return a success/failure with maybe an action to getLastError or similar.
-                outputStream << "Action [" << action.type << "] processed" << std::endl;
+        void run(Document* document) {
+            while (true) {
+                runOnce(document);
             }
         }
     };
