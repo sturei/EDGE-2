@@ -23,7 +23,7 @@ namespace e2 {
                 Body emptyBody;
                 brepModel->addBody(emptyBody);
             });
-        }
+           }
     }
 };
 

@@ -1,11 +1,10 @@
-#pragma once
 #include <map>
 #include <string>
 #include <functional>
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-#include "document/store.h"
+#include "document/document.h"
 
 using json = nlohmann::json;
 
@@ -26,30 +25,36 @@ using json = nlohmann::json;
  */
 
 namespace e2 {
-    
-    class Document {
-        public:
 
-            struct ActionSpec {
-                std::string type;
-                json payload;
-            };
+    Document::~Document() {
+        for (auto& pair : m_stores) {
+            delete pair.second;
+        }
+    }
 
-            struct ActionDef {
-                std::string type;
-                std::function<void(Document*, const json&)> function;
-            };
-    
-            Document() {}
-            Document(const std::map<std::string, Store*>& stores) : m_stores(stores) {}
-            ~Document();
-            Store* storeAt(const std::string& key);
-            void registerActionFunction(const ActionDef& action);
-            bool dispatchAction(const ActionSpec& action);
-            friend std::ostream& operator<<(std::ostream& os, const Document& doc);
+    Store* Document::storeAt(const std::string& key) {
+        return m_stores.at(key);
+    }
 
-        private:
-            std::map<std::string, Store*> m_stores; // Document takes ownership of the stores
-            std::map<std::string, std::function<void(Document*, const json&)>> m_actionFunctions;
-    };
+    void Document::registerActionFunction(const ActionDef& action) {
+        m_actionFunctions[action.type] = action.function;
+    }
+
+    bool Document::dispatchAction(const ActionSpec& action) {
+        auto it = m_actionFunctions.find(action.type);
+        if (it != m_actionFunctions.end()) {
+            it->second(this, action.payload);
+            return true;
+        }
+        return false;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const Document& doc) {
+        os << "Document with " << doc.m_stores.size() << " stores." << std::endl;
+        for (const auto& pair : doc.m_stores) {
+            os << "Store key: " << pair.first << std::endl;
+            os << *(pair.second) << std::endl;
+        }
+        return os;
+    }   
 };  

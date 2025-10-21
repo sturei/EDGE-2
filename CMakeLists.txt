@@ -54,6 +54,10 @@ set(MODELLING_SERVICE_SOURCES
     src/brep/body.actions.cpp
     src/brep/body.fixtures.cpp
     src/brep/brepModel.cpp
+    src/document/document.cpp
+    src/document/documentService.cpp
+    src/document/model.cpp
+    src/document/store.cpp
 )
 
 set(TEST_SOURCES
@@ -68,7 +72,13 @@ set(TEST_SOURCES
     src/document/documentService.test.cpp
 )
 
-set(GUI_SOURCES
+set(DESKTOP_APP_SOURCES
+    src/gui/magnum/ArcBall.cpp
+    src/gui/magnum/MyApplication.cpp
+    src/document/document.cpp
+    src/document/documentService.cpp
+    src/document/model.cpp
+    src/document/store.cpp
 )
 
 ##################
@@ -110,12 +120,11 @@ target_link_libraries(e2_modellingService
 )
 
 #
-# e2_desktopApp application
+# desktop app
 #
 add_executable(e2_desktopApp 
-    src/gui/magnum/ArcBall.cpp
-    src/gui/magnum/MyApplication.cpp
     src/main/desktopApp_main.cpp
+    ${DESKTOP_APP_SOURCES}
 )
 target_include_directories(e2_desktopApp
     PRIVATE
