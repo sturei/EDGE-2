@@ -51,18 +51,26 @@ namespace e2 {
             return true;
         }
 
-        void runOnce(Document* document) {
+        void runOnce(Document* document, bool blocking = true) {
             // Reads from stdin if there is anything there to read, writes to stdout.
 
-            const size_t len = 1;
-            const int timeoutMillis = 0;    // 0 = non-blocking
-            pollfd cinfd[len];
-            cinfd[0].fd = fileno(stdin);
-            cinfd[0].events = POLLIN;
-            // to avoid blocking, only read the line if it is available. See http://www.coldestgame.com/site/blog/cybertron/non-blocking-reading-stdin-c
-            if (poll(cinfd, len, timeoutMillis))
+            bool inputIsAvailable = false;
+            if (!blocking){
+                // To avoid blocking, we only attempt read the line if it is available. See http://www.coldestgame.com/site/blog/cybertron/non-blocking-reading-stdin-c
+                // Unfortunately this code mixes C and C++ style I/O. I tried cin.peek() and cin.rdbuf()->in_avail() but they didn't work for this purpose.
+                const size_t len = 1;
+                const int timeoutMillis = 0;    // 0 = non-blocking
+                pollfd cinfd[len];
+                cinfd[0].fd = fileno(stdin);
+                cinfd[0].events = POLLIN;
+                if (poll(cinfd, len, timeoutMillis)) {
+                    inputIsAvailable = true;
+                }
+            }
+
+            if (blocking || inputIsAvailable)
             {
-                // Input is available. Read and process it.
+                // Read input and process it. getLine will block and wait for input if there is no input available.
                 // Always acknowledge the input on stdout, even if it is invalid. Clients may be waiting for a response.
                 std::string line;
                 if (!std::getline(std::cin, line)) {
@@ -89,7 +97,9 @@ namespace e2 {
             // std::cerr << "No input available" << std::endl;        //--- IGNORE ---
         }   
 
-        void run(Document* document) {
+        void run(Document* document, bool blocking = true) {
+            // implementation note: the assumption is that this is used in case of a dedicated service process, so we can block waiting for input
+            // alternatively, could have a non-blocking mode and a sleep interval, or similar.
             while (true) {
                 runOnce(document);
             }

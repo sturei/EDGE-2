@@ -38,7 +38,7 @@ class GuiApplication : public MyApplication {
     private:
         void doOnTickEvent() override {
             // run one loop of the DocumentService to read, process and dispatch any actions supplied on stdin
-            DocumentService::runOnce(m_document);
+            DocumentService::runOnce(m_document, false);   // non-blocking
         }
         Document* m_document = nullptr;
 };
