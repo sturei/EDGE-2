@@ -56,7 +56,6 @@ namespace e2 {
             // NOTE: this method uses stdin directly, rather than the input and output streams passed as parameters, because of the use of poll() to check for input availability.
             // For testing purposes only, clients can pass in stringstreams for input and output, so long as blocking is true. Sorry!
 
-
             bool inputIsAvailable = false;
             if (!blocking){
                 // To avoid blocking, we only attempt read the line if it is available. See http://www.coldestgame.com/site/blog/cybertron/non-blocking-reading-stdin-c

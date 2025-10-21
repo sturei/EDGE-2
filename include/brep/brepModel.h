@@ -11,7 +11,6 @@
  */
 
 namespace e2 {
-
     class BRepModel : public Model {
     public:
         BRepModel() : Model() {}

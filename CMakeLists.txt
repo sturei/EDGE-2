@@ -50,7 +50,8 @@ find_package(Magnum REQUIRED
 ##################
 
 set(MODELLING_SERVICE_SOURCES
-    src/main/modellingService_main.cpp
+    src/brep/body.actions.cpp
+    src/brep/body.fixtures.cpp
 )
 
 set(TEST_SOURCES
@@ -77,6 +78,7 @@ set(GUI_SOURCES
 #
 add_executable(e2_test
   ${TEST_SOURCES}
+  ${MODELLING_SERVICE_SOURCES}
 )
 target_include_directories(e2_test
     PRIVATE 
@@ -93,7 +95,8 @@ target_link_libraries(e2_test
 # modelling service
 #
 add_executable(e2_modellingService
-  ${MODELLING_SERVICE_SOURCES}
+    src/main/modellingService_main.cpp
+    ${MODELLING_SERVICE_SOURCES}
 )
 target_include_directories(e2_modellingService
     PRIVATE 
