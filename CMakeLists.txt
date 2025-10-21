@@ -50,8 +50,10 @@ find_package(Magnum REQUIRED
 ##################
 
 set(MODELLING_SERVICE_SOURCES
+    src/brep/body.cpp
     src/brep/body.actions.cpp
     src/brep/body.fixtures.cpp
+    src/brep/brepModel.cpp
 )
 
 set(TEST_SOURCES
