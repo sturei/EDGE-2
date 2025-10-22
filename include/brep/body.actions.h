@@ -7,7 +7,7 @@ namespace e2 {
     namespace BodyActions {
         void addEmptyBody(Document* doc, const nlohmann::json& payload);
 
-        static Document::ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};           
+        inline static Document::ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};           
     }
 };
 

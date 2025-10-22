@@ -75,10 +75,15 @@ set(TEST_SOURCES
 set(DESKTOP_APP_SOURCES
     src/gui/magnum/ArcBall.cpp
     src/gui/magnum/MyApplication.cpp
+    src/gui/magnum/MagnumGate.cpp
     src/document/document.cpp
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
+    src/gui/gui.actions.cpp
+    src/gui/gui.actions.cpp
+    src/gui/guiModel.cpp
+    src/gui/gitem.cpp
 )
 
 ##################

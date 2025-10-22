@@ -101,6 +101,7 @@ MyApplication::MyApplication(const Arguments& arguments, const Corrade::Containe
     GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 
     /* Setup a cube with vertex ID and wireframe visualized */
+    if(false) // skip this part  
     {
         const Trade::MeshData cube = Primitives::cubeSolid();
         _mesh = MeshTools::compile(cube);
@@ -132,6 +133,15 @@ MyApplication::MyApplication(const Arguments& arguments, const Corrade::Containe
             .rotateX(-30.0_degf)
             ;
         new VisualizationDrawable{*object, _shader, _mesh, _drawables};
+    }
+
+    /* Set up the colored shader */
+    {
+        _coloredShader = Shaders::PhongGL{};
+        _coloredShader
+            .setAmbientColor(0x111111_rgbf)
+            .setSpecularColor(0xffffff_rgbf)
+            .setShininess(80.0f);
     }
 
     /* Set up the camera */

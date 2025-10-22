@@ -43,6 +43,7 @@
 #include <Magnum/SceneGraph/MatrixTransformation3D.h>
 #include <Magnum/SceneGraph/Scene.h>
 #include <Magnum/Shaders/MeshVisualizerGL.h>
+#include <Magnum/Shaders/PhongGL.h>
 
 #include "gui/magnum/ArcBallCamera.h"
 
@@ -51,6 +52,12 @@ namespace Magnum { namespace Examples {
 class MyApplication: public Platform::Application {
     public:
         explicit MyApplication(const Arguments& arguments, const Containers::StringView& title = Containers::StringView("My Application"));
+
+    protected:
+
+        SceneGraph::Scene<SceneGraph::MatrixTransformation3D>& getScene() { return _scene; }
+        SceneGraph::DrawableGroup3D& getDrawables() { return _drawables; }
+        Shaders::PhongGL& getColoredShader() { return _coloredShader; }
 
     private:
         void tickEvent() override;
@@ -69,8 +76,9 @@ class MyApplication: public Platform::Application {
         GL::Mesh _mesh{NoCreate};
         Containers::Optional<ArcBallCamera> _arcballCamera;
 
-        /* Stuff for visualizing the cube */
         Shaders::MeshVisualizerGL3D _shader{NoCreate};
+        Shaders::PhongGL _coloredShader{NoCreate};
+
         GL::Texture2D _colormap{NoCreate};
 };
 

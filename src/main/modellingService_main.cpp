@@ -17,15 +17,15 @@ using namespace e2;
 
 int main(int argc, char* argv[]) {
 
-    // Create the initial document and its stores
-    Model* brepModel = new BRepModel();
+    // Initialize the document
+    Model* brepModel = new BRepModel();                           // owns an initially empty collection of bodies
     Store* brepStore = new Store(brepModel);                      // store takes ownership of the model
     Document* document = new Document({{"brep", brepStore}});     // document takes ownership of the store
 
     // Register action functions with the document
     document->registerActionFunction(e2::BodyActions::addEmptyBodyDef);
 
-    // Run the DocumentService, which reads from stdin and writes to stdout and stderr
+    // Run the DocumentService, which communicates with clients via stdin and stdout
     DocumentService::run(document);
 
     delete document;

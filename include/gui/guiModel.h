@@ -1,21 +1,22 @@
 #pragma once
 #include "document/model.h"
-
-/**
- * GuiModel represents the data model for the GUI.
- * It will contain the display list of graphical objects to be rendered, and potentially other GUI-related data in future.  
- */
+#include "gui/gitem.h"
 
 namespace e2 {
     class GuiModel : public Model {
     public:
         GuiModel() : Model() {}
-        void print(std::ostream& os) const override {
-            os << "GuiModel" << std::endl;
-        }
+        ~GuiModel() override {} 
 
-        // Empty for now. Will add GUI-specific data members and methods later.
+        size_t numGItems() const { return m_drawList.size(); }
+        GItem* gItem(size_t index) { return m_drawList[index]; }
+        const GItem* gItem(size_t index) const { return m_drawList[index]; }
+        size_t addGItem(GItem* item);
+        void removeGItem(size_t index);
+        void print(std::ostream& os) const override;
+
     private:
+        std::vector<GItem*> m_drawList;
     };
 };
 
