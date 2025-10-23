@@ -31,11 +31,11 @@ namespace e2 {
         void addGBlock(Document* doc, const json& payload) {
             Store* store = doc->storeAt("gui");
             store->changeState([payload](Model* model) {
-                double width = payload.value("width", 2.0);
-                double height = payload.value("height", 2.0);
-                double length = payload.value("length", 2.0);
+                double width = payload.value("width", 2.0);      // length in x direction
+                double height = payload.value("height", 2.0);    // length in y direction
+                double depth = payload.value("depth", 2.0);     // length in z direction
                 GuiModel* guiModel = dynamic_cast<GuiModel*>(model);
-                GBlock* block = new GBlock(width, height, length);
+                GBlock* block = new GBlock(width, height, depth);
                 guiModel->addGItem(block);
             });
             std::cerr << "added GBlock" << std::endl;      // ---IGNORE---

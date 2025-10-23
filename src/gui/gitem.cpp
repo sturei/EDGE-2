@@ -8,7 +8,7 @@ namespace e2 {
     }
     
     void GBlock::print(std::ostream& os) const {
-        os << "GBlock" << "(length = " << m_length << ", width=" << m_width << ", height=" << m_height << ")";
+        os << "GBlock" << "(width=" << m_width << ", height=" << m_height << ", depth=" << m_depth << ")";
     }
 
 };

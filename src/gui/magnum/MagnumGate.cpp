@@ -21,6 +21,7 @@ namespace Magnum { namespace Examples { namespace MagnumGate {
 
     using Object3D = SceneGraph::Object<SceneGraph::MatrixTransformation3D>;
     using Scene3D = SceneGraph::Scene<SceneGraph::MatrixTransformation3D>;
+    using namespace Math::Literals;
 
     // A simple drawable that uses the Phong shader to render a colored object
     class ColoredDrawable: public SceneGraph::Drawable3D {
@@ -59,10 +60,10 @@ namespace Magnum { namespace Examples { namespace MagnumGate {
             const Trade::MeshData cube = Primitives::cubeSolid();
             handle->mesh = MeshTools::compile(cube);
             handle->object = new Object3D(&scene);
-            new ColoredDrawable(*handle->object, shader, handle->mesh, Color4{1.0f, 0.0f, 0.0f, 0.5f}, drawables);
+            new ColoredDrawable(*handle->object, shader, handle->mesh, 0x0000ffff_rgbaf, drawables);
         }
         // scale the cube to the size of the GBlock
-        Vector3 scaleVec = Vector3(gblock->length()/2, gblock->width()/2, gblock->height()/2);
+        Vector3 scaleVec = Vector3(gblock->width()/2, gblock->height()/2, gblock->depth()/2);
         handle->object->scale(scaleVec);
         handle->setNeedsUpdate(false);
     }   

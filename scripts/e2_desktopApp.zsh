@@ -7,7 +7,7 @@ echo "  The payload must be valid JSON e.g. a string, number, array or object."
 echo "  Examples:"
 echo "    {\"type\":\"ping\", \"payload\":{}}"
 echo "    {\"type\":\"addGBlock\", \"payload\":{}}"
-echo "    {\"type\":\"addGBlock\", \"payload\":{\"length\":1, \"width\":2, \"height\":3}}"
+echo "    {\"type\":\"addGBlock\", \"payload\":{\"width\":1, \"height\":2, \"depth\":3}}"
 echo "  Or, type 'q' to quit."
 
 # Start the desktop client as a coprocess

@@ -33,15 +33,15 @@ namespace e2 {
 
     class GBlock : public GItem {
         public:
-            GBlock(double width, double height, double length) : GItem(), m_width(width), m_height(height), m_length(length) {}
+            GBlock(double width, double height, double depth) : GItem(), m_width(width), m_height(height), m_depth(depth) {}
             void print(std::ostream& os) const override;
             double width() const { return m_width; }
             double height() const { return m_height; }
-            double length() const { return m_length; }
+            double depth() const { return m_depth; }
         private:
             double m_width;
             double m_height;
-            double m_length;
+            double m_depth;
     };
 
 };
