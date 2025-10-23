@@ -6,7 +6,10 @@ echo "  Enter each action like this: {\"type\":<string>, \"payload\":<any valid 
 echo "  The payload must be valid JSON e.g. a string, number, array or object."
 echo "  Examples:"
 echo "    {\"type\":\"ping\", \"payload\":{}}"
-echo "    {\"type\":\"addGBlock\", \"payload\":{}}"
+echo "    {\"type\":\"addGPoint\", \"payload\":{\"size\":0.2}}"
+echo "    {\"type\":\"addGLine\", \"payload\":{\"length\":3}}"
+echo "    {\"type\":\"addGPlane\", \"payload\":{\"width\":3, \"height\":2}}"
+echo "    {\"type\":\"addGSphere\", \"payload\":{\"radius\":3}}"
 echo "    {\"type\":\"addGBlock\", \"payload\":{\"width\":1, \"height\":2, \"depth\":3}}"
 echo "  Or, type 'q' to quit."
 

@@ -32,6 +32,10 @@ class GuiApplication : public MyApplication {
 
             // Register action functions with the document
             m_document->registerActionFunction(e2::GuiActions::pingDef);
+            m_document->registerActionFunction(e2::GuiActions::addGPointDef);
+            m_document->registerActionFunction(e2::GuiActions::addGLineDef);
+            m_document->registerActionFunction(e2::GuiActions::addGPlaneDef);
+            m_document->registerActionFunction(e2::GuiActions::addGSphereDef);
             m_document->registerActionFunction(e2::GuiActions::addGBlockDef);
             }
         ~GuiApplication() {
@@ -47,10 +51,10 @@ class GuiApplication : public MyApplication {
         }
         void updateScene(GuiModel* guiModel) {
             // Updates the scene from the GUI model
-            auto& scene = getScene();
-            auto& drawables = getDrawables();
-            auto& shader = getColoredShader();
-            MagnumGate::updateSceneFromGuiModel(guiModel, scene, drawables, shader);
+            auto& appScene = getScene();
+            auto& appDrawables = getDrawables();
+            MagnumGate::AppShaders appShaders{getPhongShader(), getFlatShader()};
+            MagnumGate::updateSceneFromGuiModel(guiModel, appScene, appDrawables, appShaders);
             redraw();
         }
     private:

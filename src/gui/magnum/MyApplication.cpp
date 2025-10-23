@@ -135,13 +135,19 @@ MyApplication::MyApplication(const Arguments& arguments, const Corrade::Containe
         new VisualizationDrawable{*object, _shader, _mesh, _drawables};
     }
 
-    /* Set up the colored shader */
+    /* Set up the phong shader */
     {
-        _coloredShader = Shaders::PhongGL{};
-        _coloredShader
+        _phongShader = Shaders::PhongGL{};
+        _phongShader
             .setAmbientColor(0x111111_rgbf)
             .setSpecularColor(0xffffff_rgbf)
             .setShininess(80.0f);
+    }
+    /* Set up the flat shader */
+    {
+        _flatShader = Shaders::FlatGL3D{};
+        _flatShader
+            .setColor(0x999999_rgbf);
     }
 
     /* Set up the camera */

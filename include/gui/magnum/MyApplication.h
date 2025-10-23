@@ -44,6 +44,7 @@
 #include <Magnum/SceneGraph/Scene.h>
 #include <Magnum/Shaders/MeshVisualizerGL.h>
 #include <Magnum/Shaders/PhongGL.h>
+#include <Magnum/Shaders/FlatGL.h>
 
 #include "gui/magnum/ArcBallCamera.h"
 
@@ -57,7 +58,8 @@ class MyApplication: public Platform::Application {
 
         SceneGraph::Scene<SceneGraph::MatrixTransformation3D>& getScene() { return _scene; }
         SceneGraph::DrawableGroup3D& getDrawables() { return _drawables; }
-        Shaders::PhongGL& getColoredShader() { return _coloredShader; }
+        Shaders::PhongGL& getPhongShader() { return _phongShader; }
+        Shaders::FlatGL3D& getFlatShader() { return _flatShader; }
 
     private:
         void tickEvent() override;
@@ -77,7 +79,8 @@ class MyApplication: public Platform::Application {
         Containers::Optional<ArcBallCamera> _arcballCamera;
 
         Shaders::MeshVisualizerGL3D _shader{NoCreate};
-        Shaders::PhongGL _coloredShader{NoCreate};
+        Shaders::PhongGL _phongShader{NoCreate};
+        Shaders::FlatGL3D _flatShader{NoCreate};
 
         GL::Texture2D _colormap{NoCreate};
 };
