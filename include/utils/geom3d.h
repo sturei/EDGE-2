@@ -12,7 +12,11 @@
  * More complex geometries, e.g. swept surfaces, meshes, NURBS, will be represented differently (probably with a "rep" concept in the owning cell).
  * All methods honour value semantics.
  * TODO: support parametrizations where applicable (probably using non-member functions to avoid polluting the classes). Will need to add secondary directions and scales where applicable.
- * Probably need to add a type field.
+ * Probably need to add a type field. Or put that in a flags field of the owning cell?
+ * Consider another approach - full fatty struct - Geom3D would have all the methods of the other types, so it could be used in template code directly. For non-template code,
+ * then just use geom_to_plane etc functions to fully convert to the desired type. Pros: simpler code, no need for dynamic casts. Cons: not sure - maybe a performance hit 
+ * because of the copy for non-template code? Probably allow implicit conversion one way (e.g. Plane3d to Geom3d via Geom3d conversion constructors) and 
+ * explicit conversion the other way (e.g. geom_to_plane)?
 */
 
 namespace e2 {

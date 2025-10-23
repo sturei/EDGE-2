@@ -9,22 +9,6 @@
 
 using json = nlohmann::json;
 
-/**
- * The Document class provides access to the application data model.
- * State changes to the data model are made via actions.
- * Each action is dispatched to the Document as a Plain Old Data (POD) structure {type, payload*} pair.
- * The document in turn invokes a registered "action function" corresponding to the action type. The action function takes the payload
- * as input and performs some operations that modify the application state via a state change callback on one or more stores.
- * Implementation notes:
- * The Document class contains a map of Stores, each Store containing a Model. Stores handle lifecycle events on Models.
- * The Document class takes ownerahip of the stores it is given.
- * Actions are intended to be asynchronous and stores are intended to be independently lockable. Not implemented yet!
- * Various levels of error checking, logging etc will be added later.
- * Actions are chainable (one action function can call another action function via the appropriate interface on the Document). Not implemented yet!
- * A series of actions is intended to be replayable - not implemented yet!
- * Consider moving ActionSpec inside Document, because it is specific to Document.
- */
-
 namespace e2 {
     
     class Document {
