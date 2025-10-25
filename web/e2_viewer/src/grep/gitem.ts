@@ -1,3 +1,10 @@
+/**
+ * Simple graphical item definitions. The drawlist is composed of items of these types.
+ * Implementaion notes:
+ * Perhaps add name, matrix, appearance in future.
+ * Add GMesh and GGroup later.
+ */
+
 export abstract class GItem {
     constructor() {}
     }
