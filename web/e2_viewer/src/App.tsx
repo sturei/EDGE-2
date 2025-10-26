@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 import reactLogo from './assets/react.svg'
 import tailwindLogo from './assets/tailwindcss-mark.svg'
 import daisyuiLogo from './assets/daisyui-mark-rotating.svg'
+import threejsLogo from './assets/threejs-logo.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
@@ -29,16 +32,28 @@ function App() {
               </div>
             </a>
             <a className="join-item" href="https://daisyui.com" target="_blank">
-              <div className="tooltip" data-tip="DaisyUI - CSS component library">
-              <img src={daisyuiLogo} className="logo" alt="DaisyUI logo" />
+              <div className="tooltip" data-tip="daisyUI - CSS component library">
+              <img src={daisyuiLogo} className="logo" alt="daisyUI logo" />
+              </div>
+            </a>
+            <a className="join-item" href="https://threejs.org/" target="_blank">
+              <div className="tooltip" data-tip="three.js - WebGL library">
+              <img src={threejsLogo} className="logo" alt="three.js logo" />
+              </div>
+            </a>
+            <a className="join-item" href="https://github.com/pmndrs/react-three-fiber" target="_blank">
+              <div className="tooltip" data-tip="react-three-fiber - React + three.js">
+              <img src={threejsLogo} className="logo" alt="three.js logo" />
+              </div>
+            </a>
+            <a className="join-item" href="https://github.com/pmndrs/drei" target="_blank">
+              <div className="tooltip" data-tip="drei - R3F helper components">
+              <img src={threejsLogo} className="logo" alt="three.js logo" />
               </div>
             </a>
           </div>
           <p className="read-the-docs">
-            This application uses Vite + React + Tailwind + DaisyUI.
-          </p>
-          <p className="read-the-docs">
-            Click on the logos to learn more
+            Click on the logos above to learn more about the technologies used in this application.
           </p>
           <div className="basis-64">
             <button className="btn"
@@ -62,7 +77,16 @@ function App() {
   function GraphicsPanel() {
     return (
       <>
-        <p> Graphics go here</p>
+        <Canvas>
+          <ambientLight color={0x505050} />
+          <directionalLight intensity={0.5} position={[0.75, 0.25, 0.25]} />
+          <directionalLight intensity={0.5} position={[-0.75, 0.25, 0.25]} />
+          <mesh>
+            <boxGeometry args={[3, 2, 1]}/>
+            <meshStandardMaterial />
+          </mesh>
+          <OrbitControls />
+        </Canvas>
       </>
     )
   }
