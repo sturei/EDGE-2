@@ -8,8 +8,27 @@ import threejsLogo from './assets/threejs-logo.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+import {GRepModel} from './grep/grepModel';
+import { Store } from './document/store'
+import { Document } from './document/document'
+import * as grepActions from './grep/grep.actions.ts'  
+
+
 function App() {
   const [count, setCount] = useState(0)
+
+  // Set up the Document and Store for the GRepModel. The GRepModel holds the drawlist.
+  const grepModel = new GRepModel();
+  const grepStore = new Store(grepModel);
+  const grepDocument = new Document(new Map([['grep', grepStore]]));
+
+  // Register actions with the document. These actions are the only valid way for the application to manipulate the drawlist.
+  grepDocument.registerActionFunction(grepActions.pingActionDef);
+  grepDocument.registerActionFunction(grepActions.addGPointActionDef);
+  grepDocument.registerActionFunction(grepActions.addGLineActionDef);
+  grepDocument.registerActionFunction(grepActions.addGPlaneActionDef);
+  grepDocument.registerActionFunction(grepActions.addGSphereActionDef);
+  grepDocument.registerActionFunction(grepActions.addGBlockActionDef);
 
   function AcknowledgementsPanel() {
     return (
@@ -66,10 +85,42 @@ function App() {
     )
   }
 
+  function dispatchAction(formData: FormData) {
+    const actionText = formData.get("actionInput") as string;
+    try {
+
+      console.log(`Dispatching action: ${actionText}`);
+
+      const action = JSON.parse(actionText);
+      const dispatched = grepDocument.dispatchAction(action);
+      if (!dispatched) {
+        console.error(`Action type "${action.type}" not recognized. Was it registered correctly?`);
+      }
+    } catch (error) {
+      console.error("Failed to parse action input as JSON:", error);
+    }
+  }
+
+  const actionSuggestions = [
+    '{"type": "ping", "payload": {} }',
+    '{"type":"addGPoint", "payload":{"size":0.2}}',
+    '{"type":"addGLine", "payload":{"length":3}}',
+    '{"type":"addGPlane", "payload":{"width":3,"height":2}}',
+    '{"type":"addGSphere", "payload":{"radius":3}}',
+    '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3}}'
+  ];
+ 
   function ActionsPanel() {
     return (
       <>
-        <p> Actions go here</p>
+        <form action={dispatchAction}>
+          <input name="actionInput" type="text" className="input" placeholder="Next action?" list="suggestions" />
+          <datalist id="suggestions">
+            {actionSuggestions.map((suggestion, index) => (
+              <option key={index} value={suggestion}></option>
+            ))}
+          </datalist>
+        </form>   
       </>
     )
   }
@@ -91,10 +142,10 @@ function App() {
     )
   }
 
-function CommandsPanel() {
+function ToolbarPanel() {
     return (
       <>
-        <p> Commands go here</p>
+        <p> Toolbar goes here</p>
       </>
     )
   }
@@ -103,12 +154,12 @@ function CommandsPanel() {
   return (
     <>
       <div className="container m-auto grid grid-cols-3 grid-rows-1">
-        <div className="join-vertical">
-          <div className="join-item"><ActionsPanel /></div>
-          <div className="join-item"><AcknowledgementsPanel /></div>
+        <div className="container m-auto grid grid-cols-1 grid-rows-2">
+          <div><ActionsPanel /></div>
+          <div><AcknowledgementsPanel /></div>
         </div>
         <GraphicsPanel />
-        <CommandsPanel /> 
+        <ToolbarPanel /> 
       </div>
     </>
   )
