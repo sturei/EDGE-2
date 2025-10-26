@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
+import tailwindLogo from './assets/tailwindcss-mark.svg'
+import daisyuiLogo from './assets/daisyui-mark-rotating.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
@@ -8,17 +10,24 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
+      <div className="join">
+        <a className="join-item" href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+        <a className="join-item" href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo" alt="React logo" />
+        </a>
+        <a className="join-item" href="https://tailwindcss.com" target="_blank">
+          <img src={tailwindLogo} className="logo" alt="Tailwind CSS logo" />
+        </a>
+        <a className="join-item" href="https://daisyui.com" target="_blank">
+          <img src={daisyuiLogo} className="logo" alt="DaisyUI logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+      <h1>Vite + React + Tailwind + DaisyUI</h1>
+      <div className="basis-64">
+        <button className="btn"
+          onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
         <p>
@@ -26,7 +35,7 @@ function App() {
         </p>
       </div>
       <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+        Click on the Vite/React/Tailwind/DaisyUI logos to learn more
       </p>
     </>
   )

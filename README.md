@@ -80,6 +80,13 @@ Configure launch.json for the debugger to point to the executable and the cwd in
 
 Note that VSCode's Integrated Terminal is not supported in the mac default llvm debugger.
 
+In Visual Studio Code, if you get a warning about unrecognised plugin for tailwind, add it to the file.associations (you can do it from Settings)
+```
+"files.associations": {
+  "*.css": "tailwindcss"
+}
+```
+
 
 ## In case you want a clean start before rebuilding everything
 
