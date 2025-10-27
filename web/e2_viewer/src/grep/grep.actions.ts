@@ -63,8 +63,8 @@ function addGBlock(doc: Document, payload: any): void {
         let grepModel = model as GRepModel;
         const block = new GBlock(width, height, depth);
         grepModel.addGItem(block);
+        console.log("added GBlock");      // ---IGNORE---
     });
-    console.log("added GBlock");      // ---IGNORE---
 }
 
 

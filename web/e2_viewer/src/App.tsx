@@ -13,13 +13,20 @@ import { Store } from './document/store'
 import { Document } from './document/document'
 import * as grepActions from './grep/grep.actions.ts'  
 
+import { Drawable, type IDrawable } from './components/Drawable.tsx'
+import { updateReactStateFromDocument, type IReactState } from './grep/reactGate.ts'
 
 function App() {
   const [count, setCount] = useState(0)
+  const initialReactState:IReactState = {drawlist: new Array<IDrawable>()};
+  const [reactState, setReactState] = useState(initialReactState);
 
   // Set up the Document and Store for the GRepModel. The GRepModel holds the drawlist.
+
+  console.log(" Setting up GRepModel, Store, and Document");
+  
   const grepModel = new GRepModel();
-  const grepStore = new Store(grepModel);
+  const grepStore = new Store(grepModel, postStateChangeCallback);
   const grepDocument = new Document(new Map([['grep', grepStore]]));
 
   // Register actions with the document. These actions are the only valid way for the application to manipulate the drawlist.
@@ -29,6 +36,16 @@ function App() {
   grepDocument.registerActionFunction(grepActions.addGPlaneActionDef);
   grepDocument.registerActionFunction(grepActions.addGSphereActionDef);
   grepDocument.registerActionFunction(grepActions.addGBlockActionDef);
+
+  function postStateChangeCallback() {
+    console.log("Document state changed. Current drawlist:");
+    for (let i = 0; i < grepModel.numGItems(); ++i) {
+      const gitem = grepModel.gItem(i);
+      console.log(` GItem ${i}:`, gitem);
+    }
+    let newReactState = updateReactStateFromDocument(reactState, grepDocument);
+    setReactState(newReactState);
+  }
 
   function AcknowledgementsPanel() {
     return (
@@ -132,6 +149,20 @@ function App() {
           <ambientLight color={0x505050} />
           <directionalLight intensity={0.5} position={[0.75, 0.25, 0.25]} />
           <directionalLight intensity={0.5} position={[-0.75, 0.25, 0.25]} />
+          <Drawable args={{geometry: {type: 'box', width: 3, height: 2, depth: 1}}} />
+          <OrbitControls />
+        </Canvas>
+      </>
+    )
+  }
+
+  function GraphicsPanelOld() {
+    return (
+      <>
+        <Canvas>
+          <ambientLight color={0x505050} />
+          <directionalLight intensity={0.5} position={[0.75, 0.25, 0.25]} />
+          <directionalLight intensity={0.5} position={[-0.75, 0.25, 0.25]} />
           <mesh>
             <boxGeometry args={[3, 2, 1]}/>
             <meshStandardMaterial />
@@ -142,13 +173,13 @@ function App() {
     )
   }
 
-function ToolbarPanel() {
-    return (
-      <>
-        <p> Toolbar goes here</p>
-      </>
-    )
-  }
+  function ToolbarPanel() {
+      return (
+        <>
+          <p> Toolbar goes here</p>
+        </>
+      )
+    }
 
 
   return (

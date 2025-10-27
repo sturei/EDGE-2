@@ -5,6 +5,10 @@
  * Add GMesh and GGroup later.
  */
 
+// TODO:
+// Make an interface IGItem with a type field. Make GItem implement it
+// consider removing all the trivial accessors.
+
 export abstract class GItem {
     constructor() {}
     }

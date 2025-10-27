@@ -24,7 +24,9 @@ export class GRepModel extends Model {
     }
 
     addGItem(item: GItem): number {
-        return this.m_drawList.push(item) - 1;
+        const index = this.m_drawList.push(item) - 1;
+        console.log(`GRepModel.addGItem: item=${item}, index=${index}`);
+        return index;
     }
 
     removeGItem(index: number): void {
