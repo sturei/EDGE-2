@@ -1,22 +1,27 @@
 /**
  * Simple graphical item definitions. The drawlist is composed of items of these types.
- * Implementaion notes:
+ * Implementation notes:
  * Perhaps add name, matrix, appearance in future.
  * Add GMesh and GGroup later.
  */
 
-// TODO:
-// Make an interface IGItem with a type field. Make GItem implement it
-// consider removing all the trivial accessors.
+export const GItemType = {
+    Point: "point",
+    Line: "line",
+    Plane: "plane",
+    Sphere: "sphere",
+    Block: "block"
+} as const;
 
-export abstract class GItem {
-    constructor() {}
-    }
+export interface IGItem {
+    type: string;
+    toString(): string;
+}
 
-export class GPoint extends GItem {
-    private m_size: number;  // size (radius) of the point
+export class GPoint implements IGItem {
+    type = GItemType.Point;
+    m_size: number;  // size (radius) of the point
     constructor(size: number) { 
-        super();
         this.m_size = size;
     }
     size(): number { return this.m_size; }
@@ -25,10 +30,10 @@ export class GPoint extends GItem {
     }
 }
 
-export class GLine extends GItem {
+export class GLine implements IGItem {
+    type = GItemType.Line;  
     private m_length: number;  // length of the line
     constructor(length: number) { 
-        super();
         this.m_length = length;
     }
     length(): number { return this.m_length; }
@@ -38,11 +43,11 @@ export class GLine extends GItem {
 
 }
 
-export class GPlane extends GItem {
+export class GPlane implements IGItem {
+    type = GItemType.Plane;
     private m_width: number;   // length in x direction
     private m_height: number;  // length in y direction
     constructor(width: number, height: number) { 
-        super();
         this.m_width = width;
         this.m_height = height;
     }
@@ -53,10 +58,10 @@ export class GPlane extends GItem {
     }
 }
 
-export class GSphere extends GItem {
+export class GSphere implements IGItem {
+    type = GItemType.Sphere;
     private m_radius: number;
     constructor(radius: number) { 
-        super();
         this.m_radius = radius;
     }
     radius(): number { return this.m_radius; }
@@ -65,12 +70,13 @@ export class GSphere extends GItem {
     }
 }
 
-export class GBlock extends GItem {
+export class GBlock implements IGItem {
+    type = GItemType.Block;
     private m_width: number;   // length in x direction
     private m_height: number;  // length in y direction
     private m_depth: number;   // length in z direction
     constructor(width: number, height: number, depth: number) { 
-        super();
+        this.m_width = width;
         this.m_width = width;
         this.m_height = height;
         this.m_depth = depth;

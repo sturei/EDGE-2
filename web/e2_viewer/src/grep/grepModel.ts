@@ -6,10 +6,10 @@
 
 
 import {Model} from '../document/model';
-import {GItem} from './gitem';
+import {type IGItem} from './gitem';
 
 export class GRepModel extends Model {
-    private m_drawList: GItem[] = [];
+    private m_drawList: IGItem[] = [];
 
     constructor() {
         super();
@@ -19,11 +19,11 @@ export class GRepModel extends Model {
         return this.m_drawList.length;
     }
 
-    gItem(index: number): GItem | undefined {
+    gItem(index: number): IGItem | undefined {
         return this.m_drawList[index];
     }
 
-    addGItem(item: GItem): number {
+    addGItem(item: IGItem): number {
         const index = this.m_drawList.push(item) - 1;
         console.log(`GRepModel.addGItem: item=${item}, index=${index}`);
         return index;

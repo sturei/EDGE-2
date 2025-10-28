@@ -13,13 +13,14 @@ class ZooModelFixture implements Model {
 
 function addAnimal(doc: Document, payload: { species: string }): void {
         const species = payload.species;
-        const store = doc.storeAt("zoo");
-        if (store) {
-            store.changeState((model) => {
-                const zooModel = model as ZooModelFixture;
-                zooModel.animals.push(species);
-            });
-        }
+        if (!species) {
+            throw new Error("Payload must contain 'species' field");
+        }   
+        const store = doc.getStore("zoo");
+        store.changeState((model) => {
+            const zooModel = model as ZooModelFixture;
+            zooModel.animals.push(species);
+        });
     }
 const addAnimalDef: ActionDef = { type: "addAnimal", function: addAnimal };
 
@@ -40,34 +41,44 @@ describe('Document', () => {
     it('should add animal via direct action call', () => {
         const payload = { species: "Elephant" };
         addAnimal(document, payload);
-        
-        const store = document.storeAt("zoo");
-        const zooModel = store?.getModel() as ZooModelFixture;
-        
+        const store = document.getStore("zoo");
+        const zooModel = store.getModel() as ZooModelFixture;
         expect(zooModel.animals).toHaveLength(1);
         expect(zooModel.animals[0]).toBe("Elephant");
     });
     
     it('should register and dispatch action', () => {
         document.registerActionFunction(addAnimalDef);
-        
         const action: ActionSpec = {
             type: "addAnimal",
             payload: { species: "Giraffe" }
         };
-        
         document.dispatchAction(action);
-        
-        const store = document.storeAt("zoo");
-        const zooModel = store?.getModel() as ZooModelFixture;
-        
+        const store = document.getStore("zoo");
+        const zooModel = store.getModel() as ZooModelFixture;
         expect(zooModel.animals).toHaveLength(1);
         expect(zooModel.animals[0]).toBe("Giraffe");
     });
+
+    it('should throw error for unregistered action', () => {
+        const action: ActionSpec = {
+            type: "nonExistentAction",
+            payload: {}
+        };
+        expect(() => document.dispatchAction(action)).toThrowError("No action function registered for action type: nonExistentAction");
+    });
     
+    it('should throw error for bad payload', () => {
+        document.registerActionFunction(addAnimalDef);
+        const action: ActionSpec = {
+            type: "addAnimal",
+            payload: { anythingBut: "Giraffe" }
+        };
+        expect(() => document.dispatchAction(action)).toThrowError("Payload must contain 'species' field");
+    });
+
     it('should output correct string representation', () => {
         const docStr = document.toString();
-        
         expect(docStr).toContain("Document with 1 stores");
     });
 });

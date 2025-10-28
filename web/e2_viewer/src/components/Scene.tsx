@@ -25,11 +25,7 @@ const emptyDrawlist:ISceneReactState = {drawlist: new Array<IDrawable>()};
  * will be added to the GRep model. These would map to composite objects in react-three-fiber.
  */
 function updateReactStateFromDocument(oldState: ISceneReactState, document: Document) : ISceneReactState {
-    const sceneStore = document.storeAt('scene');
-    if (!sceneStore) {
-        console.error("updateReactStateFromDocument: no 'scene' store found in document.");
-        return oldState;
-    }
+    const sceneStore = document.getStore('scene');
     const grepModel = sceneStore.getModel() as GRepModel;
     const newState:ISceneReactState = { ...oldState };
 

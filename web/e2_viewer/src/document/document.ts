@@ -45,8 +45,12 @@ export class Document {
         }
     }
 
-    storeAt(key: string): Store | undefined {
-        return this.stores.get(key);
+    getStore(key: string): Store  {
+        const store = this.stores.get(key);
+        if (!store) {
+            throw new Error(`Store not found for key: ${key}`);
+        }
+        return store;
     }
 
     addStore(key: string, store: Store): void {
