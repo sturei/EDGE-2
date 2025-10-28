@@ -9,7 +9,7 @@ function ping(_doc: Document, _payload: any): void {
 }
 
 function addGPoint(doc: Document, payload: any): void {
-    const store = doc.storeAt("grep");
+    const store = doc.storeAt("scene");
     store.changeState((model: Model) => {
         let grepModel = model as GRepModel; 
         const size = payload.size ?? 1.0;    // size of the point
@@ -21,7 +21,7 @@ function addGPoint(doc: Document, payload: any): void {
 }
 
 function addGLine(doc: Document, payload: any): void {
-    const store = doc.storeAt("grep");
+    const store = doc.storeAt("scene");
     store.changeState((model: Model) => {
         const length = payload.length ?? 1.0;    // length of the line
         let grepModel = model as GRepModel;
@@ -32,7 +32,7 @@ function addGLine(doc: Document, payload: any): void {
 }
 
 function addGPlane(doc: Document, payload: any): void {
-    const store = doc.storeAt("grep");
+    const store = doc.storeAt("scene");
     store.changeState((model: Model) => {
         const width = payload.width ?? 1.0;      // width of the plane
         const height = payload.height ?? 1.0;    // height of the plane
@@ -44,7 +44,7 @@ function addGPlane(doc: Document, payload: any): void {
 }
 
 function addGSphere(doc: Document, payload: any): void {
-    const store = doc.storeAt("grep");
+    const store = doc.storeAt("scene");
     store.changeState((model: Model) => {
         const radius = payload.radius ?? 1.0;    // radius of the sphere
         let grepModel = model as GRepModel;
@@ -55,7 +55,7 @@ function addGSphere(doc: Document, payload: any): void {
 }
 
 function addGBlock(doc: Document, payload: any): void {
-    const store = doc.storeAt("grep");
+    const store = doc.storeAt("scene");
     store.changeState((model: Model) => {
         const width = payload.width ?? 2.0;      // length in x direction
         const height = payload.height ?? 2.0;    // length in y direction

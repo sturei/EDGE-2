@@ -27,6 +27,12 @@ export interface IDrawable {
 
 export function Drawable({args}: {args: IDrawable}) {
     console.log("Drawable: rendering args:", args);
+
+    if (!args)
+        return (
+            <></>
+        );
+
     return (
         <>
           <mesh>

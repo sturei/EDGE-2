@@ -8,9 +8,9 @@ export interface IReactState {
 }
 
 export function updateReactStateFromDocument(oldState: IReactState, document: Document) : IReactState {
-    const grepStore = document.storeAt('grep');
+    const grepStore = document.storeAt('scene');
     if (!grepStore) {
-        console.error("updateReactStateFromDocument: no 'grep' store found in document.");
+        console.error("updateReactStateFromDocument: no 'scene' store found in document.");
         return oldState;
     }
     const grepModel = grepStore.getModel() as GRepModel;
@@ -54,6 +54,6 @@ export function updateReactStateFromDocument(oldState: IReactState, document: Do
             */      
     }
 
-    console.log("React state updated from document changes.");
-    return newState;;
+    console.log("React state updated from document changes, new state:", newState);
+    return newState;
 }

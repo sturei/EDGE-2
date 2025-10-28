@@ -49,6 +49,10 @@ export class Document {
         return this.stores.get(key);
     }
 
+    addStore(key: string, store: Store): void {
+        this.stores.set(key, store);
+    }
+
     registerActionFunction(action: ActionDef): void {
         this.actionFunctions.set(action.type, action.function);
     }

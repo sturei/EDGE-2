@@ -6,7 +6,7 @@
 }
 
 .logo {
-  height: 6em;
+  height: 2em;
   padding: 0.1em;
   will-change: filter;
   transition: filter 300ms;
@@ -20,4 +20,12 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.left-sidebar {
+  width: 15rem
+}
+
+.right-sidebar {
+  width: 2rem
 }
