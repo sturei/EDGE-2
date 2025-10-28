@@ -1,5 +1,5 @@
 /**
- * This is just a panel acknowledging some of the technologies used in this application, plus a little button to demonstrate that React is working.
+ * This component is a simple panel acknowledging the technologies used in this application, plus a button to demonstrate that React is working.
  * It was derived from the Vite + React + Tailwind + DaisyUI template.
  */
 

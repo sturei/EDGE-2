@@ -13,6 +13,7 @@ test ('GRepModel', () => {
     expect(model.gItem(0)).toBe(firstItem);
     model.addGItem(secondItem);
     expect(model.numGItems()).toBe(2);
+    expect(model.drawlist()).toEqual([firstItem, secondItem]);
     expect(model.gItem(1)).toBe(secondItem);
     model.removeGItem(0);
     expect(model.numGItems()).toBe(1);

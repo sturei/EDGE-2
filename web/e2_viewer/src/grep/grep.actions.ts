@@ -57,9 +57,9 @@ function addGSphere(doc: Document, payload: any): void {
 function addGBlock(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
-        const width = payload.width;      // length in x direction
-        const height = payload.height;    // length in y direction
-        const depth = payload.depth;      // length in z direction
+        const width = payload.width ?? 2.0;      // length in x direction
+        const height = payload.height ?? 2.0;    // length in y direction
+        const depth = payload.depth ?? 2.0;      // length in z direction
         let grepModel = model as GRepModel;
         const block = new GBlock(width, height, depth);
         grepModel.addGItem(block);

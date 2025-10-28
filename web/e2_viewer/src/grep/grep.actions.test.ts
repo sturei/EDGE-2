@@ -100,16 +100,16 @@ describe("grep.actions", () => {
     });
 
     describe("addGBlock action", () => {
-        it("should add GBlock with provided dimensions", () => {
-            const payload = { width: 2.0, height: 3.0, depth: 4.0 };
-            addGBlockActionDef.function(mockDoc, payload);
-            expect(GBlock).toHaveBeenCalledWith(2.0, 3.0, 4.0);
+        it("should add GBlock with default dimensions", () => {
+            addGBlockActionDef.function(mockDoc, {});
+            expect(GBlock).toHaveBeenCalledWith(2.0, 2.0, 2.0);
             expect(mockGRepModel.addGItem).toHaveBeenCalled();
         });
 
-        it("should add GBlock with undefined dimensions", () => {
-            addGBlockActionDef.function(mockDoc, {});
-            expect(GBlock).toHaveBeenCalledWith(undefined, undefined, undefined);
+        it("should add GBlock with custom dimensions", () => {
+            const payload = { width: 2.0, height: 3.0, depth: 4.0 };
+            addGBlockActionDef.function(mockDoc, payload);
+            expect(GBlock).toHaveBeenCalledWith(2.0, 3.0, 4.0);
             expect(mockGRepModel.addGItem).toHaveBeenCalled();
         });
     });

@@ -19,8 +19,16 @@ export class GRepModel extends Model {
         return this.m_drawList.length;
     }
 
-    gItem(index: number): IGItem | undefined {
-        return this.m_drawList[index];
+    gItem(index: number): IGItem {
+        const item = this.m_drawList[index];
+        if (!item) {
+            throw new Error(`GRepModel.gItem: no GItem at index ${index}`);
+        }
+        return item;
+    }
+
+    drawlist(): ReadonlyArray<IGItem> {
+        return this.m_drawList;
     }
 
     addGItem(item: IGItem): number {

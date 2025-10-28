@@ -4,7 +4,7 @@ import { Acknowledgements } from './components/Acknowledgements'
 import { Actions } from './components/Actions.tsx'
 import { Scene } from './components/Scene.tsx';
 import { DocumentContext } from './Contexts.ts';
-import './App.css'
+import './App.css';
 
 function App() {
   const document = useContext(DocumentContext);
