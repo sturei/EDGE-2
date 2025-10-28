@@ -34,15 +34,26 @@ const actionSuggestions = [
     /** when the user enters text into the actions input form, this function dispatches it to the document */
     function dispatchAction(formData: FormData) {
         const actionText = formData.get("actionInput") as string;
+        if (actionText.trim() === "") {
+            console.log("Blank line - no action dispatched.");
+            return;
+        }
         try {
             console.log(`Dispatching action: ${actionText}`);
             const action = JSON.parse(actionText);
-            const dispatched = document.dispatchAction(action);
-            if (!dispatched) {
-                console.error(`Action type "${action.type}" not recognized. Was it registered correctly?`);
+            document.dispatchAction(action);
+        } catch (e: unknown) {
+            let errorMessage = "";
+            if (typeof e === "string") {
+                errorMessage = e;
             }
-        } catch (error) {
-            console.error("Failed to parse action input as JSON:", error);
+            else if (e instanceof Error) {
+                errorMessage = e.message;
+            }
+            else {
+                errorMessage = "Unknown error.";
+            }
+            console.error(`Error dispatching action: ${actionText}\n${errorMessage}`);
         }
     }
 

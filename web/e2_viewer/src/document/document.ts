@@ -57,17 +57,19 @@ export class Document {
         this.actionFunctions.set(action.type, action.function);
     }
 
-    dispatchAction(action: ActionSpec): boolean {
+    dispatchAction(action: ActionSpec): void {
+
+        // Look up the action function based on the action type
         const actionFunction = this.actionFunctions.get(action.type);
-        if (actionFunction) {
-            actionFunction(this, action.payload);
-            return true;
+        if (!actionFunction) {
+            throw new Error(`No action function registered for action type: ${action.type}`);
         }
-        return false;
+        
+        // and execute it...
+        actionFunction(this, action.payload);
     }
 
     toString(): string {
-        // Implement string representation as needed
         return `Document with ${this.stores.size} stores`;
     }
 }

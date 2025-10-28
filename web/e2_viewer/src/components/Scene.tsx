@@ -19,6 +19,11 @@ interface ISceneReactState {
 
 const emptyDrawlist:ISceneReactState = {drawlist: new Array<IDrawable>()};
 
+/** this function reconciles the grepModel with the React model whenever the document (or more specifically the scene store within it) changes.
+ * The GRep model is independent of any particular graphics library. The React model is specific to react-three-fiber.
+ * At present, the GRep model is very simple - just primitive shapes - and so the mapping is trivial. In future, more complex shapes and properties 
+ * will be added to the GRep model. These would map to composite objects in react-three-fiber.
+ */
 function updateReactStateFromDocument(oldState: ISceneReactState, document: Document) : ISceneReactState {
     const sceneStore = document.storeAt('scene');
     if (!sceneStore) {
@@ -26,19 +31,17 @@ function updateReactStateFromDocument(oldState: ISceneReactState, document: Docu
         return oldState;
     }
     const grepModel = sceneStore.getModel() as GRepModel;
-    //for (const item of grepModel.drawlist) {
-    //    console.log("Drawlist item:", item);
-   // }
+    const newState:ISceneReactState = { ...oldState };
 
-   const newState:ISceneReactState = { ...oldState };
-   newState.drawlist = new Array<IDrawable>();
+    // For now, we just clear and rebuild the React drawlist from scratch. 
+    // In future, we could optimize by updating only what changed since the last update.
+    newState.drawlist = new Array<IDrawable>();
 
     for (let i = 0; i < grepModel.numGItems(); ++i) {
         const gItem = grepModel.gItem(i);
         console.log(`GItem ${i}:`, gItem);
         if (!gItem) continue;   // TODO: errors policy
 
-        // TODO if drawable has not changed, set it to the saved state. Use a handle stored in GItemBase for this?
         const gBlock = gItem as GBlock
         const drawable: IDrawable = {
             geometry: {
@@ -47,14 +50,11 @@ function updateReactStateFromDocument(oldState: ISceneReactState, document: Docu
                 height: gBlock.height(),
                 depth: gBlock.depth()
             },
-            //appearance: {
-            //    type: "StandardAppearance",
-            //    color: 0x00ff00
-            //}
         };
         newState.drawlist.push(drawable);
 
         /*
+        TODO:
         if (gitem.type() === "GPoint") {
         } else if (gitem.type() === "GLine") {
         } else if (gitem.type() === "GPlane") {
@@ -75,13 +75,10 @@ export function Scene(){
     const [reactState, setReactState] = useState(emptyDrawlist);
 
     useEffect(() => {
-        // Sets up the Document and Store for the GRepModel. The GRepModel holds the drawlist.
-
         console.log(" Setting up the Scene's Model and Store");
         const grepModel = new GRepModel();
         const sceneStore = new Store(grepModel, postStateChangeCallback);
         document.addStore('scene', sceneStore);
-
     }, []);
 
     /** Updates the React state whenever the drawlist changes */
