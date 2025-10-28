@@ -1,4 +1,4 @@
-/** This component sets up the list of  */
+/** This component supplies the list of objects to be drawn */
 
 import { Drawable, type IDrawable } from "./Drawable";
 

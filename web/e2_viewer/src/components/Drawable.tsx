@@ -29,7 +29,7 @@ export type IAnyGeometry = IBoxGeometry | ISphereGeometry;
 
 /** Drawable */
 export interface IDrawable {
-    geometry: IAnyGeometry;
+    geometry?: IAnyGeometry;
     appearance?: IStandardAppearance;
  //   matrix?: number[];
 }   
@@ -42,7 +42,10 @@ function meshFromDrawable(drawable: IDrawable) {
     const appearance = drawable.appearance;
     console.log("meshFromDrawable: geometry:", geometry);
     
-    if (geometry.type === 'box') {
+    if (!geometry) {
+        console.warn("meshFromDrawable: no geometry specified in drawable:", drawable);
+    }
+    else if (geometry.type === 'box') {
         return (
             <mesh>
                 <boxGeometry args={[geometry.width, geometry.height, geometry.depth]}/>
@@ -62,7 +65,7 @@ function meshFromDrawable(drawable: IDrawable) {
     return (<></>);
 }
 
-/** the component that puts the mesh into the scene */
+/** return the jsx that puts the mesh into the scene */
 export function Drawable({drawable}: {drawable: IDrawable}) {
     console.log("Drawable: rendering args:", drawable);
     return meshFromDrawable(drawable);

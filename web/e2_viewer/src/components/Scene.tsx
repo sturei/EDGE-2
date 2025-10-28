@@ -89,6 +89,7 @@ export function Scene(){
         setReactState(newReactState);
     }
 
+    /** returns the jsx that puts the drawlist into the scene */
     return (
         <>
         <ambientLight color={0x505050} />
