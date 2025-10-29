@@ -61,8 +61,8 @@ const blue = 0x0000ff;
 const white = 0xffffff;
 //const gray = 0x808080;  
 
-/** Outputs the required react-three-fiber jsx for the specified drawable */
-function r3fFromDrawable(drawable: IDrawable) {
+/** Outputs the required react-three-fiber jsx for the specified drawable. Exported for testing */
+export function r3fFromDrawable(drawable: IDrawable) {
     const geometry = drawable.geometry;
     const appearance = drawable.appearance;
     console.log("r3fFromDrawable: geometry:", geometry);
@@ -125,6 +125,5 @@ function r3fFromDrawable(drawable: IDrawable) {
 
 /** return the jsx that puts the drawable into the scene */
 export function Drawable({drawable}: {drawable: IDrawable}) {
-    console.log("++++++++++++++++++++++++++++");
     return r3fFromDrawable(drawable);
 }

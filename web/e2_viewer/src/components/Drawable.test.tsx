@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { Canvas } from '@react-three/fiber';
-import { Drawable, type IDrawable } from './Drawable';
+import { r3fFromDrawable, type IDrawable } from './Drawable';
 import "@testing-library/jest-dom";
+import { prettyDOM, render } from '@testing-library/react';
 import ResizeObserver from 'resize-observer-polyfill'
 window.ResizeObserver = ResizeObserver
 
@@ -10,121 +9,106 @@ window.ResizeObserver = ResizeObserver
  * @vitest-environment jsdom
  */
 
-/** This is pointless until I can get ti actually render the Drawable. Right now it just does nothing below the Canvas.
- *  To be valid tests, one would need to dig into the rendered output, looking for e.g. 'Sphere/ So skipping these tests for now.
- */
-
-// Helper to render component within R3F Canvas
-const renderWithCanvas = (drawable: IDrawable) => {
-    return render(
-        <Canvas>
-            <Drawable drawable={drawable} />
-        </Canvas>
-    );
-};
-
-describe.skip('Drawable', () => {
-    it('should render box geometry with default color', () => {
-        const drawable: IDrawable = {
-            geometry: {
-                type: 'box',
-                width: 1,
-                height: 2,
-                depth: 3
-            }
-        };
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
-    });
-
-    it('should render box geometry with custom appearance', () => {
-        const drawable: IDrawable = {
-            geometry: {
-                type: 'box',
-                width: 1,
-                height: 2,
-                depth: 3
-            },
-            appearance: {
-                type: 'standard',
-                color: 0x00ff00
-            }
-        };
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
-    });
-
-    it('should render plane geometry', () => {
-        const drawable: IDrawable = {
-            geometry: {
-                type: 'plane',
-                width: 5,
-                height: 3
-            }
-        };
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
-    });
-
-    it('should render sphere geometry', () => {
-        const drawable: IDrawable = {
-            geometry: {
-                type: 'sphere',
-                radius: 2.5
-            }
-        };
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
-
-        console.log("Created SPHERE?");
-        console.log(screen.debug());
-
-    });
-
-    it('should render line geometry', () => {
-        const drawable: IDrawable = {
-            geometry: {
-                type: 'line',
-                points: [[0, 0, 0], [1, 1, 1], [2, 0, 2]]
-            }
-        };
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
-    });
-
-    it('should render point geometry', () => {
-        const drawable: IDrawable = {
-            geometry: {
-                type: 'point',
-                position: new Float32Array([0, 0, 0, 1, 1, 1])
-            }
-        };
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
-    });
-
-    it('should handle drawable without geometry', () => {
+describe('r3fFromDrawable', () => {
+    it('should return undefined when no geometry is provided', () => {
         const drawable: IDrawable = {};
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
+        const result = r3fFromDrawable(drawable);
+        expect(result).toBeUndefined();
     });
 
-    it('should handle drawable with only appearance', () => {
+    it('should render box geometry with default color when no appearance is provided', () => {
         const drawable: IDrawable = {
-            appearance: {
-                type: 'standard',
-                color: 0xff0000
-            }
+            geometry: { type: 'box', width: 2, height: 3, depth: 4 }
         };
-        
-        const { container } = renderWithCanvas(drawable);
-        expect(container).toBeInTheDocument();
+        const result = r3fFromDrawable(drawable);
+        //const result = renderWithCanvas(drawable);
+        expect(result).toBeDefined();
+
+        // Implementation note on the alternatives I tried already:
+        // 1. react-test-renderer is deprecated. 
+        // 2. ReactThreeTestRenderer is poorly documented and lacks toJSON() method.
+        // 3. RTF assumes we can find elements by text, role etc. This is false with most 3D elements.
+        // Hence we just use render and prettyDOM from @testing-library/react to get a string representation of the tree, and then inspect that.
+        // render() generates a bunch of warnings about camelCase elements (which are non-standard in React, but standard in R3F) but otherwise seems to work.
+        // Tried wrapping in <Canvas> to see if it suppressed the warnings but it didn't work.
+
+        render(result);                       
+        const tree = prettyDOM();
+        expect(tree).toContain('box');
+        expect(tree).toContain('2,3,4');
+
+    });
+
+    it('should render box geometry with custom color', () => {
+        const drawable: IDrawable = {
+            geometry: { type: 'box', width: 2, height: 3, depth: 4 },
+            appearance: { type: 'standard', color: 0x00ff00 }
+        };
+        const result = r3fFromDrawable(drawable);
+        expect(result).toBeDefined();
+        render(result);
+        const tree = prettyDOM();
+        expect(tree).toContain(Number('0x00ff00'));
+    });
+
+    it('should render plane geometry with default color', () => {
+        const drawable: IDrawable = {
+            geometry: { type: 'plane', width: 5, height: 6 }
+        };
+        const result = r3fFromDrawable(drawable);
+        expect(result).toBeDefined();
+        render(result);
+        const tree = prettyDOM();
+        expect(tree).toContain('plane');
+        expect(tree).toContain('5,6');
+    });
+
+    it('should render sphere geometry with custom color', () => {
+        const drawable: IDrawable = {
+            geometry: { type: 'sphere', radius: 2.5 },
+            appearance: { type: 'standard', color: 0xffffff }
+        };
+        const result = r3fFromDrawable(drawable);
+        expect(result).toBeDefined();
+        render(result);
+        const tree = prettyDOM();
+        expect(tree).toContain('sphere');
+        expect(tree).toContain('2.5');
+    });
+
+    // oops - Line seems to use a Hook internally - need to skip for now. Solution ought to be to wrap in <Canvas>? But I couldn't get that to work.
+    it.skip('should render line geometry with start and end', () => {
+        const drawable: IDrawable = {
+            geometry: { 
+                type: 'line', 
+                points: [[0, 0, 0], [1, 1, 1]] 
+            },
+            appearance: { type: 'standard', color: 0xff0000 }
+        };
+        const result = r3fFromDrawable(drawable);
+        expect(result).toBeDefined();
+        render(result);
+        const tree = prettyDOM();
+        console.log("Line geometry render tree:", tree);    
+        expect(tree).toContain('line');
+        expect(tree).toContain('2.5');
+    });
+
+    it('should render point geometry with position data', () => {
+        const drawable: IDrawable = {
+            geometry: { 
+                type: 'point', 
+                position: new Float32Array([5, 2, 4]) 
+            },
+            appearance: { type: 'standard', color: 0x00ff00 }
+        };
+        const result = r3fFromDrawable(drawable);
+        expect(result).toBeDefined();
+        render(result);
+        const tree = prettyDOM();
+        console.log("Point geometry render tree:", tree);
+        expect(tree).toContain('point');
+        expect(tree).toContain('5,2,4');
     });
 });
+

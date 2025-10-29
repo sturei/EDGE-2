@@ -19,7 +19,8 @@ interface ISceneReactState {
     drawlist: IDrawable[]
 }
 
-function drawableFromGItem(gItem: IGItem): IDrawable {
+// Converts a GItem to a Drawable. Exported for testing purposes
+export function drawableFromGItem(gItem: IGItem): IDrawable {
 
     let drawable: IDrawable = {};
 
