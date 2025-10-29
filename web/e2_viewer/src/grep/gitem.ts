@@ -5,22 +5,14 @@
  * Add GMesh and GGroup later.
  */
 
-export const GItemType = {
-    GPoint: "point",
-    GLine: "line",
-    GPlane: "plane",
-    GSphere: "sphere",
-    GBlock: "block"
-} as const;
-
 export interface IGItem {
     type: string;
     toString(): string;
 }
 
 export class GPoint implements IGItem {
-    type = GItemType.GPoint;
-    m_size: number;  // size (radius) of the point
+    type = 'gpoint';
+    private m_size: number;  // size (radius) of the point
     constructor(size: number) { 
         this.m_size = size;
     }
@@ -31,7 +23,7 @@ export class GPoint implements IGItem {
 }
 
 export class GLine implements IGItem {
-    type = GItemType.GLine;  
+    type = 'gline';
     private m_length: number;  // length of the line
     constructor(length: number) { 
         this.m_length = length;
@@ -44,7 +36,7 @@ export class GLine implements IGItem {
 }
 
 export class GPlane implements IGItem {
-    type = GItemType.GPlane;
+    type = 'gplane';
     private m_width: number;   // length in x direction
     private m_height: number;  // length in y direction
     constructor(width: number, height: number) { 
@@ -59,7 +51,7 @@ export class GPlane implements IGItem {
 }
 
 export class GSphere implements IGItem {
-    type = GItemType.GSphere;
+    type = 'gsphere';
     private m_radius: number;
     constructor(radius: number) { 
         this.m_radius = radius;
@@ -71,7 +63,7 @@ export class GSphere implements IGItem {
 }
 
 export class GBlock implements IGItem {
-    type = GItemType.GBlock;
+    type = 'gblock';
     private m_width: number;   // length in x direction
     private m_height: number;  // length in y direction
     private m_depth: number;   // length in z direction

@@ -14,7 +14,7 @@ Otherwise, clone the repo however you would normally do it.
 
 ## Ensure prequisites are present. 
 
-The following instructions are for MacOS.
+The following instructions are for zshell on MacOS.
 
 Homebrew is required to install and manage some of the prereqs.
 If not installed already, install Homebrew globally by entering the following at a command prompt. The line below was copied from https://brew.sh/ in Oct 2025.
@@ -36,11 +36,14 @@ Install them globally as follows:
 % brew install cmake
 % brew install --cask github
 % brew install --cask visual-studio-code
+% touch ~/.zshrc ~/.bash_profile
 % curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 % nvm install node
 ```
-If you are using zshell on Mac (the default), then make sure your ~/.zshrc file exists before installing nvm (so that the installed can modify it)
-Note that installing node via nvm as above installs npm as a side-effect.
+Note that nvm has a quirk that .zshrc and .bash_profile need to exist before running the curl command to install it. 
+If you get a warning about command completion on starting a new shell window, disable it in ~/.zshrc. I don't know why nvm puts that in!
+
+See https://stackoverflow.com/questions/16904658/node-version-manager-install-nvm-command-not-found 
 
 ## Build and test the project
 

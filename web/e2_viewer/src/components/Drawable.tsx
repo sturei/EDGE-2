@@ -4,8 +4,7 @@
 // Also it does not reuse geometries between different drawables with the same geometry.
 // To avoid this it's probably possible to create a geometry cache keyed on name or id. Perhaps provide it as a Context.
 
-import {Line} from '@react-three/drei'  
-import { Vector3 } from 'three/src/math/Vector3.js';
+import {Box, Line, Sphere} from '@react-three/drei'  
 
 /** Appearances */
 export interface IStandardAppearance {
@@ -32,7 +31,13 @@ export interface ILineGeometry {
     type: 'line';
     points: Array<[number, number, number]>;
 }
-export type IAnyGeometry = IBoxGeometry | ISphereGeometry | ILineGeometry;
+
+export interface IPointGeometry {
+    type: 'point';
+    position: Float32Array;
+}
+
+export type IAnyGeometry = IBoxGeometry | ISphereGeometry | ILineGeometry | IPointGeometry;
 
 /** Drawable */
 export interface IDrawable {
@@ -47,31 +52,31 @@ const red = 0xff0000;
 const green = 0x00ff00;
 const blue = 0x0000ff;
 const white = 0xffffff;
-const gray = 0x808080;  
+//const gray = 0x808080;  
 
-/** Creates a react-three-fiber mesh from a drawable that describes its properties */
-function meshFromDrawable(drawable: IDrawable) {
+/** Outputs the required react-three-fiber jsx for the specified drawable */
+function r3fFromDrawable(drawable: IDrawable) {
     const geometry = drawable.geometry;
     const appearance = drawable.appearance;
-    console.log("meshFromDrawable: geometry:", geometry);
-    
+    console.log("r3fFromDrawable: geometry:", geometry);
+
+    // TODO: use-memo to avoid recreating the underlying geometries unnecessarily (see drei docs)
+
     if (!geometry) {
-        console.warn("meshFromDrawable: no geometry specified in drawable:", drawable);
+        console.warn("r3fFromDrawable: no geometry specified in drawable:", drawable);
     }
     else if (geometry.type === 'box') {
         return (
-            <mesh>
-                <boxGeometry args={[geometry.width, geometry.height, geometry.depth]}/>
-                <meshStandardMaterial color={appearance?.color??red}/>
-            </mesh>
+            <Box args={[geometry.width, geometry.height, geometry.depth]}>
+                <meshStandardMaterial color={appearance?.color??red} />
+            </Box>
         );
     }
     else if (geometry.type === 'sphere') {
         return (
-            <mesh>
-                <sphereGeometry args={[geometry.radius, 32, 32]}/>
-                <meshStandardMaterial color={appearance?.color??green}/>
-            </mesh>
+            <Sphere args={[geometry.radius, 32, 32]}>
+                <meshStandardMaterial color={appearance?.color??green} />
+            </Sphere>
         );
     }
     else if (geometry.type === 'line') {
@@ -82,12 +87,26 @@ function meshFromDrawable(drawable: IDrawable) {
             />
         );
     }
-
-    return (<></>);
+    else if (geometry.type === 'point') {
+        return (
+            <points> 
+                <bufferGeometry>
+                    <bufferAttribute
+                        attach={'attributes-position'}
+                        args={[geometry.position, 3]} 
+                    />
+                </bufferGeometry>
+                <pointsMaterial
+                    size={4}
+                    sizeAttenuation={false}
+                    color={appearance?.color??red}
+                />
+            </points>
+        );
+    }
 }
 
 /** return the jsx that puts the mesh into the scene */
 export function Drawable({drawable}: {drawable: IDrawable}) {
-    console.log("Drawable: rendering args:", drawable);
-    return meshFromDrawable(drawable);
+    return r3fFromDrawable(drawable);
 }

@@ -8,7 +8,7 @@ import { OrbitControls } from '@react-three/drei'
 import { GRepModel } from '../grep/grepModel';
 import { Store } from '../document/store' 
 import { Document } from '../document/document';
-import { GBlock, type IGItem, GItemType, GSphere, GLine } from '../grep/gitem';
+import { GBlock, type IGItem, GSphere, GLine, GPoint } from '../grep/gitem';
 import { Drawlist } from './Drawlist.tsx'
 import { DocumentContext } from '../Contexts.ts';
 import { type IDrawable } from "./Drawable";
@@ -23,7 +23,7 @@ function drawableFromGItem(gItem: IGItem): IDrawable {
 
     let drawable: IDrawable = {};
 
-    if (gItem.type === GItemType.GBlock) {
+    if (gItem.type === 'gblock') {
         const gBlock = gItem as GBlock;
         drawable = {
             geometry: {
@@ -34,7 +34,7 @@ function drawableFromGItem(gItem: IGItem): IDrawable {
             }
         }
     }
-    else if (gItem.type === GItemType.GSphere) {
+    else if (gItem.type === 'gsphere') {
         const gSphere = gItem as GSphere;
         drawable = {
             geometry: {
@@ -43,7 +43,7 @@ function drawableFromGItem(gItem: IGItem): IDrawable {
             }
         }
     }
-    else if (gItem.type === GItemType.GLine) {
+    else if (gItem.type === 'gline') {
         const gLine = gItem as GLine;
         drawable = {
             geometry: {
@@ -52,6 +52,15 @@ function drawableFromGItem(gItem: IGItem): IDrawable {
             }
         }
     }
+    else if (gItem.type === 'gpoint') {
+        //const gPoint = gItem as GPoint;
+        drawable = {
+            geometry: {
+                type: 'point',
+                position: new Float32Array([0,0,0])  // point at origin
+            }
+        }
+    }                  
     return drawable;
 }
 
