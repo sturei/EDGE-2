@@ -8,7 +8,7 @@ import { OrbitControls } from '@react-three/drei'
 import { GRepModel } from '../grep/grepModel';
 import { Store } from '../document/store' 
 import { Document } from '../document/document';
-import { GBlock, type IGItem, GItemType, GSphere } from '../grep/gitem';
+import { GBlock, type IGItem, GItemType, GSphere, GLine } from '../grep/gitem';
 import { Drawlist } from './Drawlist.tsx'
 import { DocumentContext } from '../Contexts.ts';
 import { type IDrawable } from "./Drawable";
@@ -40,6 +40,15 @@ function drawableFromGItem(gItem: IGItem): IDrawable {
             geometry: {
                 type: 'sphere',
                 radius: gSphere.radius()
+            }
+        }
+    }
+    else if (gItem.type === GItemType.GLine) {
+        const gLine = gItem as GLine;
+        drawable = {
+            geometry: {
+                type: 'line',
+                points: [[-gLine.length()/2, 0, 0], [gLine.length()/2, 0, 0]],  // line along x axis centered at origin
             }
         }
     }

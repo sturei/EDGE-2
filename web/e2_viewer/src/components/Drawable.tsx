@@ -4,6 +4,9 @@
 // Also it does not reuse geometries between different drawables with the same geometry.
 // To avoid this it's probably possible to create a geometry cache keyed on name or id. Perhaps provide it as a Context.
 
+import {Line} from '@react-three/drei'  
+import { Vector3 } from 'three/src/math/Vector3.js';
+
 /** Appearances */
 export interface IStandardAppearance {
     type: 'standard';
@@ -25,7 +28,11 @@ export interface ISphereGeometry {
     radius: number;
 }
 
-export type IAnyGeometry = IBoxGeometry | ISphereGeometry;
+export interface ILineGeometry {
+    type: 'line';
+    points: Array<[number, number, number]>;
+}
+export type IAnyGeometry = IBoxGeometry | ISphereGeometry | ILineGeometry;
 
 /** Drawable */
 export interface IDrawable {
@@ -35,6 +42,12 @@ export interface IDrawable {
 }   
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+
+const red = 0xff0000;
+const green = 0x00ff00;
+const blue = 0x0000ff;
+const white = 0xffffff;
+const gray = 0x808080;  
 
 /** Creates a react-three-fiber mesh from a drawable that describes its properties */
 function meshFromDrawable(drawable: IDrawable) {
@@ -49,7 +62,7 @@ function meshFromDrawable(drawable: IDrawable) {
         return (
             <mesh>
                 <boxGeometry args={[geometry.width, geometry.height, geometry.depth]}/>
-                <meshStandardMaterial color={appearance?.color}/>
+                <meshStandardMaterial color={appearance?.color??red}/>
             </mesh>
         );
     }
@@ -57,8 +70,16 @@ function meshFromDrawable(drawable: IDrawable) {
         return (
             <mesh>
                 <sphereGeometry args={[geometry.radius, 32, 32]}/>
-                <meshStandardMaterial color={appearance?.color}/>
+                <meshStandardMaterial color={appearance?.color??green}/>
             </mesh>
+        );
+    }
+    else if (geometry.type === 'line') {
+        return (
+            <Line
+                points={geometry.points}
+                color={appearance?.color??blue}
+            />
         );
     }
 
