@@ -89,6 +89,7 @@ function r3fFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'sphere') {
+        console.log("Creating sphere with radius:", geometry.radius);
         return (
             <Sphere args={[geometry.radius, 32, 32]}>
                 <meshStandardMaterial color={appearance?.color??green} />
@@ -124,5 +125,6 @@ function r3fFromDrawable(drawable: IDrawable) {
 
 /** return the jsx that puts the drawable into the scene */
 export function Drawable({drawable}: {drawable: IDrawable}) {
+    console.log("++++++++++++++++++++++++++++");
     return r3fFromDrawable(drawable);
 }
