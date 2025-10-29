@@ -3,6 +3,7 @@ import { r3fFromDrawable, type IDrawable } from './Drawable';
 import "@testing-library/jest-dom";
 import { prettyDOM, render } from '@testing-library/react';
 import ResizeObserver from 'resize-observer-polyfill'
+
 window.ResizeObserver = ResizeObserver
 
 /**
@@ -21,7 +22,6 @@ describe('r3fFromDrawable', () => {
             geometry: { type: 'box', width: 2, height: 3, depth: 4 }
         };
         const result = r3fFromDrawable(drawable);
-        //const result = renderWithCanvas(drawable);
         expect(result).toBeDefined();
 
         // Implementation note on the alternatives I tried already:
@@ -30,10 +30,14 @@ describe('r3fFromDrawable', () => {
         // 3. RTF assumes we can find elements by text, role etc. This is false with most 3D elements.
         // Hence we just use render and prettyDOM from @testing-library/react to get a string representation of the tree, and then inspect that.
         // render() generates a bunch of warnings about camelCase elements (which are non-standard in React, but standard in R3F) but otherwise seems to work.
-        // Tried wrapping in <Canvas> to see if it suppressed the warnings but it didn't work.
+        // Tried wrapping in <Canvas> to see if it suppressed the warnings but it didn't work. Not surpising - it will bypass anything that would
+        // render to the DOM - including rendering to the virtual DOM that we are using for testing here.
 
         render(result);                       
         const tree = prettyDOM();
+
+        console.log("Box geometry render tree:", tree);
+
         expect(tree).toContain('box');
         expect(tree).toContain('2,3,4');
 
@@ -76,7 +80,7 @@ describe('r3fFromDrawable', () => {
         expect(tree).toContain('2.5');
     });
 
-    // oops - Line seems to use a Hook internally - need to skip for now. Solution ought to be to wrap in <Canvas>? But I couldn't get that to work.
+    // oops - Line seems to use a Hook internally, and that triggers an error (something about only working inside Canvas).
     it.skip('should render line geometry with start and end', () => {
         const drawable: IDrawable = {
             geometry: { 
@@ -89,9 +93,9 @@ describe('r3fFromDrawable', () => {
         expect(result).toBeDefined();
         render(result);
         const tree = prettyDOM();
-        console.log("Line geometry render tree:", tree);    
+        //console.log("Line geometry render tree:", tree);
         expect(tree).toContain('line');
-        expect(tree).toContain('2.5');
+        expect(tree).toContain('0,0,0,1,1,1');
     });
 
     it('should render point geometry with position data', () => {
@@ -106,7 +110,7 @@ describe('r3fFromDrawable', () => {
         expect(result).toBeDefined();
         render(result);
         const tree = prettyDOM();
-        console.log("Point geometry render tree:", tree);
+        //console.log("Point geometry render tree:", tree);
         expect(tree).toContain('point');
         expect(tree).toContain('5,2,4');
     });
