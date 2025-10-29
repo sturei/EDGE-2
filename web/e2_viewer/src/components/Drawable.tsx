@@ -4,7 +4,8 @@
 // Also it does not reuse geometries between different drawables with the same geometry.
 // To avoid this it's probably possible to create a geometry cache keyed on name or id. Perhaps provide it as a Context.
 
-import {Box, Line, Sphere} from '@react-three/drei'  
+import {Box, Line, Sphere, Plane} from '@react-three/drei'  
+import * as THREE from 'three';
 
 /** Appearances */
 export interface IStandardAppearance {
@@ -22,6 +23,12 @@ export interface IBoxGeometry {
     depth: number;
 }
 
+export interface IPlaneGeometry {
+    type: 'plane';
+    width: number;
+    height: number;
+}
+
 export interface ISphereGeometry {
     type: 'sphere'; 
     radius: number;
@@ -37,7 +44,7 @@ export interface IPointGeometry {
     position: Float32Array;
 }
 
-export type IAnyGeometry = IBoxGeometry | ISphereGeometry | ILineGeometry | IPointGeometry;
+export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry;
 
 /** Drawable */
 export interface IDrawable {
@@ -60,6 +67,8 @@ function r3fFromDrawable(drawable: IDrawable) {
     const appearance = drawable.appearance;
     console.log("r3fFromDrawable: geometry:", geometry);
 
+    // uses drei utilities where available - otherwise uses threejs
+
     // TODO: use-memo to avoid recreating the underlying geometries unnecessarily (see drei docs)
 
     if (!geometry) {
@@ -70,6 +79,13 @@ function r3fFromDrawable(drawable: IDrawable) {
             <Box args={[geometry.width, geometry.height, geometry.depth]}>
                 <meshStandardMaterial color={appearance?.color??red} />
             </Box>
+        );
+    }
+    else if (geometry.type === 'plane') {
+        return (
+            <Plane args={[geometry.width, geometry.height]}>
+                <meshStandardMaterial color={appearance?.color??blue} side={THREE.DoubleSide} />
+            </Plane>
         );
     }
     else if (geometry.type === 'sphere') {
@@ -106,7 +122,7 @@ function r3fFromDrawable(drawable: IDrawable) {
     }
 }
 
-/** return the jsx that puts the mesh into the scene */
+/** return the jsx that puts the drawable into the scene */
 export function Drawable({drawable}: {drawable: IDrawable}) {
     return r3fFromDrawable(drawable);
 }
