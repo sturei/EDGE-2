@@ -7,16 +7,14 @@ An experimental shape modeller
 If using Github Desktop:
 
 1. Log in to github
-2. File > Clone Repository. Select EDGE-2 and the path to your Github projects.
-3. In VSCode and select EDGE-2 or EDGE-2/engines
-
-Otherwise, clone the repo however you would normally do it.
+2. Clone the EDGE-2 repo however you would normally do it.
 
 ## Ensure prequisites are present. 
 
 The following instructions are for zshell on MacOS.
 
-Homebrew is required to install and manage some of the prereqs.
+Homebrew is required to install and manage several of the prereqs.
+
 If not installed already, install Homebrew globally by entering the following at a command prompt. The line below was copied from https://brew.sh/ in Oct 2025.
 
 ```
@@ -47,13 +45,33 @@ If you get a warning about command completion on starting a new shell window, di
 
 See https://stackoverflow.com/questions/16904658/node-version-manager-install-nvm-command-not-found 
 
-## Build and test the project
+## Build and test each of the subprojects (engines, web and api)
 
-For each of the subfolders (engines and web at time of writing)
+Build and test each of the subprojects: engines, web and api.
+
 ```
-% cd <folder>
-% <follow the instructions in the README that you will find there>
-% code            # opens Visual Studio Code
+% cd engines
+% mkdir build && cd build
+% cmake ..
+% make
+% ctest
+% ../scripts/e2_modellingService.zsh
+```
+
+```
+% cd web/e2_viewer
+% npm install
+% npm run test
+% npm run dev
+% open a browser window at the url suggested
+```
+
+```
+% cd api/e2_api_service
+% npm install
+% npm run test
+% npm run dev
+% open a browser window at localhost:3000/hello
 ```
 
 ### Tips and troubleshooting
