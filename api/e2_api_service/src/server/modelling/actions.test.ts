@@ -1,0 +1,68 @@
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
+import { ChildProcess, spawn } from 'child_process';
+import { dispatchAction, modellingService } from './actions.js';
+
+// Mock child_process
+vi.mock('child_process', () => {
+    let mockChildProcess: Partial<ChildProcess>;
+    let mockStdout: any;
+    let mockStdin: any;
+    mockStdout = {
+        on: vi.fn()
+    };
+    mockStdin = {
+        write: vi.fn()
+    };
+    mockChildProcess = {
+        stdout: mockStdout,
+        stdin: mockStdin,
+        pid: 12345
+    };
+
+    return {
+        spawn: vi.fn(() => mockChildProcess)
+    }
+});
+
+describe('actions', () => {
+    let mockChildProcess: Partial<ChildProcess>;
+    let mockStdout: any;
+    let mockStdin: any;
+
+    beforeEach(() => {
+        mockStdout = {
+            on: vi.fn()
+        };
+        mockStdin = {
+            write: vi.fn()
+        };
+        mockChildProcess = {
+            stdout: mockStdout,
+            stdin: mockStdin,
+            pid: 12345
+        
+        };
+
+        vi.mocked(spawn).mockReturnValue(mockChildProcess as ChildProcess);
+    });
+
+    afterEach(() => {
+        vi.clearAllMocks();
+    });
+
+    describe('modellingService', () => {
+        it('should be spawned with correct path', () => {
+            expect(spawn).toHaveBeenCalledWith('../../engines/build/e2_modellingService');
+        });
+
+        it('should export the spawned process', () => {
+            expect(modellingService.pid).toEqual(mockChildProcess.pid);
+        });
+    });
+
+    // ideally there should be a test for dispatchAction. 
+    // Probably that would need a mock of stdin.on that saves the callback that's registered in the real code, and a mock of
+    // stdin.write that calls it with the mocked data.
+
+});
+

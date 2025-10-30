@@ -29,6 +29,7 @@ CMake is required for building the C++ code.
 GitHub destop is recommended for interacting with Github.
 VSCode is recommended for developing with C++, typescript and other languages.
 npm and node are required for building the typescript code; nvm is recommended for installing and managing them as below. Note that nvm should NOT be installed via Homebrew. Use the instructions below.
+Bruno is recommended for manual testing of server-side api's.
 
 Install them globally as follows:
 
@@ -36,6 +37,7 @@ Install them globally as follows:
 % brew install cmake
 % brew install --cask github
 % brew install --cask visual-studio-code
+% brew install bruno
 % touch ~/.zshrc ~/.bash_profile
 % curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 % nvm install node
