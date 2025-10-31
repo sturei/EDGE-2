@@ -31,7 +31,11 @@ const actionSuggestions = [
 
     }, []);
 
-    /** when the user enters text into the actions input form, this function dispatches it to the document */
+    /** This method takes a JSON string from an input form, converts it to an object representing an action, and dispatches the action to 
+     * the global document (which is passed in as context) 
+     * The format for an action is {"type": <string>, "payload": <any valid json>}. 
+     * Any errors are caught here and logged, and then execution continues normally.
+     */
     function dispatchAction(formData: FormData) {
         const actionText = formData.get("actionInput") as string;
         if (actionText.trim() === "") {

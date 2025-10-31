@@ -11,14 +11,16 @@ using json = nlohmann::json;
 /**
  * DocumentService enables interprocess communication with a live Document
  * External clients send actions via stdin, and receive responses via stdout. Errors and logs are sent to stderr.
- * Implementation notes:
- * DocumentService is stateless - it does not own the Document, it just provides an interface to it. The Document holds all the state.
- * This is quick-and-dirty IPC. In future, websockets or messaging services such as ZeroMQ could be used.
+ * This is quick-and-dirty IPC. In future, websockets or messaging services such as ZeroMQ could be used instead, or as well.
  */
 
 namespace e2 {
     namespace DocumentService {
 
+        /** This method takes a JSON string as input, and converts it a json object representing an action. 
+         *  The format for an action is: {"type":<string>, "payload":<any valid JSON>}
+         *  Returns true if successful, false otherwise.
+        */
         bool parseAction(const std::string& line, Document::ActionSpec& action) {
             try
             {
@@ -40,6 +42,7 @@ namespace e2 {
             return true;
         }
 
+        /** This method dispatches the specified action to the document. TODO: catch errors, log them and continue. */
         bool dispatchAction(Document* document, const Document::ActionSpec& action) {
             if (!document->dispatchAction(action)) {
                 //std::cerr << "Failed to dispatch action. Is \"" << action.type << "\" action registered?" << std::endl;  //--- IGNORE ---
@@ -48,10 +51,13 @@ namespace e2 {
             return true;
         }
 
+        /** In blocking mode, this method waits for input on stdin, processes it and dispatches it to the document as an action.
+        *  In non-blocking mode, it only processes input it it is available, Otherwise it does nothing.
+        */
         void runOnce(Document* document, bool blocking, std::istream& input, std::ostream& output) {
-            // Reads from stdin if there is anything there to read, writes to stdout.
-            // NOTE: this method uses stdin directly, rather than the input and output streams passed as parameters, because of the use of poll() to check for input availability.
-            // For testing purposes only, clients can pass in stringstreams for input and output, so long as blocking is true. Sorry!
+            // NOTE: this method uses stdin directly, rather than the input and output streams passed as parameters, 
+            // because it uses poll() to check for input availability.
+            // For testing purposes only, clients may pass in stringstreams for input and output, but that only works in blocking mode.
 
             bool inputIsAvailable = false;
             if (!blocking){
@@ -96,6 +102,10 @@ namespace e2 {
             // std::cerr << "No input available" << std::endl;        //--- IGNORE ---
         }   
 
+        /** This method runs the document service in a loop, processing input and dispatching actions. 
+         * Right now it really works in blocking mode, otherwise the loop will just whizz round and round. Later, perhaps, a sleep interval 
+         * could be added to make non-blockin mode work too. 
+         */
         void run(Document* document, bool blocking, std::istream& input, std::ostream& output) {
             // implementation note: the assumption is that this is used in case of a dedicated service process, so we can block waiting for input
             // alternatively, could have a non-blocking mode and a sleep interval, or similar.
