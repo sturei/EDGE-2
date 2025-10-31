@@ -9,10 +9,10 @@ class BodyTest : public ::testing::Test {
     protected:
         void SetUp() override {
             // An empty body - no cells
-            emptyBodyFixture = BodyFixtures::createEmptyBody();
+            emptyBodyFixture = BRepFixtures::createEmptyBody();
 
             // An acorn body - one cell, which is a point
-            acornBodyFixture = BodyFixtures::createAcornBody(Vec3d(1,2,3));
+            acornBodyFixture = BRepFixtures::createAcornBody(Vec3d(1,2,3));
         };
 
         void TearDown() override {

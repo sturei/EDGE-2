@@ -4,7 +4,7 @@
 #include "document/document.h"
 
 namespace e2 {
-    namespace BodyActions {
+    namespace BRepActions {
         void addEmptyBody(Document* doc, const nlohmann::json& payload);
 
         inline static Document::ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};           

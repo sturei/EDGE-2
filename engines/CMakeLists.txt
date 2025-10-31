@@ -51,8 +51,8 @@ find_package(Magnum REQUIRED
 
 set(MODELLING_SERVICE_SOURCES
     src/brep/body.cpp
-    src/brep/body.actions.cpp
-    src/brep/body.fixtures.cpp
+    src/brep/brep.actions.cpp
+    src/brep/brep.fixtures.cpp
     src/brep/brepModel.cpp
     src/grep/gitem.cpp
     src/grep/grep.actions.cpp

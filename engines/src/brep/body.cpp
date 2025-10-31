@@ -6,25 +6,35 @@
 
 /***
  * The Body class represents a non-regularized pointset of any dimension.
- * A Body is composed of Cells of various dimensions.
- * Each Cell represents an open, connected subset of the geometry it lies on.
- * Each Cell is bounded by lower-dimensional cells.
- * Each Cell has an "active" flag indicating whether the cell should be considered or not.
- * Boundaries-of-boundaries are also considered boundaries of the cell.
+ * 
+ * The key concepts are Bodies, Cells, Cocells and Support.
+ * A Body is composed of Cells of various dimensions (3D, 2D, 1D and 0D).
+ * Each Cell is bounded by lower-dimensional Cells.
+ * Cells and their boundary Cells are connected to each other by Cocells.
+ * A Cell represents an open, connected subset of its Support.
+ * Support simply means the geometry that a Cell lies on.
+ *
+ * Each Cell has an "active" flag indicating whether the cell should be considered part of the Body or not.
  * The collection of cells that bound a given cell are called the cell's "boundary".
  * The collection of cells that a given cell bounds are called the cell's "star".
- * Cells are connected to their boundaries, and vice versa, by Cocells. 
- * Each cocell connects a cell to one of its boundary cells, and connects a boundary cell to one of its star cells.
- * Thus the body consists of a graph of cells connected by cocells.
- * The geometry upon which a given cell sits is called the cell's "support"
+ * Boundaries-of-boundaries are considered to be part of the boundary of a cell.
  * The subset of a cell's boundary with specified dimension k is called the cell's "k-boundary".
  * The subset of a body that is the collection of cells of dimension less than or equal to k are called the body's "k-skeleton"
- * Cocells whose boundary is one dimension lower than their star are assigned a sense according to which side their star lies on.
- * Think of each cocell as having a natural direction with respect to the cell it bounds (its star) and the boundary it lies on (its boundary).
+ * 
+ * As described above, a Cocell connects a star Cell to a boundary Cell.
+ * A Sense is assigned to any Cocell whose boundary Cell is one dimension lower than its star Cell. 
+ * Think of each Cocell as having a natural direction:
  * The natural direction of a 0D cocell (covertex) is the tangent T of its star's support.
  * The natural direction of a 2D cocell (coface) is the normal N of its boundary's support.
- * The natural direction of a 1D cocell (coedge) is the cross product of the tangent T of its boundary's support and the normal N of its star's support, i.e. T x N.
- * The sense of cocell is +1 if its natural direction points away from its star, -1 if it points towards, and 0 if the boundary cell is an internal boundary (i.e. it bounds the same cell on both sides)
+ * The natural direction of a 1D cocell (coedge) is the cross product of the tangent T of its boundary's support and the normal N 
+ * of its star's support, i.e. T x N.
+ * The sense of cocell is +1 if its natural direction points away from its star, -1 if it points towards, and 0 if the boundary cell is 
+ * an internal boundary (i.e. it bounds the same cell on both sides)
+ * 
+ * The body may be thought of as a graph of Cells (graph vertices) connected by Cocells (graph edges). 
+ * The code contains utilities for creating and manipulating such graphs.
+ *
+
  * Bibliography:
  * Rossignac and O'Connor, "SGC: A dimension-independent model for pointsets with internal structures and 
  * incomplete boundaries", in Geometric Modeling for Product Engineering, Wozny, Turner and Preiss (eds), Elsevier, 1990.
@@ -39,9 +49,10 @@
  * add "rep" to cell for complex geometries
  * use the type in the ostream operator<<
  * add all the functions like kSkeleton etc (maybe do those as non-members)
- * maybe support exotic pointsets like pierced plane - can be done by having cells that are active, but with a flag indicating that the pointset they define should be excluded from the body's pointset
- * Thinking about cache usage:
- * My 2017 iMac sysctl -a | grep "l.*cachesize" gives:
+ * maybe support exotic pointsets like pierced plane - can be done by having cells that are active (i.e. to be considered) but "negative" (i.e. their points are to be actively excluded)
+ *
+ * Some memory considerations:
+ * On my MacBook Pro (2020 M1 Pro), sysctl -a | grep
  *   hw.l1icachesize: 32768
  *   hw.l1dcachesize: 32768
  *   hw.l2cachesize: 262144
@@ -52,7 +63,7 @@
  * L3 cache is 8MB, which is 8388608/96 = 87381 Cell objects or 349525 Cocell objects.
  * A body with 100 cells and 200 cocells is 100*96 + 200*24 = 14kB (+16kB for the graph), which fits in L1 cache.
  * A body with 500 cells and 1000 cocells is 70kB (+82kB for the graph), which fits in L2 cache but not L1 cache.
- * For scale, a cube has 27 cells and 46 cocells.
+ * For scale, a rectangular cuboid contains 27 cells and 46 cocells.
  */
 
 namespace e2 {

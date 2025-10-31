@@ -24,7 +24,7 @@ public:
     MOCK_METHOD(size_t, addGItem, (GItem*), (override));
 };
 
-class GrepActionsTest : public ::testing::Test {
+class GRepActionsTest : public ::testing::Test {
 protected:
     void SetUp() override {
         mockDoc = std::make_unique<MockDocument>();
@@ -52,18 +52,18 @@ protected:
 };
 
 
-TEST_F(GrepActionsTest, PingWritesToStderr) {
+TEST_F(GRepActionsTest, PingWritesToStderr) {
     testing::internal::CaptureStderr();
     json payload = json::object();
     
-    GrepActions::ping(mockDoc.get(), payload);
+    GRepActions::ping(mockDoc.get(), payload);
     
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "pong\n");
 }
 
 
-TEST_F(GrepActionsTest, AddGPointWithDefaultSize) {
+TEST_F(GRepActionsTest, AddGPointWithDefaultSize) {
     json payload = json::object();
 
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -78,13 +78,13 @@ TEST_F(GrepActionsTest, AddGPointWithDefaultSize) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGPoint(mockDoc.get(), payload);
+    GRepActions::addGPoint(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GPoint\n");
 }
 
 
-TEST_F(GrepActionsTest, AddGPointWithCustomSize) {
+TEST_F(GRepActionsTest, AddGPointWithCustomSize) {
     json payload = json::object({{"size", 2.5}});
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -101,12 +101,12 @@ TEST_F(GrepActionsTest, AddGPointWithCustomSize) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGPoint(mockDoc.get(), payload);
+    GRepActions::addGPoint(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GPoint\n");
 }
 
-TEST_F(GrepActionsTest, AddGLineWithDefaultLength) {
+TEST_F(GRepActionsTest, AddGLineWithDefaultLength) {
     json payload = json::object();
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -121,13 +121,13 @@ TEST_F(GrepActionsTest, AddGLineWithDefaultLength) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGLine(mockDoc.get(), payload);
+    GRepActions::addGLine(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GLine\n");
 }
 
 
-TEST_F(GrepActionsTest, AddGLineWithCustomLength) {
+TEST_F(GRepActionsTest, AddGLineWithCustomLength) {
     json payload = json::object({{"length", 3.7}});
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -142,13 +142,13 @@ TEST_F(GrepActionsTest, AddGLineWithCustomLength) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGLine(mockDoc.get(), payload);
+    GRepActions::addGLine(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GLine\n");
 }
 
 
-TEST_F(GrepActionsTest, AddGPlaneWithDefaultDimensions) {
+TEST_F(GRepActionsTest, AddGPlaneWithDefaultDimensions) {
     json payload = json::object();
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -163,12 +163,12 @@ TEST_F(GrepActionsTest, AddGPlaneWithDefaultDimensions) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGPlane(mockDoc.get(), payload);
+    GRepActions::addGPlane(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GPlane\n");
 }
 
-TEST_F(GrepActionsTest, AddGPlaneWithCustomDimensions) {
+TEST_F(GRepActionsTest, AddGPlaneWithCustomDimensions) {
     json payload = json::object({{"width", 4.5}, {"height", 6.2}});
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -183,12 +183,12 @@ TEST_F(GrepActionsTest, AddGPlaneWithCustomDimensions) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGPlane(mockDoc.get(), payload);
+    GRepActions::addGPlane(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GPlane\n");
 }
 
-TEST_F(GrepActionsTest, AddGSphereWithDefaultRadius) {
+TEST_F(GRepActionsTest, AddGSphereWithDefaultRadius) {
     json payload = json::object();
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -203,12 +203,12 @@ TEST_F(GrepActionsTest, AddGSphereWithDefaultRadius) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGSphere(mockDoc.get(), payload);
+    GRepActions::addGSphere(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GSphere\n");
 }
 
-TEST_F(GrepActionsTest, AddGSphereWithCustomRadius) {
+TEST_F(GRepActionsTest, AddGSphereWithCustomRadius) {
     json payload = json::object({{"radius", 2.8}});
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -223,12 +223,12 @@ TEST_F(GrepActionsTest, AddGSphereWithCustomRadius) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGSphere(mockDoc.get(), payload);
+    GRepActions::addGSphere(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GSphere\n");
 }
 
-TEST_F(GrepActionsTest, AddGBlockWithDefaultDimensions) {
+TEST_F(GRepActionsTest, AddGBlockWithDefaultDimensions) {
     json payload = json::object();
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -243,12 +243,12 @@ TEST_F(GrepActionsTest, AddGBlockWithDefaultDimensions) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGBlock(mockDoc.get(), payload);
+    GRepActions::addGBlock(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GBlock\n");
 }
 
-TEST_F(GrepActionsTest, AddGBlockWithCustomDimensions) {
+TEST_F(GRepActionsTest, AddGBlockWithCustomDimensions) {
     json payload = json::object({{"width", 3.0}, {"height", 4.0}, {"depth", 5.0}});
     
     EXPECT_CALL(*mockDoc, storeAt("grep"))
@@ -263,7 +263,7 @@ TEST_F(GrepActionsTest, AddGBlockWithCustomDimensions) {
         .Times(1);
     
     testing::internal::CaptureStderr();
-    GrepActions::addGBlock(mockDoc.get(), payload);
+    GRepActions::addGBlock(mockDoc.get(), payload);
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "added GBlock\n");
 }

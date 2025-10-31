@@ -4,7 +4,7 @@
 #include "document/document.h"
 
 namespace e2 {
-    namespace GrepActions {
+    namespace GRepActions {
         void ping(Document* doc, const nlohmann::json& payload);
         void addGPoint(Document* doc, const nlohmann::json& payload);
         void addGLine(Document* doc, const nlohmann::json& payload);

@@ -2,7 +2,7 @@
 #include "document/document.h"
 #include "document/store.h"
 #include "brep/brepModel.h"
-#include "brep/body.actions.h"
+#include "brep/brep.actions.h"
 #include "grep/grepModel.h"
 #include "grep/grep.actions.h"
 
@@ -28,14 +28,14 @@ int main(int argc, char* argv[]) {
     Document* document = new Document({{"brep", brepStore}, {"grep", grepStore}});     // document takes ownership of the stores
 
     // Register action functions with the document
-    document->registerActionFunction(e2::BodyActions::addEmptyBodyDef);
+    document->registerActionFunction(e2::BRepActions::addEmptyBodyDef);
 
-    document->registerActionFunction(e2::GrepActions::pingDef);
-    document->registerActionFunction(e2::GrepActions::addGPointDef);
-    document->registerActionFunction(e2::GrepActions::addGLineDef);
-    document->registerActionFunction(e2::GrepActions::addGPlaneDef);
-    document->registerActionFunction(e2::GrepActions::addGSphereDef);
-    document->registerActionFunction(e2::GrepActions::addGBlockDef);
+    document->registerActionFunction(e2::GRepActions::pingDef);
+    document->registerActionFunction(e2::GRepActions::addGPointDef);
+    document->registerActionFunction(e2::GRepActions::addGLineDef);
+    document->registerActionFunction(e2::GRepActions::addGPlaneDef);
+    document->registerActionFunction(e2::GRepActions::addGSphereDef);
+    document->registerActionFunction(e2::GRepActions::addGBlockDef);
 
     // Run the DocumentService. This communicates with other processes via stdin and stdout.
     DocumentService::run(document);

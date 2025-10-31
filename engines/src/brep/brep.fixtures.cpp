@@ -2,11 +2,11 @@
 #include "brep/body.fixtures.h"
 
 /**
- * BodyFixtures provides a set of fixtures for testing the Body class.
+ * BRepFixtures provides a set of fixtures for testing or building simple breps.
  */
 
 namespace e2 {
-    namespace BodyFixtures {
+    namespace BRepFixtures {
         Body* createEmptyBody() {
             // A body with no cells
             Body* body = new Body;
