@@ -72,20 +72,6 @@ set(TEST_SOURCES
     src/document/documentService.test.cpp
 )
 
-#set(DESKTOP_APP_SOURCES
-#    src/gui/magnum/ArcBall.cpp
-#    src/gui/magnum/MyApplication.cpp
-#    src/gui/magnum/MagnumGate.cpp
-#    src/document/document.cpp
-#    src/document/documentService.cpp
-#    src/document/model.cpp
-#    src/document/store.cpp
-#    src/gui/gui.actions.cpp
-#    src/gui/gui.actions.cpp
-#    src/gui/guiModel.cpp
-#    src/gui/gitem.cpp
-#)
-
 ##################
 # Targets
 ##################
@@ -123,33 +109,6 @@ target_link_libraries(e2_modellingService
   PRIVATE
     nlohmann_json::nlohmann_json
 )
-
-#
-# desktop app
-#
-#add_executable(e2_desktopApp 
-#    src/main/desktopApp_main.cpp
-#    ${DESKTOP_APP_SOURCES}
-#)
-#
-#
-#target_include_directories(e2_desktopApp
-#    PRIVATE
-#        ${PROJECT_SOURCE_DIR}/include
-#)
-#target_link_libraries(e2_desktopApp PRIVATE
-#    Magnum::Application
-#    Magnum::GL
-#    Magnum::Magnum
-#    Magnum::MeshTools
-#    Magnum::DebugTools
-#    Magnum::Primitives
-#    Magnum::SceneGraph
-#    Magnum::Shaders
-#    Magnum::Trade
-#    nlohmann_json::nlohmann_json
-#)
-#
 
 ################
 # Testing
