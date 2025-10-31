@@ -3,16 +3,17 @@
 #include "grep/gitem.h"
 
 namespace e2 {
-    class GrepModel : public Model {
+    class GRepModel : public Model {
     public:
-        GrepModel() : Model() {}
-        ~GrepModel() override {} 
+        GRepModel() : Model() {}
+        ~GRepModel() override {} 
 
         size_t numGItems() const { return m_drawList.size(); }
         GItem* gItem(size_t index) { return m_drawList[index]; }
         const GItem* gItem(size_t index) const { return m_drawList[index]; }
         virtual size_t addGItem(GItem* item);
         void removeGItem(size_t index);
+        const std::vector<GItem*>& drawlist() const { return m_drawList; }  
         void print(std::ostream& os) const override;
 
     private:

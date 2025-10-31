@@ -71,7 +71,8 @@ set(TEST_SOURCES
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
     src/grep/gitem.test.cpp
-    src/grep/grep.actions.test.cpp    
+    src/grep/grep.actions.test.cpp
+    src/grep/grepModel.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/documentService.test.cpp

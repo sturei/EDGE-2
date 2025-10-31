@@ -19,7 +19,7 @@ public:
     MOCK_METHOD(void, changeState, (std::function<void(Model*)>), (override));
 };
 
-class MockGrepModel : public GrepModel {
+class MockGRepModel : public GRepModel {
 public:
     MOCK_METHOD(size_t, addGItem, (GItem*), (override));
 };
@@ -29,7 +29,7 @@ protected:
     void SetUp() override {
         mockDoc = std::make_unique<MockDocument>();
         mockStore = std::make_unique<MockStore>();
-        mockModel = std::make_unique<MockGrepModel>();
+        mockModel = std::make_unique<MockGRepModel>();
 
         ON_CALL(*mockDoc, storeAt("grep"))
             .WillByDefault(::testing::Return(mockStore.get()));
@@ -48,7 +48,7 @@ protected:
 
     std::unique_ptr<MockDocument> mockDoc;
     std::unique_ptr<MockStore> mockStore;
-    std::unique_ptr<MockGrepModel> mockModel;
+    std::unique_ptr<MockGRepModel> mockModel;
 };
 
 
