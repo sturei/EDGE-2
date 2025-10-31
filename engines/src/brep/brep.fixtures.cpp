@@ -1,5 +1,5 @@
 #include "brep/body.h"
-#include "brep/body.fixtures.h"
+#include "brep/brep.fixtures.h"
 
 /**
  * BRepFixtures provides a set of fixtures for testing or building simple breps.

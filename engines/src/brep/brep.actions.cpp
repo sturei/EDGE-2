@@ -1,6 +1,7 @@
 #include <nlohmann/json.hpp>
 #include "brep/body.h"
 #include "brep/brep.actions.h"
+#include "brep/brep.fixtures.h"
 #include "brep/brepModel.h"
 #include "document/document.h"
 #include "document/store.h"
@@ -16,12 +17,13 @@ using json = nlohmann::json;
 namespace e2 {
     namespace BRepActions {
         void addEmptyBody(Document* doc, const json& payload) {
-            // This action adds an empty body to the BRepModel in the "brep" store of the document.
+            // This action adds an empty body (a body with no cells) to the brep store.
             Store* store = doc->storeAt("brep");
             store->changeState([](Model* model) {
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
-                Body emptyBody;
-                brepModel->addBody(emptyBody);
+                Body* emptyBody = BRepFixtures::createEmptyBody();
+                brepModel->addBody(*emptyBody);
+                delete emptyBody; // brepModel makes a copy of the body, so we can delete this one
             });
            }
     }

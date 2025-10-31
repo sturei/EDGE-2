@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "brep/body.h"
-#include "brep/body.fixtures.h"
+#include "brep/brep.fixtures.h"
 
 using namespace e2;
 
