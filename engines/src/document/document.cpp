@@ -32,7 +32,7 @@ namespace e2 {
         }
     }
 
-    Store* Document::storeAt(const std::string& key) {
+    Store* Document::storeAt(const std::string& key) const {
         return m_stores.at(key);
     }
 

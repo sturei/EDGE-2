@@ -54,6 +54,9 @@ set(MODELLING_SERVICE_SOURCES
     src/brep/body.actions.cpp
     src/brep/body.fixtures.cpp
     src/brep/brepModel.cpp
+    src/grep/gitem.cpp
+    src/grep/grep.actions.cpp
+    src/grep/grepModel.cpp
     src/document/document.cpp
     src/document/documentService.cpp
     src/document/model.cpp
@@ -67,6 +70,8 @@ set(TEST_SOURCES
     src/utils/geom3d.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
+    src/grep/gitem.test.cpp
+    src/grep/grep.actions.test.cpp    
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/documentService.test.cpp

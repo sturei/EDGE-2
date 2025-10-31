@@ -5,9 +5,9 @@
 namespace e2 {
     class Store {
         public:
-            Store(Model* model, std::function<void()> postStateChangeCallback = nullptr) : m_model(model), m_postStateChangeCallback(postStateChangeCallback) {}
+            Store(Model* model = nullptr, std::function<void()> postStateChangeCallback = nullptr) : m_model(model), m_postStateChangeCallback(postStateChangeCallback) {}
             ~Store();
-            void changeState(std::function<void(Model*)> stateChangeCallback);
+            virtual void changeState(std::function<void(Model*)> stateChangeCallback);    // virtual to make it easy to mock out in tests
             const Model* model() const { return m_model; }
             friend std::ostream& operator<<(std::ostream& os, const Store& store);
         private:

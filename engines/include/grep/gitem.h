@@ -5,6 +5,7 @@
 
 namespace e2 {
 
+    // Assuming we will need some kind of handle to connect to downstream representations...
     class GItemHandle {
         public:
             GItemHandle() {}
@@ -12,28 +13,39 @@ namespace e2 {
             bool needsUpdate() const { return m_needsUpdate; }
             void setNeedsUpdate(bool needsUpdate) { m_needsUpdate = needsUpdate; }  
         private:
-            bool m_needsUpdate = true; // whether the graphical item needs to be updated in the graphics framework
+            bool m_needsUpdate = true; // whether the downstream item needs to be updated.
+    };
+
+    enum class GItemType {
+        GPOINT,
+        GLINE,
+        GPLANE,
+        GSPHERE,
+        GBLOCK
     };
 
     class GItem {
         public:
-            GItem() {}
+            GItem(GItemType type) : m_type(type) {}
             virtual ~GItem() {
                 delete m_handle;
             };
+            GItemType type() const { return m_type; }
             GItemHandle* handle() { return m_handle; }
             void setHandle(GItemHandle* handle) { m_handle = handle; }
             virtual void print(std::ostream& os) const = 0;
+            std::string toString() const;
             friend std::ostream& operator<<(std::ostream& os, const GItem& m);
         private:
             //std::string m_name;
             //GAppearance* m_appearance;
+            GItemType m_type;
             GItemHandle* m_handle = nullptr;
     };
 
     class GPoint : public GItem {
         public:
-            GPoint(double size) : GItem(), m_size(size) {}
+            GPoint(double size) : GItem(GItemType::GPOINT), m_size(size) {}
             double size() const { return m_size; }
             void print(std::ostream& os) const override;
         private:
@@ -42,7 +54,7 @@ namespace e2 {
 
     class GLine : public GItem {
         public:
-            GLine(double length) : GItem(), m_length(length) {}
+            GLine(double length) : GItem(GItemType::GLINE), m_length(length) {}
             void print(std::ostream& os) const override;
             double length() const { return m_length; }
         private:
@@ -51,7 +63,7 @@ namespace e2 {
     
     class GPlane : public GItem {
         public:
-            GPlane(double width, double height) : GItem(), m_width(width), m_height(height) {}
+            GPlane(double width, double height) : GItem(GItemType::GPLANE), m_width(width), m_height(height) {}
             void print(std::ostream& os) const override;
             double width() const { return m_width; }
             double height() const { return m_height; }
@@ -62,7 +74,7 @@ namespace e2 {
     
     class GSphere : public GItem {
         public:
-            GSphere(double radius) : GItem(), m_radius(radius) {}
+            GSphere(double radius) : GItem(GItemType::GSPHERE), m_radius(radius) {}
             void print(std::ostream& os) const override;
             double radius() const { return m_radius; }
         private:
@@ -71,7 +83,7 @@ namespace e2 {
     
     class GBlock : public GItem {
         public:
-            GBlock(double width, double height, double depth) : GItem(), m_width(width), m_height(height), m_depth(depth) {}
+            GBlock(double width, double height, double depth) : GItem(GItemType::GBLOCK), m_width(width), m_height(height), m_depth(depth) {}
             void print(std::ostream& os) const override;
             double width() const { return m_width; }
             double height() const { return m_height; }

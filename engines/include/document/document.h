@@ -27,7 +27,7 @@ namespace e2 {
             Document() {}
             Document(const std::map<std::string, Store*>& stores) : m_stores(stores) {}
             ~Document();
-            Store* storeAt(const std::string& key);
+            virtual Store* storeAt(const std::string& key) const;     // it's virtual to make it easy to mock out in tests   
             void registerActionFunction(const ActionDef& action);
             bool dispatchAction(const ActionSpec& action);
             friend std::ostream& operator<<(std::ostream& os, const Document& doc);
@@ -36,4 +36,4 @@ namespace e2 {
             std::map<std::string, Store*> m_stores; // Document takes ownership of the stores
             std::map<std::string, std::function<void(Document*, const json&)>> m_actionFunctions;
     };
-};  
+}

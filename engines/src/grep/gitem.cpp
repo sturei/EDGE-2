@@ -1,4 +1,5 @@
-#include "gui/gitem.h"
+#include "grep/gitem.h"
+#include <sstream>
 
 namespace e2 {
 
@@ -6,6 +7,12 @@ namespace e2 {
         m.print(os);
         return os;
     }
+
+    std::string GItem::toString() const {
+        std::ostringstream os;
+        print(os);
+        return os.str();
+    }   
 
     void GPoint::print(std::ostream& os) const {
         os << "GPoint" << "(size=" << m_size << ")";
