@@ -22,8 +22,7 @@ namespace e2 {
             store->changeState([](Model* model) {
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
                 Body* emptyBody = BRepFixtures::createEmptyBody();
-                brepModel->addBody(*emptyBody);
-                delete emptyBody; // brepModel makes a copy of the body, so we can delete this one
+                brepModel->addBody(emptyBody);
             });
            }
     }
