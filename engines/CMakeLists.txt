@@ -58,6 +58,7 @@ set(MODELLING_SERVICE_SOURCES
     src/grep/grep.actions.cpp
     src/grep/grepModel.cpp
     src/document/document.cpp
+    src/document/document.actions.cpp
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
@@ -75,6 +76,7 @@ set(TEST_SOURCES
     src/grep/grepModel.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
+    src/document/document.actions.test.cpp
     src/document/documentService.test.cpp
 )
 

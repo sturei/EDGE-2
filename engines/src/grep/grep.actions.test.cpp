@@ -52,17 +52,6 @@ protected:
 };
 
 
-TEST_F(GRepActionsTest, PingWritesToStderr) {
-    testing::internal::CaptureStderr();
-    json payload = json::object();
-    
-    GRepActions::ping(mockDoc.get(), payload);
-    
-    std::string output = testing::internal::GetCapturedStderr();
-    EXPECT_EQ(output, "pong\n");
-}
-
-
 TEST_F(GRepActionsTest, AddGPointWithDefaultSize) {
     json payload = json::object();
 

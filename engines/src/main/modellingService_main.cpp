@@ -1,5 +1,6 @@
 #include "document/documentService.h"
 #include "document/document.h"
+#include "document/document.actions.h"
 #include "document/store.h"
 #include "brep/brepModel.h"
 #include "brep/brep.actions.h"
@@ -28,12 +29,13 @@ int main(int argc, char* argv[]) {
     Document* document = new Document({{"brep", brepStore}, {"grep", grepStore}});     // document takes ownership of the stores
 
     // Register action functions with the document
+    document->registerActionFunction(e2::DocumentActions::pingDef);
+
     document->registerActionFunction(e2::BRepActions::addEmptyBodyDef);
     document->registerActionFunction(e2::BRepActions::addAcornBodyDef);
     document->registerActionFunction(e2::BRepActions::addWireRectangleDef);
     document->registerActionFunction(e2::BRepActions::addSheetRectangleDef);
 
-    document->registerActionFunction(e2::GRepActions::pingDef);
     document->registerActionFunction(e2::GRepActions::addGPointDef);
     document->registerActionFunction(e2::GRepActions::addGLineDef);
     document->registerActionFunction(e2::GRepActions::addGPlaneDef);

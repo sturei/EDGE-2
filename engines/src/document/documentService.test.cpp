@@ -84,7 +84,7 @@ TEST_F(DocumentServiceTest, RunOnceEmptyLineString) {
     DocumentService::runOnce(document, input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"OK\"") != std::string::npos);
-    EXPECT_TRUE(outputStr.find("Empty line") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Blank line") != std::string::npos);
 }
 
 TEST_F(DocumentServiceTest, RunOnceInvalidJSON) {

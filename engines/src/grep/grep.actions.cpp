@@ -12,10 +12,6 @@ using json = nlohmann::json;
 
 namespace e2 {
     namespace GRepActions {
-        void ping(Document* doc, const json& payload) {
-            // This action just writes "pong" to stderr. Useful for testing connectivity.
-            std::cerr << "pong" << std::endl;
-        }
         void addGPoint(Document* doc, const json& payload) {
             Store* store = doc->storeAt("grep");
             store->changeState([payload](Model* model) {
