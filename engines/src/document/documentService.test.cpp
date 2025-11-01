@@ -49,9 +49,9 @@ class DocumentServiceTest : public ::testing::Test {
     Document *document;
 };
 
-TEST_F(DocumentServiceTest, Run) {
+TEST_F(DocumentServiceTest, RunOnce) {
 
-    // a single-line JSON text with type, payload pair
+    // create a single-line JSON text with type, payload pair
     std::string actionText = std::string(R"(
     {
         "type": "addAnimal",
@@ -60,13 +60,11 @@ TEST_F(DocumentServiceTest, Run) {
     )");
     actionText.erase(remove(actionText.begin(), actionText.end(), '\n'), actionText.end());
     
-    // Simulate input and output streams using stringstreams. Only works in blocking mode.
+    // Simulate input and output streams using stringstreams.
     std::istringstream input(actionText);
     std::ostringstream output;
-    bool blocking = true;
-    DocumentService::runOnce(document, blocking, input, output);
+    DocumentService::runOnce(document, input, output);
     std::string outputStr = output.str();
-    //std::cout << "Output stream:\n" << outputStr << std::endl; // --- IGNORE ---
     EXPECT_TRUE(outputStr.find("ACK: success") != std::string::npos);
 
 };

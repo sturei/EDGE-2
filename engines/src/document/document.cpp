@@ -41,12 +41,15 @@ namespace e2 {
     }
 
     bool Document::dispatchAction(const ActionSpec& action) {
-        auto it = m_actionFunctions.find(action.type);
-        if (it != m_actionFunctions.end()) {
-            it->second(this, action.payload);
-            return true;
+        try {
+            //std::cerr << "Dispatching action of type: " << action.type << " with payload: " << action.payload.dump() << std::endl;  //--- IGNORE ---
+            auto actionFunction = m_actionFunctions.at(action.type);
+            actionFunction(this, action.payload);
+        } catch (const std::exception& e) {
+            std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  //--- IGNORE ---
+            return false;
         }
-        return false;
+        return true;
     }
 
     std::ostream& operator<<(std::ostream& os, const Document& doc) {

@@ -62,8 +62,8 @@
  * A body with 500 cells and 1000 cocells is 70kB (+82kB for the graph).
  * For scale, a rectangular cuboid has 27 cells and 46 cocells.
  * Some people suggest 16k chunks as a good size for cache efficiency. Which is about a 4-cube-equivalent body.
- * So the approach taken here, where the cells and cocells of each body are packed into contiguous arrays, seems 
- * like a decent balance.
+ * So the approach taken here, where the cells (including their support) and cocells of each body are 
+ * packed into contiguous arrays, seems like a decent balance.
  */
 
 namespace e2 {
