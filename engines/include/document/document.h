@@ -10,26 +10,35 @@
 using json = nlohmann::json;
 
 namespace e2 {
+
+    class Document;
+
+    struct ActionSpec {
+        std::string type;
+        json payload;
+    };
+
+    struct ActionDef {
+        std::string type;
+        std::function<void(Document*, const json&)> function;
+    };
+
+    enum class ActionResult {
+        SUCCESS,
+        UNKNOWN_ACTION,
+        INVALID_PAYLOAD,
+        INTERNAL_ERROR
+    };
     
     class Document {
         public:
 
-            struct ActionSpec {
-                std::string type;
-                json payload;
-            };
-
-            struct ActionDef {
-                std::string type;
-                std::function<void(Document*, const json&)> function;
-            };
-    
             Document() {}
             Document(const std::map<std::string, Store*>& stores) : m_stores(stores) {}
             ~Document();
             virtual Store* storeAt(const std::string& key) const;     // it's virtual to make it easy to mock out in tests   
             void registerActionFunction(const ActionDef& action);
-            bool dispatchAction(const ActionSpec& action);
+            ActionResult dispatchAction(const ActionSpec& action);
             friend std::ostream& operator<<(std::ostream& os, const Document& doc);
 
         private:

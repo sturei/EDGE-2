@@ -40,16 +40,24 @@ namespace e2 {
         m_actionFunctions[action.type] = action.function;
     }
 
-    bool Document::dispatchAction(const ActionSpec& action) {
+    ActionResult Document::dispatchAction(const ActionSpec& action) {
         try {
-            //std::cerr << "Dispatching action of type: " << action.type << " with payload: " << action.payload.dump() << std::endl;  //--- IGNORE ---
-            auto actionFunction = m_actionFunctions.at(action.type);
+            //std::cerr << "Dispatching action of type: " << action.type << " with payload: " << action.payload.dump() << std::endl;  //--- DEBUG ---
+            auto it = m_actionFunctions.find(action.type);
+            if (it == m_actionFunctions.end()) {
+                std::cerr << "Unknown action type: " << action.type << std::endl;
+                return ActionResult::UNKNOWN_ACTION;
+            }
+            auto actionFunction = it->second;
             actionFunction(this, action.payload);
+        } catch (const json::exception& e) {
+            std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;
+            return ActionResult::INVALID_PAYLOAD;
         } catch (const std::exception& e) {
-            std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  //--- IGNORE ---
-            return false;
+            std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;
+            return ActionResult::INTERNAL_ERROR;
         }
-        return true;
+        return ActionResult::SUCCESS;
     }
 
     std::ostream& operator<<(std::ostream& os, const Document& doc) {

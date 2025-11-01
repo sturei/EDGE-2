@@ -17,11 +17,25 @@ using json = nlohmann::json;
 namespace e2 {
     namespace DocumentService {
 
+        // The response sent to the output is a JSON string representing this structure, i.e. a string like: {"status":<string>, "reason":<string>}
+        struct ActionResponse
+        {
+            std::string status;       // "OK" or "ERROR"
+            std::string reason;       // human-readable reason for failure
+        };
+
+        void to_json(json& j, const ActionResponse& ar) {
+            j = json{
+                {"status", ar.status}, 
+                {"reason", ar.reason}
+            };
+        }
+
         /** This method converts a JSON string to a json object representing an action.
          *  The format for an action is: {"type":<string>, "payload":<any valid JSON>}
-         *  Returns true if successful, false otherwise.
+         *  Returns true if successful, false otherwise. In case of failure, response contains the details.
         */
-        bool parseAction(const std::string& line, Document::ActionSpec& action) {
+        bool parseAction(const std::string& line, ActionSpec& action, ActionResponse& response) {
             try
             {
                 json jsonAction = json::parse(line);
@@ -32,15 +46,31 @@ namespace e2 {
             catch (const json::exception& e)
             {
                 std::cerr << "Error parsing input: " << e.what() << std::endl;
+                response = {"ERROR", "Invalid JSON: " + std::string(e.what())};
                 return false;
             }
             return true;
         }
 
-        /** This method dispatches the specified action to the document. TODO: catch errors, log them and continue. */
-        bool dispatchAction(Document* document, const Document::ActionSpec& action) {
-            if (!document->dispatchAction(action)) {
-                //std::cerr << "Failed to dispatch action. Is \"" << action.type << "\" action registered?" << std::endl;  //--- IGNORE ---
+        /** This method dispatches the specified action to the document. 
+         * Returns true if successful, false otherwise. In case of failure, response contains the details.
+        */
+        bool dispatchAction(Document* document, const ActionSpec& action, ActionResponse& response) {
+            ActionResult result = document->dispatchAction(action);
+            if (result == ActionResult::SUCCESS) {
+                response = {"OK", ""};
+            }
+            else if (result == ActionResult::UNKNOWN_ACTION) {
+                std::cerr << "Unknown action type: " << action.type << std::endl;
+                response = {"ERROR", "Unknown action type: " + action.type};
+                return false;
+            }
+            else if (result == ActionResult::INVALID_PAYLOAD) {
+                response = {"ERROR", "Invalid payload for action type: " + action.type};
+                return false;
+            }
+            else  {// INTERNAL_ERROR
+                response = {"ERROR", "Internal error. Failed to execute action: " + action.type};
                 return false;
             }
             return true;
@@ -52,28 +82,33 @@ namespace e2 {
         */
         void runOnce(Document* document, std::istream& input, std::ostream& output) {
             // Read input and process it. getLine will block and wait for input if there is no input available.
-            // Always acknowledge the input on stdout, even if it is invalid. Clients may be waiting for a response.
+            // We always acknowledge the input on the output stream because clients may be blocking, awaiting a response.
+
+            ActionSpec action;
+            ActionResponse response;
+
             std::string line;
             if (!std::getline(input, line)) {
-                output << "ACK: invalid stream or EOF" << std::endl;
-                return;
+                response = {"ERROR", "Invalid stream or EOF"};
             }
-            if (line.empty()) {
-                output << "ACK: empty line" << std::endl;
-                return;
+            else if (line.empty()) {
+                // empty line is not an error, just acknowledge it
+                response = {"OK", "Empty line"};
             }
-            // std::cerr << "Received input: [" << line << "]" << std::endl;        //--- IGNORE ---
-            Document::ActionSpec action;
-            if (!parseAction(line, action)) {
-                output << "ACK: parse error" << std::endl;
-                return; 
+            else if (!parseAction(line, action, response)) {
+                // parseAction sets the response in case of error
             }
-            if (!dispatchAction(document, action)) {
-                output << "ACK: dispatch error" << std::endl;
-                return;
+            else if (!dispatchAction(document, action, response)) {
+                // dispatchAction sets the response in case of error
             }
-            output << "ACK: success" << std::endl;
-                return;
+            else {
+                // success
+                response = {"OK", ""};
+            }
+
+            // package up the response as JSON and stream it to the output stream
+            json jsonResponse = response;
+            output << jsonResponse;
         }   
 
         /** Similar to runOnce, but it first polls the input stream, and only reads from it if something is available.
@@ -97,7 +132,8 @@ namespace e2 {
          * It reads one line at a time from the specified input stream (stdin by default) and processes it. 
          * The line is expected to consist of a JSON string representing an action.
          * The format for an action is: {"type":<string>, "payload":<any valid JSON>}
-         * Responses are written to the specified output stream (stdout by default). Errors and logs are written to stderr.
+         * Responses are written to the specified output stream (stdout by default). 
+         * Errors and logs are written to stderr.
          */
         void run(Document* document, std::istream& input, std::ostream& output) {
             while (true) {

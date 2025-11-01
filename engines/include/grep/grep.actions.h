@@ -15,12 +15,12 @@ namespace e2 {
         //void addGGroup(Document* doc, const nlohmann::json& payload);
         // et cetera - names, transformations, appearances, transform_item, remove_item, etc.
 
-        inline static Document::ActionDef pingDef = {"ping", ping};
-        inline static Document::ActionDef addGPointDef = {"addGPoint", addGPoint};
-        inline static Document::ActionDef addGLineDef = {"addGLine", addGLine};
-        inline static Document::ActionDef addGPlaneDef = {"addGPlane", addGPlane};
-        inline static Document::ActionDef addGSphereDef = {"addGSphere", addGSphere};
-        inline static Document::ActionDef addGBlockDef = {"addGBlock", addGBlock};
+        inline static ActionDef pingDef = {"ping", ping};
+        inline static ActionDef addGPointDef = {"addGPoint", addGPoint};
+        inline static ActionDef addGLineDef = {"addGLine", addGLine};
+        inline static ActionDef addGPlaneDef = {"addGPlane", addGPlane};
+        inline static ActionDef addGSphereDef = {"addGSphere", addGSphere};
+        inline static ActionDef addGBlockDef = {"addGBlock", addGBlock};
     }
 };
 

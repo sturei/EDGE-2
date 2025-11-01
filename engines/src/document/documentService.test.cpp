@@ -29,7 +29,7 @@ namespace DocumentServiceTestActions {
             zooModel->animals.push_back(species);
         });
     }
-    Document::ActionDef addAnimalDef = {"addAnimal", addAnimal};
+    ActionDef addAnimalDef = {"addAnimal", addAnimal};
 }
 
 class DocumentServiceTest : public ::testing::Test {
@@ -65,7 +65,76 @@ TEST_F(DocumentServiceTest, RunOnce) {
     std::ostringstream output;
     DocumentService::runOnce(document, input, output);
     std::string outputStr = output.str();
-    EXPECT_TRUE(outputStr.find("ACK: success") != std::string::npos);
-
+    EXPECT_TRUE(outputStr.find("\"status\":\"OK\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("\"reason\":\"\"") != std::string::npos);
 };
+
+TEST_F(DocumentServiceTest, RunOnceEmptyLine) {
+    std::istringstream input("");
+    std::ostringstream output;
+    DocumentService::runOnce(document, input, output);
+    std::string outputStr = output.str();
+    EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Invalid stream or EOF") != std::string::npos);
+}
+
+TEST_F(DocumentServiceTest, RunOnceEmptyLineString) {
+    std::istringstream input("\n");
+    std::ostringstream output;
+    DocumentService::runOnce(document, input, output);
+    std::string outputStr = output.str();
+    EXPECT_TRUE(outputStr.find("\"status\":\"OK\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Empty line") != std::string::npos);
+}
+
+TEST_F(DocumentServiceTest, RunOnceInvalidJSON) {
+    std::string invalidJson = "{ invalid json }";
+    std::istringstream input(invalidJson);
+    std::ostringstream output;
+    DocumentService::runOnce(document, input, output);
+    std::string outputStr = output.str();
+    EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Invalid JSON") != std::string::npos);
+}
+
+TEST_F(DocumentServiceTest, RunOnceMissingType) {
+    std::string missingType = R"({"payload": {"species": "Lion"}})";
+    std::istringstream input(missingType);
+    std::ostringstream output;
+    DocumentService::runOnce(document, input, output);
+    std::string outputStr = output.str();
+    EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Invalid JSON") != std::string::npos);
+}
+
+TEST_F(DocumentServiceTest, RunOnceMissingPayload) {
+    std::string missingPayload = R"({"type": "addAnimal"})";
+    std::istringstream input(missingPayload);
+    std::ostringstream output;
+    DocumentService::runOnce(document, input, output);
+    std::string outputStr = output.str();
+    EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Invalid JSON") != std::string::npos);
+}
+
+TEST_F(DocumentServiceTest, RunOnceUnknownAction) {
+    std::string unknownAction = R"({"type": "unknownAction", "payload": {}})";
+    std::istringstream input(unknownAction);
+    std::ostringstream output;
+    DocumentService::runOnce(document, input, output);
+    std::string outputStr = output.str();
+    EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Unknown action type") != std::string::npos);
+}
+
+TEST_F(DocumentServiceTest, RunOnceInvalidPayload) {
+    std::string invalidPayload = R"({"type": "addAnimal", "payload": {"wrongField": "value"}})";
+    std::istringstream input(invalidPayload);
+    std::ostringstream output;
+    DocumentService::runOnce(document, input, output);
+    std::string outputStr = output.str();
+    EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("Invalid payload") != std::string::npos);
+}
+
 

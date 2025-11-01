@@ -7,7 +7,7 @@ namespace e2 {
     namespace BRepActions {
         void addEmptyBody(Document* doc, const nlohmann::json& payload);
 
-        inline static Document::ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};           
+        inline static ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};           
     }
 };
 
