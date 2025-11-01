@@ -62,6 +62,7 @@ set(MODELLING_SERVICE_SOURCES
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
+    src/scene/scene.actions.cpp   
 )
 
 set(TEST_SOURCES
@@ -78,6 +79,7 @@ set(TEST_SOURCES
     src/document/document.test.cpp
     src/document/document.actions.test.cpp
     src/document/documentService.test.cpp
+    src/scene/scene.actions.test.cpp
 )
 
 ##################

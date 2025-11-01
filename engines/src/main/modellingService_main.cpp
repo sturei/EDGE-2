@@ -6,6 +6,7 @@
 #include "brep/brep.actions.h"
 #include "grep/grepModel.h"
 #include "grep/grep.actions.h"
+#include "scene/scene.actions.h"
 
 using namespace e2;
 
@@ -21,14 +22,23 @@ using namespace e2;
 
 int main(int argc, char* argv[]) {
 
-    // Initialize the document
-    Model* brepModel = new BRepModel();                           // owns an initially empty collection of bodies
-    Store* brepStore = new Store(brepModel);                      // store takes ownership of the model
-    Model* grepModel = new GRepModel();                           // owns an initially empty drawlist
-    Store* grepStore = new Store(grepModel);                      // store takes ownership of the model
-    Document* document = new Document({{"brep", brepStore}, {"grep", grepStore}});     // document takes ownership of the stores
+    // Note on resource management:
+    // Document takes ownership of its stores; stores take ownership of their models; models own all of their data. 
+    // It's a 'total ownership' resource model, with the document at the top of the hierarchy.
+    // std::unique_ptr could be used instead of raw pointers to enforce ownership, but it's a faff.
 
-    // Register action functions with the document
+    // Initialize the models
+    Model* brepModel = new BRepModel();            // an initially empty collection of bodies
+    Model* grepModel = new GRepModel();            // an initially empty drawlist
+    Model* sceneModel = new GRepModel();           // an initially empty drawlist that combines the other models into a scene for rendering
+
+    // Initialise the stores and the document.
+    Document* document = new Document({
+        {"brep", new Store(brepModel)},
+        {"grep", new Store(grepModel)},
+        {"scene", new Store(sceneModel)}});
+
+    // Register action functions
     document->registerActionFunction(e2::DocumentActions::pingDef);
 
     document->registerActionFunction(e2::BRepActions::addEmptyBodyDef);
@@ -42,9 +52,12 @@ int main(int argc, char* argv[]) {
     document->registerActionFunction(e2::GRepActions::addGSphereDef);
     document->registerActionFunction(e2::GRepActions::addGBlockDef);
 
+    document->registerActionFunction(e2::SceneActions::getSceneDef);
+
     // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
     DocumentService::run(document);
 
+    delete document;   // this deletes the stores and models too (if in future the run() loop ever exits)
     return 0;
 }
     
