@@ -6,8 +6,14 @@
 namespace e2 {
     namespace BRepActions {
         void addEmptyBody(Document* doc, const nlohmann::json& payload);
+        void addAcornBody(Document* doc, const nlohmann::json& payload);
+        void addWireRectangle(Document* doc, const nlohmann::json& payload);
+        void addSheetRectangle(Document* doc, const nlohmann::json& payload);
 
-        inline static ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};           
+        inline static ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};
+        inline static ActionDef addAcornBodyDef = {"addAcornBody", addAcornBody};
+        inline static ActionDef addWireRectangleDef = {"addWireRectangle", addWireRectangle};
+        inline static ActionDef addSheetRectangleDef = {"addSheetRectangle", addSheetRectangle};    
     }
 };
 

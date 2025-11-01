@@ -45,16 +45,16 @@ namespace e2 {
             //std::cerr << "Dispatching action of type: " << action.type << " with payload: " << action.payload.dump() << std::endl;  //--- DEBUG ---
             auto it = m_actionFunctions.find(action.type);
             if (it == m_actionFunctions.end()) {
-                std::cerr << "Unknown action type: " << action.type << std::endl;
+                // std::cerr << "Unknown action type: " << action.type << std::endl;   <--- DEBUG ---
                 return ActionResult::UNKNOWN_ACTION;
             }
             auto actionFunction = it->second;
             actionFunction(this, action.payload);
         } catch (const json::exception& e) {
-            std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;
+            // std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  <--- DEBUG ---
             return ActionResult::INVALID_PAYLOAD;
         } catch (const std::exception& e) {
-            std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;
+            // std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  <--- DEBUG ---
             return ActionResult::INTERNAL_ERROR;
         }
         return ActionResult::SUCCESS;

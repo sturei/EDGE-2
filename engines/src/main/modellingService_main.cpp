@@ -29,6 +29,9 @@ int main(int argc, char* argv[]) {
 
     // Register action functions with the document
     document->registerActionFunction(e2::BRepActions::addEmptyBodyDef);
+    document->registerActionFunction(e2::BRepActions::addAcornBodyDef);
+    document->registerActionFunction(e2::BRepActions::addWireRectangleDef);
+    document->registerActionFunction(e2::BRepActions::addSheetRectangleDef);
 
     document->registerActionFunction(e2::GRepActions::pingDef);
     document->registerActionFunction(e2::GRepActions::addGPointDef);
@@ -37,9 +40,9 @@ int main(int argc, char* argv[]) {
     document->registerActionFunction(e2::GRepActions::addGSphereDef);
     document->registerActionFunction(e2::GRepActions::addGBlockDef);
 
-    // Run the DocumentService. This communicates with other processes via stdin and stdout.
+    // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
     DocumentService::run(document);
 
-    delete document;
     return 0;
 }
+    

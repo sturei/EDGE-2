@@ -25,6 +25,7 @@ namespace e2 {
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
                 Body* emptyBody = BRepFixtures::createEmptyBody();
                 brepModel->addBody(emptyBody);
+                std::cerr << "added Empty Body" << std::endl;      // ---LOGGING---
             });
         
         }
@@ -43,25 +44,53 @@ namespace e2 {
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
                 Body* acornBody = BRepFixtures::createAcornBody(acornPosition);
                 brepModel->addBody(acornBody);
+                std::cerr << "added Acorn Body" << std::endl;      // ---LOGGING--- 
             });
         }
 
         void addWireRectangle(Document* doc, const json& payload) {
             // This action adds a wire rectangle to the brep store.
+            json ll = payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}}));
+            json ur = payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}));
+            Vec3d lowerLeft = Vec3d(
+                ll.at("x").get<double>(),
+                ll.at("y").get<double>(),
+                ll.at("z").get<double>()
+            );
+            Vec3d upperRight = Vec3d(
+                ur.at("x").get<double>(),
+                ur.at("y").get<double>(),
+                ur.at("z").get<double>()
+            );
             Store* store = doc->storeAt("brep");
-            store->changeState([](Model* model) {
+            store->changeState([lowerLeft, upperRight](Model* model) {
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
-                Body* wireRectangleBody = BRepFixtures::createWireRectangle();
+                Body* wireRectangleBody = BRepFixtures::createWireRectangle(lowerLeft, upperRight);
                 brepModel->addBody(wireRectangleBody);
+                std::cerr << "added Wire Rectangle" << std::endl;      // ---LOGGING---
             });
-           }
+        }
+
         void addSheetRectangle(Document* doc, const json& payload) {
             // This action adds a sheet rectangle to the brep store.
+            json ll = payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}}));
+            json ur = payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}));
+            Vec3d lowerLeft = Vec3d(
+                ll.at("x").get<double>(),
+                ll.at("y").get<double>(),
+                ll.at("z").get<double>()
+            );
+            Vec3d upperRight = Vec3d(
+                ur.at("x").get<double>(),
+                ur.at("y").get<double>(),
+                ur.at("z").get<double>()
+            );
             Store* store = doc->storeAt("brep");
-            store->changeState([](Model* model) {
+            store->changeState([lowerLeft, upperRight](Model* model) {
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
-                Body* sheetRectangleBody = BRepFixtures::createSheetRectangle();
+                Body* sheetRectangleBody = BRepFixtures::createSheetRectangle(lowerLeft, upperRight);
                 brepModel->addBody(sheetRectangleBody);
+                std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
             });
            }
     }

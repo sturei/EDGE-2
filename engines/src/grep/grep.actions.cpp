@@ -23,8 +23,8 @@ namespace e2 {
                 GRepModel* grepModel = dynamic_cast<GRepModel*>(model);
                 GPoint* point = new GPoint(size);
                 grepModel->addGItem(point);
+                std::cerr << "added GPoint" << std::endl;      // ---LOGGING---
             });
-            std::cerr << "added GPoint" << std::endl;      // ---IGNORE---
         }
 
         void addGLine(Document* doc, const json& payload) {
@@ -34,8 +34,8 @@ namespace e2 {
                 GRepModel* grepModel = dynamic_cast<GRepModel*>(model);
                 GLine* line = new GLine(length);
                 grepModel->addGItem(line);
+                std::cerr << "added GLine" << std::endl;      // ---LOGGING---
             });
-            std::cerr << "added GLine" << std::endl;      // ---IGNORE---
         }
         
         void addGPlane(Document* doc, const json& payload) {
@@ -46,8 +46,8 @@ namespace e2 {
                 GRepModel* grepModel = dynamic_cast<GRepModel*>(model);
                 GPlane* plane = new GPlane(width, height);
                 grepModel->addGItem(plane);
+                std::cerr << "added GPlane" << std::endl;      // ---LOGGING---
             });
-            std::cerr << "added GPlane" << std::endl;      // ---IGNORE---
         }
 
         void addGSphere(Document* doc, const json& payload) {
@@ -57,8 +57,8 @@ namespace e2 {
                 GRepModel* grepModel = dynamic_cast<GRepModel*>(model);
                 GSphere* sphere = new GSphere(radius);
                 grepModel->addGItem(sphere);
+                std::cerr << "added GSphere" << std::endl;      // ---LOGGING---
             });
-            std::cerr << "added GSphere" << std::endl;      // ---IGNORE---
         }
 
         void addGBlock(Document* doc, const json& payload) {
@@ -70,8 +70,8 @@ namespace e2 {
                 GRepModel* grepModel = dynamic_cast<GRepModel*>(model);
                 GBlock* block = new GBlock(width, height, depth);
                 grepModel->addGItem(block);
+                std::cerr << "added GBlock" << std::endl;      // ---LOGGING---
             });
-            std::cerr << "added GBlock" << std::endl;      // ---IGNORE---
         }
     }
 };

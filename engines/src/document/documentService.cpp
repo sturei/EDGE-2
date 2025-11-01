@@ -7,6 +7,7 @@
 #include "document/documentService.h"
 
 using json = nlohmann::json;
+using ordered_json = nlohmann::ordered_json;
 
 /**
  * DocumentService enables interprocess communication with a live Document
@@ -24,12 +25,10 @@ namespace e2 {
             std::string reason;       // human-readable reason for failure
         };
 
-        void to_json(json& j, const ActionResponse& ar) {
-            j = json{
-                {"status", ar.status}, 
-                {"reason", ar.reason}
-            };
-        }
+        void to_json(ordered_json& j, const ActionResponse& ar) {
+            j["status"] = ar.status;
+            j["reason"] = ar.reason;
+        }   
 
         /** This method converts a JSON string to a json object representing an action.
          *  The format for an action is: {"type":<string>, "payload":<any valid JSON>}
@@ -39,13 +38,11 @@ namespace e2 {
             try
             {
                 json jsonAction = json::parse(line);
-                //std::cerr << "Parsed input to json: " << jsonAction.dump() << std::endl;    //--- DEBUG ---
                 action.type = jsonAction.at("type");
                 action.payload = jsonAction.at("payload");
             }
             catch (const json::exception& e)
             {
-                std::cerr << "Error parsing input: " << e.what() << std::endl;
                 response = {"ERROR", "Invalid JSON: " + std::string(e.what())};
                 return false;
             }
@@ -61,7 +58,6 @@ namespace e2 {
                 response = {"OK", ""};
             }
             else if (result == ActionResult::UNKNOWN_ACTION) {
-                std::cerr << "Unknown action type: " << action.type << std::endl;
                 response = {"ERROR", "Unknown action type: " + action.type};
                 return false;
             }
@@ -85,15 +81,15 @@ namespace e2 {
             // We always acknowledge the input on the output stream because clients may be blocking, awaiting a response.
 
             ActionSpec action;
-            ActionResponse response;
+            ActionResponse response = {"OK", ""};
 
             std::string line;
             if (!std::getline(input, line)) {
                 response = {"ERROR", "Invalid stream or EOF"};
             }
-            else if (line.empty()) {
-                // empty line is not an error, just acknowledge it
-                response = {"OK", "Empty line"};
+            else if (line.empty() || std::all_of(line.begin(), line.end(), ::isspace))  {
+                // blank line is not an error, we just acknowledge it
+                response = {"OK", "Blank line"};
             }
             else if (!parseAction(line, action, response)) {
                 // parseAction sets the response in case of error
@@ -107,8 +103,8 @@ namespace e2 {
             }
 
             // package up the response as JSON and stream it to the output stream
-            json jsonResponse = response;
-            output << jsonResponse;
+            ordered_json jsonResponse = response;
+            output << jsonResponse << std::endl;
         }   
 
         /** Similar to runOnce, but it first polls the input stream, and only reads from it if something is available.
