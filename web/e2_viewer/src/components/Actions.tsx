@@ -13,7 +13,8 @@ const actionSuggestions = [
     '{"type":"addGLine", "payload":{"length":4}}',
     '{"type":"addGPlane", "payload":{"width":3,"height":2}}',
     '{"type":"addGSphere", "payload":{"radius":0.75}}',
-    '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3}}'
+    '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3}}',
+    '{"type":"addSheetRectangle", "payload":{"width":5,"height":3}}'
   ];
   
   export function Actions() {
@@ -32,6 +33,7 @@ const actionSuggestions = [
         document.registerActionFunction(grepActions.addGBlockActionDef);
 
         document.registerActionFunction(brepActions.pingModellerActionDef);
+        document.registerActionFunction(brepActions.addSheetRectangleActionDef);
 
     }, []);
 

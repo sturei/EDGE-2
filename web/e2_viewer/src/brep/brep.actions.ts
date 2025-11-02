@@ -23,7 +23,25 @@ async function pingModeller(_doc: Document, _payload: any): Promise<void> {
 
 }
 
+async function addSheetRectangle(_doc: Document, payload: any): Promise<void> {
+
+    // create a rectangular sheet with specified width and height by pinging the modeller server.
+
+    const response = await fetch(modellingActions, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            type: "addSheetRectangle",
+            payload: payload
+        })
+    });
+    const data = await response.json();
+    console.log("Modeller response:", data);
+
+}
+
 export const pingModellerActionDef = { type: "pingModeller", function: pingModeller };
-
-
-
+export const addSheetRectangleActionDef = { type: "addSheetRectangle", function: addSheetRectangle };
