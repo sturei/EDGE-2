@@ -79,4 +79,16 @@ export class GBlock implements IGItem {
     toString(): string {
         return `GBlock(${this.m_width}, ${this.m_height}, ${this.m_depth})`;
     }
+
+}
+export class GShape implements IGItem {
+    type = 'gshape';
+    private m_points: Array<number> = [];
+    constructor(points: Array<number>) {
+        this.m_points = points;
+    }
+    points(): Array<number> { return this.m_points; }
+    toString(): string {
+        return `GShape(${this.m_points})`;
+    }
 }

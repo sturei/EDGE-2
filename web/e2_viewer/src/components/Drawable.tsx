@@ -44,7 +44,12 @@ export interface IPointGeometry {
     position: Float32Array;
 }
 
-export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry;
+export interface IShapeGeometry {
+    type: 'gshape';
+    points: number[];
+}
+
+export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IShapeGeometry;
 
 /** Drawable */
 export interface IDrawable {
@@ -58,8 +63,17 @@ export interface IDrawable {
 const red = 0xff0000;
 const green = 0x00ff00;
 const blue = 0x0000ff;
-const white = 0xffffff;
+const white = 0xffffff; 
 //const gray = 0x808080;  
+
+function Shape(points: number[]) {
+    const shape = new THREE.Shape();
+    shape.moveTo( points[0], points[1] );
+    for ( let i = 2; i < points.length; i += 2 ) {
+        shape.lineTo( points[i], points[i + 1] );
+    }
+    return shape;
+}
 
 /** Outputs the required react-three-fiber jsx for the specified drawable. Exported for testing */
 export function r3fFromDrawable(drawable: IDrawable) {
@@ -69,7 +83,7 @@ export function r3fFromDrawable(drawable: IDrawable) {
 
     // uses drei utilities where available - otherwise uses threejs
 
-    // TODO: use-memo to avoid recreating the underlying geometries unnecessarily (see drei docs)
+    // TODO: use-memo, use-ref etc to avoid recreating the underlying geometries unnecessarily (see drei docs)
 
     if (!geometry) {
         console.warn("r3fFromDrawable: no geometry specified in drawable:", drawable);
@@ -120,6 +134,14 @@ export function r3fFromDrawable(drawable: IDrawable) {
                 />
             </points>
         );
+    }
+    else if (geometry.type === 'gshape'){
+        return(
+            <mesh>
+                <shapeGeometry args={[Shape(geometry.points)]} />
+                <meshStandardMaterial color={appearance?.color??white} side={THREE.DoubleSide} />
+            </mesh> 
+        )
     }
 }
 

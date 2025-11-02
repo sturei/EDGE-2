@@ -1,7 +1,7 @@
 import { Document } from "../document/document";
 import { Model } from "../document/model";
 import { GRepModel } from "../grep/grepModel";
-import { GPoint, GLine, GPlane, GSphere, GBlock } from "./gitem";
+import { GPoint, GLine, GPlane, GSphere, GBlock, GShape } from "./gitem";
 
 function ping(_doc: Document, _payload: any): void {
     // This action just writes "pong" to stderr. Useful for testing that the pieces are connected.
@@ -67,6 +67,17 @@ function addGBlock(doc: Document, payload: any): void {
     });
 }
 
+function addGShape(doc: Document, payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        const points = payload.points ?? [];
+        let grepModel = model as GRepModel;
+        const shape = new GShape(points);
+        grepModel.addGItem(shape);
+    });
+    console.log("added GShape");      // ---IGNORE---
+}
+
 
 export const pingActionDef = { type: "ping", function: ping };
 export const addGPointActionDef = { type: "addGPoint", function: addGPoint };
@@ -74,6 +85,5 @@ export const addGLineActionDef = { type: "addGLine", function: addGLine };
 export const addGPlaneActionDef = { type: "addGPlane", function: addGPlane };
 export const addGSphereActionDef = { type: "addGSphere", function: addGSphere };
 export const addGBlockActionDef = { type: "addGBlock", function: addGBlock };
-
-
+export const addGShapeActionDef = { type: "addGShape", function: addGShape };
 

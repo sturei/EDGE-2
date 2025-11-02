@@ -14,6 +14,7 @@ const actionSuggestions = [
     '{"type":"addGPlane", "payload":{"width":3,"height":2}}',
     '{"type":"addGSphere", "payload":{"radius":0.75}}',
     '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3}}',
+    '{"type":"addGShape", "payload":{"points":[0,0,1,0,1,1,0,1,0,0]}}',
     '{"type":"addSheetRectangle", "payload":{"width":5,"height":3}}'
   ];
   
@@ -31,6 +32,7 @@ const actionSuggestions = [
         document.registerActionFunction(grepActions.addGPlaneActionDef);
         document.registerActionFunction(grepActions.addGSphereActionDef);
         document.registerActionFunction(grepActions.addGBlockActionDef);
+        document.registerActionFunction(grepActions.addGShapeActionDef);
 
         document.registerActionFunction(brepActions.pingModellerActionDef);
         document.registerActionFunction(brepActions.addSheetRectangleActionDef);

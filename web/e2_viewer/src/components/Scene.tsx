@@ -8,7 +8,7 @@ import { OrbitControls } from '@react-three/drei'
 import { GRepModel } from '../grep/grepModel';
 import { Store } from '../document/store' 
 import { Document } from '../document/document';
-import { GBlock, type IGItem, GSphere, GLine, GPoint, GPlane } from '../grep/gitem';
+import { GBlock, type IGItem, GSphere, GLine, GPoint, GPlane, GShape } from '../grep/gitem';
 import { Drawlist } from './Drawlist.tsx'
 import { DocumentContext } from '../Contexts.ts';
 import { type IDrawable } from "./Drawable";
@@ -71,7 +71,16 @@ export function drawableFromGItem(gItem: IGItem): IDrawable {
                 position: new Float32Array([0,0,0])  // point at origin
             }
         }
-    }                  
+    }        
+    else if (gItem.type === 'gshape') {
+        const gShape = gItem as GShape;
+        drawable = {
+            geometry: {
+                type: 'gshape',
+                points: gShape.points()
+            }
+        }
+    }          
     return drawable;
 }
 
