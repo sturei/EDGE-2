@@ -104,7 +104,7 @@ namespace e2 {
 
             // package up the response as JSON and stream it to the output stream
             ordered_json jsonResponse = response;
-            output << jsonResponse << std::endl;
+            output << jsonResponse << std::flush;
         }   
 
         /** Similar to runOnce, but it first polls the input stream, and only reads from it if something is available.

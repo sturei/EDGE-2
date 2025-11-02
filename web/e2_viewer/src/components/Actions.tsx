@@ -3,10 +3,12 @@
 import { DocumentContext } from "../Contexts"; 
 import { useContext, useEffect } from "react";
 import * as grepActions from '../grep/grep.actions.ts'  
+import * as brepActions from '../brep/brep.actions.ts'  
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
     '{"type": "ping", "payload": {} }',
+    '{"type": "pingModeller", "payload": {} }',
     '{"type":"addGPoint", "payload":{"size":0.2}}',
     '{"type":"addGLine", "payload":{"length":4}}',
     '{"type":"addGPlane", "payload":{"width":3,"height":2}}',
@@ -28,6 +30,8 @@ const actionSuggestions = [
         document.registerActionFunction(grepActions.addGPlaneActionDef);
         document.registerActionFunction(grepActions.addGSphereActionDef);
         document.registerActionFunction(grepActions.addGBlockActionDef);
+
+        document.registerActionFunction(brepActions.pingModellerActionDef);
 
     }, []);
 
