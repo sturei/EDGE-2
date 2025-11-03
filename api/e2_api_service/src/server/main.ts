@@ -9,29 +9,24 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/hello", (_, res) => {
-  res.send("Hello Vite + React + TypeScript!");
+    res.send("Hello Vite + React + TypeScript!");
 });
 
 /** Dispatches the specified action to the modelling service */
 app.post("/modelling/actions", async (req, res) => {
 
-  // TODO:error handling (e.g. return 400 for invalid input, 500 for internal errors, etc)
+    // TODO:error handling (e.g. return 400 for invalid input, 500 for internal errors, etc)
 
-  // send the request
-  const action = req.body;
-  const responseText = await dispatchAction(action);
+    // send the request
+    const action = req.body;
 
-  // process the response
-  let response = JSON.parse(responseText);
-  let clientActions = [];
-  for (const actionText of response.clientActions) {
-    clientActions.push(JSON.parse(actionText));
-  }
-  response.clientActions = clientActions;
+    // wait for the response
+    const response = await dispatchAction(action);
 
-  res.status(201).json({response:response});
+    // and return it
+    res.status(201).json({response:response});
 });
 
 ViteExpress.listen(app, 3000, () =>
-  console.log("Server is listening on port 3000..."),
+    console.log("Server is listening on port 3000..."),
 );

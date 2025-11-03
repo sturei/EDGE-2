@@ -7,35 +7,44 @@ import {ChildProcess, spawn} from 'child_process';
 // 4. handle errors
 
 const modellingServicePath = '../../engines/build/e2_modellingService';
-let modellingService = spawn(modellingServicePath);
 
+/* On initialisation, we spawn the modelling service as a child process. */
+const modellingService = spawn(modellingServicePath);
 console.log(`Spawned modelling service process ${modellingService.pid}`);
 
-// TODO make this take a string and return a string, for consistency with itself.
-// also make it process the client actions instead of main doing it.
-/** dispatches the specified action to the modelling service and waits for a response */
-export async function dispatchAction(action: { type: string; payload: any }) : Promise<string> {
+/** Dispatches the specified action to the modelling service and waits for a response. 
+ * The action argument and the return value are JSON objects */
+export async function dispatchAction(action: any) : Promise<any> {
 
-    console.log(`Dispatching action to modelling service: `, JSON.stringify(action));
-
-    // Send an action to the modelling service
-    modellingService.stdin.write(JSON.stringify(action) + '\n');
+    // Send the action to the modelling service as a JSON string.
+    const actionText = JSON.stringify(action);
+    console.log(`Dispatching action to modelling service: `, actionText);      //--- DEBUG ---
+    modellingService.stdin.write(actionText + '\n');
 
     // Wait for the response from the modelling service
-    const response = new Promise<string>((resolve, reject) => {
+    const responsePromise = new Promise<string>((resolve, reject) => {
         modellingService.stdout.on('data', (data) => {
             resolve(data.toString());
         });
     });
-    const data = await response;
+    const responseText = await responsePromise;
+    console.log(`Response from modelling service: ${responseText}`);                   //--- DEBUG ---
 
-    // Return it
-    console.log(`Response from modelling service: ${data}`);
+    // process the response. It consist of a JSON string, which we unpack into a JSON object.
+    let response = JSON.parse(responseText);
 
-    return data;
+    // client actions are JSON strings embedded into the response object. 
+    // We unpack them too, so that whole returned value is a regular JSON object.
+    let clientActions = [];
+    for (const actionText of response.clientActions) {
+        clientActions.push(JSON.parse(actionText));
+    }
+    response.clientActions = clientActions;
+
+    return response;
 }
 
-export { modellingService };
+export { modellingService };     // export the spawned process for testing purposes
 
 
 
