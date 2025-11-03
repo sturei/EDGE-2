@@ -8,7 +8,7 @@ import * as brepActions from '../brep/brep.actions.ts'
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
     '{"type":"ping", "payload": {} }',
-    '{"type":"addGPoint", "payload":{"size":0.2}}',
+    '{"type":"addGPoint", "payload":{"size":5, "position":[1,1,1], "color":16711680}}',
     '{"type":"addGLine", "payload":{"length":4}}',
     '{"type":"addGPlane", "payload":{"width":3,"height":2}}',
     '{"type":"addGSphere", "payload":{"radius":0.75}}',

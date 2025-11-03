@@ -1,8 +1,7 @@
 import { Document } from "../document/document";
 import { Model } from "../document/model";
 import { GRepModel } from "../grep/grepModel";
-//import { GPoint, GLine, GPlane, GSphere, GBlock, GShape } from "./gitem";
-import type { IDrawable } from "../grep/drawable";
+import { Color, type IDrawable } from "../grep/drawable";
 
 function ping(_doc: Document, _payload: any): void {
     // This action just writes "pong" to stderr. Useful for testing that the pieces are connected.
@@ -12,17 +11,22 @@ function ping(_doc: Document, _payload: any): void {
 function addGPoint(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
-        let grepModel = model as GRepModel; 
-        const size = payload.size ?? 1.0;    // size of the point
-        console.log(`Adding GPoint of size: ${size}`);
-        // TODO: enable position to be specified in payload. Also inherit size from payload.
+        let sceneModel = model as GRepModel; 
+        const size = payload.size ?? 1.0;    // size of the point in pixels
+        const position = payload.position ?? [0, 0, 0];  // position of the point
+        const color = payload.color ?? Color.Red;
         const drawable: IDrawable = {
             geometry: {
                 type: 'point',
-                position: new Float32Array([0, 0, 0])
+                position: position
+            },
+            appearance: {
+                type: 'point',
+                color: color,
+                size: size
             }
         };
-        grepModel.addDrawable(drawable);
+        sceneModel.addDrawable(drawable);
     });
     console.log("added GPoint");      // ---IGNORE---
 }

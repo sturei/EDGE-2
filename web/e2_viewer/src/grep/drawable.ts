@@ -1,12 +1,27 @@
 
 
 /** Appearances */
+
+export const Color = {
+    Red: 0xff0000,              // 16711680 in decimal
+    Green: 0x00ff00,            // 65280 in decimal
+    Blue: 0x0000ff,             // 255 in decimal
+    White: 0xffffff,            // 16777215 in decimal
+    Gray: 0x808080              // 8421504 in decimal
+};
+
 export interface IStandardAppearance {
     type: 'standard';
     color: number;
 }
 
-export type IAnyAppearance = IStandardAppearance;           // other types to be added later, like IPhongAppearance etc.
+export interface IPointAppearance {
+    type: 'point';
+    color?: number;
+    size?: number;
+}
+
+export type IAnyAppearance = IStandardAppearance | IPointAppearance;           // other types to be added later, like IPhongAppearance etc.
 
 /** Geometries */
 export interface IBoxGeometry {
@@ -34,7 +49,7 @@ export interface ILineGeometry {
 
 export interface IPointGeometry {
     type: 'point';
-    position: Float32Array;
+    position: [number, number, number];
 }
 
 export interface IShapeGeometry {
@@ -47,7 +62,7 @@ export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILi
 /** Drawable */
 export interface IDrawable {
     geometry?: IAnyGeometry;
-    appearance?: IStandardAppearance;
+    appearance?: IAnyAppearance;
  //   matrix?: number[];
 }   
 

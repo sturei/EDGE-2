@@ -4,17 +4,11 @@
 // Also it does not reuse geometries between different drawables with the same geometry.
 // To avoid this it's probably possible to create a geometry cache keyed on name or id. Perhaps provide it as a Context.
 
-import type { IDrawable } from '../grep/drawable';
+import  { type IDrawable, Color } from '../grep/drawable';
 import {Box, Line, Sphere, Plane} from '@react-three/drei'  
 import * as THREE from 'three';
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-
-const red = 0xff0000;
-const green = 0x00ff00;
-const blue = 0x0000ff;
-const white = 0xffffff; 
-//const gray = 0x808080;  
 
 function Shape(points: number[]) {
     const shape = new THREE.Shape();
@@ -41,14 +35,14 @@ export function r3fFromDrawable(drawable: IDrawable) {
     else if (geometry.type === 'box') {
         return (
             <Box args={[geometry.width, geometry.height, geometry.depth]}>
-                <meshStandardMaterial color={appearance?.color??red} />
+                <meshStandardMaterial color={appearance?.color??Color.Red} />
             </Box>
         );
     }
     else if (geometry.type === 'plane') {
         return (
             <Plane args={[geometry.width, geometry.height]}>
-                <meshStandardMaterial color={appearance?.color??blue} side={THREE.DoubleSide} />
+                <meshStandardMaterial color={appearance?.color??Color.Blue} side={THREE.DoubleSide} />
             </Plane>
         );
     }
@@ -56,7 +50,7 @@ export function r3fFromDrawable(drawable: IDrawable) {
         console.log("Creating sphere with radius:", geometry.radius);
         return (
             <Sphere args={[geometry.radius, 32, 32]}>
-                <meshStandardMaterial color={appearance?.color??green} />
+                <meshStandardMaterial color={appearance?.color??Color.Green} />
             </Sphere>
         );
     }
@@ -64,23 +58,33 @@ export function r3fFromDrawable(drawable: IDrawable) {
         return (
             <Line
                 points={geometry.points}
-                color={appearance?.color??blue}
+                color={appearance?.color??Color.Blue}
             />
         );
     }
     else if (geometry.type === 'point') {
+        console.log("Creating point at position:", geometry.position);
+        const positions = new Float32Array(geometry.position);
+        let size = 4;
+        let color = Color.Red;
+        if (appearance !== undefined && appearance.type === 'point') {
+            console.log("    with appearance:", appearance);
+            size = appearance.size ?? 4;
+            color = appearance.color ?? Color.Red;
+        }
+
         return (
             <points> 
                 <bufferGeometry>
                     <bufferAttribute
                         attach={'attributes-position'}
-                        args={[geometry.position, 3]} 
+                        args={[positions, 3]} 
                     />
                 </bufferGeometry>
                 <pointsMaterial
-                    size={4}
+                    size={size}
                     sizeAttenuation={false}
-                    color={appearance?.color??red}
+                    color={color}
                 />
             </points>
         );
@@ -89,7 +93,7 @@ export function r3fFromDrawable(drawable: IDrawable) {
         return(
             <mesh>
                 <shapeGeometry args={[Shape(geometry.points)]} />
-                <meshStandardMaterial color={appearance?.color??white} side={THREE.DoubleSide} />
+                <meshStandardMaterial color={appearance?.color??Color.White} side={THREE.DoubleSide} />
             </mesh> 
         )
     }

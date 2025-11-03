@@ -7,13 +7,13 @@ test ('GRepModel', () => {
     const firstItem:IDrawable = {
         geometry: {
             type: 'point',
-            position: new Float32Array([1,2,3])
+            position: [1,2,3]
         }
     };
     const secondItem:IDrawable = {
         geometry: {
             type: 'point',
-            position: new Float32Array([4,5,6])
+            position: [4,5,6]
         }
     };
 

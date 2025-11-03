@@ -1,16 +1,20 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Drawlist } from './Drawlist';
-import type { IDrawable } from './Drawable';
+import type { IDrawable } from '../grep/drawable';
 import "@testing-library/jest-dom";
 
 /**
  * @vitest-environment jsdom
  */
 
+interface IMockDrawable extends IDrawable {
+    id?: string;
+}
+
 // Mock the Drawable component
 vi.mock('./Drawable', () => ({
-    Drawable: ({ drawable }: { drawable: IDrawable }) => (
+    Drawable: ({ drawable }: { drawable: IMockDrawable }) => (
         <div data-testid="drawable-item">{drawable.id || 'drawable'}</div>
     )
 }));
@@ -22,7 +26,7 @@ describe('Drawlist', () => {
     });
 
     it('renders single drawable item', () => {
-        const mockDrawable: IDrawable = { id: 'test-1' };
+        const mockDrawable: IMockDrawable = { id: 'test-1' };
         render(<Drawlist drawlist={[mockDrawable]} />);
         
         expect(screen.getByTestId('drawable-item')).toBeInTheDocument();
@@ -30,7 +34,7 @@ describe('Drawlist', () => {
     });
 
     it('renders multiple drawable items', () => {
-        const mockDrawables: IDrawable[] = [
+        const mockDrawables: IMockDrawable[] = [
             { id: 'test-1' },
             { id: 'test-2' },
             { id: 'test-3' }
@@ -45,7 +49,7 @@ describe('Drawlist', () => {
     });
 
     it('passes correct drawable prop to each Drawable component', () => {
-        const mockDrawables: IDrawable[] = [
+        const mockDrawables: IMockDrawable[] = [
             { id: 'item-1' },
             { id: 'item-2' }
         ];

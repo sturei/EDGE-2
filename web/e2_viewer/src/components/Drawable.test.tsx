@@ -103,9 +103,9 @@ describe('r3fFromDrawable', () => {
         const drawable: IDrawable = {
             geometry: { 
                 type: 'point', 
-                position: new Float32Array([5, 2, 4]) 
+                position: [5, 2, 4] 
             },
-            appearance: { type: 'standard', color: 0x00ff00 }
+            appearance: { type: 'point', color: 0x00ff00 }
         };
         const result = r3fFromDrawable(drawable);
         expect(result).toBeDefined();
