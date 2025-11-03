@@ -20,10 +20,13 @@ function App() {
   return (
     <>
     <DocumentContext value={document}>
+      <div className="header bg-blue-300 p-2">
+        <div><Actions /></div>
+      </div>
       <div className="flex flex-row">
         <div className="left-sidebar flex-none bg-blue-100">
           <div className="grid grid-cols-1 grid-rows-2">
-            <div><Actions /></div>
+            <div></div>
             <div><Acknowledgements /></div>
           </div>
         </div>
