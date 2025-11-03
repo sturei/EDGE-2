@@ -7,14 +7,14 @@ import * as brepActions from '../brep/brep.actions.ts'
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
-    '{"type": "ping", "payload": {} }',
-    '{"type": "pingModeller", "payload": {} }',
+    '{"type":"ping", "payload": {} }',
     '{"type":"addGPoint", "payload":{"size":0.2}}',
     '{"type":"addGLine", "payload":{"length":4}}',
     '{"type":"addGPlane", "payload":{"width":3,"height":2}}',
     '{"type":"addGSphere", "payload":{"radius":0.75}}',
     '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3}}',
     '{"type":"addGShape", "payload":{"points":[0,0,1,0,1,1,0,1,0,0]}}',
+    '{"type":"pingModeller", "payload": {} }',
     '{"type":"addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
   ];
   
