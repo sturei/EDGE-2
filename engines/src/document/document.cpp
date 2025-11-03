@@ -60,6 +60,18 @@ namespace e2 {
         return ActionResult::SUCCESS;
     }
 
+    void Document::dispatchClientAction(const ActionSpec& action) {
+        m_clientActions.push_back(action);
+    }
+
+    const std::vector<ActionSpec>& Document::getClientActions() const {
+        return m_clientActions;
+    }
+
+    void Document::clearClientActions() {
+        m_clientActions.clear();
+    }
+
     std::ostream& operator<<(std::ostream& os, const Document& doc) {
         os << "Document with " << doc.m_stores.size() << " stores." << std::endl;
         for (const auto& pair : doc.m_stores) {

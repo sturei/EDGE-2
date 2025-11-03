@@ -1,4 +1,4 @@
-import { Document } from "../document/document";
+import { Document, type ActionSpec } from "../document/document";
 
 const apiServer = 'http://localhost:3000';
 const modellingActions = apiServer + '/modelling/actions';
@@ -23,9 +23,9 @@ async function pingModeller(_doc: Document, _payload: any): Promise<void> {
 
 }
 
-async function addSheetRectangle(_doc: Document, payload: any): Promise<void> {
+async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
 
-    // create a rectangular sheet with specified width and height by pinging the modeller server.
+    // create a rectangular sheet with specified lowerLeft and upperRight corners
 
     const response = await fetch(modellingActions, {
         method: 'POST',
@@ -40,7 +40,10 @@ async function addSheetRectangle(_doc: Document, payload: any): Promise<void> {
     });
     const data = await response.json();
     console.log("Modeller response:", data);
-
+    const clientActions: ActionSpec[]= data.response.clientActions as ActionSpec[];
+    for (const action of clientActions) {
+        doc.dispatchAction(action);
+    }
 }
 
 export const pingModellerActionDef = { type: "pingModeller", function: pingModeller };

@@ -3,6 +3,7 @@
 #include <string>
 #include <functional>
 #include <iostream>
+#include <sstream>
 #include <nlohmann/json.hpp>
 
 #include "document/store.h"
@@ -39,10 +40,14 @@ namespace e2 {
             virtual Store* storeAt(const std::string& key) const;     // it's virtual to make it easy to mock out in tests   
             void registerActionFunction(const ActionDef& action);
             ActionResult dispatchAction(const ActionSpec& action);
+            void dispatchClientAction(const ActionSpec& action);
+            const std::vector<ActionSpec>& getClientActions() const;
+            void clearClientActions();
             friend std::ostream& operator<<(std::ostream& os, const Document& doc);
 
         private:
-            std::map<std::string, Store*> m_stores; // Document takes ownership of the stores
-            std::map<std::string, std::function<void(Document*, const json&)>> m_actionFunctions;
+            std::map<std::string, Store*> m_stores;                                                     // stores owned by this Document
+            std::map<std::string, std::function<void(Document*, const json&)>> m_actionFunctions;       // action functions registered with this Document
+            std::vector<ActionSpec> m_clientActions;                                                    // client actions are buffered here
     };
 }

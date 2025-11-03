@@ -11,10 +11,12 @@ let modellingService = spawn(modellingServicePath);
 
 console.log(`Spawned modelling service process ${modellingService.pid}`);
 
+// TODO make this take a string and return a string, for consistency with itself.
+// also make it process the client actions instead of main doing it.
 /** dispatches the specified action to the modelling service and waits for a response */
 export async function dispatchAction(action: { type: string; payload: any }) : Promise<string> {
 
-    console.log(`Dispatching modelling action: ${action.type}`);
+    console.log(`Dispatching action to modelling service: `, JSON.stringify(action));
 
     // Send an action to the modelling service
     modellingService.stdin.write(JSON.stringify(action) + '\n');
@@ -28,7 +30,7 @@ export async function dispatchAction(action: { type: string; payload: any }) : P
     const data = await response;
 
     // Return it
-    console.log(`Returning response: ${data}`);
+    console.log(`Response from modelling service: ${data}`);
 
     return data;
 }

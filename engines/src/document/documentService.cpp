@@ -21,13 +21,15 @@ namespace e2 {
         // The response sent to the output is a JSON string representing this structure, i.e. a string like: {"status":<string>, "reason":<string>}
         struct ActionResponse
         {
-            std::string status;       // "OK" or "ERROR"
-            std::string reason;       // human-readable reason for failure
+            std::string status = "OK";                              // "OK" or "ERROR"
+            std::string reason = "";                                // human-readable reason for failure, or empty string
+            ordered_json clientActions = ordered_json::array();           // a JSON array of actions to be performed by the client, or empty array
         };
 
         void to_json(ordered_json& j, const ActionResponse& ar) {
             j["status"] = ar.status;
             j["reason"] = ar.reason;
+            j["clientActions"] = ar.clientActions;
         }   
 
         /** This method converts a JSON string to a json object representing an action.
@@ -55,7 +57,19 @@ namespace e2 {
         bool dispatchAction(Document* document, const ActionSpec& action, ActionResponse& response) {
             ActionResult result = document->dispatchAction(action);
             if (result == ActionResult::SUCCESS) {
-                response = {"OK", ""};
+
+                // collect any pending client actions and return them in the response.
+                // Implementation note: in future, we might want to stream client actions directly to the client through a websocket or similar, instead of buffering them up
+                // and retrieving them here and bundling them into the response.
+                ordered_json clientActionsArray = ordered_json::array();
+                for (const auto& clientAction : document->getClientActions()) {
+                    ordered_json clientActionJson;
+                    clientActionJson["type"] = clientAction.type;
+                    clientActionJson["payload"] = clientAction.payload;
+                    clientActionsArray.push_back(clientActionJson.dump());
+                }
+                response = {"OK", "", clientActionsArray};
+                document->clearClientActions();
             }
             else if (result == ActionResult::UNKNOWN_ACTION) {
                 response = {"ERROR", "Unknown action type: " + action.type};
@@ -92,19 +106,18 @@ namespace e2 {
                 response = {"OK", "Blank line"};
             }
             else if (!parseAction(line, action, response)) {
-                // parseAction sets the response in case of error
+                // Bad input. parseAction sets the response
             }
             else if (!dispatchAction(document, action, response)) {
-                // dispatchAction sets the response in case of error
+                // Bad input or internal error. dispatchAction sets the response.
             }
             else {
-                // success
-                response = {"OK", ""};
+                // Success! dispatchAction sets the response
             }
 
             // package up the response as JSON and stream it to the output stream
             ordered_json jsonResponse = response;
-            output << jsonResponse << std::flush;
+            output << jsonResponse << std::endl;
         }   
 
         /** Similar to runOnce, but it first polls the input stream, and only reads from it if something is available.

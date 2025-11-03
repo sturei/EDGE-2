@@ -78,19 +78,35 @@ namespace e2 {
             Vec3d lowerLeft = Vec3d(
                 ll.at("x").get<double>(),
                 ll.at("y").get<double>(),
-                ll.at("z").get<double>()
+                0
             );
             Vec3d upperRight = Vec3d(
                 ur.at("x").get<double>(),
                 ur.at("y").get<double>(),
-                ur.at("z").get<double>()
+                0
             );
             Store* store = doc->storeAt("brep");
-            store->changeState([lowerLeft, upperRight](Model* model) {
+            store->changeState([lowerLeft, upperRight, doc](Model* model) {
+
+                // update the BRepModel
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
                 Body* sheetRectangleBody = BRepFixtures::createSheetRectangle(lowerLeft, upperRight);
                 brepModel->addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the Scene model in the client      
+                Vec3d lowerRight(upperRight.x(), lowerLeft.y(), lowerLeft.z());
+                Vec3d upperLeft(lowerLeft.x(), upperRight.y(), upperRight.z());          
+                json points = json::array({
+                    lowerLeft.x(), lowerLeft.y(),
+                    lowerRight.x(), lowerRight.y(),
+                    upperRight.x(), upperRight.y(),
+                    upperLeft.x(), upperLeft.y(),
+                    lowerLeft.x(), lowerLeft.y()
+                });
+                json clientPayload = json::object({{"points", points}});
+                doc->dispatchClientAction({"addGShape", clientPayload});
+
             });
            }
     }

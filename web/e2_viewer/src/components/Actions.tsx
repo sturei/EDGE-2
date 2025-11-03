@@ -15,7 +15,7 @@ const actionSuggestions = [
     '{"type":"addGSphere", "payload":{"radius":0.75}}',
     '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3}}',
     '{"type":"addGShape", "payload":{"points":[0,0,1,0,1,1,0,1,0,0]}}',
-    '{"type":"addSheetRectangle", "payload":{"width":5,"height":3}}'
+    '{"type":"addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
   ];
   
   export function Actions() {
