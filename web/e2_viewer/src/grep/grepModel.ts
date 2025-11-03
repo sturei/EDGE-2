@@ -5,44 +5,44 @@
  */
 
 
-import {Model} from '../document/model';
-import {type IGItem} from './gitem';
+import { Model } from '../document/model';
+import {type IDrawable} from '../grep/drawable';
 
 export class GRepModel extends Model {
-    private m_drawList: IGItem[] = [];
+    private m_drawList: IDrawable[] = [];
 
     constructor() {
         super();
     }
 
-    numGItems(): number {
+    numDrawables(): number {
         return this.m_drawList.length;
     }
 
-    gItem(index: number): IGItem {
+    drawable(index: number): IDrawable {
         const item = this.m_drawList[index];
         if (!item) {
-            throw new Error(`GRepModel.gItem: no GItem at index ${index}`);
+            throw new Error(`GRepModel.drawable: no drawable at index ${index}`);
         }
         return item;
     }
 
-    drawlist(): ReadonlyArray<IGItem> {
+    drawlist(): IDrawable[] {
         return this.m_drawList;
     }
 
-    addGItem(item: IGItem): number {
+    addDrawable(item: IDrawable): number {
         const index = this.m_drawList.push(item) - 1;
-        console.log(`GRepModel.addGItem: item=${item}, index=${index}`);
+        console.log(`GRepModel.addDrawable: item=${item}, index=${index}`);
         return index;
     }
 
-    removeGItem(index: number): void {
+    removeDrawable(index: number): void {
         this.m_drawList.splice(index, 1);
     }
 
     toString(): string {
-        return `GrepModel(numGItems=${this.numGItems()})`;
+        return `GrepModel(numDrawables=${this.numDrawables()})`;
     }
 }
 

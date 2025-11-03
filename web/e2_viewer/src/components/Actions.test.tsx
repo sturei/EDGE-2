@@ -3,6 +3,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Actions } from './Actions';
 import { DocumentContext } from '../Contexts';
 import * as grepActions from '../grep/grep.actions.ts';
+import * as brepActions from '../brep/brep.actions.ts';
+
+/**
+ * @vitest-environment jsdom
+ */
 
 // Mock the grep actions module
 vi.mock('../grep/grep.actions.ts', () => ({
@@ -11,7 +16,15 @@ vi.mock('../grep/grep.actions.ts', () => ({
     addGLineActionDef: { type: 'addGLine' },
     addGPlaneActionDef: { type: 'addGPlane' },
     addGSphereActionDef: { type: 'addGSphere' },
-    addGBlockActionDef: { type: 'addGBlock' }
+    addGBlockActionDef: { type: 'addGBlock' },
+    addGShapeActionDef: { type: 'addGShape' },
+    addPingModellerActionDef: { type: 'pingModeller' }
+}));
+
+// Mock the brep actions module
+vi.mock('../brep/brep.actions.ts', () => ({
+    pingModellerActionDef: { type: 'pingModeller' },
+    addSheetRectangleActionDef: { type: 'addSheetRectangle' }
 }));
 
 describe('Actions', () => {
@@ -46,13 +59,17 @@ describe('Actions', () => {
     it('registers all action functions on mount', () => {
         renderActions();
         
-        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(6);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(9);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.pingActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGPointActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGLineActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGPlaneActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGSphereActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGBlockActionDef);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGShapeActionDef);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.pingModellerActionDef);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.addSheetRectangleActionDef);
+
     });
 
     it('dispatches valid JSON action when form is submitted', () => {

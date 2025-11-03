@@ -4,59 +4,9 @@
 // Also it does not reuse geometries between different drawables with the same geometry.
 // To avoid this it's probably possible to create a geometry cache keyed on name or id. Perhaps provide it as a Context.
 
+import type { IDrawable } from '../grep/drawable';
 import {Box, Line, Sphere, Plane} from '@react-three/drei'  
 import * as THREE from 'three';
-
-/** Appearances */
-export interface IStandardAppearance {
-    type: 'standard';
-    color: number;
-}
-
-export type IAnyAppearance = IStandardAppearance;           // other types to be added later, like IPhongAppearance etc.
-
-/** Geometries */
-export interface IBoxGeometry {
-    type: 'box';
-    width: number;
-    height: number;
-    depth: number;
-}
-
-export interface IPlaneGeometry {
-    type: 'plane';
-    width: number;
-    height: number;
-}
-
-export interface ISphereGeometry {
-    type: 'sphere'; 
-    radius: number;
-}
-
-export interface ILineGeometry {
-    type: 'line';
-    points: Array<[number, number, number]>;
-}
-
-export interface IPointGeometry {
-    type: 'point';
-    position: Float32Array;
-}
-
-export interface IShapeGeometry {
-    type: 'gshape';
-    points: number[];
-}
-
-export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IShapeGeometry;
-
-/** Drawable */
-export interface IDrawable {
-    geometry?: IAnyGeometry;
-    appearance?: IStandardAppearance;
- //   matrix?: number[];
-}   
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
@@ -135,7 +85,7 @@ export function r3fFromDrawable(drawable: IDrawable) {
             </points>
         );
     }
-    else if (geometry.type === 'gshape'){
+    else if (geometry.type === 'shape'){
         return(
             <mesh>
                 <shapeGeometry args={[Shape(geometry.points)]} />

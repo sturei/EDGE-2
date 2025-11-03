@@ -7,106 +7,14 @@ import { useContext, useEffect, useState } from "react";
 import { OrbitControls } from '@react-three/drei'
 import { GRepModel } from '../grep/grepModel';
 import { Store } from '../document/store' 
-import { Document } from '../document/document';
-import { GBlock, type IGItem, GSphere, GLine, GPoint, GPlane, GShape } from '../grep/gitem';
 import { Drawlist } from './Drawlist.tsx'
 import { DocumentContext } from '../Contexts.ts';
-import { type IDrawable } from "./Drawable";
-
-const emptyDrawlist:ISceneReactState = {drawlist: new Array<IDrawable>()};
+import { type IDrawable } from "../grep/drawable";
 
 interface ISceneReactState {
     drawlist: IDrawable[]
 }
-
-// Converts a GItem to a Drawable. Exported for testing purposes
-export function drawableFromGItem(gItem: IGItem): IDrawable {
-
-    let drawable: IDrawable = {};
-
-    if (gItem.type === 'gblock') {
-        const gBlock = gItem as GBlock;
-        drawable = {
-            geometry: {
-                type: 'box',
-                width: gBlock.width(),
-                height: gBlock.height(),
-                depth: gBlock.depth()
-            }
-        }
-    }
-    else if (gItem.type === 'gplane') {
-        const gPlane = gItem as GPlane;
-        drawable = {
-            geometry: {
-                type: 'plane',
-                width: gPlane.width(),
-                height: gPlane.height()
-            }
-        }
-    }
-    else if (gItem.type === 'gsphere') {
-        const gSphere = gItem as GSphere;
-        drawable = {
-            geometry: {
-                type: 'sphere',
-                radius: gSphere.radius()
-            }
-        }
-    }
-    else if (gItem.type === 'gline') {
-        const gLine = gItem as GLine;
-        drawable = {
-            geometry: {
-                type: 'line',
-                points: [[-gLine.length()/2, 0, 0], [gLine.length()/2, 0, 0]],  // line along x axis centered at origin
-            }
-        }
-    }
-    else if (gItem.type === 'gpoint') {
-        //const gPoint = gItem as GPoint;
-        drawable = {
-            geometry: {
-                type: 'point',
-                position: new Float32Array([0,0,0])  // point at origin
-            }
-        }
-    }        
-    else if (gItem.type === 'gshape') {
-        const gShape = gItem as GShape;
-        drawable = {
-            geometry: {
-                type: 'gshape',
-                points: gShape.points()
-            }
-        }
-    }          
-    return drawable;
-}
-
-/** this function reconciles the grepModel with the React model whenever the document (or more specifically the scene store within it) changes.
- * The GRep model is independent of any particular graphics library. The React model is specific to react-three-fiber.
- * At present, the GRep model is very simple - just primitive shapes - and so the mapping is trivial. In future, more complex shapes and properties
- * will be added to the GRep model. A single complex GItem could map to several drawables, probably in a group.
- */
-function updateReactStateFromDocument(oldState: ISceneReactState, document: Document) : ISceneReactState {
-    const sceneStore = document.getStore('scene');
-    const grepModel = sceneStore.getModel() as GRepModel;
-    const newState:ISceneReactState = { ...oldState };
-
-    // For now, we just clear and rebuild the React drawlist from scratch. 
-    // In future, we could optimize by updating only what changed since the last update.
-    newState.drawlist = new Array<IDrawable>();
-
-    for (const gItem of grepModel.drawlist()) {
-        console.log(`GItem:`, gItem);
-        const drawable: IDrawable = drawableFromGItem(gItem);
-        newState.drawlist.push(drawable);
-    }
-
-    console.log("React state updated from document changes, new state:", newState);
-    return newState;
-}
+const emptyDrawlist:ISceneReactState = {drawlist: new Array<IDrawable>()};
 
 export function Scene(){
     const document = useContext(DocumentContext);
@@ -115,19 +23,22 @@ export function Scene(){
     /** Sets up the Scene Model and Store */
     useEffect(() => {
         console.log(" Setting up the Scene's Model and Store");
-        const grepModel = new GRepModel();
-        const sceneStore = new Store(grepModel, postStateChangeCallback);
+        const sceneModel = new GRepModel();
+        const sceneStore = new Store(sceneModel, postStateChangeCallback);
         document.addStore('scene', sceneStore);
     }, []);
 
     /** Updates the React state whenever the Scene model changes */
     function postStateChangeCallback() {
-        console.log("Scene model state changed. Updating Scene React state.");
-        let newReactState = updateReactStateFromDocument(reactState, document);
-        setReactState(newReactState);
+        console.log("Scene model state changed. Updating react state.");
+        const sceneStore = document.getStore('scene');
+        const sceneModel = sceneStore.getModel() as GRepModel;
+        const newState:ISceneReactState = { ...reactState };
+        newState.drawlist = sceneModel.drawlist().slice();
+        console.log(" New state:", newState);
+        setReactState(newState);
     }
 
-    /** returns the jsx that puts the drawlist into the scene */
     return (
         <>
         <ambientLight color={0x505050} />

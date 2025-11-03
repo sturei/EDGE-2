@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { r3fFromDrawable, type IDrawable } from './Drawable';
+import { r3fFromDrawable } from './Drawable';
+import type { IDrawable } from '../grep/drawable';
 import "@testing-library/jest-dom";
 import { prettyDOM, render } from '@testing-library/react';
 import ResizeObserver from 'resize-observer-polyfill'

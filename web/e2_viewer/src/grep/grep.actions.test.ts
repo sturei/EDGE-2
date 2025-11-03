@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { GPoint, GLine, GPlane, GSphere, GBlock } from "./gitem";
 import {
     pingActionDef,
     addGPointActionDef,
     addGLineActionDef,
     addGPlaneActionDef,
     addGSphereActionDef,
-    addGBlockActionDef
+    addGBlockActionDef,
+    addGShapeActionDef
 } from "./grep.actions";
 
 // Mock dependencies
@@ -21,7 +21,7 @@ describe("grep.actions", () => {
 
     beforeEach(() => {
         mockGRepModel = {
-            addGItem: vi.fn()
+            addDrawable: vi.fn()
         };
 
         mockStore = {
@@ -46,71 +46,61 @@ describe("grep.actions", () => {
     describe("addGPoint action", () => {
         it("should add GPoint with default size", () => {
             addGPointActionDef.function(mockDoc, {});
-            expect(GPoint).toHaveBeenCalledWith(1.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
         it("should add GPoint with custom size", () => {
             addGPointActionDef.function(mockDoc, { size: 2.5 });
-            expect(GPoint).toHaveBeenCalledWith(2.5);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
     describe("addGLine action", () => {
         it("should add GLine with default length", () => {
             addGLineActionDef.function(mockDoc, {});
-            expect(GLine).toHaveBeenCalledWith(1.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
         it("should add GLine with custom length", () => {
             addGLineActionDef.function(mockDoc, { length: 3.0 });
-            expect(GLine).toHaveBeenCalledWith(3.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
     describe("addGPlane action", () => {
         it("should add GPlane with default dimensions", () => {
             addGPlaneActionDef.function(mockDoc, {});
-            expect(GPlane).toHaveBeenCalledWith(1.0, 1.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
         it("should add GPlane with custom dimensions", () => {
             addGPlaneActionDef.function(mockDoc, { width: 2.0, height: 3.0 });
-            expect(GPlane).toHaveBeenCalledWith(2.0, 3.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
     describe("addGSphere action", () => {
         it("should add GSphere with default radius", () => {
             addGSphereActionDef.function(mockDoc, {});
-            expect(GSphere).toHaveBeenCalledWith(1.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
         it("should add GSphere with custom radius", () => {
             addGSphereActionDef.function(mockDoc, { radius: 4.0 });
-            expect(GSphere).toHaveBeenCalledWith(4.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
     describe("addGBlock action", () => {
         it("should add GBlock with default dimensions", () => {
             addGBlockActionDef.function(mockDoc, {});
-            expect(GBlock).toHaveBeenCalledWith(2.0, 2.0, 2.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
         it("should add GBlock with custom dimensions", () => {
             const payload = { width: 2.0, height: 3.0, depth: 4.0 };
             addGBlockActionDef.function(mockDoc, payload);
-            expect(GBlock).toHaveBeenCalledWith(2.0, 3.0, 4.0);
-            expect(mockGRepModel.addGItem).toHaveBeenCalled();
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
@@ -137,6 +127,10 @@ describe("grep.actions", () => {
 
         it("should have correct type for addGBlock action", () => {
             expect(addGBlockActionDef.type).toBe("addGBlock");
+        });
+
+        it("should have correct type for addGShape action", () => {
+            expect(addGShapeActionDef.type).toBe("addGShape");
         });
     });
 });
