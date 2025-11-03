@@ -7,7 +7,8 @@ export const Color = {
     Green: 0x00ff00,            // 65280 in decimal
     Blue: 0x0000ff,             // 255 in decimal
     White: 0xffffff,            // 16777215 in decimal
-    Gray: 0x808080              // 8421504 in decimal
+    Gray: 0x808080,              // 8421504 in decimal
+    Yellow: 0xffff00             // 16776960 in decimal
 };
 
 export interface IStandardAppearance {
@@ -21,7 +22,12 @@ export interface IPointAppearance {
     size?: number;
 }
 
-export type IAnyAppearance = IStandardAppearance | IPointAppearance;           // other types to be added later, like IPhongAppearance etc.
+export interface ILineAppearance {
+    type: 'line';
+    color?: number;
+}
+
+export type IAnyAppearance = IStandardAppearance | IPointAppearance | ILineAppearance;           // other types to be added later, like IPhongAppearance etc.
 
 /** Geometries */
 export interface IBoxGeometry {
@@ -44,7 +50,8 @@ export interface ISphereGeometry {
 
 export interface ILineGeometry {
     type: 'line';
-    points: Array<[number, number, number]>;
+    start: [number, number, number];
+    end: [number, number, number];
 }
 
 export interface IPointGeometry {

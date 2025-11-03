@@ -34,12 +34,19 @@ function addGPoint(doc: Document, payload: any): void {
 function addGLine(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
-        const length = payload.length ?? 1.0;    // length of the line
+        const start = payload.start ?? [-1, 0, 0];    // start point of the line
+        const end = payload.end ?? [1, 0, 0];         // end point of the line
+        const color = payload?.color ?? Color.Blue;
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
                 type: 'line',
-                points: [[-length/2, 0, 0], [length/2, 0, 0]],  // line along x axis centered at origin
+                start: start,
+                end: end
+            },
+            appearance: {
+                type: 'line',
+                color: color
             }
         };
         grepModel.addDrawable(drawable);

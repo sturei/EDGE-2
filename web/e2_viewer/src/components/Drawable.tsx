@@ -57,8 +57,8 @@ export function r3fFromDrawable(drawable: IDrawable) {
     else if (geometry.type === 'line') {
         return (
             <Line
-                points={geometry.points}
-                color={appearance?.color??Color.Blue}
+                points={[geometry.start, geometry.end]} // Array of points
+                color={appearance?.color??Color.Blue} // Line color
             />
         );
     }
