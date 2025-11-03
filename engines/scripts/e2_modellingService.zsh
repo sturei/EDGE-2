@@ -12,11 +12,6 @@ Instructions:
     {"type":"addAcornBody", "payload":{"x":3, "y":2, "z":1}}
     {"type":"addWireRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
     {"type":"addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"addGPoint", "payload":{"size":0.2}}
-    {"type":"addGLine", "payload":{"length":3}}
-    {"type":"addGPlane", "payload":{"width":3, "height":2}}
-    {"type":"addGSphere", "payload":{"radius":3}}
-    {"type":"addGBlock", "payload":{"width":1, "height":2, "depth":3}}
   Type 'q' to quit, or 'h' to show these instructions again.
 EOM
 

@@ -4,9 +4,6 @@
 #include "document/store.h"
 #include "brep/brepModel.h"
 #include "brep/brep.actions.h"
-#include "grep/grepModel.h"
-#include "grep/grep.actions.h"
-#include "scene/scene.actions.h"
 
 using namespace e2;
 
@@ -29,14 +26,9 @@ int main(int argc, char* argv[]) {
 
     // Initialize the models
     Model* brepModel = new BRepModel();            // an initially empty collection of bodies
-    Model* grepModel = new GRepModel();            // an initially empty drawlist
-    Model* sceneModel = new GRepModel();           // an initially empty drawlist that combines the other models into a scene for rendering
 
     // Initialise the stores and the document.
-    Document* document = new Document({
-        {"brep", new Store(brepModel)},
-        {"grep", new Store(grepModel)},
-        {"scene", new Store(sceneModel)}});
+    Document* document = new Document({{"brep", new Store(brepModel)}});    // document takes ownership of the store
 
     // Register action functions
     document->registerActionFunction(e2::DocumentActions::pingDef);
@@ -45,14 +37,6 @@ int main(int argc, char* argv[]) {
     document->registerActionFunction(e2::BRepActions::addAcornBodyDef);
     document->registerActionFunction(e2::BRepActions::addWireRectangleDef);
     document->registerActionFunction(e2::BRepActions::addSheetRectangleDef);
-
-    document->registerActionFunction(e2::GRepActions::addGPointDef);
-    document->registerActionFunction(e2::GRepActions::addGLineDef);
-    document->registerActionFunction(e2::GRepActions::addGPlaneDef);
-    document->registerActionFunction(e2::GRepActions::addGSphereDef);
-    document->registerActionFunction(e2::GRepActions::addGBlockDef);
-
-    document->registerActionFunction(e2::SceneActions::getSceneDef);
 
     // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
     DocumentService::run(document);
