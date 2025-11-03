@@ -69,9 +69,16 @@ const actionSuggestions = [
         }
     }
 
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        dispatchAction(formData);
+        event.currentTarget.reset();
+    }
+
     return (
       <>
-        <form action={dispatchAction}>
+        <form onSubmit={handleSubmit}>
           <input name="actionInput" type="text" className="input" placeholder="Next action?" list="suggestions" />
           <datalist id="suggestions">
             {actionSuggestions.map((suggestion, index) => (
