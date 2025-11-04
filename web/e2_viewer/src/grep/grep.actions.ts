@@ -12,8 +12,8 @@ function addGPoint(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         let sceneModel = model as GRepModel; 
-        const size = payload.size ?? 1.0;    // size of the point in pixels
-        const position = payload.position ?? [0, 0, 0];  // position of the point
+        const size = payload.size ?? 1.0;
+        const position = payload.position ?? [0, 0, 0];
         const color = payload.color ?? Color.Red;
         const drawable: IDrawable = {
             geometry: {
@@ -34,8 +34,8 @@ function addGPoint(doc: Document, payload: any): void {
 function addGLine(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
-        const start = payload.start ?? [-1, 0, 0];    // start point of the line
-        const end = payload.end ?? [1, 0, 0];         // end point of the line
+        const start = payload.start ?? [-1, 0, 0];
+        const end = payload.end ?? [1, 0, 0];
         const color = payload?.color ?? Color.Blue;
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
@@ -57,15 +57,22 @@ function addGLine(doc: Document, payload: any): void {
 function addGPlane(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
-        const width = payload.width ?? 1.0;      // width of the plane
-        const height = payload.height ?? 1.0;    // height of the plane
+        const width = payload.width ?? 1.0;
+        const height = payload.height ?? 1.0;
+        const color = payload?.color ?? Color.Blue;
+
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
                 type: 'plane',
                 width: width,
                 height: height
+            },
+            appearance: {
+                type: 'mesh',
+                color: color
             }
+
         };
         grepModel.addDrawable(drawable);    
     });
@@ -75,7 +82,7 @@ function addGPlane(doc: Document, payload: any): void {
 function addGSphere(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
-        const radius = payload.radius ?? 1.0;    // radius of the sphere
+        const radius = payload.radius ?? 1.0;
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {

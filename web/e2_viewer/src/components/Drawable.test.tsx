@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { r3fFromDrawable } from './Drawable';
+import { jsxFromDrawable } from './Drawable';
 import type { IDrawable } from '../grep/drawable';
 import "@testing-library/jest-dom";
 import { prettyDOM, render } from '@testing-library/react';
@@ -14,7 +14,7 @@ window.ResizeObserver = ResizeObserver
 describe('r3fFromDrawable', () => {
     it('should return undefined when no geometry is provided', () => {
         const drawable: IDrawable = {};
-        const result = r3fFromDrawable(drawable);
+        const result = jsxFromDrawable(drawable);
         expect(result).toBeUndefined();
     });
 
@@ -22,7 +22,7 @@ describe('r3fFromDrawable', () => {
         const drawable: IDrawable = {
             geometry: { type: 'box', width: 2, height: 3, depth: 4 }
         };
-        const result = r3fFromDrawable(drawable);
+        const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();
 
         // Implementation note on the alternatives I tried already:
@@ -47,9 +47,9 @@ describe('r3fFromDrawable', () => {
     it('should render box geometry with custom color', () => {
         const drawable: IDrawable = {
             geometry: { type: 'box', width: 2, height: 3, depth: 4 },
-            appearance: { type: 'standard', color: 0x00ff00 }
+            appearance: { type: 'mesh', color: 0x00ff00 }
         };
-        const result = r3fFromDrawable(drawable);
+        const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();
         render(result);
         const tree = prettyDOM();
@@ -60,7 +60,7 @@ describe('r3fFromDrawable', () => {
         const drawable: IDrawable = {
             geometry: { type: 'plane', width: 5, height: 6 }
         };
-        const result = r3fFromDrawable(drawable);
+        const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();
         render(result);
         const tree = prettyDOM();
@@ -71,9 +71,9 @@ describe('r3fFromDrawable', () => {
     it('should render sphere geometry with custom color', () => {
         const drawable: IDrawable = {
             geometry: { type: 'sphere', radius: 2.5 },
-            appearance: { type: 'standard', color: 0xffffff }
+            appearance: { type: 'mesh', color: 0xffffff }
         };
-        const result = r3fFromDrawable(drawable);
+        const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();
         render(result);
         const tree = prettyDOM();
@@ -81,22 +81,21 @@ describe('r3fFromDrawable', () => {
         expect(tree).toContain('2.5');
     });
 
-    // oops - Line seems to use a Hook internally, and that triggers an error (something about only working inside Canvas).
-    it.skip('should render line geometry with start and end', () => {
+    it('should render line geometry with start and end', () => {
         const drawable: IDrawable = {
             geometry: { 
                 type: 'line', 
-                points: [[0, 0, 0], [1, 1, 1]] 
+                start : [0, 0, 0],
+                end: [1, 1, 1]
             },
-            appearance: { type: 'standard', color: 0xff0000 }
+            appearance: { type: 'line', color: 0xff0000 }
         };
-        const result = r3fFromDrawable(drawable);
+        const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();
         render(result);
         const tree = prettyDOM();
         //console.log("Line geometry render tree:", tree);
-        expect(tree).toContain('line');
-        expect(tree).toContain('0,0,0,1,1,1');
+        expect(tree).toContain('primitive');     // it's a hand-rolled primitive, not a drei Line. Drei Line cannot be used in unit tests as it errors out trying to render to mock DOM.
     });
 
     it('should render point geometry with position data', () => {
@@ -107,7 +106,7 @@ describe('r3fFromDrawable', () => {
             },
             appearance: { type: 'point', color: 0x00ff00 }
         };
-        const result = r3fFromDrawable(drawable);
+        const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();
         render(result);
         const tree = prettyDOM();

@@ -1,11 +1,11 @@
-/** This component creates a 3D object in the scene, based on the provided properties. */
-
-// Implementation note: as written, it will create new geometry even if the geometry is unchanged and all that has changed is the appearance or the matrix.
-// Also it does not reuse geometries between different drawables with the same geometry.
-// To avoid this it's probably possible to create a geometry cache keyed on name or id. Perhaps provide it as a Context.
+/** This component creates a 3D object in the scene based on the provided properties. 
+*/
+// Implementation note: as written, it's not efficient from a React point of view. It will create new geometry on every react-three-fiber render.
+// Later will come the usual use-memo, use-ref etc.
 
 import  { type IDrawable, Color } from '../grep/drawable';
-import {Box, Line, Sphere, Plane} from '@react-three/drei'  
+import {Box, Sphere, Plane} from '@react-three/drei'  
+import { Line2, LineGeometry, LineMaterial } from 'three-stdlib'
 import * as THREE from 'three';
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
@@ -20,19 +20,16 @@ function Shape(points: number[]) {
 }
 
 /** Outputs the required react-three-fiber jsx for the specified drawable. Exported for testing */
-export function r3fFromDrawable(drawable: IDrawable) {
+export function jsxFromDrawable(drawable: IDrawable) {
     const geometry = drawable.geometry;
     const appearance = drawable.appearance;
-    console.log("r3fFromDrawable: geometry:", geometry);
 
-    // uses drei utilities where available - otherwise uses threejs
-
-    // TODO: use-memo, use-ref etc to avoid recreating the underlying geometries unnecessarily (see drei docs)
-
+    // uses drei utilities where available - otherwise uses threejs directly
     if (!geometry) {
-        console.warn("r3fFromDrawable: no geometry specified in drawable:", drawable);
+        console.warn("jsxFromDrawable: no geometry specified in drawable:", drawable);
     }
     else if (geometry.type === 'box') {
+        console.log(`Creating box with dimensions width = ${geometry.width}, height = ${geometry.height}, depth = ${geometry.depth}`);
         return (
             <Box args={[geometry.width, geometry.height, geometry.depth]}>
                 <meshStandardMaterial color={appearance?.color??Color.Red} />
@@ -40,6 +37,7 @@ export function r3fFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'plane') {
+        console.log(`Creating plane with dimensions width = ${geometry.width}, height = ${geometry.height}`);
         return (
             <Plane args={[geometry.width, geometry.height]}>
                 <meshStandardMaterial color={appearance?.color??Color.Blue} side={THREE.DoubleSide} />
@@ -47,7 +45,7 @@ export function r3fFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'sphere') {
-        console.log("Creating sphere with radius:", geometry.radius);
+        console.log(`Creating sphere with radius: ${geometry.radius}`);
         return (
             <Sphere args={[geometry.radius, 32, 32]}>
                 <meshStandardMaterial color={appearance?.color??Color.Green} />
@@ -55,24 +53,31 @@ export function r3fFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'line') {
+        console.log(`Creating line from ${geometry.start} to ${geometry.end}`);
+        const positions = new Float32Array([
+            ...geometry.start,
+            ...geometry.end
+        ]);
+        const lineGeometry = new LineGeometry();
+        lineGeometry.setPositions(positions);
+        const lineMaterial = new LineMaterial( { color: appearance?.color??Color.Blue } );
+        const line2 = new Line2(lineGeometry, lineMaterial);
+        
         return (
-            <Line
-                points={[geometry.start, geometry.end]} // Array of points
-                color={appearance?.color??Color.Blue} // Line color
-            />
+            <primitive object={line2} >
+            </primitive>
         );
     }
     else if (geometry.type === 'point') {
-        console.log("Creating point at position:", geometry.position);
+        console.log(`Creating point at position: ${geometry.position}`);
         const positions = new Float32Array(geometry.position);
         let size = 4;
         let color = Color.Red;
         if (appearance !== undefined && appearance.type === 'point') {
-            console.log("    with appearance:", appearance);
+            console.log(`    with appearance: ${appearance}`);
             size = appearance.size ?? 4;
             color = appearance.color ?? Color.Red;
         }
-
         return (
             <points> 
                 <bufferGeometry>
@@ -90,6 +95,7 @@ export function r3fFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'shape'){
+        console.log(`Creating shape with points: ${geometry.points}`);
         return(
             <mesh>
                 <shapeGeometry args={[Shape(geometry.points)]} />
@@ -99,7 +105,6 @@ export function r3fFromDrawable(drawable: IDrawable) {
     }
 }
 
-/** return the jsx that puts the drawable into the scene */
 export function Drawable({drawable}: {drawable: IDrawable}) {
-    return r3fFromDrawable(drawable);
+    return jsxFromDrawable(drawable);
 }
