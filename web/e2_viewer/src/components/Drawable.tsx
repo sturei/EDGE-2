@@ -3,7 +3,7 @@
 // Implementation note: as written, it's not efficient from a React point of view. It will create new geometry on every react-three-fiber render.
 // Later will come the usual use-memo, use-ref etc.
 
-import  { type IAnyGeometry, type IPointGeometry, type IProfileGeometry, type IAnyAppearance, type IDrawable, Color } from '../grep/drawable';
+import  { type IPointGeometry, type IProfileGeometry, type IDrawable, Color } from '../grep/drawable';
 import {Box, Sphere, Plane} from '@react-three/drei'  
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib'
 import * as THREE from 'three';
@@ -20,10 +20,10 @@ function Shape(points: number[]) {
     return shape;
 }
 
-function Profile({args, children} : {args: [IProfileGeometry], children: JSX.Element}) {
-    const [geometry] = args;
+function Profile({args, children} : {args: [Array<Array<[number, number]>>], children: JSX.Element}) {
+    const [paths] = args;
     const shape = new THREE.Shape();
-    for (const path of geometry.paths) {
+    for (const path of paths) {
         shape.moveTo(path[0][0], path[0][1]);
         for (let i = 1; i < path.length; i++) {
             shape.lineTo(path[i][0], path[i][1]);
@@ -37,16 +37,40 @@ function Profile({args, children} : {args: [IProfileGeometry], children: JSX.Ele
     )
 }
 
-function Point({args, children} : {args: [IPointGeometry], children: JSX.Element}) {
-    const [geometry] = args;
-    const positions = new Float32Array(geometry.position);
+function Point({args, children} : {args: [[number, number, number]], children: JSX.Element}) {
+    const [position] = args;
+    const positions = new Float32Array(position);
     return (
         <points> 
             <bufferGeometry>
                 <bufferAttribute attach={'attributes-position'} args={[positions, 3]} />
             </bufferGeometry>
-            {children}
+            {children}  
         </points>
+    )
+}
+
+function Line({args, children} : {args: [[number, number, number], [number, number, number]], children: JSX.Element}) {
+    const [start, end] = args;
+    // I would use the drei's Line component instead of this home-grown one, but drei's Line generates an error when rendering 
+    // to the mock dom that I use in the unit tests.
+    const positions = new Float32Array([...start, ...end]);
+    const lineGeometry = new LineGeometry();
+    lineGeometry.setPositions(positions)
+    const line2 = new Line2(lineGeometry);    
+    return (
+        <primitive object={line2} >
+            {children}
+        </primitive>
+    )
+}
+
+function LineAppearance({color} : {color: number}) {
+    // LineMaterial is not part of the main package. The easiest way to use it in r3f seems to be to wrap it like this.
+    // If in future I can use drei Line, then this can be removed.
+    const lineMaterial = new LineMaterial( { color } );
+    return (
+        <primitive object={lineMaterial} />
     )
 }
 
@@ -84,30 +108,18 @@ export function jsxFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'line') {
-
-        // There is a Line component in drei but it cannot be used in the unit tests because it generates an error when rendering to the mock DOM.
-        // Hence this hand-rolled version using threejs directly. Which of course needs useMemo, useRef etc. to be efficient.
-
         console.log(`Creating line from ${geometry.start} to ${geometry.end}`);
-        const positions = new Float32Array([
-            ...geometry.start,
-            ...geometry.end
-        ]);
-        const lineGeometry = new LineGeometry();
-        lineGeometry.setPositions(positions);
-        const lineMaterial = new LineMaterial( { color: appearance?.color??Color.Blue } );
-        const line2 = new Line2(lineGeometry, lineMaterial);
-        
         return (
-            <primitive object={line2} >
-            </primitive>
+            <Line args={[geometry.start, geometry.end]}>
+                <LineAppearance color={appearance?.color??Color.Blue} />
+            </Line>
         );
-    }
+    }        
     else if (geometry.type === 'point') {
         console.log(`Creating point at position: ${geometry.position}`);
         const size = appearance?.type === 'point' ? appearance.size ?? 4 : 4;
         return (
-            <Point args={[geometry]}>
+            <Point args={[geometry.position]}>
                 <pointsMaterial color={appearance?.color ?? Color.Green} size={size} sizeAttenuation={false} />
             </Point>
         );
@@ -124,7 +136,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
     else if (geometry.type === 'profile'){
         console.log(`Creating profile with ${geometry.paths.length} paths`);    // --- DEBUG ---
         return(
-            <Profile args={[geometry]}>
+            <Profile args={[geometry.paths]}>
                 <meshStandardMaterial color={appearance?.color??Color.White} side={THREE.DoubleSide} />
             </Profile>
         )
