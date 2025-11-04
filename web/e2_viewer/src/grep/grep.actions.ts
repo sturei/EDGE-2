@@ -83,11 +83,17 @@ function addGSphere(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const radius = payload.radius ?? 1.0;
+        const color = payload?.color ?? Color.Blue;
+
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
                 type: 'sphere',
                 radius: radius
+            },
+            appearance: {
+                type: 'mesh',
+                color: color
             }
         };
         grepModel.addDrawable(drawable);
@@ -101,6 +107,7 @@ function addGBlock(doc: Document, payload: any): void {
         const width = payload.width ?? 2.0;      // length in x direction
         const height = payload.height ?? 2.0;    // length in y direction
         const depth = payload.depth ?? 2.0;      // length in z direction
+        const color = payload?.color ?? Color.Green;
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
@@ -108,6 +115,10 @@ function addGBlock(doc: Document, payload: any): void {
                 width: width,
                 height: height,
                 depth: depth
+            },
+            appearance: {
+                type: 'mesh',
+                color: color
             }
         };
         grepModel.addDrawable(drawable);
