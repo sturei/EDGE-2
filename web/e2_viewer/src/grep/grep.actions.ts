@@ -126,27 +126,6 @@ function addGBlock(doc: Document, payload: any): void {
     });
 }
 
-function addGShape(doc: Document, payload: any): void {
-    const store = doc.getStore("scene");
-    store.changeState((model: Model) => {
-        const points = payload.points ?? [];
-        const color = payload?.color ?? Color.Green;
-        let grepModel = model as GRepModel;
-        const drawable: IDrawable = {
-            geometry: {
-                type: 'shape',
-                points: points
-            },
-            appearance: {
-                type: 'mesh',
-                color: color
-            }
-        };
-        grepModel.addDrawable(drawable);
-    });
-    console.log("added GShape");      // ---DEBUG---
-}
-
 function addGProfile(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -175,5 +154,4 @@ export const addGLineActionDef = { type: "addGLine", function: addGLine };
 export const addGPlaneActionDef = { type: "addGPlane", function: addGPlane };
 export const addGSphereActionDef = { type: "addGSphere", function: addGSphere };
 export const addGBlockActionDef = { type: "addGBlock", function: addGBlock };
-export const addGShapeActionDef = { type: "addGShape", function: addGShape };
 export const addGProfileActionDef = { type: "addGProfile", function: addGProfile };

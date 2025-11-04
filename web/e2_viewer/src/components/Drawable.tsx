@@ -3,7 +3,7 @@
 // Implementation note: as written, it's not efficient from a React point of view. It will create new geometry on every react-three-fiber render.
 // Later will come the usual use-memo, use-ref etc.
 
-import  { type IPointGeometry, type IProfileGeometry, type IDrawable, Color } from '../grep/drawable';
+import  { type IDrawable, Color } from '../grep/drawable';
 import {Box, Sphere, Plane} from '@react-three/drei'  
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib'
 import * as THREE from 'three';
@@ -11,14 +11,6 @@ import type { JSX } from 'react';
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
-function Shape(points: number[]) {
-    const shape = new THREE.Shape();
-    shape.moveTo( points[0], points[1] );
-    for ( let i = 2; i < points.length; i += 2 ) {
-        shape.lineTo( points[i], points[i + 1] );
-    }
-    return shape;
-}
 
 function Profile({args, children} : {args: [Array<Array<[number, number]>>], children: JSX.Element}) {
     const [paths] = args;
@@ -123,15 +115,6 @@ export function jsxFromDrawable(drawable: IDrawable) {
                 <pointsMaterial color={appearance?.color ?? Color.Green} size={size} sizeAttenuation={false} />
             </Point>
         );
-    }
-    else if (geometry.type === 'shape'){
-        console.log(`Creating shape with points: ${geometry.points}`);        //--- DEBUG ---
-        return(
-            <mesh>
-                <shapeGeometry args={[Shape(geometry.points)]} />
-                <meshStandardMaterial color={appearance?.color??Color.White} side={THREE.DoubleSide} />
-            </mesh> 
-        )
     }
     else if (geometry.type === 'profile'){
         console.log(`Creating profile with ${geometry.paths.length} paths`);    // --- DEBUG ---

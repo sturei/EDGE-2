@@ -75,12 +75,6 @@ export interface IPointGeometry {
     position: [number, number, number];
 }
 
-/** Shape defined by a list of 2D points (x1,y1,x2,y2,...) TODO: "Profile defined by paths...*/
-export interface IShapeGeometry {
-    type: 'shape';
-    points: number[];
-}
-
 /** Filled profile defined by an array of 2D paths. 
  * Each path is an array of [x,y] tuples.
  * Paths must be consistently oriented with the interior on the left. 
@@ -90,7 +84,7 @@ export interface IProfileGeometry {
     paths: Array<Array<[number, number]>>;
 }
 
-export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IShapeGeometry | IProfileGeometry;
+export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IProfileGeometry;
 
 /** Drawable */
 export interface IDrawable {

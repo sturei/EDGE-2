@@ -60,14 +60,13 @@ describe('Actions', () => {
     it('registers all action functions on mount', () => {
         renderActions();
         
-        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(10);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(9);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.pingActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGPointActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGLineActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGPlaneActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGSphereActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGBlockActionDef);
-        expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGShapeActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGProfileActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.pingModellerActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.addSheetRectangleActionDef);

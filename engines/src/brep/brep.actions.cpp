@@ -98,14 +98,17 @@ namespace e2 {
                 Vec3d lowerRight(upperRight.x(), lowerLeft.y(), lowerLeft.z());
                 Vec3d upperLeft(lowerLeft.x(), upperRight.y(), upperRight.z());          
                 json points = json::array({
-                    lowerLeft.x(), lowerLeft.y(),
-                    lowerRight.x(), lowerRight.y(),
-                    upperRight.x(), upperRight.y(),
-                    upperLeft.x(), upperLeft.y(),
-                    lowerLeft.x(), lowerLeft.y()
+                    json::array({lowerLeft.x(), lowerLeft.y()}),
+                    json::array({lowerRight.x(), lowerRight.y()}),
+                    json::array({upperRight.x(), upperRight.y()}),
+                    json::array({upperLeft.x(), upperLeft.y()}),
+                    json::array({lowerLeft.x(), lowerLeft.y()})
                 });
-                json clientPayload = json::object({{"points", points}});
-                doc->dispatchClientAction({"addGShape", clientPayload});
+                json paths = json::array({
+                    points
+                });
+                json clientPayload = json::object({{"paths", paths}});
+                doc->dispatchClientAction({"addGProfile", clientPayload});
 
             });
            }

@@ -6,7 +6,6 @@ import {
     addGPlaneActionDef,
     addGSphereActionDef,
     addGBlockActionDef,
-    addGShapeActionDef,
     addGProfileActionDef
 } from "./grep.actions";
 
@@ -105,14 +104,6 @@ describe("grep.actions", () => {
         });
     });
 
-    describe("addGShape action", () => {
-        it("should add GShape with provided points", () => {
-            const points = [0, 0, 0, 1, 1, 1];
-            addGShapeActionDef.function(mockDoc, { points });
-            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
-        });
-    });
-
     describe("addGProfile action", () => {
         it("should add GProfile with provided paths", () => {
             const paths = [[[0,0],[1,0],[1,1],[0,1],[0,0]]];
@@ -144,10 +135,6 @@ describe("grep.actions", () => {
 
         it("should have correct type for addGBlock action", () => {
             expect(addGBlockActionDef.type).toBe("addGBlock");
-        });
-
-        it("should have correct type for addGShape action", () => {
-            expect(addGShapeActionDef.type).toBe("addGShape");
         });
 
         it("should have correct type for addGProfile action", () => {
