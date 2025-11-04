@@ -7,6 +7,7 @@ import  { type IDrawable, Color } from '../grep/drawable';
 import {Box, Sphere, Plane} from '@react-three/drei'  
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib'
 import * as THREE from 'three';
+import path from 'path';
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
@@ -18,6 +19,18 @@ function Shape(points: number[]) {
     }
     return shape;
 }
+
+function Profile(paths: Array<Array<[number, number]>>) {
+    const shape = new THREE.Shape();
+    for (const path of paths) {
+        shape.moveTo(path[0][0], path[0][1]);
+        for (let i = 1; i < path.length; i++) {
+            shape.lineTo(path[i][0], path[i][1]);
+        }
+    }
+    return shape;
+}
+
 
 /** Outputs the required react-three-fiber jsx for the specified drawable. Exported for testing */
 export function jsxFromDrawable(drawable: IDrawable) {
@@ -53,6 +66,10 @@ export function jsxFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'line') {
+
+        // There is a Line component in drei but it cannot be used in the unit tests because it generates an error when rendering to the mock DOM.
+        // Hence this hand-rolled version using threejs directly. Which of course needs useMemo, useRef etc. to be efficient.
+
         console.log(`Creating line from ${geometry.start} to ${geometry.end}`);
         const positions = new Float32Array([
             ...geometry.start,
@@ -74,7 +91,6 @@ export function jsxFromDrawable(drawable: IDrawable) {
         let size = 4;
         let color = Color.Red;
         if (appearance !== undefined && appearance.type === 'point') {
-            console.log(`    with appearance: ${appearance}`);
             size = appearance.size ?? 4;
             color = appearance.color ?? Color.Red;
         }
@@ -99,6 +115,21 @@ export function jsxFromDrawable(drawable: IDrawable) {
         return(
             <mesh>
                 <shapeGeometry args={[Shape(geometry.points)]} />
+                <meshStandardMaterial color={appearance?.color??Color.White} side={THREE.DoubleSide} />
+            </mesh> 
+        )
+    }
+    else if (geometry.type === 'profile'){
+        console.log(`Creating profile with ${geometry.paths.length} paths`);    // --- DEBUG ---
+        //for (const path of geometry.paths) {                                    // --- DEBUG ---
+        //    console.log(`   path with ${path.length} points`);                  // --- DEBUG ---
+        //    for (const point of path) {                                         // --- DEBUG ---
+        //        console.log(`       point: ${point}`);                          // --- DEBUG ---
+        //    }                                                                   // --- DEBUG ---
+        //}                                                                       // --- DEBUG ---       
+        return(
+            <mesh>
+                <shapeGeometry args={[Profile(geometry.paths)]} />
                 <meshStandardMaterial color={appearance?.color??Color.White} side={THREE.DoubleSide} />
             </mesh> 
         )

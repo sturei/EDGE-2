@@ -81,7 +81,16 @@ export interface IShapeGeometry {
     points: number[];
 }
 
-export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IShapeGeometry;
+/** Filled profile defined by an array of 2D paths. 
+ * Each path is an array of [x,y] tuples.
+ * Paths must be consistently oriented with the interior on the left. 
+ * The union of the paths must form the boundary of a simple polygon. */
+export interface IProfileGeometry {
+    type: 'profile';
+    paths: Array<Array<[number, number]>>;
+}
+
+export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IShapeGeometry | IProfileGeometry;
 
 /** Drawable */
 export interface IDrawable {

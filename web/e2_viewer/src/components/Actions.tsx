@@ -11,9 +11,10 @@ const actionSuggestions = [
     '{"type":"addGPoint", "payload":{"size":5, "position":[1,1,1], "color":16711680}}',
     '{"type":"addGLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":8603039}}',
     '{"type":"addGPlane", "payload":{"width":3,"height":2, "color":16711680}}',
-    '{"type":"addGSphere", "payload":{"radius":0.75, "color":16711680}}',
+    '{"type":"addGSphere", "payload":{"radius":0.75, "color":65280}}',
     '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3, "color":16711680}}',
     '{"type":"addGShape", "payload":{"points":[0,0,1,0,1,1,0,1,0,0], "color":16711680}}',
+    '{"type":"addGProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":16711680}}',
     '{"type":"pingModeller", "payload": {} }',
     '{"type":"addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
   ];
@@ -33,6 +34,7 @@ const actionSuggestions = [
         document.registerActionFunction(grepActions.addGSphereActionDef);
         document.registerActionFunction(grepActions.addGBlockActionDef);
         document.registerActionFunction(grepActions.addGShapeActionDef);
+        document.registerActionFunction(grepActions.addGProfileActionDef);
 
         document.registerActionFunction(brepActions.pingModellerActionDef);
         document.registerActionFunction(brepActions.addSheetRectangleActionDef);

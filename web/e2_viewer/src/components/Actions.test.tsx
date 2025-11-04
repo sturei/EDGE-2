@@ -18,6 +18,7 @@ vi.mock('../grep/grep.actions.ts', () => ({
     addGSphereActionDef: { type: 'addGSphere' },
     addGBlockActionDef: { type: 'addGBlock' },
     addGShapeActionDef: { type: 'addGShape' },
+    addGProfileActionDef: { type: 'addGProfile' },
     addPingModellerActionDef: { type: 'pingModeller' }
 }));
 
@@ -59,7 +60,7 @@ describe('Actions', () => {
     it('registers all action functions on mount', () => {
         renderActions();
         
-        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(9);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(10);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.pingActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGPointActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGLineActionDef);
@@ -67,6 +68,7 @@ describe('Actions', () => {
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGSphereActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGBlockActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGShapeActionDef);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGProfileActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.pingModellerActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.addSheetRectangleActionDef);
 
