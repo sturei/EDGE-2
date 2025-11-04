@@ -9,19 +9,38 @@
 using json = nlohmann::json;
 
 /**
- * The Document class provides access to the application data model.
- * State changes to the data model are made via actions.
- * Each action is dispatched to the Document as a Plain Old Data (POD) structure {type, payload*} pair.
- * The document in turn invokes a registered "action function" corresponding to the action type. The action function takes the payload
- * as input and performs some operations that modify the application state via a state change callback on one or more stores.
- * Implementation notes:
- * The Document class contains a map of Stores, each Store containing a Model. Stores handle lifecycle events on Models.
- * The Document class takes ownerahip of the stores it is given.
- * Actions are intended to be asynchronous and stores are intended to be independently lockable. Not implemented yet!
- * Various levels of error checking, logging etc will be added later.
- * Actions are chainable (one action function can call another action function via the appropriate interface on the Document). Not implemented yet!
- * A series of actions is intended to be replayable - not implemented yet!
- * Consider moving ActionSpec inside Document, because it is specific to Document.
+ * The Document class holds the primary application state.
+ * The primary concepts are Document, Store, Model, and Action.
+ * A Document contains one or more Stores. 
+ * Each Store contains a Model (the data).
+ * State changes to the Model are made via Actions.
+ * An application is expected to have a single Document instance. 
+ * Some applications will employ just a single Store and Model within their single Document to store all of their state.
+ * Other applications may choose to have multiple Stores and Models, each holding a different aspect of the state.
+ * Client code subclasses Model to implement application-specific data structures.
+ * Documents and Stores are not subclassed. They are designed to be generic, able to hold any type of Model.
+ * Stores are concerned with lifecycle management of Models - things like undo/redo, 
+ * persistence, locking, logging etc. (Most of these are not implemented yet).
+ * Document provides the orchestration of Actions - registering action functions, dispatching actions to 
+ * the appropriate function etc.
+ * So, how does a client make a state change?
+ * Firstly, note that all state changes are made in so-called "action functions". 
+ * Action functions are regular functions, written by the application developer and registered
+ * with the document at application startup time.
+ * To invoke an action function, the client dispatches an Action to the Document. An Action is simply a {type, payload} pair.
+ * The type is a string that identifies the action function to be invoked. The payload is a JSON object that contains any
+ * parameters needed by the action function.
+ * The Document looks up the action function registered for that action type, and invokes it with the payload.
+ * Each action function then makes state changes to the Model via a state change callback on the Store that contains the Model.
+ * It is this callback mechanism that enables Stores to manage lifecycle events, and prevent uncontrolled state changes to Models.
+ * As a convenience, the document provides a post-state-change callback that gets invoked after each state change.
+ * This can be used to trigger UI updates or other operations that are common to all state changes in an application.
+ * Actions are chainable (one action function can dispatch another action function via the appropriate interface on the Document)
+ * Actions are replayable (the Document could log all actions to a file, and then replay them later to restore state)
+ * Actions are simple (just JSON data - no function pointers or other complexities)
+ * Action can be dispatched across process boundaries (by serializing to JSON text, and sending via stdin/stdout, sockets etc). 
+ * There is a class called DocumentService that provides a simple stdin/stdout IPC mechanism for dispatching actions to a Document 
+ * and receiving actions in return.
  */
 
 namespace e2 {
