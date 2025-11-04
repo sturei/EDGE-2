@@ -3,11 +3,11 @@
 // Implementation note: as written, it's not efficient from a React point of view. It will create new geometry on every react-three-fiber render.
 // Later will come the usual use-memo, use-ref etc.
 
-import  { type IDrawable, Color } from '../grep/drawable';
+import  { type IAnyGeometry, type IPointGeometry, type IProfileGeometry, type IAnyAppearance, type IDrawable, Color } from '../grep/drawable';
 import {Box, Sphere, Plane} from '@react-three/drei'  
 import { Line2, LineGeometry, LineMaterial } from 'three-stdlib'
 import * as THREE from 'three';
-import path from 'path';
+import type { JSX } from 'react';
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
@@ -20,19 +20,37 @@ function Shape(points: number[]) {
     return shape;
 }
 
-function Profile(paths: Array<Array<[number, number]>>) {
+function Profile({args, children} : {args: [IProfileGeometry], children: JSX.Element}) {
+    const [geometry] = args;
     const shape = new THREE.Shape();
-    for (const path of paths) {
+    for (const path of geometry.paths) {
         shape.moveTo(path[0][0], path[0][1]);
         for (let i = 1; i < path.length; i++) {
             shape.lineTo(path[i][0], path[i][1]);
         }
     }
-    return shape;
+    return (
+        <mesh>
+            <shapeGeometry args={[shape]} />
+            {children}
+        </mesh> 
+    )
 }
 
+function Point({args, children} : {args: [IPointGeometry], children: JSX.Element}) {
+    const [geometry] = args;
+    const positions = new Float32Array(geometry.position);
+    return (
+        <points> 
+            <bufferGeometry>
+                <bufferAttribute attach={'attributes-position'} args={[positions, 3]} />
+            </bufferGeometry>
+            {children}
+        </points>
+    )
+}
 
-/** Outputs the required react-three-fiber jsx for the specified drawable. Exported for testing */
+/** Outputs the required react-three-fiber jsx for the specified drawable. (Exported for testing purposes) */
 export function jsxFromDrawable(drawable: IDrawable) {
     const geometry = drawable.geometry;
     const appearance = drawable.appearance;
@@ -87,31 +105,15 @@ export function jsxFromDrawable(drawable: IDrawable) {
     }
     else if (geometry.type === 'point') {
         console.log(`Creating point at position: ${geometry.position}`);
-        const positions = new Float32Array(geometry.position);
-        let size = 4;
-        let color = Color.Red;
-        if (appearance !== undefined && appearance.type === 'point') {
-            size = appearance.size ?? 4;
-            color = appearance.color ?? Color.Red;
-        }
+        const size = appearance?.type === 'point' ? appearance.size ?? 4 : 4;
         return (
-            <points> 
-                <bufferGeometry>
-                    <bufferAttribute
-                        attach={'attributes-position'}
-                        args={[positions, 3]} 
-                    />
-                </bufferGeometry>
-                <pointsMaterial
-                    size={size}
-                    sizeAttenuation={false}
-                    color={color}
-                />
-            </points>
+            <Point args={[geometry]}>
+                <pointsMaterial color={appearance?.color ?? Color.Green} size={size} sizeAttenuation={false} />
+            </Point>
         );
     }
     else if (geometry.type === 'shape'){
-        console.log(`Creating shape with points: ${geometry.points}`);
+        console.log(`Creating shape with points: ${geometry.points}`);        //--- DEBUG ---
         return(
             <mesh>
                 <shapeGeometry args={[Shape(geometry.points)]} />
@@ -121,17 +123,10 @@ export function jsxFromDrawable(drawable: IDrawable) {
     }
     else if (geometry.type === 'profile'){
         console.log(`Creating profile with ${geometry.paths.length} paths`);    // --- DEBUG ---
-        //for (const path of geometry.paths) {                                    // --- DEBUG ---
-        //    console.log(`   path with ${path.length} points`);                  // --- DEBUG ---
-        //    for (const point of path) {                                         // --- DEBUG ---
-        //        console.log(`       point: ${point}`);                          // --- DEBUG ---
-        //    }                                                                   // --- DEBUG ---
-        //}                                                                       // --- DEBUG ---       
         return(
-            <mesh>
-                <shapeGeometry args={[Profile(geometry.paths)]} />
+            <Profile args={[geometry]}>
                 <meshStandardMaterial color={appearance?.color??Color.White} side={THREE.DoubleSide} />
-            </mesh> 
+            </Profile>
         )
     }
 }
