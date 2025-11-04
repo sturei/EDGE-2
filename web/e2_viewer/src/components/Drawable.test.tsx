@@ -18,9 +18,9 @@ describe('r3fFromDrawable', () => {
         expect(result).toBeUndefined();
     });
 
-    it('should render box geometry with default color when no appearance is provided', () => {
+    it('should render block geometry with default color when no appearance is provided', () => {
         const drawable: IDrawable = {
-            geometry: { type: 'box', width: 2, height: 3, depth: 4 }
+            geometry: { type: 'block', width: 2, height: 3, depth: 4 }
         };
         const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();
@@ -44,9 +44,9 @@ describe('r3fFromDrawable', () => {
 
     });
 
-    it('should render box geometry with custom color', () => {
+    it('should render block geometry with custom color', () => {
         const drawable: IDrawable = {
-            geometry: { type: 'box', width: 2, height: 3, depth: 4 },
+            geometry: { type: 'block', width: 2, height: 3, depth: 4 },
             appearance: { type: 'mesh', color: 0x00ff00 }
         };
         const result = jsxFromDrawable(drawable);

@@ -111,7 +111,7 @@ function addGBlock(doc: Document, payload: any): void {
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
-                type: 'box',
+                type: 'block',
                 width: width,
                 height: height,
                 depth: depth

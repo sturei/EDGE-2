@@ -74,9 +74,9 @@ export function jsxFromDrawable(drawable: IDrawable) {
     // uses drei utilities where available - otherwise uses threejs directly
     if (!geometry) {
         console.warn("jsxFromDrawable: no geometry specified in drawable:", drawable);
-    }
-    else if (geometry.type === 'box') {
-        console.log(`Creating box with dimensions width = ${geometry.width}, height = ${geometry.height}, depth = ${geometry.depth}`);
+    }   
+    else if (geometry.type === 'block') {
+        console.log(`Creating block with dimensions width = ${geometry.width}, height = ${geometry.height}, depth = ${geometry.depth}`);
         return (
             <Box args={[geometry.width, geometry.height, geometry.depth]}>
                 <meshStandardMaterial color={appearance?.color??Color.Red} />

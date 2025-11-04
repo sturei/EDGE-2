@@ -41,9 +41,9 @@ export type IAnyAppearance = IPointAppearance | ILineAppearance | IMeshAppearanc
 
 /** Geometries */
 
-/** Box centered on the origin */
-export interface IBoxGeometry {
-    type: 'box';
+/** Block centered on the origin */
+export interface IBlockGeometry {
+    type: 'block';
     width: number;     // length along X
     height: number;    // length along Y
     depth: number;     // length along Z
@@ -84,7 +84,7 @@ export interface IProfileGeometry {
     paths: Array<Array<[number, number]>>;
 }
 
-export type IAnyGeometry = IBoxGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IProfileGeometry;
+export type IAnyGeometry = IBlockGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IProfileGeometry;
 
 /** Drawable */
 export interface IDrawable {
