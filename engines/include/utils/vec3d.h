@@ -24,6 +24,9 @@ namespace e2 {
             Vec3d operator*(double s) const {
                 return Vec3d(m_x * s, m_y * s, m_z * s);
             }
+            friend Vec3d operator*(double s, const Vec3d& v) {
+                return Vec3d(v.m_x * s, v.m_y * s, v.m_z * s);
+            }
             Vec3d operator/(double s) const {
                 return Vec3d(m_x / s, m_y / s, m_z / s);
             }

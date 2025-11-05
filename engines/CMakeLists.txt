@@ -60,6 +60,8 @@ set(MODELLING_SERVICE_SOURCES
     src/document/model.cpp
     src/document/store.cpp
     src/utils/vec3d.cpp
+    src/utils/evaluate.cpp
+    src/utils/parameterize.cpp
 )
 
 set(TEST_SOURCES

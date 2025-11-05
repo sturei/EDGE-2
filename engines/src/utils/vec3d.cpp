@@ -10,8 +10,7 @@
 
 namespace e2 {
 
-    /** Returns a unit vector orthogonal to this vector
-     */
+    /** Returns a unit vector orthogonal to this vector */
     Vec3d Vec3d::ortho() const {
         double t0 = std::abs(m_x);
         double t1 = std::abs(m_y);
