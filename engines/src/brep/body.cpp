@@ -7,12 +7,12 @@
 /***
  * The Body class represents a non-regularized pointset of any dimension.
  * 
- * The key concepts are Bodies, Cells, Cocells and Support.
+ * The key concepts are Body, Cell, Cocell and Support.
  * A Body is composed of Cells of various dimensions (3D, 2D, 1D and 0D).
  * Each Cell is bounded by lower-dimensional Cells.
  * Cells and their boundary Cells are connected to each other by Cocells.
  * A Cell represents an open, connected subset of its Support.
- * Support simply means the geometry that a Cell lies on.
+ * Support simply refers to the geometry that a Cell lies on.
  *
  * Each Cell has an "active" flag indicating whether the cell should be considered part of the Body or not.
  * The collection of cells that bound a given cell are called the cell's "boundary".

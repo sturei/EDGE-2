@@ -30,15 +30,17 @@ TEST(CellTest, CellDefaultConstructor) {
 };
 
 TEST(CellTest, CellParameterizedConstructor) {
-    Point3d pt(Vec3d(4, 5, 6));
+    Vec3d pt(4, 5, 6);
     Cell cell(pt);
+    EXPECT_EQ(cell.isActive(), true);
+    EXPECT_EQ(cell.support().type(), Geom3dType::POINT);
     EXPECT_EQ(cell.support().position().x(), 4);
     EXPECT_EQ(cell.support().position().y(), 5);
     EXPECT_EQ(cell.support().position().z(), 6);
 };
 
 TEST(CellTest, CellTest_OstreamOperator) {
-    Point3d pt(Vec3d(4, 5, 6));
+    Vec3d pt(4, 5, 6);
     Cell cell(pt);
     std::ostringstream oss;
     oss << cell;
@@ -96,8 +98,8 @@ TEST_F(BodyTest, BodyDefaultConstructor) {
 TEST_F(BodyTest, BodyParameterizedConstructor) {
     // circle with one interior point
     std::vector<Cell> cells = { 
-        Cell(Circle3d(Vec3d(0, 0, 0), Vec3d(0, 0, 1), 2)), 
-        Cell(Point3d(Vec3d(2, 0, 0))) 
+        Cell(Cir3d(Vec3d(0, 0, 0), 2, Vec3d(0, 0, 1))), 
+        Cell(Vec3d(2, 0, 0)) 
     };
     std::vector<Cocell> cocells = { Cocell(0, 1, 0) };
     Body body(cells, cocells);
@@ -113,7 +115,7 @@ TEST_F(BodyTest, BodyParameterizedConstructor) {
 
 TEST_F(BodyTest, AddCell) {
     Body body;
-    Cell cell(Point3d(Vec3d(7, 8, 9)));
+    Cell cell(Vec3d(7, 8, 9));
     body.addCell(cell);
     EXPECT_EQ(body.cells().size(), 1);
     EXPECT_EQ(body.cells()[0].support().position().x(), 7);
@@ -123,8 +125,8 @@ TEST_F(BodyTest, AddCell) {
 TEST_F(BodyTest, AddCocell) {
     // circle with one interior point
     std::vector<Cell> cells = { 
-        Cell(Circle3d(Vec3d(0, 0, 0), Vec3d(0, 0, 1), 2)), 
-        Cell(Point3d(Vec3d(2, 0, 0))) 
+        Cell(Cir3d(Vec3d(0, 0, 0), 2, Vec3d(0, 0, 1))), 
+        Cell(Vec3d(2, 0, 0)) 
     };
     std::vector<Cocell> cocells = { Cocell(0, 1, 0) };
     Body body(cells);
