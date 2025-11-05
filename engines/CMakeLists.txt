@@ -66,6 +66,10 @@ set(TEST_SOURCES
     src/utils/graph.test.cpp
     src/utils/vec3d.test.cpp
     src/utils/geom3d.test.cpp
+    src/utils/ray3d.test.cpp
+    src/utils/pla3d.test.cpp
+    src/utils/sph3d.test.cpp
+    src/utils/cir3d.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
     src/document/store.test.cpp

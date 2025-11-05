@@ -32,13 +32,13 @@ using json = nlohmann::json;
  * parameters needed by the action function.
  * The Document looks up the action function registered for that action type, and invokes it with the payload.
  * Each action function then makes state changes to the Model via a state change callback on the Store that contains the Model.
- * It is this callback mechanism that enables Stores to manage lifecycle events, and prevent uncontrolled state changes to Models.
- * As a convenience, the document provides a post-state-change callback that gets invoked after each state change.
+ * It is this callback mechanism that enables Stores to manage lifecycle events, and to prevent uncontrolled state changes to Models.
+ * As a convenience, the document also provides a post-state-change callback that gets invoked after each state change.
  * This can be used to trigger UI updates or other operations that are common to all state changes in an application.
  * Actions are chainable (one action function can dispatch another action function via the appropriate interface on the Document)
  * Actions are replayable (the Document could log all actions to a file, and then replay them later to restore state)
  * Actions are simple (just JSON data - no function pointers or other complexities)
- * Action can be dispatched across process boundaries (by serializing to JSON text, and sending via stdin/stdout, sockets etc). 
+ * Action can be dispatched across process boundaries by serializing to JSON text, and sending via stdin/stdout, sockets etc.
  * There is a class called DocumentService that provides a simple stdin/stdout IPC mechanism for dispatching actions to a Document 
  * and receiving actions in return.
  */
