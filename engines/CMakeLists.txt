@@ -62,6 +62,7 @@ set(MODELLING_SERVICE_SOURCES
     src/utils/vec3d.cpp
     src/utils/evaluate.cpp
     src/utils/parameterize.cpp
+    src/utils/tesselate.cpp
 )
 
 set(TEST_SOURCES
@@ -75,6 +76,7 @@ set(TEST_SOURCES
     src/utils/cir3d.test.cpp
     src/utils/evaluate.test.cpp
     src/utils/parameterize.test.cpp
+    src/utils/tesselate.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
     src/document/store.test.cpp
