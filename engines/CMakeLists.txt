@@ -59,6 +59,7 @@ set(MODELLING_SERVICE_SOURCES
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
+    src/utils/vec3d.cpp
 )
 
 set(TEST_SOURCES

@@ -1,12 +1,6 @@
 #pragma once
 #include <iostream>
 
-/**
- * Vec3d represents a 3D vector assumed to be a point or direction in 3D space.
- * Implementation notes:
- * All methods honour value semantics.
- * Operator== uses exact equality of components. Fuzzy equality will be implemented later as a non-member function.
-*/
 namespace e2 {
     class Vec3d {
         public:
@@ -15,10 +9,6 @@ namespace e2 {
             double x() const { return m_x; }
             double y() const { return m_y; }
             double z() const { return m_z; }
-            friend std::ostream& operator<<(std::ostream& os, const Vec3d& v) {
-                os << "(" << v.m_x << ", " << v.m_y << ", " << v.m_z << ")";
-                return os;
-            }
             bool operator==(const Vec3d& other) const {
                 return m_x == other.m_x && m_y == other.m_y && m_z == other.m_z;
             }
@@ -57,12 +47,16 @@ namespace e2 {
             Vec3d orthonormalize(const Vec3d& dir) const {
                 return orthogonalize(dir).normalize();
             }
+            Vec3d ortho() const;
             double magnitude() const {
                 return std::sqrt(m_x * m_x + m_y * m_y + m_z * m_z);
             }
             double magnitudeSquared() const {
                 return m_x * m_x + m_y * m_y + m_z * m_z;
             }
+
+            friend std::ostream& operator<<(std::ostream& os, const Vec3d& v);
+
         private:
             double m_x=0, m_y=0, m_z=0;
     };

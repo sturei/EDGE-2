@@ -84,5 +84,58 @@ TEST(Vec3dTest, Normalize) {
     EXPECT_DOUBLE_EQ(result.y(), 0.8);
     EXPECT_DOUBLE_EQ(result.z(), 0.0);
 }
+TEST(Vec3dTest, OrthoVector) {
+    // Test ortho with vector along x-axis
+    Vec3d v1(1.0, 0.0, 0.0);
+    Vec3d ortho1 = v1.ortho();
+    EXPECT_DOUBLE_EQ(ortho1.dot(v1), 0.0);
+    EXPECT_DOUBLE_EQ(ortho1.magnitude(), 1.0);
+    
+    // Test ortho with vector along y-axis
+    Vec3d v2(0.0, 1.0, 0.0);
+    Vec3d ortho2 = v2.ortho();
+    EXPECT_DOUBLE_EQ(ortho2.dot(v2), 0.0);
+    EXPECT_DOUBLE_EQ(ortho2.magnitude(), 1.0);
+    
+    // Test ortho with vector along z-axis
+    Vec3d v3(0.0, 0.0, 1.0);
+    Vec3d ortho3 = v3.ortho();
+    EXPECT_DOUBLE_EQ(ortho3.dot(v3), 0.0);
+    EXPECT_DOUBLE_EQ(ortho3.magnitude(), 1.0);
+    
+    // Test ortho with arbitrary vector
+    Vec3d v4(1.0, 2.0, 3.0);
+    Vec3d ortho4 = v4.ortho();
+    EXPECT_NEAR(ortho4.dot(v4), 0.0, 1e-10);
+    EXPECT_DOUBLE_EQ(ortho4.magnitude(), 1.0);
+}
+
+TEST(Vec3dTest, NegationOperator) {
+    Vec3d v(1.0, -2.0, 3.0);
+    Vec3d result = -v;
+    EXPECT_EQ(result.x(), -1.0);
+    EXPECT_EQ(result.y(), 2.0);
+    EXPECT_EQ(result.z(), -3.0);
+}
+
+TEST(Vec3dTest, ScalarDivision) {
+    Vec3d v(4.0, 6.0, 8.0);
+    Vec3d result = v / 2.0;
+    EXPECT_EQ(result.x(), 2.0);
+    EXPECT_EQ(result.y(), 3.0);
+    EXPECT_EQ(result.z(), 4.0);
+}
+
+TEST(Vec3dTest, ZeroVector) {
+    Vec3d zero;
+    EXPECT_EQ(zero.magnitude(), 0.0);
+    EXPECT_TRUE(zero.x() == 0.0 && zero.y() == 0.0 && zero.z() == 0.0);
+}
+
+TEST(Vec3dTest, UnitVectorMagnitude) {
+    Vec3d unit = Vec3d(1.0, 2.0, 3.0).normalize();
+    EXPECT_DOUBLE_EQ(unit.magnitude(), 1.0);
+}
+
 
 
