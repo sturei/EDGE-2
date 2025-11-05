@@ -70,6 +70,8 @@ set(TEST_SOURCES
     src/utils/pla3d.test.cpp
     src/utils/sph3d.test.cpp
     src/utils/cir3d.test.cpp
+    src/utils/evaluate.test.cpp
+    src/utils/parameterize.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
     src/document/store.test.cpp
