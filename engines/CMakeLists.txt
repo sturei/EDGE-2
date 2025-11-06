@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 4.1) # earliest version tested
 project(EDGE-2 VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
+set(CMAKE_BUILD_TYPE Debug)
 
 ##################
 # Dependencies
@@ -54,6 +54,7 @@ set(MODELLING_SERVICE_SOURCES
     src/brep/brep.actions.cpp
     src/brep/brep.fixtures.cpp
     src/brep/brepModel.cpp
+    src/brep/navigate.cpp
     src/document/document.cpp
     src/document/document.actions.cpp
     src/document/documentService.cpp
@@ -79,6 +80,7 @@ set(TEST_SOURCES
     src/utils/tesselate.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
+    src/brep/navigate.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp

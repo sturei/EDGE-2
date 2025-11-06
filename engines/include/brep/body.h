@@ -40,13 +40,20 @@ namespace e2 {
             Body(const std::vector<Cell>& cells, const std::vector<Cocell>& cocells = {}) : m_cells(cells), m_cocells(cocells) {
                 updateGraph();
             }
+
             const std::vector<Cell>& cells() const { return m_cells; }
             const std::vector<Cocell>& cocells() const { return m_cocells; }
+            CellIndex addCell(const Cell& cell);
+            const Cell& cell(CellIndex index) const { return m_cells[index]; }   
+            const size_t numCells() const { return m_cells.size(); }
+            CocellIndex addCocell(const Cocell& cocell);
+            const Cocell& cocell(CocellIndex index) const { return m_cocells[index]; }   
+            const size_t numCocells() const { return m_cocells.size(); }
+
             const e2::Graph& graph() const { return m_graph; }
             bool graphNeedsUpdate() const { return m_graphNeedsUpdate; }    
-            CellIndex addCell(const Cell& cell);
-            CocellIndex addCocell(const Cocell& cocell);
             void updateGraph();
+
             friend std::ostream& operator<<(std::ostream& os, const Body& body);
         private:
             std::vector<Cell> m_cells; // all the cells in the body

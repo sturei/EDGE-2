@@ -72,6 +72,7 @@ namespace e2 {
             body->addCocell(Cocell(faceCellIndex, 5, +1)); // face bounded by right edge
             body->addCocell(Cocell(faceCellIndex, 6, +1)); // face bounded by upper edge
             body->addCocell(Cocell(faceCellIndex, 7, +1)); // face bounded by left edge
+            body->updateGraph();
 
             return body;
         }
