@@ -77,13 +77,13 @@ namespace e2 {
         return os;
     }
 
-    size_t Body::addCell(const Cell& cell) {
+    CellIndex Body::addCell(const Cell& cell) {
         m_cells.push_back(cell);
         m_graphNeedsUpdate = true;
         return m_cells.size() - 1;
     }
 
-    size_t Body::addCocell(const Cocell& cocell) {
+    CocellIndex Body::addCocell(const Cocell& cocell) {
         m_cocells.push_back(cocell);
         m_graphNeedsUpdate = true;
         return m_cocells.size() - 1;
@@ -94,10 +94,9 @@ namespace e2 {
             // For now, just rebuild the graph from scratch. Incremental update can come later.
             // Have not used vertex properties here for now, because cells[v[i].property] would be just cells[i] anyway.
             m_graph = e2::Graph(m_cells.size()); 
-            for (size_t i = 0; i < m_cocells.size(); ++i) {
+            for (CocellIndex i = 0; i < m_cocells.size(); ++i) {
                 const auto& cocell = m_cocells[i];
-                // Edge property is the index of the cocell.
-                // Edge added star->boundary by convention, but actually doesn't matter because the graph internally connects in both directions
+                // Add the cocell as an edge in the graph, so it becomes an out-edge of its star and an in-edge of its boundary.
                 m_graph.addEdge(cocell.starCell(), cocell.boundaryCell(), i);
             }
             m_graphNeedsUpdate = false;
@@ -106,10 +105,10 @@ namespace e2 {
 
     std::ostream& operator<<(std::ostream& os, const Body& body) {
         os << "Body with " << body.m_cells.size() << " cells and " << body.m_cocells.size() << " cocells." << std::endl;
-        for (size_t i = 0; i < body.m_cells.size(); ++i) {
+        for (CellIndex i = 0; i < body.m_cells.size(); ++i) {
             os << "  Cell " << i << ": " << body.m_cells[i] << std::endl;
         }
-        for (size_t i = 0; i < body.m_cocells.size(); ++i) {
+        for (CocellIndex i = 0; i < body.m_cocells.size(); ++i) {
             os << "  Cocell " << i << ": " << body.m_cocells[i] << std::endl;
         }
         return os;

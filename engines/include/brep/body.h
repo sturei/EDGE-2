@@ -3,6 +3,11 @@
 #include "utils/graph.h"
 
 namespace e2 {
+
+    typedef size_t CellIndex;       // Index into the Body's Cell vector
+    typedef size_t CocellIndex;     // Index into the Body's Cocell vector
+    typedef int CocellSense;        // +1 for positive, -1 for negative, 0 for neutral
+
     class Cell {
         public:
             Cell() {}
@@ -18,15 +23,15 @@ namespace e2 {
     class Cocell {
         public:
             Cocell() {}
-            Cocell(size_t starCell, size_t boundaryCell, int sense ) : m_starCell(starCell), m_boundaryCell(boundaryCell), m_sense(sense) {}
-            int sense() const { return m_sense; }
-            size_t starCell() const { return m_starCell; }
-            size_t boundaryCell() const { return m_boundaryCell; }
+            Cocell(CellIndex starCell, CellIndex boundaryCell, CocellSense sense ) : m_starCell(starCell), m_boundaryCell(boundaryCell), m_sense(sense) {}
+            CocellSense sense() const { return m_sense; }
+            CellIndex starCell() const { return m_starCell; }
+            CellIndex boundaryCell() const { return m_boundaryCell; }
             friend std::ostream& operator<<(std::ostream& os, const Cocell& cocell);
         private:
-            size_t m_starCell = -1; // index of the cell in the body's cells vector that this cocell is part of the boundary of
-            size_t m_boundaryCell = -1; // index of the cell in the body's cells vector that this cocell bounds
-            int m_sense = 0; // 0 for internal boundary, +1 or -1 for external boundary according to which side the cell it bounds lies on
+            CellIndex m_starCell = -1;
+            CellIndex m_boundaryCell = -1;
+            CocellSense m_sense = 0;
     };
 
     class Body {
@@ -39,8 +44,8 @@ namespace e2 {
             const std::vector<Cocell>& cocells() const { return m_cocells; }
             const e2::Graph& graph() const { return m_graph; }
             bool graphNeedsUpdate() const { return m_graphNeedsUpdate; }    
-            size_t addCell(const Cell& cell);
-            size_t addCocell(const Cocell& cocell);
+            CellIndex addCell(const Cell& cell);
+            CocellIndex addCocell(const Cocell& cocell);
             void updateGraph();
             friend std::ostream& operator<<(std::ostream& os, const Body& body);
         private:
