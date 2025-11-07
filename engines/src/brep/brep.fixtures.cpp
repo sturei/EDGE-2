@@ -111,9 +111,9 @@ namespace e2 {
             Ray3d left(ul, Vec3d(0,-1,0));
 
             Cir3d corner_bl(c_bl, r, Vec3d(0,0,1), Vec3d(1,0,0)); // bottom-left corner arc
-            Cir3d corner_br(c_br, r, Vec3d(0,0,1), Vec3d(0,1,0)); // bottom-right corner arc
-            Cir3d corner_tr(c_tr, r, Vec3d(0,0,1), Vec3d(-1,0,0)); // top-right corner arc
-            Cir3d corner_tl(c_tl, r, Vec3d(0,0,1), Vec3d(0,-1,0)); // top-left corner arc
+            Cir3d corner_br(c_br, r, Vec3d(0,0,1), Vec3d(1,1,0)); // bottom-right corner arc
+            Cir3d corner_tr(c_tr, r, Vec3d(0,0,1), Vec3d(1,0,0)); // top-right corner arc
+            Cir3d corner_tl(c_tl, r, Vec3d(0,0,1), Vec3d(1,0,0)); // top-left corner arc
 
             // construct the cells
             std::vector<Cell> cells = {
@@ -143,8 +143,8 @@ namespace e2 {
                 Cocell(9, 3, +1),  
                 Cocell(10, 4, -1),  
                 Cocell(10, 5, +1),  
-                Cocell(11, 5, -1),  
-                Cocell(11, 6, +1),  
+                Cocell(11, 6, -1),  
+                Cocell(11, 7, +1),  
                 Cocell(12, 7, -1),  
                 Cocell(12, 0, +1),  
                 Cocell(13, 1, -1),  
