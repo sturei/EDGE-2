@@ -3,6 +3,8 @@
 #include "brep/brep.actions.h"
 #include "brep/brep.fixtures.h"
 #include "brep/brepModel.h"
+#include "brep/navigate.h"
+#include "brep/tessellate.h"
 #include "document/document.h"
 #include "document/store.h"
 #include "utils/vec3d.h"
@@ -94,7 +96,8 @@ namespace e2 {
                 brepModel->addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
 
-                // update the Scene model in the client      
+                // update the Scene model in the client
+                /*      
                 Vec3d lowerRight(upperRight.x(), lowerLeft.y(), lowerLeft.z());
                 Vec3d upperLeft(lowerLeft.x(), upperRight.y(), upperRight.z());          
                 json points = json::array({
@@ -107,6 +110,26 @@ namespace e2 {
                 json paths = json::array({
                     points
                 });
+                */
+
+                // TODO: move to profile.h/cpp
+                CellIndex faceIndex = getFacesOfBody(*sheetRectangleBody)[0];
+                auto edges = getEdgesOfFace(faceIndex, *sheetRectangleBody);
+                std::vector<json> paths;
+                for (const auto& edgePair : edges) {
+                    CellIndex edgeIndex = edgePair.first;
+                    auto tessellatedPointsPtr = tessellate(*sheetRectangleBody, edgeIndex);
+                    std::vector<json> path;
+                    for (const auto& point : *tessellatedPointsPtr) {
+                            path.push_back(json::array({point.x(), point.y()}));
+                    }
+                    if (edgePair.second == -1) {
+                        std::reverse(path.begin(), path.end());
+                    }
+                    paths.push_back(path);
+                    delete tessellatedPointsPtr;
+                }
+
                 json clientPayload = json::object({{"paths", paths}});
                 doc->dispatchClientAction({"addGProfile", clientPayload});
 

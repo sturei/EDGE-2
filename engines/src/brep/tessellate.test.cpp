@@ -27,20 +27,18 @@ TEST_F(TesselateTest, TessellateRay) {
     double tstart = 2.0;
     double tend = 7.0;
     auto points = tessellate(ray, tstart, tend);
-    ASSERT_EQ(points.size(), 2);
+    ASSERT_EQ(points->size(), 2);
+    delete points;
 };
 
 TEST_F(TesselateTest, TessellateFullCircle) {
     double tstart = 0.0;
     double tend = 2.0 * M_PI;
     auto points = tessellate(circle, tstart, tend);
-    EXPECT_TRUE(isNearlyEqual(points.front(), points.back()));
-    EXPECT_GT(points.size(), 10); // Expect multiple segments
+    EXPECT_TRUE(isNearlyEqual(points->front(), points->back()));
+    EXPECT_GT(points->size(), 10); // Expect multiple segments
+    delete points;
 };
-
-
-
-
 
 
 

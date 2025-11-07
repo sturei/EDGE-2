@@ -34,6 +34,8 @@
  * The body may be thought of as a graph of Cells (graph vertices) connected by Cocells (graph edges). 
  * The code contains utilities for creating and manipulating such graphs.
  *
+ * For now,Cells, Cocells and Attributes, once added to a Body, cannot be removed (cells can be deactivated though).
+ * Hence, indexes into the Body's Cell and Cocell vectors remain valid for the lifetime of
 
  * Bibliography:
  * Rossignac and O'Connor, "SGC: A dimension-independent model for pointsets with internal structures and 
@@ -87,6 +89,24 @@ namespace e2 {
         m_cocells.push_back(cocell);
         m_graphNeedsUpdate = true;
         return m_cocells.size() - 1;
+    }
+
+    void Body::attachCellAttribute(CellIndex cellIndex, std::string attributeType, Attribute* attribute){
+        // they are stored by type first, then by cell index.
+        // It will probably be more common to process one attribute type for many cells than vice versa.
+        m_cellAttributes[attributeType][cellIndex] = attribute;
+        
+    }
+    bool Body::findCellAttribute(CellIndex cellIndex, std::string attributeType, Attribute& outAttribute) const {
+        auto it = m_cellAttributes.find(attributeType);
+        if (it != m_cellAttributes.end()) {
+            auto attrIt = it->second.find(cellIndex);
+            if (attrIt != it->second.end()) {
+                outAttribute = *attrIt->second;
+                return true;
+            }
+        }
+        return false;
     }
 
     void Body::updateGraph() {
