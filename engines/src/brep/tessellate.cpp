@@ -1,4 +1,4 @@
-#include "utils/tesselate.h"
+#include "brep/tessellate.h"
 #include "utils/evaluate.h"
 
 namespace e2 {

@@ -55,6 +55,7 @@ set(MODELLING_SERVICE_SOURCES
     src/brep/brep.fixtures.cpp
     src/brep/brepModel.cpp
     src/brep/navigate.cpp
+    src/brep/tessellate.cpp
     src/document/document.cpp
     src/document/document.actions.cpp
     src/document/documentService.cpp
@@ -63,7 +64,6 @@ set(MODELLING_SERVICE_SOURCES
     src/utils/vec3d.cpp
     src/utils/evaluate.cpp
     src/utils/parameterize.cpp
-    src/utils/tesselate.cpp
 )
 
 set(TEST_SOURCES
@@ -77,10 +77,10 @@ set(TEST_SOURCES
     src/utils/cir3d.test.cpp
     src/utils/evaluate.test.cpp
     src/utils/parameterize.test.cpp
-    src/utils/tesselate.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
     src/brep/navigate.test.cpp
+    src/brep/tessellate.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp
