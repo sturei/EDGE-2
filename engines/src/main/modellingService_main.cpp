@@ -37,6 +37,10 @@ int main(int argc, char* argv[]) {
     document->registerActionFunction(e2::BRepActions::addAcornBodyDef);
     document->registerActionFunction(e2::BRepActions::addWireRectangleDef);
     document->registerActionFunction(e2::BRepActions::addSheetRectangleDef);
+    document->registerActionFunction(e2::BRepActions::addWireRectangleDef);
+    document->registerActionFunction(e2::BRepActions::addSheetRectangleDef);
+    document->registerActionFunction(e2::BRepActions::addWireRoundRectDef);
+    document->registerActionFunction(e2::BRepActions::addSheetRoundRectDef);
 
     // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
     DocumentService::run(document);

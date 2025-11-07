@@ -23,7 +23,7 @@ async function pingModeller(_doc: Document, _payload: any): Promise<void> {
 
 }
 
-async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
+async function executeModellingAction(doc: Document, type:string,payload: any): Promise<void> {
 
     // create a rectangular sheet with specified lowerLeft and upperRight corners
 
@@ -34,7 +34,7 @@ async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            type: "addSheetRectangle",
+            type: type,
             payload: payload
         })
     });
@@ -46,5 +46,16 @@ async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
     }
 }
 
+
+async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
+    // create a rectangular sheet with specified lowerLeft and upperRight corners
+    await executeModellingAction(doc, "addSheetRectangle", payload);
+}
+async function addSheetRoundRect(doc: Document, payload: any): Promise<void> {
+    // create a rectangular sheet with specified lowerLeft and upperRight corners, and cornerRadius
+    await executeModellingAction(doc, "addSheetRoundRect", payload);
+}
+
 export const pingModellerActionDef = { type: "pingModeller", function: pingModeller };
 export const addSheetRectangleActionDef = { type: "addSheetRectangle", function: addSheetRectangle };
+export const addSheetRoundRectActionDef = { type: "addSheetRoundRect", function: addSheetRoundRect };

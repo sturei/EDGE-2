@@ -36,6 +36,7 @@ const actionSuggestions = [
 
         document.registerActionFunction(brepActions.pingModellerActionDef);
         document.registerActionFunction(brepActions.addSheetRectangleActionDef);
+        document.registerActionFunction(brepActions.addSheetRoundRectActionDef);
 
     }, []);
 

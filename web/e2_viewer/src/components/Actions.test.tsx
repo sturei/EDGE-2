@@ -25,7 +25,8 @@ vi.mock('../grep/grep.actions.ts', () => ({
 // Mock the brep actions module
 vi.mock('../brep/brep.actions.ts', () => ({
     pingModellerActionDef: { type: 'pingModeller' },
-    addSheetRectangleActionDef: { type: 'addSheetRectangle' }
+    addSheetRectangleActionDef: { type: 'addSheetRectangle' },
+    addSheetRoundRectActionDef: { type: 'addSheetRoundRect' }
 }));
 
 describe('Actions', () => {
@@ -60,7 +61,7 @@ describe('Actions', () => {
     it('registers all action functions on mount', () => {
         renderActions();
         
-        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(9);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledTimes(10);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.pingActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGPointActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGLineActionDef);
@@ -70,6 +71,7 @@ describe('Actions', () => {
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.addGProfileActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.pingModellerActionDef);
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.addSheetRectangleActionDef);
+        expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(brepActions.addSheetRoundRectActionDef);
 
     });
 

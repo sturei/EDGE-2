@@ -50,20 +50,51 @@ namespace e2 {
             });
         }
 
-        void addWireRectangle(Document* doc, const json& payload) {
-            // This action adds a wire rectangle to the brep store.
-            json ll = payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}}));
-            json ur = payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}));
+        void getPayloadForGProfile(const Body& profile, json& clientPayload) {
+            // This function generates the JSON payload for a GProfile representing the outline of the given sheet rectangle body.
+            CellIndex faceIndex = getFacesOfBody(profile)[0];
+            auto edges = getEdgesOfFace(faceIndex, profile);
+            std::vector<json> paths;
+            for (const auto& edgePair : edges) {
+                CellIndex edgeIndex = edgePair.first;
+                auto tessellatedPointsPtr = tessellate(profile, edgeIndex);
+                std::vector<json> path;
+                for (const auto& point : *tessellatedPointsPtr) {
+                        path.push_back(json::array({point.x(), point.y()}));
+                }
+                if (edgePair.second == -1) {
+                    std::reverse(path.begin(), path.end());
+                }
+                paths.push_back(path);
+                delete tessellatedPointsPtr;
+            }
+
+            clientPayload = json::object({{"paths", paths}});
+        }
+
+        std::pair<Vec3d, Vec3d> parseLowerUpperJson(const json& llJson, const json& urJson) {
             Vec3d lowerLeft = Vec3d(
-                ll.at("x").get<double>(),
-                ll.at("y").get<double>(),
-                ll.at("z").get<double>()
+                llJson.at("x").get<double>(),
+                llJson.at("y").get<double>(),
+                llJson.at("z").get<double>()
             );
             Vec3d upperRight = Vec3d(
-                ur.at("x").get<double>(),
-                ur.at("y").get<double>(),
-                ur.at("z").get<double>()
+                urJson.at("x").get<double>(),
+                urJson.at("y").get<double>(),
+                urJson.at("z").get<double>()
             );
+            return std::make_pair(lowerLeft, upperRight);
+        }
+
+        void addWireRectangle(Document* doc, const json& payload) {
+            // This action adds a wire rectangle to the brep store.
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+
             Store* store = doc->storeAt("brep");
             store->changeState([lowerLeft, upperRight](Model* model) {
                 BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
@@ -75,18 +106,13 @@ namespace e2 {
 
         void addSheetRectangle(Document* doc, const json& payload) {
             // This action adds a sheet rectangle to the brep store.
-            json ll = payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}}));
-            json ur = payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}));
-            Vec3d lowerLeft = Vec3d(
-                ll.at("x").get<double>(),
-                ll.at("y").get<double>(),
-                0
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
             );
-            Vec3d upperRight = Vec3d(
-                ur.at("x").get<double>(),
-                ur.at("y").get<double>(),
-                0
-            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+
             Store* store = doc->storeAt("brep");
             store->changeState([lowerLeft, upperRight, doc](Model* model) {
 
@@ -96,45 +122,62 @@ namespace e2 {
                 brepModel->addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
 
-                // update the Scene model in the client
-                /*      
-                Vec3d lowerRight(upperRight.x(), lowerLeft.y(), lowerLeft.z());
-                Vec3d upperLeft(lowerLeft.x(), upperRight.y(), upperRight.z());          
-                json points = json::array({
-                    json::array({lowerLeft.x(), lowerLeft.y()}),
-                    json::array({lowerRight.x(), lowerRight.y()}),
-                    json::array({upperRight.x(), upperRight.y()}),
-                    json::array({upperLeft.x(), upperLeft.y()}),
-                    json::array({lowerLeft.x(), lowerLeft.y()})
-                });
-                json paths = json::array({
-                    points
-                });
-                */
-
-                // TODO: move to profile.h/cpp
-                CellIndex faceIndex = getFacesOfBody(*sheetRectangleBody)[0];
-                auto edges = getEdgesOfFace(faceIndex, *sheetRectangleBody);
-                std::vector<json> paths;
-                for (const auto& edgePair : edges) {
-                    CellIndex edgeIndex = edgePair.first;
-                    auto tessellatedPointsPtr = tessellate(*sheetRectangleBody, edgeIndex);
-                    std::vector<json> path;
-                    for (const auto& point : *tessellatedPointsPtr) {
-                            path.push_back(json::array({point.x(), point.y()}));
-                    }
-                    if (edgePair.second == -1) {
-                        std::reverse(path.begin(), path.end());
-                    }
-                    paths.push_back(path);
-                    delete tessellatedPointsPtr;
-                }
-
-                json clientPayload = json::object({{"paths", paths}});
+                // update the scene in the client
+                json clientPayload;
+                getPayloadForGProfile(*sheetRectangleBody, clientPayload);
                 doc->dispatchClientAction({"addGProfile", clientPayload});
 
             });
-           }
+        }
+
+        void addWireRoundRect(Document* doc, const json& payload) {
+            // This action adds a wire rounded rectangle to the brep store.
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+            double cornerRadius = payload.value("cornerRadius", 0.2);
+
+            Store* store = doc->storeAt("brep");
+            store->changeState([lowerLeft, upperRight, cornerRadius](Model* model) {
+                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                Body* wireRectangleBody = BRepFixtures::createWireRoundRect(lowerLeft, upperRight, cornerRadius);
+                brepModel->addBody(wireRectangleBody);
+                std::cerr << "added Wire Rounded Rectangle" << std::endl;      // ---LOGGING---
+            });
+        }
+
+        void addSheetRoundRect(Document* doc, const json& payload) {
+            // This action adds a sheet rounded rectangle to the brep store.
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+            double cornerRadius = payload.value("cornerRadius", 0.2);
+
+            Store* store = doc->storeAt("brep");
+            store->changeState([lowerLeft, upperRight, cornerRadius, doc](Model* model) {
+
+                // update the BRepModel
+                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                Body* sheetRoundRectBody = BRepFixtures::createSheetRoundRect(lowerLeft, upperRight, cornerRadius);
+                brepModel->addBody(sheetRoundRectBody);
+                std::cerr << "added Sheet Rounded Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the scene in the client
+                json clientPayload;
+                getPayloadForGProfile(*sheetRoundRectBody, clientPayload);
+                doc->dispatchClientAction({"addGProfile", clientPayload});
+
+            });
+        }
+
+
+
     }
 };
 
