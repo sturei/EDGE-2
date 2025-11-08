@@ -8,6 +8,8 @@
 #include "document/document.h"
 #include "document/store.h"
 #include "utils/vec3d.h"
+#include "scene/sceneActionPayloads.h"
+
 using json = nlohmann::json;
 
 /**
@@ -48,28 +50,6 @@ namespace e2 {
                 brepModel->addBody(acornBody);
                 std::cerr << "added Acorn Body" << std::endl;      // ---LOGGING--- 
             });
-        }
-
-        void getPayloadForGProfile(const Body& profile, json& clientPayload) {
-            // This function generates the JSON payload for a GProfile representing the outline of the given sheet rectangle body.
-            CellIndex faceIndex = getFacesOfBody(profile)[0];
-            auto edges = getEdgesOfFace(faceIndex, profile);
-            std::vector<json> paths;
-            for (const auto& edgePair : edges) {
-                CellIndex edgeIndex = edgePair.first;
-                auto tessellatedPointsPtr = tessellate(profile, edgeIndex);
-                std::vector<json> path;
-                for (const auto& point : *tessellatedPointsPtr) {
-                        path.push_back(json::array({point.x(), point.y()}));
-                }
-                if (edgePair.second == -1) {
-                    std::reverse(path.begin(), path.end());
-                }
-                paths.push_back(path);
-                delete tessellatedPointsPtr;
-            }
-
-            clientPayload = json::object({{"paths", paths}});
         }
 
         std::pair<Vec3d, Vec3d> parseLowerUpperJson(const json& llJson, const json& urJson) {
@@ -122,9 +102,9 @@ namespace e2 {
                 brepModel->addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
 
-                // update the scene in the client
+                // update the Scene
                 json clientPayload;
-                getPayloadForGProfile(*sheetRectangleBody, clientPayload);
+                getPayloadForAddGProfile(*sheetRectangleBody, clientPayload);
                 doc->dispatchClientAction({"addGProfile", clientPayload});
 
             });
@@ -170,7 +150,7 @@ namespace e2 {
 
                 // update the scene in the client
                 json clientPayload;
-                getPayloadForGProfile(*sheetRoundRectBody, clientPayload);
+                getPayloadForAddGProfile(*sheetRoundRectBody, clientPayload);
                 doc->dispatchClientAction({"addGProfile", clientPayload});
 
             });
