@@ -23,10 +23,10 @@ namespace e2 {
     std::vector<std::pair<CellIndex, CocellSense>> getKBoundary(int k, const CellIndex& cellIndex, const Body& body) {
         std::vector<std::pair<CellIndex, CocellSense>> result;
         const Graph& graph = body.graph();
-        const Graph::VertexView vertex = graph.vertex(cellIndex);
+        const Graph::NodeView vertex = graph.node(cellIndex);
         for (size_t i = 0; i < vertex.outDegree; ++i) {
-            Graph::EdgeView edge = vertex.outEdge(i);
-            CocellIndex cocellIndex = edge.edgeProperty;
+            Graph::LinkView edge = vertex.outLink(i);
+            CocellIndex cocellIndex = edge.linkProperty;
             const Cocell& cocell = body.cocell(cocellIndex);
             const CellIndex boundaryCellIndex = edge.target;
             const Cell& boundaryCell = body.cell(boundaryCellIndex);
@@ -43,10 +43,10 @@ namespace e2 {
     std::vector<std::pair<CellIndex, CocellSense>> getKStar(int k, const CellIndex& cellIndex, const Body& body) {
         std::vector<std::pair<CellIndex, CocellSense>> result;
         const Graph& graph = body.graph();
-        const Graph::VertexView vertex = graph.vertex(cellIndex);
+        const Graph::NodeView vertex = graph.node(cellIndex);
         for (size_t i = 0; i < vertex.inDegree; ++i) {
-            Graph::EdgeView edge = vertex.inEdge(i);
-            CocellIndex cocellIndex = edge.edgeProperty;
+            Graph::LinkView edge = vertex.inLink(i);
+            CocellIndex cocellIndex = edge.linkProperty;
             const Cocell& cocell = body.cocell(cocellIndex);
             const CellIndex starCellIndex = edge.source;
             const Cell& starCell = body.cell(starCellIndex);

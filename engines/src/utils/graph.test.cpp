@@ -30,18 +30,18 @@ struct Map
         size_t u = cityIndex(sourceCity);
         size_t v = cityIndex(targetCity);
         size_t p = roadIndex(road);
-        connections.addEdge(u, v, p);
+        connections.addLink(u, v, p);
     }
     std::vector<std::string> getRoadsBetween(const std::string& sourceCity, const std::string& targetCity) const {
         size_t u = cityIndex(sourceCity);
         size_t v = cityIndex(targetCity);
-        const auto& sourceVertex = connections.vertex(u);
+        const auto& sourceNode = connections.node(u);
 
         std::vector<std::string> roadsOut;
-        for (size_t i = 0; i < sourceVertex.outDegree; ++i) {
-            const auto& outEdge = sourceVertex.outEdge(i);
-            if (outEdge.target == v) {
-              roadsOut.push_back(roads[outEdge.edgeProperty]);
+        for (size_t i = 0; i < sourceNode.outDegree; ++i) {
+            const auto& outLink = sourceNode.outLink(i);
+            if (outLink.target == v) {
+              roadsOut.push_back(roads[outLink.linkProperty]);
             }
         }
         return roadsOut;
@@ -71,14 +71,14 @@ struct Atlas
         }
     } {
         // Add edges and properties for first map directly
-        maps[0].connections.addEdge(0, 1, 0); // A -> B
-        maps[0].connections.addEdge(0, 2, 1); // A -> C
-        maps[0].connections.addEdge(1, 2, 2); // B -> C
-        maps[0].connections.addEdge(2, 0, 3); // C -> A
-        maps[0].connections.addEdge(2, 3, 4); // C -> D
-        maps[0].connections.addEdge(3, 3, 5); // D -> D
+        maps[0].connections.addLink(0, 1, 0); // A -> B
+        maps[0].connections.addLink(0, 2, 1); // A -> C
+        maps[0].connections.addLink(1, 2, 2); // B -> C
+        maps[0].connections.addLink(2, 0, 3); // C -> A
+        maps[0].connections.addLink(2, 3, 4); // C -> D
+        maps[0].connections.addLink(3, 3, 5); // D -> D
 
-        // Add edges for second map using the utilities
+        // Add links for second map using the utilities
         maps[1].connect("Vancouver", "Seattle", "VS");
         maps[1].connect("Vancouver", "Portland", "VP");
         maps[1].connect("Seattle", "Portland", "SP");
@@ -86,21 +86,21 @@ struct Atlas
 };
 
 // a few not very efficient utilities to help with testing. These might be helped by adding iterators to the graph class in the future.
-std::vector<size_t> getOutEdges(const e2::Graph& g, size_t u) {
-    std::vector<size_t> outEdges;
-    const auto& vertex = g.vertex(u);
-    for (size_t i = 0; i < vertex.outDegree; ++i) {
-        outEdges.push_back(vertex.outEdge(i).target);
+std::vector<size_t> getOutLinks(const e2::Graph& g, size_t u) {
+    std::vector<size_t> outLinks;
+    const auto& node = g.node(u);
+    for (size_t i = 0; i < node.outDegree; ++i) {
+        outLinks.push_back(node.outLink(i).target);
     }
-    return outEdges;
+    return outLinks;
 } 
-std::vector<size_t> getInEdges(const e2::Graph& g, size_t u) {
-    std::vector<size_t> inEdges;
-    const auto& vertex = g.vertex(u);
-    for (size_t i = 0; i < vertex.inDegree; ++i) {
-        inEdges.push_back(vertex.inEdge(i).source);
+std::vector<size_t> getInLinks(const e2::Graph& g, size_t u) {
+    std::vector<size_t> inLinks;
+    const auto& node = g.node(u);
+    for (size_t i = 0; i < node.inDegree; ++i) {
+        inLinks.push_back(node.inLink(i).source);
     }
-    return inEdges;
+    return inLinks;
 }
 // end of utilities
 
@@ -110,12 +110,12 @@ class GraphTest : public ::testing::Test {
 
       // "graph" is for testing basic graph functionality (without properties)
       graph = new e2::Graph(5);
-      graph->addEdge(0, 1);
-      graph->addEdge(0, 2);
-      graph->addEdge(1, 2);
-      graph->addEdge(2, 0);
-      graph->addEdge(2, 3);
-      graph->addEdge(3, 3);
+      graph->addLink(0, 1);
+      graph->addLink(0, 2);
+      graph->addLink(1, 2);
+      graph->addLink(2, 0);
+      graph->addLink(2, 3);
+      graph->addLink(3, 3);
 
       // "atlas" is for testing property functionality
       atlas = new Atlas();    
@@ -131,81 +131,81 @@ class GraphTest : public ::testing::Test {
 
 TEST_F(GraphTest, DefaultConstructor) {
   e2::Graph g;
-  EXPECT_EQ(g.numVertices(), 0);
+  EXPECT_EQ(g.numNodes(), 0);
 } 
 
 TEST_F(GraphTest, ParameterizedConstructor) {
   e2::Graph g1(3);
-  EXPECT_EQ(g1.numVertices(), 3);
+  EXPECT_EQ(g1.numNodes(), 3);
   EXPECT_EQ(g1.graphProperty(), 0);
-  EXPECT_EQ(g1.vertex(0).vertexProperty, 0);
-  EXPECT_EQ(g1.vertex(1).vertexProperty, 0);
-  EXPECT_EQ(g1.vertex(2).vertexProperty, 0);
+  EXPECT_EQ(g1.node(0).nodeProperty, 0);
+  EXPECT_EQ(g1.node(1).nodeProperty, 0);
+  EXPECT_EQ(g1.node(2).nodeProperty, 0);
 
   size_t graphProperty = 42;
-  std::vector<size_t> vertexProperties = { 5, 12, 13 };
-  e2::Graph g2(3, graphProperty, vertexProperties);
-  EXPECT_EQ(g2.numVertices(), 3);
+  std::vector<size_t> nodeProperties = { 5, 12, 13 };
+  e2::Graph g2(3, graphProperty, nodeProperties);
+  EXPECT_EQ(g2.numNodes(), 3);
   EXPECT_EQ(g2.graphProperty(), graphProperty);
-  EXPECT_EQ(g2.vertex(0).vertexProperty, 5);
-  EXPECT_EQ(g2.vertex(1).vertexProperty, 12);
-  EXPECT_EQ(g2.vertex(2).vertexProperty, 13);  
+  EXPECT_EQ(g2.node(0).nodeProperty, 5);
+  EXPECT_EQ(g2.node(1).nodeProperty, 12);
+  EXPECT_EQ(g2.node(2).nodeProperty, 13);
 
 } 
 
 TEST_F(GraphTest, Size) {
-  EXPECT_EQ(graph->numVertices(), 5);
-}
-         
-TEST_F(GraphTest, OutEdges) {
-  std::vector<size_t> outEdges0 = getOutEdges(*graph, 0);
-  EXPECT_EQ(outEdges0.size(), 2);
-  EXPECT_THAT(outEdges0, Contains(1));
-  EXPECT_THAT(outEdges0, Contains(2));
-
-  std::vector<size_t> outEdges2 = getOutEdges(*graph, 2);
-  EXPECT_EQ(outEdges2.size(), 2);
-  EXPECT_THAT(outEdges2, Contains(0));
-  EXPECT_THAT(outEdges2, Contains(3));
-
-  std::vector<size_t> outEdges3 = getOutEdges(*graph, 3);
-  EXPECT_EQ(outEdges3.size(), 1);
-  EXPECT_THAT(outEdges3, Contains(3));
-
-  std::vector<size_t> outEdges4 = getOutEdges(*graph, 4);
-  EXPECT_EQ(outEdges4.size(), 0);
-
+  EXPECT_EQ(graph->numNodes(), 5);
 }
 
-TEST_F(GraphTest, InEdges) {
-  std::vector<size_t> inEdges0 = getInEdges(*graph, 0);
-  EXPECT_EQ(inEdges0.size(), 1);
-  EXPECT_THAT(inEdges0, Contains(2));
+TEST_F(GraphTest, OutLinks) {
+  std::vector<size_t> outLinks0 = getOutLinks(*graph, 0);
+  EXPECT_EQ(outLinks0.size(), 2);
+  EXPECT_THAT(outLinks0, Contains(1));
+  EXPECT_THAT(outLinks0, Contains(2));
 
-  std::vector<size_t> inEdges2 = getInEdges(*graph, 2);
-  EXPECT_EQ(inEdges2.size(), 2);
-  EXPECT_THAT(inEdges2, Contains(0));
-  EXPECT_THAT(inEdges2, Contains(1));
+  std::vector<size_t> outLinks2 = getOutLinks(*graph, 2);
+  EXPECT_EQ(outLinks2.size(), 2);
+  EXPECT_THAT(outLinks2, Contains(0));
+  EXPECT_THAT(outLinks2, Contains(3));
 
-  std::vector<size_t> inEdges3 = getInEdges(*graph, 3);
-  EXPECT_EQ(inEdges3.size(), 2);
-  EXPECT_THAT(inEdges3, Contains(2));
-  EXPECT_THAT(inEdges3, Contains(3));
+  std::vector<size_t> outLinks3 = getOutLinks(*graph, 3);
+  EXPECT_EQ(outLinks3.size(), 1);
+  EXPECT_THAT(outLinks3, Contains(3));
 
-  std::vector<size_t> inEdges4 = getInEdges(*graph, 4);
-  EXPECT_EQ(inEdges4.size(), 0);
+  std::vector<size_t> outLinks4 = getOutLinks(*graph, 4);
+  EXPECT_EQ(outLinks4.size(), 0);
 
 }
 
-TEST_F(GraphTest, AddEdgeOutOfBounds) {
-  // Adding an edge with out-of-bounds vertices should not change the graph
-  graph->addEdge(5, 1); // u is out of bounds
-  graph->addEdge(1, 5); // v is out of bounds
-  graph->addEdge(6, 7); // both u and v are out of bounds
+TEST_F(GraphTest, InLinks) {
+  std::vector<size_t> inLinks0 = getInLinks(*graph, 0);
+  EXPECT_EQ(inLinks0.size(), 1);
+  EXPECT_THAT(inLinks0, Contains(2));
 
-  EXPECT_EQ(graph->numVertices(), 5);
-  EXPECT_EQ(graph->vertex(1).outDegree, 1);
-  EXPECT_EQ(graph->vertex(0).outDegree, 2);
+  std::vector<size_t> inLinks2 = getInLinks(*graph, 2);
+  EXPECT_EQ(inLinks2.size(), 2);
+  EXPECT_THAT(inLinks2, Contains(0));
+  EXPECT_THAT(inLinks2, Contains(1));
+
+  std::vector<size_t> inLinks3 = getInLinks(*graph, 3);
+  EXPECT_EQ(inLinks3.size(), 2);
+  EXPECT_THAT(inLinks3, Contains(2));
+  EXPECT_THAT(inLinks3, Contains(3));
+
+  std::vector<size_t> inLinks4 = getInLinks(*graph, 4);
+  EXPECT_EQ(inLinks4.size(), 0);
+
+}
+
+TEST_F(GraphTest, AddLinkOutOfBounds) {
+  // Adding a link with out-of-bounds vertices should not change the graph
+  graph->addLink(5, 1); // u is out of bounds
+  graph->addLink(1, 5); // v is out of bounds
+  graph->addLink(6, 7); // both u and v are out of bounds
+
+  EXPECT_EQ(graph->numNodes(), 5);
+  EXPECT_EQ(graph->node(1).outDegree, 1);
+  EXPECT_EQ(graph->node(0).outDegree, 2);
 }
 
 TEST_F(GraphTest, PropertyValues) {
@@ -213,11 +213,11 @@ TEST_F(GraphTest, PropertyValues) {
   const Map& m1 = atlas->maps[0];
   const e2::Graph& g1 = m1.connections;
   EXPECT_EQ(g1.graphProperty(), 0);
-  EXPECT_EQ(m1.cities[g1.vertex(0).vertexProperty], "A");
-  EXPECT_EQ(m1.cities[g1.vertex(1).vertexProperty], "B");
-  EXPECT_EQ(m1.roads[g1.vertex(0).outEdge(0).edgeProperty], "AB");
-  EXPECT_EQ(m1.roads[g1.vertex(0).outEdge(1).edgeProperty], "AC");
-  EXPECT_EQ(m1.roads[g1.vertex(2).outEdge(1).edgeProperty], "CD");
+  EXPECT_EQ(m1.cities[g1.node(0).nodeProperty], "A");
+  EXPECT_EQ(m1.cities[g1.node(1).nodeProperty], "B");
+  EXPECT_EQ(m1.roads[g1.node(0).outLink(0).linkProperty], "AB");
+  EXPECT_EQ(m1.roads[g1.node(0).outLink(1).linkProperty], "AC");
+  EXPECT_EQ(m1.roads[g1.node(2).outLink(1).linkProperty], "CD");
 }
 
 TEST_F(GraphTest, Accessors) {
@@ -225,11 +225,11 @@ TEST_F(GraphTest, Accessors) {
   const Map& m1 = atlas->maps[0];
   const e2::Graph& g1 = m1.connections;
   EXPECT_EQ(g1.graphProperty(), 0);
-  EXPECT_EQ(m1.cities[g1.vertex(0).vertexProperty], "A");
-  EXPECT_EQ(m1.cities[g1.vertex(1).vertexProperty], "B");
-  EXPECT_EQ(m1.roads[g1.vertex(0).outEdge(0).edgeProperty], "AB");
-  EXPECT_EQ(m1.roads[g1.vertex(0).outEdge(1).edgeProperty], "AC");
-  EXPECT_EQ(m1.roads[g1.vertex(2).outEdge(1).edgeProperty], "CD");
+  EXPECT_EQ(m1.cities[g1.node(0).nodeProperty], "A");
+  EXPECT_EQ(m1.cities[g1.node(1).nodeProperty], "B");
+  EXPECT_EQ(m1.roads[g1.node(0).outLink(0).linkProperty], "AB");
+  EXPECT_EQ(m1.roads[g1.node(0).outLink(1).linkProperty], "AC");
+  EXPECT_EQ(m1.roads[g1.node(2).outLink(1).linkProperty], "CD");
 
   // use the utilities to get the property values in the second map of the atlas
   const Map& m2 = atlas->maps[1];
@@ -256,9 +256,9 @@ TEST_F(GraphTest, Accessors) {
 
       // Check that the output string contains some expected substrings
       EXPECT_NE(graphStr.find("Graph property: 0"), std::string::npos);
-      EXPECT_NE(graphStr.find("Vertices: 5"), std::string::npos);
-      EXPECT_NE(graphStr.find("Vertex 0 (property: 0):"), std::string::npos);
-      EXPECT_NE(graphStr.find("Vertex 3 (property: 0):"), std::string::npos);
+      EXPECT_NE(graphStr.find("Nodes: 5"), std::string::npos);
+      EXPECT_NE(graphStr.find("Node 0 (property: 0):"), std::string::npos);
+      EXPECT_NE(graphStr.find("Node 3 (property: 0):"), std::string::npos);
   }
 
   

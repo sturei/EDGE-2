@@ -156,14 +156,14 @@ TEST_F(BodyTest, BodyFromFixtureAcorn) {
 
 TEST_F(BodyTest, GraphFromFixtureEmpty) {
     const Graph& graph = emptyBodyFixture->graph();
-    EXPECT_EQ(graph.numVertices(), 0);
+    EXPECT_EQ(graph.numNodes(), 0);
 }
 
 TEST_F(BodyTest, GraphFromFixtureAcorn) {
     Body* body = acornBodyFixture;
     const Graph& graph = body->graph();
-    EXPECT_EQ(graph.numVertices(), 1);
-    Graph::VertexView v = graph.vertex(0);
+    EXPECT_EQ(graph.numNodes(), 1);
+    Graph::NodeView v = graph.node(0);
     EXPECT_EQ(v.outDegree, 0);
     EXPECT_EQ(v.inDegree, 0);
 }

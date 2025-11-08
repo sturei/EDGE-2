@@ -116,8 +116,8 @@ namespace e2 {
             m_graph = e2::Graph(m_cells.size()); 
             for (CocellIndex i = 0; i < m_cocells.size(); ++i) {
                 const auto& cocell = m_cocells[i];
-                // Add the cocell as an edge in the graph, so it becomes an out-edge of its star and an in-edge of its boundary.
-                m_graph.addEdge(cocell.starCell(), cocell.boundaryCell(), i);
+                // Add the cocell as a link in the graph, so it becomes an out-link of its star and an in-link of its boundary.
+                m_graph.addLink(cocell.starCell(), cocell.boundaryCell(), i);
             }
             m_graphNeedsUpdate = false;
         }
