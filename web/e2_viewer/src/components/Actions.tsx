@@ -3,7 +3,7 @@
 import { DocumentContext } from "../Contexts"; 
 import { useContext, useEffect } from "react";
 import * as grepActions from '../grep/grep.actions.ts'  
-import * as brepActions from '../brep/brep.actions.ts'  
+import * as brepActions from '../shape/shape.actions.ts'  
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [

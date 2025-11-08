@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Actions } from './Actions';
 import { DocumentContext } from '../Contexts';
 import * as grepActions from '../grep/grep.actions.ts';
-import * as brepActions from '../brep/brep.actions.ts';
+import * as brepActions from '../shape/shape.actions.ts';
 
 /**
  * @vitest-environment jsdom
