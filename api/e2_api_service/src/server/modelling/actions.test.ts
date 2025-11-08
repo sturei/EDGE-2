@@ -3,19 +3,27 @@ import { ChildProcess, spawn } from 'child_process';
 import { dispatchAction, modellingService } from './actions.js';
 
 // Mock child_process
+
 vi.mock('child_process', () => {
     let mockChildProcess: Partial<ChildProcess>;
     let mockStdout: any;
     let mockStdin: any;
+    let mockStderr: any;
     mockStdout = {
         on: vi.fn()
     };
     mockStdin = {
         write: vi.fn()
     };
+    mockStderr = {
+        on: vi.fn(),
+        setEncoding: vi.fn()
+    };
     mockChildProcess = {
         stdout: mockStdout,
         stdin: mockStdin,
+        stderr: mockStderr,
+        on: vi.fn(),
         pid: 12345
     };
 
@@ -24,10 +32,12 @@ vi.mock('child_process', () => {
     }
 });
 
+
 describe('actions', () => {
     let mockChildProcess: Partial<ChildProcess>;
     let mockStdout: any;
     let mockStdin: any;
+    let mockStderr: any;
 
     beforeEach(() => {
         mockStdout = {
@@ -36,9 +46,15 @@ describe('actions', () => {
         mockStdin = {
             write: vi.fn()
         };
+        mockStderr = {
+            on: vi.fn(),
+            setEncoding: vi.fn()
+        };
         mockChildProcess = {
             stdout: mockStdout,
             stdin: mockStdin,
+            stderr: mockStderr,
+            on: vi.fn(),
             pid: 12345
         
         };

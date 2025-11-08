@@ -12,6 +12,15 @@ const modellingServicePath = '../../engines/build/e2_modellingService';
 const modellingService = spawn(modellingServicePath);
 console.log(`Spawned modelling service process ${modellingService.pid}`);
 
+modellingService.stderr.setEncoding('utf8');
+modellingService.stderr.on('data', function(data) {
+    console.log('stderr: ' + data);
+});
+
+modellingService.on('close', function(code) {
+    console.log('Modelling service closed with code: ' + code);
+});
+
 /** Dispatches the specified action to the modelling service and waits for a response. 
  * The action argument and the return value are JSON objects */
 export async function dispatchAction(action: any) : Promise<any> {
