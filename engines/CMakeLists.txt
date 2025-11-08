@@ -62,6 +62,7 @@ set(MODELLING_SERVICE_SOURCES
     src/document/model.cpp
     src/document/store.cpp
     src/scene/sceneActionPayloads.cpp
+    src/shape/shapeModel.cpp
     src/utils/vec3d.cpp
     src/utils/evaluate.cpp
     src/utils/parameterize.cpp

@@ -5,6 +5,8 @@
 #include "brep/brepModel.h"
 #include "brep/navigate.h"
 #include "brep/tessellate.h"
+#include "shape/shapeModel.h"
+
 #include "document/document.h"
 #include "document/store.h"
 #include "utils/vec3d.h"
@@ -24,9 +26,9 @@ namespace e2 {
 
         void addEmptyBody(Document* doc, const json& payload) {
             // This action adds an empty body (a body with no cells) to the brep store.
-            Store* store = doc->storeAt("brep");
+            Store* store = doc->storeAt("shape");
             store->changeState([](Model* model) {
-                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
                 Body* emptyBody = BRepFixtures::createEmptyBody();
                 brepModel->addBody(emptyBody);
                 std::cerr << "added Empty Body" << std::endl;      // ---LOGGING---
@@ -43,9 +45,9 @@ namespace e2 {
                 position.at("z").get<double>()
             );
 
-            Store* store = doc->storeAt("brep");
+            Store* store = doc->storeAt("shape");
             store->changeState([acornPosition](Model* model) {
-                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
                 Body* acornBody = BRepFixtures::createAcornBody(acornPosition);
                 brepModel->addBody(acornBody);
                 std::cerr << "added Acorn Body" << std::endl;      // ---LOGGING--- 
@@ -75,9 +77,9 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc->storeAt("brep");
+            Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight](Model* model) {
-                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
                 Body* wireRectangleBody = BRepFixtures::createWireRectangle(lowerLeft, upperRight);
                 brepModel->addBody(wireRectangleBody);
                 std::cerr << "added Wire Rectangle" << std::endl;      // ---LOGGING---
@@ -93,11 +95,11 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc->storeAt("brep");
+            Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight, doc](Model* model) {
 
                 // update the BRepModel
-                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
                 Body* sheetRectangleBody = BRepFixtures::createSheetRectangle(lowerLeft, upperRight);
                 brepModel->addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
@@ -120,9 +122,9 @@ namespace e2 {
             Vec3d upperRight = bounds.second;
             double cornerRadius = payload.value("cornerRadius", 0.2);
 
-            Store* store = doc->storeAt("brep");
+            Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight, cornerRadius](Model* model) {
-                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
                 Body* wireRectangleBody = BRepFixtures::createWireRoundRect(lowerLeft, upperRight, cornerRadius);
                 brepModel->addBody(wireRectangleBody);
                 std::cerr << "added Wire Rounded Rectangle" << std::endl;      // ---LOGGING---
@@ -139,11 +141,11 @@ namespace e2 {
             Vec3d upperRight = bounds.second;
             double cornerRadius = payload.value("cornerRadius", 0.2);
 
-            Store* store = doc->storeAt("brep");
+            Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight, cornerRadius, doc](Model* model) {
 
                 // update the BRepModel
-                BRepModel* brepModel = dynamic_cast<BRepModel*>(model);
+                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
                 Body* sheetRoundRectBody = BRepFixtures::createSheetRoundRect(lowerLeft, upperRight, cornerRadius);
                 brepModel->addBody(sheetRoundRectBody);
                 std::cerr << "added Sheet Rounded Rectangle" << std::endl;      // ---LOGGING---

@@ -4,6 +4,7 @@
 #include "document/store.h"
 #include "brep/brepModel.h"
 #include "brep/brep.actions.h"
+#include "shape/shapeModel.h"
 
 using namespace e2;
 
@@ -25,10 +26,11 @@ int main(int argc, char* argv[]) {
     // std::unique_ptr could be used instead of raw pointers to enforce ownership, but it's a faff.
 
     // Initialize the models
-    Model* brepModel = new BRepModel();            // an initially empty collection of bodies
+    BRepModel* brepModel = new BRepModel();                  // an initially empty collection of bodies
+    ShapeModel* shapeModel = new ShapeModel(brepModel);
 
     // Initialise the stores and the document.
-    Document* document = new Document({{"brep", new Store(brepModel)}});    // document takes ownership of the store
+    Document* document = new Document({{"shape", new Store(shapeModel)}});    // document takes ownership of the store
 
     // Register action functions
     document->registerActionFunction(e2::DocumentActions::pingDef);
