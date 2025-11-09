@@ -11,7 +11,6 @@ namespace e2 {
 
     typedef size_t CellIndex;       // Index into the Body's Cell vector
     typedef size_t CocellIndex;     // Index into the Body's Cocell vector
-    typedef size_t AttributeIndex;  // Index into the Body's Attribute map
     typedef int CocellSense;        // +1 for positive, -1 for negative, 0 for neutral
 
     class Cell {

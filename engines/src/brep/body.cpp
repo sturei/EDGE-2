@@ -34,8 +34,8 @@
  * The body may be thought of as a graph of Cells (graph vertices) connected by Cocells (graph edges). 
  * The code contains utilities for creating and manipulating such graphs.
  *
- * For now,Cells, Cocells and Attributes, once added to a Body, cannot be removed (cells can be deactivated though).
- * Hence, indexes into the Body's Cell and Cocell vectors remain valid for the lifetime of
+ * Cells and Cocells, once added to a Body, cannot be removed (cells can be deactivated though).
+ * Hence, indexes into the Body's Cell and Cocell vectors remain valid for the lifetime of the Body.
 
  * Bibliography:
  * Rossignac and O'Connor, "SGC: A dimension-independent model for pointsets with internal structures and 

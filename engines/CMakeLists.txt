@@ -47,6 +47,7 @@ set(MODELLING_SERVICE_SOURCES
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
+    src/frep/fobject.cpp
     src/scene/sceneActionPayloads.cpp
     src/shape/shapeModel.cpp
     src/utils/vec3d.cpp
@@ -69,6 +70,7 @@ set(TEST_SOURCES
     src/brep/brepModel.test.cpp
     src/brep/navigate.test.cpp
     src/brep/tessellate.test.cpp
+    src/frep/fobject.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp
