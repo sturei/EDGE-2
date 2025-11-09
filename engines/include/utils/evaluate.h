@@ -1,6 +1,7 @@
 #pragma once
 
 #include "utils/geom3d.h"
+#include <array>
 
 namespace e2 {
 

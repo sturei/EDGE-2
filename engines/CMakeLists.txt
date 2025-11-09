@@ -30,20 +30,6 @@ FetchContent_MakeAvailable(googletest)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-#
-# Magnum
-# See   https://doc.magnum.graphics/magnum/getting-started.html#cmake
-#
-find_package(Magnum REQUIRED 
-    GL
-    MeshTools
-    DebugTools
-    Primitives
-    Shaders
-    SceneGraph
-    Trade
-    Sdl2Application
-)
 
 ##################
 # Sources
