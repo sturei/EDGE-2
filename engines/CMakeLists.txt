@@ -30,20 +30,6 @@ FetchContent_MakeAvailable(googletest)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
 FetchContent_MakeAvailable(json)
 
-#
-# Magnum
-# See   https://doc.magnum.graphics/magnum/getting-started.html#cmake
-#
-find_package(Magnum REQUIRED 
-    GL
-    MeshTools
-    DebugTools
-    Primitives
-    Shaders
-    SceneGraph
-    Trade
-    Sdl2Application
-)
 
 ##################
 # Sources
@@ -61,6 +47,9 @@ set(MODELLING_SERVICE_SOURCES
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
+    src/frep/fobject.cpp
+    src/frep/evaluate.cpp
+    src/frep/navigate.cpp
     src/scene/sceneActionPayloads.cpp
     src/shape/shapeModel.cpp
     src/utils/vec3d.cpp
@@ -83,6 +72,8 @@ set(TEST_SOURCES
     src/brep/brepModel.test.cpp
     src/brep/navigate.test.cpp
     src/brep/tessellate.test.cpp
+    src/frep/fobject.test.cpp
+    src/frep/navigate.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp
