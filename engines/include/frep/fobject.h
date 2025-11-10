@@ -12,6 +12,8 @@ namespace e2 {
     typedef size_t FNodeIndex;       // Index into the Object's FNode vector
     typedef size_t FArgIndex;        // Index into the Object's FArg vector
 
+    class FObject;                     // forward declaration
+
     enum class FNodeType {
         MAX,                // returns the maximum of its n arguments (implements INTERSECTION)
         MIN,                // returns the minimum of its n arguments (implements UNION)
@@ -47,16 +49,17 @@ namespace e2 {
 
     class FEvaluator {
         public:
-            virtual ~FEvaluator() {};
-            virtual bool evaluate(const Vec3d& position, const std::vector<double>& inputs, double& output) const = 0;
+            virtual ~FEvaluator() {}
+            virtual bool evaluateSDF(const FObject& fobject, FNodeIndex nodeIndex, const Vec3d& position, double& output) const = 0;
             virtual void print(std::ostream& os) const = 0;
-            friend std::ostream& operator<<(std::ostream& os, const FEvaluator& e);
         };
+
 
     class FObject {
         public:
             FObject() : m_graphNeedsUpdate(false) {}
-            FObject(const std::vector<FNode>& fnodes, const std::vector<FArg>& fargs = {}) : m_fnodes(fnodes), m_fargs(fargs) {
+            FObject(const std::vector<FNode>& fnodes, const std::vector<FArg>& fargs = {}, FNodeIndex root = 0)  : 
+                m_fnodes(fnodes), m_fargs(fargs), m_rootIndex(root) {
                 updateGraph();
             }
             ~FObject() {
@@ -82,11 +85,14 @@ namespace e2 {
             void attachEvaluator(FNodeIndex fnodeIndex, FEvaluator* evaluator);   // object takes ownership of evaluator pointer
             bool findEvaluator(FNodeIndex fnodeIndex, FEvaluator*& outEvaluator) const;
 
+            FNodeIndex rootIndex() const { return m_rootIndex; }
+            void setRootIndex(FNodeIndex index) { m_rootIndex = index; }
+
             friend std::ostream& operator<<(std::ostream& os, const FObject& object);
         private:
             std::vector<FNode> m_fnodes; // all the fnodes in the object
             std::vector<FArg> m_fargs;   // all the fargs in the object
-            FNodeIndex m_rootFNode;           // the root fnode of the object
+            FNodeIndex m_rootIndex;           // the root fnode of the object
             std::map<FNodeIndex, FEvaluator*> m_Evaluators; // evaluators attached to FNodes
             e2::Graph m_graph; // graph representing the connectivity of fnodes via fargs
             bool m_graphNeedsUpdate = true; // whether the graph needs to be rebuilt from the fnodes and fargs

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <iostream>
 
 /**
  * The Graph class represents a directed labelled multigraph.

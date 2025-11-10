@@ -117,6 +117,7 @@ namespace e2 {
             for (CocellIndex i = 0; i < m_cocells.size(); ++i) {
                 const auto& cocell = m_cocells[i];
                 // Add the cocell as a link in the graph, so it becomes an out-link of its star and an in-link of its boundary.
+                // TODO: consider not adding it if either cell is inactive.
                 m_graph.addLink(cocell.starCell(), cocell.boundaryCell(), i);
             }
             m_graphNeedsUpdate = false;

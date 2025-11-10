@@ -19,7 +19,7 @@ protected:
 
 class MockEvaluator : public FEvaluator {
 public:
-    bool evaluate(const Vec3d& position, const std::vector<double>& inputs, double& output) const override {
+    bool evaluateSDF(const FObject& fobject, FNodeIndex _nodeIndex, const Vec3d& _position, double& output) const override {
         output = 42.0; // arbitrary value
         return true;
     }
@@ -30,7 +30,7 @@ public:
 
 class MockEvaluator2 : public FEvaluator {
 public:
-    bool evaluate(const Vec3d& position, const std::vector<double>& inputs, double& output) const override {
+    bool evaluateSDF(const FObject& fobject, FNodeIndex _nodeIndex, const Vec3d& _position, double& output) const override {
         output = 1.0;   // different arbitrary value
         return true;
     }

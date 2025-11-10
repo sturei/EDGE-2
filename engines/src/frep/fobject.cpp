@@ -53,7 +53,7 @@ namespace e2 {
         }
         return os;
     }
-    
+
     std::ostream& operator<<(std::ostream& os, const FNode& node) {
         os << "FNode(type=" << node.m_type << ")";
         return os;
@@ -96,6 +96,7 @@ namespace e2 {
             for (FArgIndex i = 0; i < m_fargs.size(); ++i) {
                 const auto& farg = m_fargs[i];
                 // Add the farg as a link connecting the output of one function with the input of another
+                // TODO: consider not adding it if either fnode is inactive.
                 m_graph.addLink(farg.outputFNode(), farg.inputFNode(), i);
             }
             m_graphNeedsUpdate = false;
