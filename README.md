@@ -40,7 +40,10 @@ Install them globally as follows:
 % curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 % nvm install node
 ```
-Note that nvm has a quirk that .zshrc and .bash_profile need to exist before running the curl command to install it. 
+The curl command for nvm came from here: https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating
+
+Note that nvm has a quirk that .zshrc and .bash_profile need to exist before running the curl command to install it. You will need to start a new shell to pick up 
+the settings that get written there.
 If you get a warning about command completion on starting a new shell window, disable it in ~/.zshrc. I don't know why nvm puts that in!
 
 See https://stackoverflow.com/questions/16904658/node-version-manager-install-nvm-command-not-found 
