@@ -33,35 +33,19 @@
 
 namespace e2 {
 
-    std::ostream& operator<<(std::ostream& os, const FNodeType& type) {
-        switch (type) {
-            case FNodeType::MAX:
-                os << "MAX";
-                break;
-            case FNodeType::MIN:
-                os << "MIN";
-                break;
-            case FNodeType::NEGATION:
-                os << "NEGATION";
-                break;
-            case FNodeType::EVALUATION:
-                os << "EVALUATION";
-                break;
-            default:
-                os << "UNKNOWN";
-                break;
-        }
-        return os;
-    }
-
     std::ostream& operator<<(std::ostream& os, const FNode& node) {
-        os << "FNode(type=" << node.m_type << ")";
+        os << "FNode(evaluatorIndex=" << node.m_evaluatorIndex << ")";
         return os;
     }
 
     std::ostream& operator<<(std::ostream& os, const FArg& arg) {
         os << "FArg(output=" << arg.outputFNode() << ", input=" << arg.inputFNode() << ")";
         return os;
+    }
+
+    FEvaluatorIndex FObject::addEvaluator(FEvaluator* evaluator) {
+        m_evaluators.push_back(evaluator);
+        return m_evaluators.size() - 1;
     }
 
     FNodeIndex FObject::addFNode(const FNode& fnode) {
@@ -74,19 +58,6 @@ namespace e2 {
         m_fargs.push_back(farg);
         m_graphNeedsUpdate = true;
         return m_fargs.size() - 1;
-    }
-
-    void FObject::attachEvaluator(FNodeIndex fnodeIndex, FEvaluator* evaluator) {
-        m_Evaluators[fnodeIndex] = evaluator;
-    }
-
-    bool FObject::findEvaluator(FNodeIndex fnodeIndex, FEvaluator*& outEvaluator) const {
-        auto it = m_Evaluators.find(fnodeIndex);
-        if (it != m_Evaluators.end()) {
-            outEvaluator = it->second;
-            return true;
-        }
-        return false;
     }
 
     void FObject::updateGraph() {

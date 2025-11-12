@@ -44,6 +44,19 @@
         "variant": "cpp",
         "vector": "cpp",
         "memory": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "__hash_table": "cpp",
+        "__tree": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "span": "cpp",
+        "unordered_set": "cpp",
+        "valarray": "cpp",
+        "__node_handle": "cpp",
+        "cstddef": "cpp",
+        "cwctype": "cpp",
+        "ratio": "cpp"
     }
 }
