@@ -74,6 +74,7 @@ set(TEST_SOURCES
     src/brep/tessellate.test.cpp
     src/frep/fobject.test.cpp
     src/frep/fnavigate.test.cpp
+    src/frep/fevaluate.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp
