@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <cmath>
+#include "utils/res.h"
 
 namespace e2 {
     class Vec3d {
@@ -57,6 +58,26 @@ namespace e2 {
             }
             double magnitudeSquared() const {
                 return m_x * m_x + m_y * m_y + m_z * m_z;
+            }
+
+            friend double distSq(const Vec3d& p1, const Vec3d& p2) {
+                double dx = p1.m_x - p2.m_x;
+                double dy = p1.m_y - p2.m_y;
+                double dz = p1.m_z - p2.m_z;
+                return dx * dx + dy * dy + dz * dz;                
+            }
+
+            friend double dist(const Vec3d& p1, const Vec3d& p2) {
+                return std::sqrt(distSq(p1, p2));
+            }
+
+            friend bool positionsEqual(const Vec3d& p1, const Vec3d& p2) {
+                double dx = p2.m_x - p1.m_x;
+                if (dx > RESABS || dx < -RESABS) {
+                    return false; // early exit
+                }
+                return distSq(p1, p2) <= RESABS_SQ;
+
             }
 
             friend std::ostream& operator<<(std::ostream& os, const Vec3d& v);
