@@ -16,11 +16,11 @@ namespace e2 {
         }
         return false;
     }
-    
+
     bool edgeContainsPosition(CellIndex edge, const Body& body, const Vec3d& position) {
         BoundedCurve boundedCurve = getBoundedCurveOfEdge(edge, body);
         double t = parameterize(boundedCurve.curve(), position, boundedCurve.start().t());
-        Vec3d pointOnCurve = evaluate(boundedCurve.curve(), t);
+        Vec3d pointOnCurve = evaluatePoint(boundedCurve.curve(), t);
 
         if (!positionsEqual(pointOnCurve, position)) {
             return false;

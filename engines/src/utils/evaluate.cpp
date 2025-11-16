@@ -7,13 +7,13 @@
     
 namespace e2 {
 
-    Vec3d evaluate(const Ray3d& ray, double t) {
+    Vec3d evaluatePoint(const Ray3d& ray, double t) {
         //  The parametric form of a ray is
         //	R(t) = P + t*D
         return ray.position() + ray.direction() * t;        
     }     
 
-    Vec3d evaluate(const Cir3d& cir, double t) {
+    Vec3d evaluatePoint(const Cir3d& cir, double t) {
         // The parametric form for the circle is 
         // R(t)= C + r*cos(t)*X + r*sin(t)*Y
         Vec3d X = cir.xaxis();
@@ -23,23 +23,23 @@ namespace e2 {
         return cir.center().addScaled(X, rcost).addScaled(Y, rsint);
     }
 
-    Vec3d evaluate(const Geom3d& geom, double t) {
+    Vec3d evaluatePoint(const Geom3d& geom, double t) {
         Ray3d line;
         Cir3d circle;
         if (geom.isLine(line)) {
-            return evaluate(line, t);
+            return evaluatePoint(line, t);
         } else if (geom.isCircle(circle)) {
-            return evaluate(circle, t);
+            return evaluatePoint(circle, t);
         } else {
             std::cerr << "unsupported geometry" << std::endl;
             return Vec3d(0,0,0);
         }
     };
 
-    EvaluationResult evaluate(const Ray3d& ray, double t, int nderivs) {
+    EvaluationResult evaluatePointAndDerivs(const Ray3d& ray, double t, int nderivs) {
         EvaluationResult result;
         nderivs = std::min(nderivs, 3);
-        result.derivsOut[0] = evaluate(ray, t);
+        result.derivsOut[0] = evaluatePoint(ray, t);
         if (nderivs >= 1) {
             result.derivsOut[++result.nderivsOut] = ray.direction();
         }
@@ -49,7 +49,7 @@ namespace e2 {
         return result;
     }   
 
-    EvaluationResult evaluate(const Cir3d& cir, double t, int nderivs) {
+    EvaluationResult evaluatePointAndDerivs(const Cir3d& cir, double t, int nderivs) {
         EvaluationResult result;
         nderivs = std::min(nderivs, 3);
         Vec3d X = cir.xaxis();
@@ -69,13 +69,13 @@ namespace e2 {
         return result;
     }   
 
-    EvaluationResult evaluate(const Geom3d& geom, double t, int nderivs) {
+    EvaluationResult evaluatePointAndDerivs(const Geom3d& geom, double t, int nderivs) {
         Ray3d line;
         Cir3d circle;
         if (geom.isLine(line)) {
-            return evaluate(line, t, nderivs);
+            return evaluatePointAndDerivs(line, t, nderivs);
         } else if (geom.isCircle(circle)) {
-            return evaluate(circle, t, nderivs);
+            return evaluatePointAndDerivs(circle, t, nderivs);
         } else {
             std::cerr << "unsupported geometry" << std::endl;
             return EvaluationResult();

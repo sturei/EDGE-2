@@ -8,8 +8,8 @@ namespace e2 {
     // TODO: populate a reference or return a pointer, to avoid copying.
     std::vector<Vec3d>* tessellate(const Ray3d& ray, double tstart, double tend) {
         std::vector<Vec3d>* points = new std::vector<Vec3d>();
-        const Vec3d start = evaluate(ray, tstart);
-        const Vec3d end = evaluate(ray, tend);
+        const Vec3d start = evaluatePoint(ray, tstart);
+        const Vec3d end = evaluatePoint(ray, tend);
         points->push_back(start);
         points->push_back(end);
         return points;
@@ -24,7 +24,7 @@ namespace e2 {
         points->reserve(nSegments + 1);
         for (int i = 0; i <= nSegments; ++i) {
             double t = tstart + i * tstep;
-            points->push_back(evaluate(circle, t));
+            points->push_back(evaluatePoint(circle, t));
         }
         return points;
     }

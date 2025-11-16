@@ -23,7 +23,7 @@ class ParameterizeTest : public ::testing::Test {
 
 TEST_F(ParameterizeTest, ParameterizePointOnRay) {
     double t = 5.0;
-    Vec3d point = evaluate(ray, t);
+    Vec3d point = evaluatePoint(ray, t);
     double param = parameterize(ray, point);
     EXPECT_DOUBLE_EQ(param, t);
 };

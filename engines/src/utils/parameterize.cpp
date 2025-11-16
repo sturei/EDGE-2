@@ -41,25 +41,6 @@ namespace e2 {
         }
     };   
 
-    /*
-    std::pair<double, double> parameterize(const Ray3d& ray, const Vec3d& start, const Vec3d& end) {
-        double t1 = parameterize(ray, start);
-        double t2 = parameterize(ray, end);
-        if (t1 < t2) {
-            return std::make_pair(t1, t2);
-        } else {
-            return std::make_pair(t2, t1);
-        }
-    }
-
-    std::pair<double, double> parameterize(const Cir3d& cir, const Vec3d& start, const Vec3d& end) {
-        double t1 = parameterize(cir, start);
-        double t2 = parameterize(cir, end);
-        t2 = pullIntoRange(t2, t1, 2.0 * M_PI);
-        return std::make_pair(t1, t2);
-    }
-        */
-
 };
 
     

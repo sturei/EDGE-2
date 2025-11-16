@@ -112,12 +112,12 @@ namespace e2 {
             // edge is not bounded by start and end vertices. Return all of its geometry as the bounded curve.
             double periodicity;
             if (curve.isPeriodicCurve(periodicity)) {
-                CVec start = { evaluate(curve, 0.0), 0.0 };
-                CVec end = { evaluate(curve, periodicity), periodicity };
+                CVec start = { evaluatePoint(curve, 0.0), 0.0 };
+                CVec end = { evaluatePoint(curve, periodicity), periodicity };
                 return BoundedCurve(curve, start, end);
             } else {
-                CVec start = { evaluate(curve, -SIZE), -SIZE };
-                CVec end = { evaluate(curve, SIZE), SIZE };
+                CVec start = { evaluatePoint(curve, -SIZE), -SIZE };
+                CVec end = { evaluatePoint(curve, SIZE), SIZE };
                 return BoundedCurve(curve, start, end);
             }   
         }

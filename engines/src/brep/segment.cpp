@@ -54,7 +54,7 @@ namespace e2 {
                 // try to find an interior point that is not on the plane, and if so, split the segment there
                 // use the mid-point for simplicity (approximation to extreme point)
                 double tMid = 0.5 * (sbStart.cvec.t() + sbEnd.cvec.t());
-                Vec3d midPos = evaluate(boundedCurve.curve(), tMid);
+                Vec3d midPos = evaluatePoint(boundedCurve.curve(), tMid);
                 int midSense = signOfDistanceToPlane(midPos, plane);
                 if (midSense != 0) {
                     CVec midCVec = CVec(midPos, tMid);
