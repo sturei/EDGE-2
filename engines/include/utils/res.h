@@ -20,6 +20,14 @@ namespace e2 {
     const double RESABS = 1.0e-6;
     const double SIZE = RESABS/RESNOR;
     const double RESABS_SQ = RESABS*RESABS;
+
+    inline static bool angleZero(double angle) {
+        return -RESNOR < angle && angle < RESNOR;
+    };
+
+    inline static bool lengthZero(double length) {
+        return -RESABS < length && length < RESABS;
+    };
 }
 
 

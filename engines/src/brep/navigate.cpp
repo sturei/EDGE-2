@@ -1,5 +1,8 @@
 
 #include "brep/body.h"
+#include "brep/navigate.h"
+#include "utils/evaluate.h"
+#include "utils/parameterize.h"
 
 namespace e2 {
 
@@ -79,7 +82,8 @@ namespace e2 {
         return result;
     }
 
-    // Returns all vertices (0-cells) of the given edge (1-cell). 
+    // Returns all vertices (0-cells) of the given edge (1-cell). TODO - because they are flipped there is no need
+    // to return the senses here.
     std::vector<std::pair<CellIndex, CocellSense>> getVerticesOfEdge(const CellIndex& edge, const Body& body) {
         std::vector<std::pair<CellIndex, CocellSense>> result;
         auto boundaries = getKBoundary(0, edge, body);
@@ -98,5 +102,33 @@ namespace e2 {
         }
         return result;
     }
+
+    // Returns the start and end of the edge as a bounded curve with monotonic parameterization
+    BoundedCurve getBoundedCurveOfEdge(const CellIndex& edge, const Body& body) {
+        Geom3d curve = body.cell(edge).support();
+
+        const std::vector<std::pair<CellIndex, CocellSense>> vertexSensePairs = getVerticesOfEdge(edge, body);
+        if (vertexSensePairs.size() != 2) {
+            // edge is not bounded by start and end vertices. Return all of its geometry as the bounded curve.
+            double periodicity;
+            if (curve.isPeriodicCurve(periodicity)) {
+                CVec start = { evaluate(curve, 0.0), 0.0 };
+                CVec end = { evaluate(curve, periodicity), periodicity };
+                return BoundedCurve(curve, start, end);
+            } else {
+                CVec start = { evaluate(curve, -SIZE), -SIZE };
+                CVec end = { evaluate(curve, SIZE), SIZE };
+                return BoundedCurve(curve, start, end);
+            }   
+        }
+
+        Vec3d vStart = body.cell(vertexSensePairs[0].first).support().position();
+        Vec3d vEnd = body.cell(vertexSensePairs[1].first).support().position();
+
+        double tStart = parameterize(curve, vStart);
+        double tEnd = parameterize(curve, vEnd, tStart);
+ 
+        return BoundedCurve(curve, CVec(vStart, tStart), CVec(vEnd, tEnd));
+    }        
 
 };

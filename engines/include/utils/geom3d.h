@@ -8,7 +8,7 @@
 
 
 /**
- * Unified representation of simple geometries in 3D space.
+ * Unified representations of simple geometries in 3D space.
  * The style is "facetted fatty class with value semantics".
  * "Fatty" means the Geom3d class has enough storage to represent any of the primitive geometric types directly. This costs a bit more in memory, but should 
  * be a performance win because of better data locality. (More complex geometries with highly variable memory requirements (e.g. NURBS, meshes) will be represented differently.)
@@ -145,6 +145,14 @@ namespace e2 {
                 return m_type == Geom3dType::RUBBER; 
             }
 
+            bool isPeriodicCurve(double& period) const {
+                if (m_type == Geom3dType::CIRCLE) {
+                    period = 2.0 * M_PI;
+                    return true;
+                }
+                return false;
+            }
+
             // stream output
             friend std::ostream& operator<<(std::ostream& os, const Geom3d& g) {
                 os << "Geom3d( type=" << g.m_type
@@ -155,6 +163,28 @@ namespace e2 {
                    << ", scale2=" << g.m_scale2 << ")";
                 return os;
             }
+    };
+
+    class CVec {
+        private :       
+            Vec3d m_position;
+            double m_t;
+        public: 
+            CVec(const Vec3d& position, double t) : m_position(position), m_t(t) {}  
+            const Vec3d& position() const { return m_position; }
+            double t() const { return m_t; }
+    };
+
+    class BoundedCurve {    
+        private:
+            Geom3d m_curve;
+            CVec m_start;
+            CVec m_end;
+        public:
+            BoundedCurve(Geom3d& c, const CVec& s, const CVec& e) : m_curve(c), m_start(s), m_end(e) {}
+            const Geom3d& curve() const { return m_curve; }
+            const CVec& start() const { return m_start; }
+            const CVec& end() const { return m_end; }
     };
 
 };

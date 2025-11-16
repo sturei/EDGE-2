@@ -40,6 +40,8 @@ set(MODELLING_SERVICE_SOURCES
     src/brep/brep.actions.cpp
     src/brep/brep.fixtures.cpp
     src/brep/brepModel.cpp
+    src/brep/containment.cpp
+    src/brep/segment.cpp
     src/brep/navigate.cpp
     src/brep/tessellate.cpp
     src/document/document.cpp
@@ -55,6 +57,7 @@ set(MODELLING_SERVICE_SOURCES
     src/utils/vec3d.cpp
     src/utils/evaluate.cpp
     src/utils/parameterize.cpp
+    src/utils/solve.cpp
 )
 
 set(TEST_SOURCES

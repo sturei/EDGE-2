@@ -12,9 +12,11 @@ namespace e2 {
 
     Vec3d evaluate(const Ray3d& ray, double t);
     Vec3d evaluate(const Cir3d& cir, double t);
+    Vec3d evaluate(const Geom3d& geom, double t);
     
     EvaluationResult evaluate(const Ray3d& ray, double t, int nderivs);
     EvaluationResult evaluate(const Cir3d& cir, double t, int nderivs);
+    EvaluationResult evaluate(const Geom3d& geom, double t, int nderivs);   
 };
 
 

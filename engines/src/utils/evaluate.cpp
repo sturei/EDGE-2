@@ -23,6 +23,19 @@ namespace e2 {
         return cir.center().addScaled(X, rcost).addScaled(Y, rsint);
     }
 
+    Vec3d evaluate(const Geom3d& geom, double t) {
+        Ray3d line;
+        Cir3d circle;
+        if (geom.isLine(line)) {
+            return evaluate(line, t);
+        } else if (geom.isCircle(circle)) {
+            return evaluate(circle, t);
+        } else {
+            std::cerr << "unsupported geometry" << std::endl;
+            return Vec3d(0,0,0);
+        }
+    };
+
     EvaluationResult evaluate(const Ray3d& ray, double t, int nderivs) {
         EvaluationResult result;
         nderivs = std::min(nderivs, 3);
@@ -55,6 +68,19 @@ namespace e2 {
         } 
         return result;
     }   
+
+    EvaluationResult evaluate(const Geom3d& geom, double t, int nderivs) {
+        Ray3d line;
+        Cir3d circle;
+        if (geom.isLine(line)) {
+            return evaluate(line, t, nderivs);
+        } else if (geom.isCircle(circle)) {
+            return evaluate(circle, t, nderivs);
+        } else {
+            std::cerr << "unsupported geometry" << std::endl;
+            return EvaluationResult();
+        }
+    };
 
 };
 
