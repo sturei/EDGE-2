@@ -28,20 +28,6 @@ TEST_F(ParameterizeTest, ParameterizePointOnRay) {
     EXPECT_DOUBLE_EQ(param, t);
 };
 
-TEST_F(ParameterizeTest, ParameterizeSegmentOnRay) {
-    double t1 = 2.0;
-    double t2 = 7.0;
-    Vec3d start = evaluate(ray, t1);
-    Vec3d end = evaluate(ray, t2);
-    auto params = parameterize(ray, start, end);
-    EXPECT_DOUBLE_EQ(params.first, t1);
-    EXPECT_DOUBLE_EQ(params.second, t2);
-
-    // Reverse order. Params are always returned in ascending order
-    params = parameterize(ray, end, start);
-    EXPECT_DOUBLE_EQ(params.first, t1);
-    EXPECT_DOUBLE_EQ(params.second, t2);
-};
 TEST_F(ParameterizeTest, ParameterizePointOnCircle) {
     Vec3d center(0, 0, 0);
     Vec3d xaxis(1, 0, 0);
@@ -69,37 +55,6 @@ TEST_F(ParameterizeTest, ParameterizePointOnCircle) {
     Vec3d point4 = center - radius * yaxis;
     double param4 = parameterize(circle, point4);
     EXPECT_NEAR(param4, -M_PI/2, 1e-6);
-}
-
-TEST_F(ParameterizeTest, ParameterizeSegmentOnCircle) {
-    Vec3d center(0, 0, 0);
-    Vec3d xaxis(1, 0, 0);
-    Vec3d yaxis(0, 1, 0);
-    Vec3d normal = xaxis.cross(yaxis);
-    double radius = 1.0;
-    Cir3d circle(center, radius, normal, xaxis);
-    
-    // Test segment from 0 to π/2
-    Vec3d start = center + radius * xaxis;  // angle 0
-    Vec3d end = center + radius * yaxis;    // angle π/2
-    auto params = parameterize(circle, start, end);
-    EXPECT_NEAR(params.first, 0.0, 1e-6);
-    EXPECT_NEAR(params.second, M_PI/2, 1e-6);
-    
-    // Test segment crossing angle 0 (from -π/4 to π/4)
-    Vec3d start2 = evaluate(circle, -M_PI/4);
-    Vec3d end2 = evaluate(circle, M_PI/4);
-    auto params2 = parameterize(circle, start2, end2);
-    EXPECT_NEAR(params2.first, -M_PI/4, 1e-6);
-    EXPECT_NEAR(params2.second, M_PI/4, 1e-6);
-
-    // Test the complement of the above segment (from π/4 to -π/4)
-    Vec3d start3 = evaluate(circle, M_PI/4);
-    Vec3d end3 = evaluate(circle, -M_PI/4)  ;
-    auto params3 = parameterize(circle, start3, end3);
-    EXPECT_NEAR(params3.first, M_PI/4, 1e-6);
-    EXPECT_NEAR(params3.second, 7*M_PI/4, 1e-6);
-
 }
 
 TEST_F(ParameterizeTest, PullIntoRangeFunction) {

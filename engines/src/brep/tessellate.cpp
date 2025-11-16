@@ -41,29 +41,15 @@ namespace e2 {
             return points;
         }
 
+        BoundedCurve boundedCurve = getBoundedCurveOfEdge(cellIndex, body);  
+        double tstart = boundedCurve.start().t();
+        double tend = boundedCurve.end().t();
+
         Ray3d line;
         Cir3d circle;
         if (support.isLine(line)) {
-            std::vector<std::pair<CellIndex, CocellSense>> vertices = getVerticesOfEdge(cellIndex, body);
-            if (vertices.size() != 2) {
-                return points; // Need exactly two vertices to define the segment
-            }
-            Vec3d startVertexPos = body.cell(vertices[0].first).support().position();
-            Vec3d endVertexPos = body.cell(vertices[1].first).support().position();
-            double tstart = parameterize(line, startVertexPos);
-            double tend = parameterize(line, endVertexPos);
             points = tessellate(line, tstart, tend);
         } else if (support.isCircle(circle)) {
-            double tstart = 0.0;      // Start angle
-            double tend = 2.0 * M_PI; // End angle
-            std::vector<std::pair<CellIndex, CocellSense>> vertices = getVerticesOfEdge(cellIndex, body);
-            if (vertices.size() == 2) {
-                Vec3d startVertexPos = body.cell(vertices[0].first).support().position();
-                Vec3d endVertexPos = body.cell(vertices[1].first).support().position();
-                std::pair<double, double> tRange = parameterize(circle, startVertexPos, endVertexPos);
-                tstart = tRange.first;
-                tend = tRange.second;
-            }
             points = tessellate(circle, tstart, tend, atol);
         }
 

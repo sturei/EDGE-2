@@ -41,6 +41,7 @@ namespace e2 {
         }
     };   
 
+    /*
     std::pair<double, double> parameterize(const Ray3d& ray, const Vec3d& start, const Vec3d& end) {
         double t1 = parameterize(ray, start);
         double t2 = parameterize(ray, end);
@@ -57,6 +58,7 @@ namespace e2 {
         t2 = pullIntoRange(t2, t1, 2.0 * M_PI);
         return std::make_pair(t1, t2);
     }
+        */
 
 };
 
