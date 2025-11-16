@@ -73,6 +73,7 @@ set(TEST_SOURCES
     src/utils/parameterize.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
+    src/brep/containment.test.cpp
     src/brep/navigate.test.cpp
     src/brep/tessellate.test.cpp
     src/frep/fobject.test.cpp
