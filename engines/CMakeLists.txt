@@ -55,6 +55,7 @@ set(MODELLING_SERVICE_SOURCES
     src/frep/fobject.cpp
     src/frep/fevaluate.cpp
     src/frep/fnavigate.cpp
+    src/frep/sdf.cpp
     src/scene/sceneActionPayloads.cpp
     src/shape/shapeModel.cpp
     src/utils/vec3d.cpp
