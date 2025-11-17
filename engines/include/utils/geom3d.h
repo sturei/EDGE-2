@@ -180,11 +180,13 @@ namespace e2 {
             Geom3d m_curve;
             CVec m_start;
             CVec m_end;
+            bool m_isUnbounded = false;   // set to true if the start and end were artificially created to bound an unbounded edge
         public:
-            BoundedCurve(Geom3d& c, const CVec& s, const CVec& e) : m_curve(c), m_start(s), m_end(e) {}
+            BoundedCurve(Geom3d& c, const CVec& s, const CVec& e, bool unbounded = false) : m_curve(c), m_start(s), m_end(e), m_isUnbounded(unbounded) {}
             const Geom3d& curve() const { return m_curve; }
             const CVec& start() const { return m_start; }
             const CVec& end() const { return m_end; }
+            bool isUnbounded() const { return m_isUnbounded; }
     };
 
 };

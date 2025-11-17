@@ -75,21 +75,3 @@ TEST_F(NavigateTest, getKStar) {
     EXPECT_EQ(vertexStar.size(), 2); // two edges are incident on each vertex
 
 }   
-
-TEST_F(NavigateTest, GetEdgesOfFace) {
-    Body* body = sheetRectangleFixture;
-    auto faces = getKSkeleton(2, *body);
-    ASSERT_EQ(faces.size(), 1);
-    auto edges = getEdgesOfFace(faces[0], *body);
-    EXPECT_EQ(edges.size(), 4); // four edges in the face
-}       
-
-TEST_F(NavigateTest, GetVerticesOfEdge) {
-    Body* body = sheetRectangleFixture;
-    auto faces = getKSkeleton(2, *body);
-    ASSERT_EQ(faces.size(), 1);
-    auto edges = getEdgesOfFace(faces[0], *body);
-    ASSERT_EQ(edges.size(), 4);
-    auto vertices = getVerticesOfEdge(edges[0].first, *body);
-    EXPECT_EQ(vertices.size(), 2); // two vertices in an edge
-}

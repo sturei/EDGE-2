@@ -18,7 +18,7 @@ namespace e2 {
     void getPayloadForAddGProfile(const Body& profileBody, json& payload) {
         // The payload is a collection of "paths", representing the outline of the given body.
         CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
-        auto edges = getEdgesOfFace(faceIndex, profileBody);
+        auto edges = getKBoundary(1, faceIndex, profileBody);
         std::vector<json> paths;
         for (const auto& edgePair : edges) {
             CellIndex edgeIndex = edgePair.first;

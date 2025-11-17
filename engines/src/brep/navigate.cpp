@@ -76,34 +76,13 @@ namespace e2 {
         return result;
     }
 
-    // Returns all external, active boundary edges (1-cells) of the given face (2-cell)
-    std::vector<std::pair<CellIndex, CocellSense>> getEdgesOfFace(const CellIndex& face, const Body& body) { 
-        return getKBoundary(1, face, body); 
-    }
-
-    // Returns the start and end vertices (0-cells) of the given edge (1-cell), in <st, en> order, or no vertices if the edge is unbounded
-    std::vector<CellIndex> getVerticesOfEdge(const CellIndex& edge, const Body& body) {
-        std::vector<CellIndex> result;
-        auto boundaries = getKBoundary(0, edge, body);
-
-        std::vector<std::pair<CellIndex, CocellSense>> externalBoundaries;
-        if (boundaries.size() == 2 && boundaries[1].second == -1) {
-            // flip the order so that we return the vertices in <start, end> order wrt the support direction, as a convenience to the caller
-            std::reverse(boundaries.begin(), boundaries.end());
-        }
-        for (const auto& vertex : boundaries) {
-            result.push_back(vertex.first);
-        }
-        return result;
-    }
-
     // Returns the start and end of the edge as a bounded curve with monotonic parameterization
     BoundedCurve getBoundedCurveOfEdge(const CellIndex& edge, const Body& body) {
         Geom3d curve = body.cell(edge).support();
+        auto vertices = getKBoundary(0, edge, body);
 
-        const std::vector<CellIndex> vertices = getVerticesOfEdge(edge, body);
         if (vertices.size() != 2) {
-            // edge is not bounded by start and end vertices. Return all of its geometry as the bounded curve.
+            // edge is not bounded by start and end vertices. Return all of its geometry as the bo  unded curve.
             // TODO: consider carrying a flag in bounded curve to indicate unboundedness
             double periodicity;
             if (curve.isPeriodicCurve(periodicity)) {
@@ -113,17 +92,22 @@ namespace e2 {
             } else {
                 CVec start = { evaluatePoint(curve, -SIZE), -SIZE };
                 CVec end = { evaluatePoint(curve, SIZE), SIZE };
-                return BoundedCurve(curve, start, end);
+                return BoundedCurve(curve, start, end, true);
             }   
         }
 
-        Vec3d vStart = body.cell(vertices[0]).support().position();
-        Vec3d vEnd = body.cell(vertices[1]).support().position();
+        if (vertices[1].second == -1) {
+            // flip the order so that <st, en> follows the support direction
+            std::reverse(vertices.begin(), vertices.end());
+        }
+
+        Vec3d vStart = body.cell(vertices[0].first).support().position();
+        Vec3d vEnd = body.cell(vertices[1].first).support().position();
 
         double tStart = parameterize(curve, vStart);
         double tEnd = parameterize(curve, vEnd, tStart);
  
-        return BoundedCurve(curve, CVec(vStart, tStart), CVec(vEnd, tEnd));
+        return BoundedCurve(curve, CVec(vStart, tStart), CVec(vEnd, tEnd), false);
     }        
 
 };

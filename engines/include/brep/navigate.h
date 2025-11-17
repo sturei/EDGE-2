@@ -10,10 +10,6 @@ namespace e2 {
     std::vector<std::pair<CellIndex, CocellSense>> getKBoundary(int k, const CellIndex& cell, const Body& body, bool includeActiveOnly = true, bool includeExternalOnly = false);
     std::vector<std::pair<CellIndex, CocellSense>> getKStar(int k, const CellIndex& cell, const Body& body, bool includeActiveOnly = true, bool includeExternalOnly = false);
 
-    // Convenience methods for traditional brep navigation tasks
-    std::vector<std::pair<CellIndex, CocellSense>> getEdgesOfFace(const CellIndex& face, const Body& body);
-    std::vector<CellIndex> getVerticesOfEdge(const CellIndex& edge, const Body& body);
-
     // Convenience methods for common geometry tasks
     BoundedCurve getBoundedCurveOfEdge(const CellIndex& edge, const Body& body);
 

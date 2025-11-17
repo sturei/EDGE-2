@@ -39,7 +39,7 @@ namespace e2 {
             Pla3d orthoPlane = Pla3d(position, yAxis);
             Ray3d line(position, xAxis);
             int numCrossings = 0;     // number of times the positive half-line crosses the face boundaety
-            std::vector<std::pair<CellIndex, CocellSense>> edges = getEdgesOfFace(face, body);
+            std::vector<std::pair<CellIndex, CocellSense>> edges = getKBoundary(1, face, body);
             for (const std::pair<CellIndex, CocellSense>& edge : edges) {
                 std::vector<Segment> segments = segmentEdgeByPlane(edge.first, body, orthoPlane);
                 for (const Segment& segment : segments) {
