@@ -82,13 +82,12 @@ namespace e2 {
         auto vertices = getKBoundary(0, edge, body);
 
         if (vertices.size() != 2) {
-            // edge is not bounded by start and end vertices. Return all of its geometry as the bo  unded curve.
-            // TODO: consider carrying a flag in bounded curve to indicate unboundedness
+            // edge is not bounded by start and end vertices. Return all of its geometry as the bounded curve.
             double periodicity;
             if (curve.isPeriodicCurve(periodicity)) {
                 CVec start = { evaluatePoint(curve, 0.0), 0.0 };
                 CVec end = { evaluatePoint(curve, periodicity), periodicity };
-                return BoundedCurve(curve, start, end);
+                return BoundedCurve(curve, start, end, true);
             } else {
                 CVec start = { evaluatePoint(curve, -SIZE), -SIZE };
                 CVec end = { evaluatePoint(curve, SIZE), SIZE };
