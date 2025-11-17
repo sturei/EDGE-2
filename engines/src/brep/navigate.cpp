@@ -61,11 +61,6 @@ namespace e2 {
         return result;
     }
 
-    // Returns all faces (2-cells) of the body
-    std::vector<CellIndex> getFacesOfBody(const Body& body) { 
-        return getKSkeleton(2, body); 
-    }
-
     // Returns all edges (1-cells) of the given face (2-cell)
     std::vector<std::pair<CellIndex, CocellSense>> getEdgesOfFace(const CellIndex& face, const Body& body) { 
         std::vector<std::pair<CellIndex, CocellSense>> result;

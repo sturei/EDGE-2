@@ -76,20 +76,9 @@ TEST_F(NavigateTest, getKStar) {
 
 }   
 
-
-TEST_F(NavigateTest, GetFacesOfBody) {  
-    Body* body1 = sheetRectangleFixture;
-    auto faces = getFacesOfBody(*body1);
-    EXPECT_EQ(faces.size(), 1); // one face
-
-    Body* body2 = wireRectangleFixture;
-    faces = getFacesOfBody(*body2);
-    EXPECT_EQ(faces.size(), 0); // no faces in a wire body
-}   
-
 TEST_F(NavigateTest, GetEdgesOfFace) {
     Body* body = sheetRectangleFixture;
-    auto faces = getFacesOfBody(*body);
+    auto faces = getKSkeleton(2, *body);
     ASSERT_EQ(faces.size(), 1);
     auto edges = getEdgesOfFace(faces[0], *body);
     EXPECT_EQ(edges.size(), 4); // four edges in the face
@@ -97,7 +86,7 @@ TEST_F(NavigateTest, GetEdgesOfFace) {
 
 TEST_F(NavigateTest, GetVerticesOfEdge) {
     Body* body = sheetRectangleFixture;
-    auto faces = getFacesOfBody(*body);
+    auto faces = getKSkeleton(2, *body);
     ASSERT_EQ(faces.size(), 1);
     auto edges = getEdgesOfFace(faces[0], *body);
     ASSERT_EQ(edges.size(), 4);

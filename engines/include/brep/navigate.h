@@ -11,8 +11,6 @@ namespace e2 {
     std::vector<std::pair<CellIndex, CocellSense>> getKStar(int k, const CellIndex& cell, const Body& body);
 
     // Convenience methods for traditional brep navigation tasks
-    std::vector<CellIndex> getFacesOfBody(const Body& body);     // TOGO - it's trivial to implement in terms of getKSkeleton
-    //std::vector<std::pair<CellIndex, CocellSense>> getFacesOfLump(const CellIndex& face, const Body& body);   // TODO
     std::vector<std::pair<CellIndex, CocellSense>> getEdgesOfFace(const CellIndex& face, const Body& body);
     std::vector<std::pair<CellIndex, CocellSense>> getVerticesOfEdge(const CellIndex& edge, const Body& body);
 

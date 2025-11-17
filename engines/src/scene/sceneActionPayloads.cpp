@@ -17,7 +17,7 @@ namespace e2 {
     // This function returns the JSON payload for the addGProfile action.
     void getPayloadForAddGProfile(const Body& profileBody, json& payload) {
         // The payload is a collection of "paths", representing the outline of the given body.
-        CellIndex faceIndex = getFacesOfBody(profileBody)[0];
+        CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
         auto edges = getEdgesOfFace(faceIndex, profileBody);
         std::vector<json> paths;
         for (const auto& edgePair : edges) {
