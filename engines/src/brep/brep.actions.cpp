@@ -4,7 +4,7 @@
 #include "brep/brep.fixtures.h"
 #include "brep/brepModel.h"
 #include "brep/navigate.h"
-#include "brep/tessellate.h"
+#include "brep/btessellate.h"
 #include "shape/shapeModel.h"
 
 #include "document/document.h"

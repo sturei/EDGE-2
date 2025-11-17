@@ -2,7 +2,7 @@
 #include "brep/body.h"
 #include "utils/vec3d.h"
 #include "brep/navigate.h"
-#include "brep/tessellate.h"
+#include "brep/btessellate.h"
 
 using json = nlohmann::json;
 
