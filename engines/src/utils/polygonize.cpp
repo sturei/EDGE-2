@@ -1,12 +1,11 @@
-#include "brep/btessellate.h"
+#include "utils/polygonize.h"
 #include "utils/evaluate.h"
 #include "brep/navigate.h"
 #include "utils/parameterize.h"
 
 namespace e2 {
 
-    // TODO: populate a reference or return a pointer, to avoid copying.
-    std::vector<Vec3d>* tessellate(const Ray3d& ray, double tstart, double tend) {
+    std::vector<Vec3d>* polygonize(const Ray3d& ray, double tstart, double tend) {
         std::vector<Vec3d>* points = new std::vector<Vec3d>();
         const Vec3d start = evaluatePoint(ray, tstart);
         const Vec3d end = evaluatePoint(ray, tend);
@@ -15,7 +14,7 @@ namespace e2 {
         return points;
     }
 
-    std::vector<Vec3d>* tessellate(const Cir3d& circle, double tstart, double tend, double atol) {
+    std::vector<Vec3d>* polygonize(const Cir3d& circle, double tstart, double tend, double atol) {
         // Implementation for circle tessellation
         std::vector<Vec3d>* points = new std::vector<Vec3d>();
         double angleSpan = tend - tstart;
@@ -29,30 +28,19 @@ namespace e2 {
         return points;
     }
 
-    std::vector<Vec3d>* tessellate(const Body& body, CellIndex cellIndex, double atol)
+    std::vector<Vec3d>* polygonizeBoundedCurve(const BoundedCurve& boundedCurve, double atol)
     {
         std::vector<Vec3d>* points = new std::vector<Vec3d>();
-
-        // TODO cache the tessellation as an attribute of the cell
-
-        const Cell& cell = body.cell(cellIndex);
-        const Geom3d& support = cell.support();
-        if (support.dimensionality() != 1) {
-            return points;
-        }
-
-        BoundedCurve boundedCurve = getBoundedCurveOfEdge(cellIndex, body);  
         double tstart = boundedCurve.start().t();
         double tend = boundedCurve.end().t();
-
+        const Geom3d& curve = boundedCurve.curve();      
         Ray3d line;
         Cir3d circle;
-        if (support.isLine(line)) {
-            points = tessellate(line, tstart, tend);
-        } else if (support.isCircle(circle)) {
-            points = tessellate(circle, tstart, tend, atol);
+        if (curve.isLine(line)) {
+            points = polygonize(line, tstart, tend);
+        } else if (curve.isCircle(circle)) {
+            points = polygonize(circle, tstart, tend, atol);
         }
-
         return points;
     }
 

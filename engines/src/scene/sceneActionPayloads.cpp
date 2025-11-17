@@ -2,7 +2,7 @@
 #include "brep/body.h"
 #include "utils/vec3d.h"
 #include "brep/navigate.h"
-#include "brep/btessellate.h"
+#include "brep/tessellate.h"
 
 using json = nlohmann::json;
 
@@ -22,7 +22,7 @@ namespace e2 {
         std::vector<json> paths;
         for (const auto& edgePair : edges) {
             CellIndex edgeIndex = edgePair.first;
-            auto tessellatedPointsPtr = tessellate(profileBody, edgeIndex);
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
             std::vector<json> path;
             for (const auto& point : *tessellatedPointsPtr) {
                     path.push_back(json::array({point.x(), point.y()}));

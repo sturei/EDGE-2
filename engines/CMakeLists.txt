@@ -43,7 +43,7 @@ set(MODELLING_SERVICE_SOURCES
     src/brep/containment.cpp
     src/brep/segment.cpp
     src/brep/navigate.cpp
-    src/brep/btessellate.cpp
+    src/brep/tessellate.cpp
     src/document/document.cpp
     src/document/document.actions.cpp
     src/document/documentService.cpp
@@ -57,6 +57,7 @@ set(MODELLING_SERVICE_SOURCES
     src/utils/vec3d.cpp
     src/utils/evaluate.cpp
     src/utils/parameterize.cpp
+    src/utils/polygonize.cpp
     src/utils/solve.cpp
 )
 
@@ -71,11 +72,12 @@ set(TEST_SOURCES
     src/utils/cir3d.test.cpp
     src/utils/evaluate.test.cpp
     src/utils/parameterize.test.cpp
+    src/utils/polygonize.test.cpp
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
     src/brep/containment.test.cpp
     src/brep/navigate.test.cpp
-    src/brep/btessellate.test.cpp
+    src/brep/tessellate.test.cpp
     src/frep/fobject.test.cpp
     src/frep/fnavigate.test.cpp
     src/frep/fevaluate.test.cpp
