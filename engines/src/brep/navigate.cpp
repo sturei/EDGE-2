@@ -61,39 +61,36 @@ namespace e2 {
         return result;
     }
 
-    // Returns all edges (1-cells) of the given face (2-cell)
+    // Returns all boundary edges (1-cells) of the given face (2-cell)
     std::vector<std::pair<CellIndex, CocellSense>> getEdgesOfFace(const CellIndex& face, const Body& body) { 
         std::vector<std::pair<CellIndex, CocellSense>> result;
         auto boundaries = getKBoundary(1, face, body); 
         for (const auto& edge : boundaries) {
-            const CellIndex edgeIndex = edge.first;
-            const CocellSense coedgeSense = edge.second;
-            if (coedgeSense == 0) { 
-                // discard internal edges, as a convenience to the caller
-                continue;
+            if (edge.second != 0) {  
+                result.push_back(edge);
             }
-            result.push_back(edge);
         }
         return result;
     }
 
-    // Returns all vertices (0-cells) of the given edge (1-cell). TODO - because they are flipped there is no need
-    // to return the senses here.
-    std::vector<std::pair<CellIndex, CocellSense>> getVerticesOfEdge(const CellIndex& edge, const Body& body) {
-        std::vector<std::pair<CellIndex, CocellSense>> result;
+    // Returns the start and end vertices (0-cells) of the given edge (1-cell), in <st, en> order, or no vertices if the edge is unbounded
+    std::vector<CellIndex> getVerticesOfEdge(const CellIndex& edge, const Body& body) {
+        std::vector<CellIndex> result;
         auto boundaries = getKBoundary(0, edge, body);
+
+        // TODO: consider filtering for external and active cells in getKBoundary
+        std::vector<std::pair<CellIndex, CocellSense>> externalBoundaries;
         for (const auto& vertex : boundaries) {
-            const CellIndex vertexIndex = vertex.first;
-            const CocellSense covertexSense = vertex.second;
-            if (covertexSense == 0) { 
-                // discard internal vertices, as a convenience to the caller
-                continue;
+            if (vertex.second != 0) { 
+                externalBoundaries.push_back(vertex);
             }
-            result.push_back(vertex);
         }
-        if (result.size() == 2 && result[1].second == -1) {
+        if (externalBoundaries.size() == 2 && externalBoundaries[1].second == -1) {
             // flip the order so that we return the vertices in <start, end> order wrt the support direction, as a convenience to the caller
-            std::reverse(result.begin(), result.end());
+            std::reverse(externalBoundaries.begin(), externalBoundaries.end());
+        }
+        for (const auto& vertex : externalBoundaries) {
+            result.push_back(vertex.first);
         }
         return result;
     }
@@ -102,9 +99,10 @@ namespace e2 {
     BoundedCurve getBoundedCurveOfEdge(const CellIndex& edge, const Body& body) {
         Geom3d curve = body.cell(edge).support();
 
-        const std::vector<std::pair<CellIndex, CocellSense>> vertexSensePairs = getVerticesOfEdge(edge, body);
-        if (vertexSensePairs.size() != 2) {
+        const std::vector<CellIndex> vertices = getVerticesOfEdge(edge, body);
+        if (vertices.size() != 2) {
             // edge is not bounded by start and end vertices. Return all of its geometry as the bounded curve.
+            // TODO: consider carrying a flag in bounded curve to indicate unboundedness
             double periodicity;
             if (curve.isPeriodicCurve(periodicity)) {
                 CVec start = { evaluatePoint(curve, 0.0), 0.0 };
@@ -117,8 +115,8 @@ namespace e2 {
             }   
         }
 
-        Vec3d vStart = body.cell(vertexSensePairs[0].first).support().position();
-        Vec3d vEnd = body.cell(vertexSensePairs[1].first).support().position();
+        Vec3d vStart = body.cell(vertices[0]).support().position();
+        Vec3d vEnd = body.cell(vertices[1]).support().position();
 
         double tStart = parameterize(curve, vStart);
         double tEnd = parameterize(curve, vEnd, tStart);
