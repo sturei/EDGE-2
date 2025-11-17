@@ -39,10 +39,13 @@ set(MODELLING_SERVICE_SOURCES
     src/brep/body.cpp
     src/brep/brep.actions.cpp
     src/brep/brep.fixtures.cpp
+    src/brep/bnearpoint.cpp
+    src/brep/bnormal.cpp
     src/brep/brepModel.cpp
     src/brep/containment.cpp
     src/brep/segment.cpp
     src/brep/navigate.cpp
+    src/brep/bnearpoint.cpp
     src/brep/tessellate.cpp
     src/document/document.cpp
     src/document/document.actions.cpp
@@ -56,6 +59,7 @@ set(MODELLING_SERVICE_SOURCES
     src/shape/shapeModel.cpp
     src/utils/vec3d.cpp
     src/utils/evaluate.cpp
+    src/utils/nearpoint.cpp   
     src/utils/parameterize.cpp
     src/utils/polygonize.cpp
     src/utils/solve.cpp

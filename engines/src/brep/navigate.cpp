@@ -26,7 +26,7 @@ namespace e2 {
 
     // Returns the k-boundary of the given cell (i.e. all of its boundary cells having dimension k).
     // The boundary cells are returned together with the sense of the boundary wrt the star.
-    std::vector<std::pair<CellIndex, CocellSense>> getKBoundary(int k, const CellIndex& cellIndex, const Body& body, bool includeActiveOnly, bool includeExternalOnly) {
+    std::vector<std::pair<CellIndex, CocellSense>> getKBoundary(int k, CellIndex cellIndex, const Body& body, bool includeActiveOnly, bool includeExternalOnly) {
         std::vector<std::pair<CellIndex, CocellSense>> result;
         const Graph& graph = body.graph();
         const Graph::NodeView vertex = graph.node(cellIndex);
@@ -52,7 +52,7 @@ namespace e2 {
 
     // Returns the k-star of the given cell (i.e. all of its star cells having dimension k).
     // The star cells are returned together with the sense of the boundary wrt the star
-    std::vector<std::pair<CellIndex, CocellSense>> getKStar(int k, const CellIndex& cellIndex, const Body& body, bool includeActiveOnly, bool includeExternalOnly) {
+    std::vector<std::pair<CellIndex, CocellSense>> getKStar(int k, CellIndex cellIndex, const Body& body, bool includeActiveOnly, bool includeExternalOnly) {
         std::vector<std::pair<CellIndex, CocellSense>> result;
         const Graph& graph = body.graph();
         const Graph::NodeView vertex = graph.node(cellIndex);
@@ -74,6 +74,54 @@ namespace e2 {
             }
         }
         return result;
+    }
+
+    // Returns the boundary edges of the given face that are connected to the given vertex.
+    std::vector<std::pair<CellIndex, CocellSense>> getAdjacentEdgesInFace(CellIndex vertex, CellIndex face, const Body& body) {
+        const auto faceBoundaries = getKBoundary(1, face, body);
+        const auto vertexStar = getKStar(1, vertex, body);
+        // return any face boundaries that are also in the vertex star
+        std::vector<std::pair<CellIndex, CocellSense>> result;
+        for (const auto& edgeInFace : faceBoundaries) {
+            for (const auto& edgeInVertexStar : vertexStar) {
+                if (edgeInFace.first == edgeInVertexStar.first) {
+                    result.push_back(edgeInFace);
+                }
+            }
+        }
+        return result;
+    }
+
+    bool getProfileFace(const Body& body, CellIndex& profileFaceOut) {
+        Pla3d profilePlane;
+        auto profileFaces = getKSkeleton(2, body);
+        if (profileFaces.size() != 1) {
+            std::cerr << "body is not a profile" << std::endl;
+            return false;
+        }
+        profileFaceOut = profileFaces[0];
+        return true;
+    }
+
+    bool getProfilePlane(CellIndex profileFace, const Body& body, Pla3d& planeOut) {
+        Geom3d profileGeom = body.cell(profileFace).support();
+        Pla3d profilePlane;
+        if (!profileGeom.isPlane(profilePlane)) {   
+            std::cerr << "profile face is not planar" << std::endl;
+            return false;
+        }
+        planeOut = profilePlane;
+        return true;
+    }
+
+    bool getProfileEdgeSense(CellIndex edge, CellIndex profileFace, const Body& body, CocellSense& senseOut) {
+        auto adjacentFaces = getKStar(2, edge, body);
+        if (adjacentFaces.size() != 1) {
+            std::cerr << "edge is not part of a profile face" << std::endl;
+            return false;
+        }
+        senseOut = adjacentFaces[0].second;
+        return true;
     }
 
     // Returns the start and end of the edge as a bounded curve with monotonic parameterization
