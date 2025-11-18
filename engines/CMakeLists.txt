@@ -52,10 +52,11 @@ set(MODELLING_SERVICE_SOURCES
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
+    src/frep/frep.fixtures.cpp
     src/frep/fobject.cpp
     src/frep/fevaluate.cpp
     src/frep/fnavigate.cpp
-    src/frep/sdf.cpp
+    src/frep/fsdf.cpp
     src/scene/sceneActionPayloads.cpp
     src/shape/shapeModel.cpp
     src/utils/vec3d.cpp

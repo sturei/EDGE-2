@@ -56,6 +56,25 @@ namespace e2 {
         os << "FConstant(" << m_value << ")";
     }
 
+    // Evaluates to the distance to a plane
+    bool FHalfSpace::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
+        valueOut = (positionIn - m_plane.position()).dot(m_plane.normal());
+        return true;
+    }
+
+    void FHalfSpace::print(std::ostream& os) const {
+        os << "FHalfSpace(Plane: " << m_plane << ")";
+    }
+
+    // Evaluates to the value of the wrapped object
+    bool FFObject::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
+        return e2::evaluate(m_fobject, positionIn, valueOut);
+    }
+
+    void FFObject::print(std::ostream& os) const {
+        os << "FFObject wrapping FObject";
+    }
+
     // Evaluates the fobject at the given position, starting from the root node
     bool evaluate(const FObject& fobject, const Vec3d& position, double& output) {
         FNodeIndex rootIndex = fobject.rootIndex();

@@ -1,6 +1,6 @@
     
 #include "utils/vec3d.h"
-#include "frep/sdf.h"    
+#include "frep/fsdf.h"    
 #include "brep/bnearpoint.h"
 #include "brep/bnormal.h"
 #include <iostream> 
@@ -9,7 +9,7 @@ namespace e2 {
 
     // Evaluates the signed distance function to the profile defined by the Body, in the 2-dimensional plane of the profile.
     // The input position is assumed to lie in the plane of the profile.
-    bool SDFToProfile::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
+    bool FProfileSDF::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
         Vec3d nearestPoint;
         CellIndex nearestCell;
         Vec3d normalAtNearest;
@@ -26,8 +26,8 @@ namespace e2 {
         return true;
     }
 
-    void SDFToProfile::print(std::ostream& os) const {
-        os << "SDFToProfile";
+    void FProfileSDF::print(std::ostream& os) const {
+        os << "FProfileSDF(Body with " << m_Body.numCells() << " cells)";
     }
 
 }

@@ -2,6 +2,7 @@
 
 #include "frep/fobject.h"
 #include "utils/vec3d.h"
+#include "utils/pla3d.h"
 #include <iostream> 
 
 namespace e2 {
@@ -32,6 +33,24 @@ namespace e2 {
             void print(std::ostream& os) const override;
         private:
             double m_value;
+    };
+
+    class FHalfSpace : public FEvaluator {
+        public:
+            FHalfSpace(const Pla3d& plane) : m_plane(plane) {}
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            Pla3d m_plane;
+    };
+
+    class FFObject : public FEvaluator {
+        public:
+            FFObject(const FObject& fobject) : m_fobject(fobject) {}
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            const FObject& m_fobject;               // reference to another object in the same model
     };
 
     // set-theoretic operations, assuming set is defined as all P where f(P) <= 0
