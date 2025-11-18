@@ -28,7 +28,7 @@ namespace e2 {
             Store* store = doc->storeAt("shape");
             store->changeState([](Model* model) {
                 BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
-                Body* emptyBody = BRepFixtures::createEmptyBody();
+                Body* emptyBody = BRepFixtures::emptyBody();
                 brepModel->addBody(emptyBody);
                 std::cerr << "added Empty Body" << std::endl;      // ---LOGGING---
             });
@@ -47,7 +47,7 @@ namespace e2 {
             Store* store = doc->storeAt("shape");
             store->changeState([acornPosition](Model* model) {
                 BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
-                Body* acornBody = BRepFixtures::createAcornBody(acornPosition);
+                Body* acornBody = BRepFixtures::acornBody(acornPosition);
                 brepModel->addBody(acornBody);
                 std::cerr << "added Acorn Body" << std::endl;      // ---LOGGING--- 
             });
@@ -79,7 +79,7 @@ namespace e2 {
             Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight](Model* model) {
                 BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
-                Body* wireRectangleBody = BRepFixtures::createWireRectangle(lowerLeft, upperRight);
+                Body* wireRectangleBody = BRepFixtures::wireRectangle(lowerLeft, upperRight);
                 brepModel->addBody(wireRectangleBody);
                 std::cerr << "added Wire Rectangle" << std::endl;      // ---LOGGING---
             });
@@ -99,7 +99,7 @@ namespace e2 {
 
                 // update the BRepModel
                 BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
-                Body* sheetRectangleBody = BRepFixtures::createSheetRectangle(lowerLeft, upperRight);
+                Body* sheetRectangleBody = BRepFixtures::sheetRectangle(lowerLeft, upperRight);
                 brepModel->addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
 
@@ -124,7 +124,7 @@ namespace e2 {
             Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight, cornerRadius](Model* model) {
                 BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
-                Body* wireRectangleBody = BRepFixtures::createWireRoundRect(lowerLeft, upperRight, cornerRadius);
+                Body* wireRectangleBody = BRepFixtures::wireRoundRect(lowerLeft, upperRight, cornerRadius);
                 brepModel->addBody(wireRectangleBody);
                 std::cerr << "added Wire Rounded Rectangle" << std::endl;      // ---LOGGING---
             });
@@ -145,7 +145,7 @@ namespace e2 {
 
                 // update the BRepModel
                 BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
-                Body* sheetRoundRectBody = BRepFixtures::createSheetRoundRect(lowerLeft, upperRight, cornerRadius);
+                Body* sheetRoundRectBody = BRepFixtures::sheetRoundRect(lowerLeft, upperRight, cornerRadius);
                 brepModel->addBody(sheetRoundRectBody);
                 std::cerr << "added Sheet Rounded Rectangle" << std::endl;      // ---LOGGING---
 

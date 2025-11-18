@@ -7,20 +7,23 @@
 
 namespace e2 {
     namespace BRepFixtures {
-        Body* createEmptyBody() {
-            // A body with no cells
+
+        /** A body with no cells */
+        Body* emptyBody() {
             Body* body = new Body;
             return body;
         }
-        Body* createAcornBody(const Vec3d& position) {
-            // A single point cell
+
+        /** A body with a single point cell */      
+        Body* acornBody(const Vec3d& position) {
             Body* body = new Body({
                 Cell(position)
             });
             return body;
         }
-        Body* createWireRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
-            // A 4-sided rectangle on the z=0 plane, no interior
+
+        /** A body consisting of a 4-sided rectangular wireframe, z=0 plane, no interior */
+        Body* wireRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
 
             // project the input positions to z=0 plane
             Vec3d ll(lowerLeft.x(), lowerLeft.y(), 0); // lower-left
@@ -61,9 +64,10 @@ namespace e2 {
             Body* body = new Body(cells, cocells);
             return body;
         }
-        Body* createSheetRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
-            // A 4-sided rectangle on the z=0 plane, with interior
-            Body* body = createWireRectangle(lowerLeft, upperRight);
+
+        /** A body consisting of a 4-sided rectangular sheet, z=0 plane, with interior */
+        Body* sheetRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
+            Body* body = wireRectangle(lowerLeft, upperRight);
             // Add a face cell for the interior
             Cell faceCell(Pla3d(Vec3d(0,0,0), Vec3d(0,0,1))); // face on z=0 plane
             size_t faceCellIndex = body->addCell(faceCell);
@@ -77,8 +81,8 @@ namespace e2 {
             return body;
         }
 
-        Body* createWireRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
-            // A rectangle with rounded corners on the z=0 plane, no interior
+        /** A body consisting of a 4-sided rectangular wireframe with rounded corners, z=0 plane, no interior */
+        Body* wireRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
 
             double r = cornerRadius; // corner radius
 
@@ -159,9 +163,9 @@ namespace e2 {
             return body;
         }
 
-        Body* createSheetRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
-            // A 4-sided rectangle on the z=0 plane, with interior
-            Body* body = createWireRoundRect(lowerLeft, upperRight, cornerRadius);
+        /** A body consisting of a 4-sided rectangular sheet with rounded corners, z=0 plane, with interior */
+        Body* sheetRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
+            Body* body = wireRoundRect(lowerLeft, upperRight, cornerRadius);
             // Add a face cell for the interior
             Cell faceCell(Pla3d(Vec3d(0,0,0), Vec3d(0,0,1))); // face on z=0 plane
             size_t faceCellIndex = body->addCell(faceCell);

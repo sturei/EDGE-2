@@ -12,12 +12,12 @@ namespace e2 {
         void addWireRoundRect(Document* doc, const nlohmann::json& payload);
         void addSheetRoundRect(Document* doc, const nlohmann::json& payload);
 
-        inline static ActionDef addEmptyBodyDef = {"addEmptyBody", addEmptyBody};
-        inline static ActionDef addAcornBodyDef = {"addAcornBody", addAcornBody};
-        inline static ActionDef addWireRectangleDef = {"addWireRectangle", addWireRectangle};
-        inline static ActionDef addSheetRectangleDef = {"addSheetRectangle", addSheetRectangle};
-        inline static ActionDef addWireRoundRectDef = {"addWireRoundRect", addWireRoundRect};
-        inline static ActionDef addSheetRoundRectDef = {"addSheetRoundRect", addSheetRoundRect};
+        inline static ActionDef addEmptyBodyDef = {"BRep::addEmptyBody", addEmptyBody};
+        inline static ActionDef addAcornBodyDef = {"BRep::addAcornBody", addAcornBody};
+        inline static ActionDef addWireRectangleDef = {"BRep::addWireRectangle", addWireRectangle};
+        inline static ActionDef addSheetRectangleDef = {"BRep::addSheetRectangle", addSheetRectangle};
+        inline static ActionDef addWireRoundRectDef = {"BRep::addWireRoundRect", addWireRoundRect};
+        inline static ActionDef addSheetRoundRectDef = {"BRep::addSheetRoundRect", addSheetRoundRect};
     }
 };
 

@@ -9,14 +9,14 @@ class NavigateTest : public ::testing::Test {
     protected:
         void SetUp() override {
             // An empty body - no cells
-            emptyBodyFixture = BRepFixtures::createEmptyBody();
+            emptyBodyFixture = BRepFixtures::emptyBody();
 
             // An acorn body - one cell, which is a point
-            acornBodyFixture = BRepFixtures::createAcornBody(Vec3d(1,2,3));
+            acornBodyFixture = BRepFixtures::acornBody(Vec3d(1,2,3));
 
-            wireRectangleFixture = BRepFixtures::createWireRectangle(Vec3d(0,0,0), Vec3d(1,1,0));   
+            wireRectangleFixture = BRepFixtures::wireRectangle(Vec3d(0,0,0), Vec3d(1,1,0));   
 
-            sheetRectangleFixture = BRepFixtures::createSheetRectangle(Vec3d(0,0,0), Vec3d(1,1,0));
+            sheetRectangleFixture = BRepFixtures::sheetRectangle(Vec3d(0,0,0), Vec3d(1,1,0));
 
         };
 

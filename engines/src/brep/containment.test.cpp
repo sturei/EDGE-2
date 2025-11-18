@@ -9,7 +9,7 @@ using namespace e2;
 class ContainmentTest : public ::testing::Test {
 protected:
     void SetUp() override {
-            rectangleFixture = BRepFixtures::createSheetRectangle(Vec3d(0,0,0), Vec3d(1,1,0));
+            rectangleFixture = BRepFixtures::sheetRectangle(Vec3d(0,0,0), Vec3d(1,1,0));
     }
     void TearDown() override {
             delete rectangleFixture;
