@@ -3,6 +3,7 @@
 #include "document/document.actions.h"
 #include "document/store.h"
 #include "brep/brepModel.h"
+#include "frep/frepModel.h"
 #include "brep/brep.actions.h"
 #include "shape/shapeModel.h"
 
@@ -27,7 +28,8 @@ int main(int argc, char* argv[]) {
 
     // Initialize the models
     BRepModel* brepModel = new BRepModel();                  // an initially empty collection of bodies
-    ShapeModel* shapeModel = new ShapeModel(brepModel);
+    FRepModel* frepModel = new FRepModel();                // an initially empty collection of FObjects
+    ShapeModel* shapeModel = new ShapeModel(brepModel, frepModel);
 
     // Initialise the stores and the document.
     Document* document = new Document({{"shape", new Store(shapeModel)}});    // document takes ownership of the store
