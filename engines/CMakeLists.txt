@@ -89,6 +89,7 @@ set(TEST_SOURCES
     src/frep/fobject.test.cpp
     src/frep/fnavigate.test.cpp
     src/frep/fevaluate.test.cpp
+    src/frep/fsdf.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp

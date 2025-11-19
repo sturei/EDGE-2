@@ -90,7 +90,7 @@ namespace e2 {
         }
 
         /** A 2d object (really an infinite 3d object) consisting of the interior points of an extruded profile (represented as a brep) */
-        FObject* infiniteExtrusionFromProfile(const Body& profileBody) {
+        FObject* infiniteExtrudedProfile(const Body& profileBody) {
             std::vector<FEvaluator*> evaluators = {
                 new FProfileSDF(profileBody)
             };
@@ -100,12 +100,12 @@ namespace e2 {
             std::vector<FArg> args = {
             };
             FNodeIndex rootIndex = 0; // The profile SDF node is the root
-            FObject* infiniteExtrusionFromProfile = new FObject(evaluators, nodes, args, rootIndex);
-            return infiniteExtrusionFromProfile;
+            FObject* infiniteExtrudedProfile = new FObject(evaluators, nodes, args, rootIndex);
+            return infiniteExtrudedProfile;
         }
 
-        /** A 3d object consisting of the interior points of an extrusion of the given profile by a specified depth*/
-        FObject* extrusionFromProfile(const Body& profileBody, double depth) {
+        /** A 3d object consisting of the interior points of an extrusion of the given profile by a specified depth */
+        FObject* extrudedProfile(const Body& profileBody, double depth) {
             CellIndex profileFace;
             Pla3d profilePlane;
 
@@ -116,8 +116,8 @@ namespace e2 {
                 return nullptr; // could not determine profile plane
             }
 
-            Pla3d basePlane = profilePlane;
-            Pla3d topPlane = Pla3d(basePlane.position() + depth * basePlane.normal(), basePlane.normal());
+            Pla3d basePlane = Pla3d(profilePlane.position() - depth/2 * profilePlane.normal(), profilePlane.normal());
+            Pla3d topPlane = Pla3d(profilePlane.position() + depth/2 * profilePlane.normal(), profilePlane.normal());
         
             std::vector<FEvaluator*> evaluators = {
                 new FProfileSDF(profileBody),
@@ -140,9 +140,38 @@ namespace e2 {
                 FArg(4, 3)   // Intersection node arg 3: Complement of base half-space
             };
             FNodeIndex rootIndex = 3; // The intersection node is the root
-            FObject* extrusionFromProfile = new FObject(evaluators, nodes, args, rootIndex);
-            return extrusionFromProfile;
+            FObject* extrudedProfile = new FObject(evaluators, nodes, args, rootIndex);
+            return extrudedProfile;
         }
-    };
-};
+
+        /** A 3d object consisting of the interior points of an extrusion of the given profile by specified depth, exact SDF everywhere */
+        FObject* extrudedProfileExact(const Body& profileBody, double depth) {
+            CellIndex profileFace;
+            Pla3d profilePlane;
+
+            if (!getProfileFace(profileBody, profileFace)) {
+                return nullptr; // could not find profile face
+            }
+            if (!getProfilePlane(profileFace, profileBody, profilePlane)) {
+                return nullptr; // could not determine profile plane
+            }
+
+            std::vector<FEvaluator*> evaluators = {
+                new FProfileSDF(profileBody),
+                new FExtrusionSDF(depth)
+            };
+
+            std::vector<FNode> nodes = {
+                FNode(0),     // Profile SDF
+                FNode(1),     // Extrusion operator
+            };
+            std::vector<FArg> args = {
+                FArg(0, 1),  // Extrusion arg: Profile SDF
+            };
+            FNodeIndex rootIndex = 1; // The extrusion operator is the root
+            FObject* extrudedProfileExact = new FObject(evaluators, nodes, args, rootIndex);
+            return extrudedProfileExact;    
+        }
+    }
+}
 

@@ -15,6 +15,16 @@ namespace e2 {
                                         // An alternative would be store a (persistent) name of the the body, if such a thing existed
     };
 
+    class FExtrusionSDF : public FEvaluator {
+    public:
+        FExtrusionSDF(double depth) : m_Depth(depth) {}
+        bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
+        void print(std::ostream& os) const override;
+    private:
+        double m_Depth;           // depth of the extrusion
+    };
+
+
 }
 
 

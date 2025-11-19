@@ -13,6 +13,7 @@ namespace e2 {
             return false;
         }
         valueOut = *std::max_element(argsIn.begin(), argsIn.end());
+        std::cerr << "FMax::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
 
@@ -26,6 +27,7 @@ namespace e2 {
             return false;
         }
         valueOut = *std::min_element(argsIn.begin(), argsIn.end());
+        std::cerr << "FMin::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
 
@@ -39,6 +41,7 @@ namespace e2 {
             return false;
         }
         valueOut = -argsIn[0];
+        std::cerr << "FNegation::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
 
@@ -49,6 +52,7 @@ namespace e2 {
     // Evaluates to a constant value
     bool FConstant::evaluate(const Vec3d& _positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
         valueOut = m_value;
+        std::cerr << "FConstant::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
     
@@ -59,6 +63,7 @@ namespace e2 {
     // Evaluates to the distance to a plane
     bool FHalfSpace::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
         valueOut = (positionIn - m_plane.position()).dot(m_plane.normal());
+        std::cerr << "FHalfSpace::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
 
@@ -68,7 +73,9 @@ namespace e2 {
 
     // Evaluates to the value of the wrapped object
     bool FFObject::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
-        return e2::evaluate(m_fobject, positionIn, valueOut);
+        bool result = e2::evaluate(m_fobject, positionIn, valueOut);
+        std::cerr << "FFObject::evaluate: valueOut = " << valueOut << std::endl;
+        return result;
     }
 
     void FFObject::print(std::ostream& os) const {
@@ -78,7 +85,9 @@ namespace e2 {
     // Evaluates the fobject at the given position, starting from the root node
     bool evaluate(const FObject& fobject, const Vec3d& position, double& output) {
         FNodeIndex rootIndex = fobject.rootIndex();
-        return evaluate(fobject, rootIndex, position, output);
+        bool result = evaluate(fobject, rootIndex, position, output);
+        std::cerr << "evaluate(FObject) at " << position << ": output = " << output << std::endl;
+        return result;
     }
 
     // Evaluates the fobject at the given position, starting from the specified node
