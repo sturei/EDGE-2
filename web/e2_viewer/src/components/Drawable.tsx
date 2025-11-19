@@ -11,7 +11,6 @@ import type { JSX } from 'react';
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
-
 function Profile({args, children} : {args: [Array<Array<[number, number]>>], children: JSX.Element}) {
     const [paths] = args;
     const shape = new THREE.Shape();
@@ -85,11 +84,24 @@ export function jsxFromDrawable(drawable: IDrawable) {
     }
     else if (geometry.type === 'plane') {
         console.log(`Creating plane with dimensions width = ${geometry.width}, height = ${geometry.height}`);
-        return (
-            <Plane args={[geometry.width, geometry.height]}>
-                <meshStandardMaterial color={appearance?.color??Color.Blue} side={THREE.DoubleSide} />
-            </Plane>
-        );
+        if (appearance?.type == 'mesh' && appearance?.texture) {
+            const {width, height, data} = appearance.texture;
+            const texture = new THREE.DataTexture( new Uint8Array(data), width, height );
+            texture.needsUpdate = true;
+            console.log("data texture created: " + data);
+            return (
+                <Plane args={[geometry.width, geometry.height]}>
+                    <meshBasicMaterial map={texture} transparent={true} opacity={1.0} side={THREE.DoubleSide} />
+                </Plane>
+            );
+        }
+        else {
+            return (
+                <Plane args={[geometry.width, geometry.height]}>
+                    <meshStandardMaterial color={appearance?.color??Color.Blue} side={THREE.DoubleSide} />
+                </Plane>
+            );
+        }
     }
     else if (geometry.type === 'sphere') {
         console.log(`Creating sphere with radius: ${geometry.radius}`);
@@ -124,8 +136,52 @@ export function jsxFromDrawable(drawable: IDrawable) {
             </Profile>
         )
     }
+
 }
 
 export function Drawable({drawable}: {drawable: IDrawable}) {
     return jsxFromDrawable(drawable);
 }
+
+/*************
+ * work-in-progress code for texture data test
+ * 
+
+
+        //const texture = useLoader(THREE.TextureLoader, img)
+
+        // 0,255,0,255,15,240,63,255,31,224,127,255,47,208,191,255,63,192,0,255,79,176,63,255,95,160,127,255,111,144,191,255,127,128,0,255,143,112,63,255,159,96,127,255,175,80,191,255,191,64,0,255,207,48,63,255,223,32,127,255,239,16,191,255
+
+
+        //const width = 32, height = 32;
+        
+        const width = 4, height = 4, depth = 4;
+        const size = width * height;
+        const data = new Uint8Array( 4 * size );
+        for ( let i = 0; i < size; i ++ ) {
+            const stride = i * depth,
+            a1 = i / size,
+            a2 = i % width / width;
+            // set r, g, b, and alpha data values
+            data[ stride ] = Math.floor(255 * a1);            // red
+            data[ stride + 1 ] = 255 - Math.floor(255 * a1);  // green
+            data[ stride + 2 ] = Math.floor(255 * a2);        // blue
+            data[ stride + 3 ] = 255;                         // alpha
+        }
+        
+        console.log("data texture created: " + data);
+
+        const texture = new THREE.DataTexture( data, width, height );
+        texture.needsUpdate = true;
+
+        console.log
+
+        return (
+            <Plane args={[geometry.width, geometry.height]}>
+                <meshBasicMaterial map={texture} transparent={true} opacity={1.0} side={THREE.DoubleSide} />
+            </Plane>
+        );
+    }
+
+*/
+

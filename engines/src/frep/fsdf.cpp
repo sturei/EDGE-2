@@ -58,10 +58,6 @@ namespace e2 {
         // see https://iquilezles.org/articles/distfunctions/ for derivation
         // Note: this implementation assumes that the profile in in the XY plane, extrusion of +/- m_depth/2 along Z.
 
-        // float d = primitive(p.xy)
-        // vec2 w = vec2( d, abs(p.z) - h );
-        // return min(max(w.x,w.y),0.0) + length(max(w,0.0));
-
         double profileSDF = argsIn[0];
         double d = profileSDF;
         double w_x = d;

@@ -60,7 +60,20 @@ function addGPlane(doc: Document, payload: any): void {
         const width = payload.width ?? 1.0;
         const height = payload.height ?? 1.0;
         const color = payload.color ?? Color.Blue;
-
+        let texture = undefined;
+        if (payload.texture) {
+            const texPayload = payload.texture;
+            const width = texPayload.width;
+            const height = texPayload.height;
+            const dataArray = texPayload.data;
+            const data = dataArray;
+            texture = {
+                width: width,
+                height: height,
+                data: data
+            };
+        }
+        
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
@@ -70,7 +83,8 @@ function addGPlane(doc: Document, payload: any): void {
             },
             appearance: {
                 type: 'mesh',
-                color: color
+                color: color,
+                texture: texture
             }
 
         };

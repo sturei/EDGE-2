@@ -34,6 +34,11 @@ export interface ILineAppearance {
 export interface IMeshAppearance {
     type: 'mesh';
     color?: number;
+    texture?: {
+        width: number;
+        height: number;
+        data: number[];
+    }
     // other mesh appearance properties can be added here. See three.js MeshStandardMaterial for more options.
 }
 
