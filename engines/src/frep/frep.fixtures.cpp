@@ -1,6 +1,7 @@
 #include "frep/fobject.h"
 #include "frep/fevaluate.h"
 #include "frep/fsdf.h"
+#include "frep/frep.fixtures.h"
 #include "brep/brep.fixtures.h"
 #include "brep/navigate.h"
 #include "utils/pla3d.h"

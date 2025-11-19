@@ -16,6 +16,8 @@ Instructions:
     {"type":"BRep::addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
     {"type":"BRep::addWireRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
     {"type":"BRep::addSheetRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
+    {"type":"FRep::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
+
   Type 'q' to quit, or 'h' to show these instructions again.
 EOM
 

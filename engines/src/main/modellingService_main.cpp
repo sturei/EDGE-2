@@ -5,6 +5,7 @@
 #include "brep/brepModel.h"
 #include "frep/frepModel.h"
 #include "brep/brep.actions.h"
+#include "frep/frep.actions.h"
 #include "shape/shapeModel.h"
 
 using namespace e2;
@@ -45,6 +46,8 @@ int main(int argc, char* argv[]) {
     document->registerActionFunction(e2::BRepActions::addSheetRectangleDef);
     document->registerActionFunction(e2::BRepActions::addWireRoundRectDef);
     document->registerActionFunction(e2::BRepActions::addSheetRoundRectDef);
+
+    document->registerActionFunction(e2::FRepActions::addRectangleDef);
 
     // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
     DocumentService::run(document);

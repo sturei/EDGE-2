@@ -53,6 +53,7 @@ set(MODELLING_SERVICE_SOURCES
     src/document/model.cpp
     src/document/store.cpp
     src/frep/frep.fixtures.cpp
+    src/frep/frep.actions.cpp
     src/frep/fobject.cpp
     src/frep/fevaluate.cpp
     src/frep/fnavigate.cpp
