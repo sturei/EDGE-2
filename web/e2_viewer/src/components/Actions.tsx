@@ -17,7 +17,8 @@ const actionSuggestions = [
     '{"type":"addGProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":16711680}}',
     '{"type":"pingModeller", "payload": {} }',
     '{"type":"addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
-    '{"type":"addSheetRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}'
+    '{"type":"addSheetRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
+    '{"type":"FRep::addRectangle", "payload":{"lowerLeft":{"x":-1, "y":-1, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
   ];
   
   export function Actions() {
@@ -39,6 +40,8 @@ const actionSuggestions = [
         document.registerActionFunction(brepActions.pingModellerActionDef);
         document.registerActionFunction(brepActions.addSheetRectangleActionDef);
         document.registerActionFunction(brepActions.addSheetRoundRectActionDef);
+
+        document.registerActionFunction(brepActions.addRectangleActionDef);
 
     }, []);
 

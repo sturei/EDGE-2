@@ -59,6 +59,7 @@ export interface IPlaneGeometry {
     type: 'plane';
     width: number;     // length along X
     height: number;    // length along Y    
+    z: number;         // position along Z
 }
 
 /** Sphere centered on the origin */

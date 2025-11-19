@@ -41,7 +41,7 @@ namespace e2 {
         double sdfValue = dist(positionOnPlane, nearestPoint);
         int sdfSign = (positionOnPlane - nearestPoint).dot(normalAtNearest) < 0 ? -1 : 1;
         valueOut = sdfSign * sdfValue;
-        std::cerr << "FProfileSDF::evaluate: valueOut = " << valueOut << std::endl;
+        //std::cerr << "FProfileSDF::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
 
@@ -68,7 +68,7 @@ namespace e2 {
         double w_length = std::sqrt(w_x_pos * w_x_pos + w_y_pos * w_y_pos);
 
         valueOut = std::min(w_max, 0.0) + w_length;
-        std::cerr << "FExtrusionSDF::evaluate: valueOut = " << valueOut << std::endl;
+        //std::cerr << "FExtrusionSDF::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
 

@@ -83,21 +83,21 @@ export function jsxFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'plane') {
-        console.log(`Creating plane with dimensions width = ${geometry.width}, height = ${geometry.height}`);
+        console.log(`Creating plane with dimensions width = ${geometry.width}, height = ${geometry.height}, z=${geometry.z}`);
         if (appearance?.type == 'mesh' && appearance?.texture) {
             const {width, height, data} = appearance.texture;
             const texture = new THREE.DataTexture( new Uint8Array(data), width, height );
             texture.needsUpdate = true;
             console.log("data texture created: " + data);
             return (
-                <Plane args={[geometry.width, geometry.height]}>
+                <Plane args={[geometry.width, geometry.height]} position={[0,0,geometry.z]}>
                     <meshBasicMaterial map={texture} transparent={true} opacity={1.0} side={THREE.DoubleSide} />
                 </Plane>
             );
         }
         else {
             return (
-                <Plane args={[geometry.width, geometry.height]}>
+                <Plane args={[geometry.width, geometry.height]} position={[0,0,geometry.z]}>
                     <meshStandardMaterial color={appearance?.color??Color.Blue} side={THREE.DoubleSide} />
                 </Plane>
             );

@@ -59,6 +59,7 @@ function addGPlane(doc: Document, payload: any): void {
     store.changeState((model: Model) => {
         const width = payload.width ?? 1.0;
         const height = payload.height ?? 1.0;
+        const z = payload.z ?? 0.0;
         const color = payload.color ?? Color.Blue;
         let texture = undefined;
         if (payload.texture) {
@@ -79,7 +80,8 @@ function addGPlane(doc: Document, payload: any): void {
             geometry: {
                 type: 'plane',
                 width: width,
-                height: height
+                height: height,
+                z: z
             },
             appearance: {
                 type: 'mesh',

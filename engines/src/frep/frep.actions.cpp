@@ -5,6 +5,7 @@
 #include "document/document.h"
 #include "document/store.h"
 #include "utils/vec3d.h"
+#include "scene/sceneActionPayloads.h"
 
 using json = nlohmann::json;
 
@@ -39,11 +40,22 @@ namespace e2 {
             Vec3d upperRight = bounds.second;
 
             Store* store = doc->storeAt("shape");
-            store->changeState([lowerLeft, upperRight](Model* model) {
+            store->changeState([doc, lowerLeft, upperRight](Model* model) {
+
+                // update the FRepModel
                 FRepModel* frepModel = dynamic_cast<ShapeModel*>(model)->frepModel();
                 FObject* rectangleObject = FRepFixtures::rectangle(lowerLeft, upperRight);
                 frepModel->addObject(rectangleObject);
                 std::cerr << "added Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the scene in the client
+                // update the Scene
+                std::vector<ActionSpec> clientActions;
+                getClientActionsForAddFObject(*rectangleObject, clientActions);
+                for (const auto& action : clientActions) {
+                    doc->dispatchClientAction(action);
+                }
+
             });
         }
 

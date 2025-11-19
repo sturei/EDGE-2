@@ -42,6 +42,13 @@ async function addSheetRoundRect(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "BRep::addSheetRoundRect", payload);
 }
 
+async function addRectangle(doc: Document, payload: any): Promise<void> {
+    // Create an infinite rectangular extrusion with spefified lowerLeft and upperRight corners.
+    // The server creates the object as frep in its shape store, and returns client actions to add the appropriate graphics to the scene.
+    await postAction(doc, "FRep::addRectangle", payload);
+}
+
 export const pingModellerActionDef = { type: "pingModeller", function: pingModeller };
 export const addSheetRectangleActionDef = { type: "addSheetRectangle", function: addSheetRectangle };
 export const addSheetRoundRectActionDef = { type: "addSheetRoundRect", function: addSheetRoundRect };
+export const addRectangleActionDef = { type: "FRep::addRectangle", function: addRectangle };          
