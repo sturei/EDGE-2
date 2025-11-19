@@ -34,12 +34,12 @@ async function pingModeller(doc: Document, _payload: any): Promise<void> {
 async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
     // Create a rectangular sheet with specified lowerLeft and upperRight corners. 
     // The server creates the sheet as brep in its shape store, and returns client actions to add the appropriate graphics to the scene.
-    await postAction(doc, "addSheetRectangle", payload);
+    await postAction(doc, "BRep::addSheetRectangle", payload);
 }
 async function addSheetRoundRect(doc: Document, payload: any): Promise<void> {
     // Create a rounded rectangular sheet with specified corners and cornerRadius. 
     // The server creates the sheet as brep in its shape store, and returns client actions to add the appropriate graphics to the scene.
-    await postAction(doc, "addSheetRoundRect", payload);
+    await postAction(doc, "BRep::addSheetRoundRect", payload);
 }
 
 export const pingModellerActionDef = { type: "pingModeller", function: pingModeller };
