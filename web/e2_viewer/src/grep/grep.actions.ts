@@ -59,7 +59,7 @@ function addGPlane(doc: Document, payload: any): void {
     store.changeState((model: Model) => {
         const width = payload.width ?? 1.0;
         const height = payload.height ?? 1.0;
-        const color = payload?.color ?? Color.Blue;
+        const color = payload.color ?? Color.Blue;
 
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
@@ -83,7 +83,7 @@ function addGSphere(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const radius = payload.radius ?? 1.0;
-        const color = payload?.color ?? Color.Blue;
+        const color = payload.color ?? Color.Blue;
 
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
@@ -107,7 +107,7 @@ function addGBlock(doc: Document, payload: any): void {
         const width = payload.width ?? 2.0;      // length in x direction
         const height = payload.height ?? 2.0;    // length in y direction
         const depth = payload.depth ?? 2.0;      // length in z direction
-        const color = payload?.color ?? Color.Green;
+        const color = payload.color ?? Color.Green;
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
@@ -130,7 +130,7 @@ function addGProfile(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
-        const color = payload?.color ?? Color.Green;
+        const color = payload.color ?? Color.Green;
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
