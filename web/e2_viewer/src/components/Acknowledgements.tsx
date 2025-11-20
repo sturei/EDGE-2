@@ -9,61 +9,42 @@ import daisyuiLogo from '../assets/daisyui-mark-rotating.svg'
 import threejsLogo from '../assets/threejs-logo.svg'
 import viteLogo from '/vite.svg'
     
-import { useState } from 'react';
-
 export function Acknowledgements() {
-  const [count, setCount] = useState(0)
 
     return (
       <>
         <div className="container m-auto grid grid-cols-1">
-          <div className="container m-auto grid grid-cols-3">
+          <div>
+            <p className="text-gray-500 text-center">
+              Acknowledgements:
+            </p>
+          </div>
+          <div className="container grid grid-cols-2 px-8">
             <a className="join-item" href="https://vite.dev" target="_blank">
-              <div className="tooltip" data-tip="Vite - Build tooling">
+              <div className="tooltip" data-tip="Vite">
                 <img src={viteLogo} className="logo" alt="Vite logo" />
               </div>
             </a>
             <a href="https://react.dev" target="_blank">
-              <div className="tooltip" data-tip="React - UI framework">
+              <div className="tooltip" data-tip="React">
                 <img src={reactLogo} className="logo" alt="React logo" />
               </div>
             </a>
             <a href="https://tailwindcss.com" target="_blank">
-              <div className="tooltip" data-tip="Tailwind - CSS framework">
+              <div className="tooltip" data-tip="Tailwind">
                 <img src={tailwindLogo} className="logo" alt="Tailwind CSS logo" />
               </div>
             </a>
             <a href="https://daisyui.com" target="_blank">
-              <div className="tooltip" data-tip="daisyUI - CSS component library">
+              <div className="tooltip" data-tip="daisyUI">
                 <img src={daisyuiLogo} className="logo" alt="daisyUI logo" />
               </div>
             </a>
             <a href="https://threejs.org/" target="_blank">
-              <div className="tooltip" data-tip="three.js - WebGL library">
+              <div className="tooltip" data-tip="Three.js">
                 <img src={threejsLogo} className="logo" alt="three.js logo" />
               </div>
             </a>
-            <a href="https://github.com/pmndrs/react-three-fiber" target="_blank">
-              <div className="tooltip" data-tip="react-three-fiber - React + three.js">
-                <img src={threejsLogo} className="logo" alt="three.js logo" />
-              </div>
-            </a>
-            <a href="https://github.com/pmndrs/drei" target="_blank">
-              <div className="tooltip" data-tip="drei - R3F helper components">
-                <img src={threejsLogo} className="logo" alt="three.js logo" />
-              </div>
-            </a>
-          </div>
-          <div>
-            <p className="read-the-docs">
-              Click on the logos above to learn more about the technologies used in this application.
-            </p>
-            <div className="basis-64">
-              <button className="btn"
-                onClick={() => setCount((count) => count + 1)}>
-                Does React react? {count}
-              </button>
-            </div>
           </div>
         </div>
       </>

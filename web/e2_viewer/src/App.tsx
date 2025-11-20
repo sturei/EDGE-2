@@ -18,29 +18,31 @@ function App() {
     }
 
   return (
-    <>
+    <div className="w-250">
     <DocumentContext value={document}>
-      <div className="header bg-blue-300 p-2">
+      <div className="header bg-blue-300 p-2 w-full">
         <div><Actions /></div>
       </div>
       <div className="flex flex-row">
-        <div className="left-sidebar flex-none bg-blue-100">
+        <div className="left-sidebar w-15rem flex-none bg-blue-100">
           <div className="grid grid-cols-1 grid-rows-2">
             <div></div>
-            <div><Acknowledgements /></div>
+            <div className="align-bottom">
+              <Acknowledgements />
+            </div>
           </div>
         </div>
-        <div className="graphicsArea flex-1 bg-gray-200">
+        <div className="graphicsArea h-140 flex-1 bg-gray-200">
           <Canvas>
             <Scene/>
           </Canvas>
         </div>
-        <div className="right-sidebar flex-none bg-blue-100">
+        <div className="right-sidebar w-10remflex-none bg-blue-100">
           <ToolbarPlaceholder />
         </div> 
       </div>      
     </DocumentContext>
-    </>
+    </div>
   )
 }
 

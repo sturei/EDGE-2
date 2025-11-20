@@ -85,7 +85,7 @@ const actionSuggestions = [
     return (
       <>
         <form onSubmit={handleSubmit}>
-          <input name="actionInput" type="text" className="flex w-4/5 input" placeholder="Next action?" list="suggestions" />
+          <input name="actionInput" type="text" className="flex w-full input" placeholder="Next action?" list="suggestions" />
           <datalist id="suggestions">
             {actionSuggestions.map((suggestion, index) => (
               <option key={index} value={suggestion}></option>
