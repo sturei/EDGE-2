@@ -74,8 +74,9 @@ TEST_F(DocumentServiceTest, RunOnceEmptyLine) {
     std::ostringstream output;
     DocumentService::runOnce(document, input, output);
     std::string outputStr = output.str();
-    EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
-    EXPECT_TRUE(outputStr.find("Invalid stream or EOF") != std::string::npos);
+    std::cerr << "Output: " << outputStr << std::endl;
+    EXPECT_TRUE(outputStr.find("\"status\":\"OK\"") != std::string::npos);
+    EXPECT_TRUE(outputStr.find("EOF") != std::string::npos);
 }
 
 TEST_F(DocumentServiceTest, RunOnceEmptyLineString) {

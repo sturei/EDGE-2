@@ -90,16 +90,19 @@ namespace e2 {
          * Responses are written to the output stream. TODO: structured responses as JSON.
          * It blocks on input, waiting for a line to be entered.
         */
-        void runOnce(Document* document, std::istream& input, std::ostream& output) {
+        bool runOnce(Document* document, std::istream& input, std::ostream& output) {
             // Read input and process it. getLine will block and wait for input if there is no input available.
             // We always acknowledge the input on the output stream because clients may be blocking, awaiting a response.
+            // Returns false if EOF is reached, true otherwise.
 
             ActionSpec action;
             ActionResponse response = {"OK", ""};
+            bool result = true;
 
             std::string line;
             if (!std::getline(input, line)) {
-                response = {"ERROR", "Invalid stream or EOF"};
+                response = {"OK", "EOF"};
+                result = false;
             }
             else if (line.empty() || std::all_of(line.begin(), line.end(), ::isspace))  {
                 // blank line is not an error, we just acknowledge it
@@ -118,35 +121,21 @@ namespace e2 {
             // package up the response as JSON and stream it to the output stream
             ordered_json jsonResponse = response;
             output << jsonResponse << std::endl;
+            return result;
         }   
 
-        /** Similar to runOnce, but it first polls the input stream, and only reads from it if something is available.
-         * It was used in the now-defunct desktop viewer to read input from stdin in the main application loop, without 
-         * blocking the UI. It only works for stdin and stout, and probably not at all on Windows. 
-        */
-        void runOnceWithoutBlocking(Document* document) {
-            // Unfortunately this code uses a System call (poll) instead of language-provided methods. 
-            // I tried cin.peek() and cin.rdbuf()->in_avail() but to no avail.
-            const size_t len = 1;
-            const int timeoutMillis = 0;    // 0 millis => non-blocking
-            pollfd cinfd[len];
-            cinfd[0].fd = fileno(stdin);
-            cinfd[0].events = POLLIN;
-            if (poll(cinfd, len, timeoutMillis)) {
-                runOnce(document);
-            }
-        }   
-
-        /** This runs the document service in a loop.
+        /** This runs the document service in a loop until EOF is reached on the input stream.
          * It reads one line at a time from the specified input stream (stdin by default) and processes it. 
          * The line is expected to consist of a JSON string representing an action.
          * The format for an action is: {"type":<string>, "payload":<any valid JSON>}
          * Responses are written to the specified output stream (stdout by default). 
-         * Errors and logs are written to stderr.
+         * Errors, logs and debug are written to stderr.
          */
         void run(Document* document, std::istream& input, std::ostream& output) {
             while (true) {
-                runOnce(document, input, output);
+                if (!runOnce(document, input, output)) {
+                    break;
+                }
             }
         }
 

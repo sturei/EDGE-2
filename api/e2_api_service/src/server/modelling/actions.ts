@@ -1,4 +1,5 @@
 import {ChildProcess, spawn} from 'child_process';
+import { Readable } from 'stream';
 
 // TODO:
 // 1. handle exit of modelling service process
@@ -12,11 +13,32 @@ const modellingServicePath = '../../engines/build/e2_modellingService';
 const modellingService = spawn(modellingServicePath);
 console.log(`Spawned modelling service process ${modellingService.pid}`);
 
+
+function readStream(stream: Readable, encoding: BufferEncoding = "utf8") : Promise<string> {
+    stream.setEncoding(encoding);
+    return new Promise((resolve, reject) => {
+        let data = "";
+        stream.on("data", (chunk) => {
+            console.log(`Received chunk: ${chunk.length} bytes`);   //--- DEBUG ---
+            data += chunk;
+            if (data.endsWith("\n")) {
+                console.log(`Received line: ${data.length} bytes`);   //--- DEBUG ---
+                data = data.slice(0, -1); // remove trailing newline
+                resolve(data);
+            }
+        });
+        stream.on("end", () => {
+            console.log(`Stream ended: ${data.length} bytes`);   //--- DEBUG ---
+            resolve(data);
+        });
+        stream.on("error", error => reject(error));
+    });
+}
+
 modellingService.stderr.setEncoding('utf8');
 modellingService.stderr.on('data', function(data) {
     console.log('stderr: ' + data);
 });
-
 modellingService.on('close', function(code) {
     console.log('Modelling service closed with code: ' + code);
 });
@@ -31,13 +53,8 @@ export async function dispatchAction(action: any) : Promise<any> {
     modellingService.stdin.write(actionText + '\n');
 
     // Wait for the response from the modelling service
-    const responsePromise = new Promise<string>((resolve, reject) => {
-        modellingService.stdout.on('data', (data) => {
-            resolve(data.toString());
-        });
-    });
-    const responseText = await responsePromise;
-    console.log(`Response from modelling service: ${responseText}`);                   //--- DEBUG ---
+    const responseText = await readStream(modellingService.stdout); 
+    //console.log(`Response from modelling service: ${responseText}`);                   //--- DEBUG ---
 
     // process the response. It consist of a JSON string, which we unpack into a JSON object.
     let response = JSON.parse(responseText);
