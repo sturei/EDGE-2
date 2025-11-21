@@ -10,12 +10,20 @@ function App() {
   const document = useContext(DocumentContext);
 
   function ToolbarPlaceholder() {
-      return (
-        <>
-          <p> Toolbar goes here</p>
-        </>
-      )
-    }
+    return (
+      <>
+        <p className="text-gray-500 italic text-sm text-center"> Toolbar goes here</p>
+      </>
+    )
+  }
+
+  function ProductTreePlaceholder() {
+    return (
+      <>
+        <p className="text-gray-500 italic text-sm text-center"> Product tree goes here</p>
+      </>
+    )
+  }
 
   return (
     <div className="w-250">
@@ -26,7 +34,9 @@ function App() {
       <div className="flex flex-row">
         <div className="left-sidebar w-15rem flex-none bg-blue-100">
           <div className="grid grid-cols-1 grid-rows-2">
-            <div></div>
+            <div>
+              <ProductTreePlaceholder />
+            </div>
             <div className="align-bottom">
               <Acknowledgements />
             </div>

@@ -17,21 +17,26 @@ console.log(`Spawned modelling service process ${modellingService.pid}`);
 function readStream(stream: Readable, encoding: BufferEncoding = "utf8") : Promise<string> {
     stream.setEncoding(encoding);
     return new Promise((resolve, reject) => {
-        let data = "";
+        let data:string = "";
         stream.on("data", (chunk) => {
-            console.log(`Received chunk: ${chunk.length} bytes`);   //--- DEBUG ---
+            //console.log(`Received chunk: ${chunk.length} bytes`);   //--- DEBUG ---
             data += chunk;
             if (data.endsWith("\n")) {
-                console.log(`Received line: ${data.length} bytes`);   //--- DEBUG ---
+                //console.log(`Received line: ${data.length} bytes`);   //--- DEBUG ---
                 data = data.slice(0, -1); // remove trailing newline
                 resolve(data);
+                data="";
             }
         });
         stream.on("end", () => {
             console.log(`Stream ended: ${data.length} bytes`);   //--- DEBUG ---
             resolve(data);
+            data="";
         });
-        stream.on("error", error => reject(error));
+        stream.on("error", (error) => {
+            console.log(`Stream error: ${error} `);   //--- DEBUG ---
+            reject(error);
+        });
     });
 }
 
@@ -54,7 +59,7 @@ export async function dispatchAction(action: any) : Promise<any> {
 
     // Wait for the response from the modelling service
     const responseText = await readStream(modellingService.stdout); 
-    //console.log(`Response from modelling service: ${responseText}`);                   //--- DEBUG ---
+    console.log(`Response from modelling service: ${responseText.length} bytes`);                   //--- DEBUG ---
 
     // process the response. It consist of a JSON string, which we unpack into a JSON object.
     let response = JSON.parse(responseText);
