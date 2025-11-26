@@ -1,11 +1,7 @@
 #include <nlohmann/json.hpp>
-#include "brep/body.h"
-#include "brep/brep.actions.h"
 #include "brep/brep.fixtures.h"
-#include "brep/brepModel.h"
-#include "brep/navigate.h"
+#include "frep/frep.fixtures.h"
 #include "shape/shapeModel.h"
-
 #include "document/document.h"
 #include "document/store.h"
 #include "utils/vec3d.h"
@@ -14,14 +10,25 @@
 using json = nlohmann::json;
 
 /**
- * BRepActions provides a set of actions that enable clients to create and manipulate breps via the DocumentService.
- * These actions are intended to be registered with a Document via Document::registerActionFunction, and then invoked via actions dispatched to the Document.
- * Each action function takes a JSON payload as input.
- * Any long-lived bodies created here are owned by the Document via the Store that contains the BRepModel.
+ * ShapeActions provides a set of actions that enable clients to create and manipulate shapes.
  */
 
 namespace e2 {
-    namespace BRepActions {
+    namespace ShapeActions {
+
+        std::pair<Vec3d, Vec3d> parseLowerUpperJson(const json& llJson, const json& urJson) {
+            Vec3d lowerLeft = Vec3d(
+                llJson.at("x").get<double>(),
+                llJson.at("y").get<double>(),
+                llJson.at("z").get<double>()
+            );
+            Vec3d upperRight = Vec3d(
+                urJson.at("x").get<double>(),
+                urJson.at("y").get<double>(),
+                urJson.at("z").get<double>()
+            );
+            return std::make_pair(lowerLeft, upperRight);
+        }
 
         void addEmptyBody(Document* doc, const json& payload) {
             // This action adds an empty body (a body with no cells) to the brep store.
@@ -53,20 +60,6 @@ namespace e2 {
             });
         }
 
-        std::pair<Vec3d, Vec3d> parseLowerUpperJson(const json& llJson, const json& urJson) {
-            Vec3d lowerLeft = Vec3d(
-                llJson.at("x").get<double>(),
-                llJson.at("y").get<double>(),
-                llJson.at("z").get<double>()
-            );
-            Vec3d upperRight = Vec3d(
-                urJson.at("x").get<double>(),
-                urJson.at("y").get<double>(),
-                urJson.at("z").get<double>()
-            );
-            return std::make_pair(lowerLeft, upperRight);
-        }
-
         void addWireRectangle(Document* doc, const json& payload) {
             // This action adds a wire rectangle to the brep store.
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
@@ -82,6 +75,25 @@ namespace e2 {
                 Body* wireRectangleBody = BRepFixtures::wireRectangle(lowerLeft, upperRight);
                 brepModel->addBody(wireRectangleBody);
                 std::cerr << "added Wire Rectangle" << std::endl;      // ---LOGGING---
+            });
+        }
+
+        void addWireRoundRect(Document* doc, const json& payload) {
+            // This action adds a wire rounded rectangle to the brep store.
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+            double cornerRadius = payload.value("cornerRadius", 0.2);
+
+            Store* store = doc->storeAt("shape");
+            store->changeState([lowerLeft, upperRight, cornerRadius](Model* model) {
+                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
+                Body* wireRectangleBody = BRepFixtures::wireRoundRect(lowerLeft, upperRight, cornerRadius);
+                brepModel->addBody(wireRectangleBody);
+                std::cerr << "added Wire Rounded Rectangle" << std::endl;      // ---LOGGING---
             });
         }
 
@@ -108,25 +120,6 @@ namespace e2 {
                 getPayloadForAddGProfile(*sheetRectangleBody, clientPayload);
                 doc->dispatchClientAction({"Gfx::addGProfile", clientPayload});
 
-            });
-        }
-
-        void addWireRoundRect(Document* doc, const json& payload) {
-            // This action adds a wire rounded rectangle to the brep store.
-            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
-            );
-            Vec3d lowerLeft = bounds.first;
-            Vec3d upperRight = bounds.second;
-            double cornerRadius = payload.value("cornerRadius", 0.2);
-
-            Store* store = doc->storeAt("shape");
-            store->changeState([lowerLeft, upperRight, cornerRadius](Model* model) {
-                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
-                Body* wireRectangleBody = BRepFixtures::wireRoundRect(lowerLeft, upperRight, cornerRadius);
-                brepModel->addBody(wireRectangleBody);
-                std::cerr << "added Wire Rounded Rectangle" << std::endl;      // ---LOGGING---
             });
         }
 
@@ -157,7 +150,34 @@ namespace e2 {
             });
         }
 
+        void addInfiniteRectangle(Document* doc, const json& payload) {
+            // This action adds a 2d rectangle, with infinite z-extent, to the frep store.
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
 
+            Store* store = doc->storeAt("shape");
+            store->changeState([doc, lowerLeft, upperRight](Model* model) {
+
+                // update the FRepModel
+                FRepModel* frepModel = dynamic_cast<ShapeModel*>(model)->frepModel();
+                FObject* rectangleObject = FRepFixtures::rectangle(lowerLeft, upperRight);
+                frepModel->addObject(rectangleObject);
+                std::cerr << "added Infinite Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the scene in the client
+                // update the Scene
+                std::vector<ActionSpec> clientActions;
+                getClientActionsForAddFObject(*rectangleObject, clientActions);
+                for (const auto& action : clientActions) {
+                    doc->dispatchClientAction(action);
+                }
+
+            });
+        }
 
     }
 };

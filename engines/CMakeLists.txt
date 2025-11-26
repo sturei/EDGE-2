@@ -37,7 +37,6 @@ FetchContent_MakeAvailable(json)
 
 set(MODELLING_SERVICE_SOURCES
     src/brep/body.cpp
-    src/brep/brep.actions.cpp
     src/brep/brep.fixtures.cpp
     src/brep/bnearpoint.cpp
     src/brep/bnormal.cpp
@@ -53,7 +52,6 @@ set(MODELLING_SERVICE_SOURCES
     src/document/model.cpp
     src/document/store.cpp
     src/frep/frep.fixtures.cpp
-    src/frep/frep.actions.cpp
     src/frep/fobject.cpp
     src/frep/fevaluate.cpp
     src/frep/fnavigate.cpp
@@ -61,6 +59,7 @@ set(MODELLING_SERVICE_SOURCES
     src/frep/fsdf.cpp
     src/scene/sceneActionPayloads.cpp
     src/shape/shapeModel.cpp
+    src/shape/shape.actions.cpp
     src/utils/vec3d.cpp
     src/utils/evaluate.cpp
     src/utils/nearpoint.cpp   

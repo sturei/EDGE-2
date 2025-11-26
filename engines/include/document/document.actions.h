@@ -7,6 +7,11 @@ namespace e2 {
     namespace DocumentActions {
         void ping(Document* doc, const nlohmann::json& payload);
         inline static ActionDef pingDef = {"Modeller::ping", ping};
+
+
+        inline static std::array<ActionDef, 1> allDocumentActions = {{
+            {"Modeller::ping", ping}
+        }};
     }
 };
 
