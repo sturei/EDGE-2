@@ -7,16 +7,14 @@ Instructions:
   Enter each action like this: {"type":<string>, "payload":<any valid JSON>}.
   The payload must be valid JSON e.g. a string, number, array or object.
   Examples:
-    {"type":"ping", "payload":{}}
-    {"type":"BRep::addEmptyBody", "payload":{}}
-    {"type":"BRep::addAcornBody", "payload":{"x":3, "y":2, "z":1}}
-    {"type":"BRep::addWireRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"BRep::addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"BRep::addWireRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"BRep::addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"BRep::addWireRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
-    {"type":"BRep::addSheetRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
-    {"type":"FRep::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
+    {"type":"Modeller::ping", "payload":{}}
+    {"type":"Sketches::addEmptyBody", "payload":{}}
+    {"type":"Sketches::addAcornBody", "payload":{"x":3, "y":2, "z":1}}
+    {"type":"Sketches::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
+    {"type":"Sketches::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
+    {"type":"Profiles::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
+    {"type":"Profiles::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
+    {"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
 
   Type 'q' to quit, or 'h' to show these instructions again.
 EOM
