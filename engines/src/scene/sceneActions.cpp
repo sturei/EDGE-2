@@ -17,29 +17,26 @@ using json = nlohmann::json;
 
 namespace e2 {
 
-        void dispatchClientActionsForAcorn(Document* doc, const Body& acornBody) {
+    void dispatchClientActionsForAcorn(Document* doc, const Body& acornBody) {
         // The payload is a point
         const Vec3d& position = acornBody.cell(0).support().position();
         json payload = json::object({{"position", json::array({position.x(), position.y(), position.z()})}});
         doc->dispatchClientAction({"Gfx::addGPoint", payload});
     }
 
-        void dispatchClientActionsForSketch(Document* doc, const Body& sketchBody) {
-        // The payload is a collection of "paths", representing the sketch edges
+    void dispatchClientActionsForSketch(Document* doc, const Body& sketchBody) {
+        // The payload for each edge is a polyline
         auto edges = getKSkeleton(1, sketchBody);
-        std::vector<json> paths;
         for (const auto& edgeIndex : edges) {
             auto tessellatedPointsPtr = tessellateEdge(edgeIndex, sketchBody);
-            std::vector<json> path;
+            std::vector<json> positions;
             for (const auto& point : *tessellatedPointsPtr) {
-                path.push_back(json::array({point.x(), point.y()}));
+                positions.push_back(json::array({point.x(), point.y(), point.z()}));
             }
-            paths.push_back(path);
+            json payload = json::object({{"positions", positions}});
+            doc->dispatchClientAction({"Gfx::addPolyline", payload});
             delete tessellatedPointsPtr;
         }
-
-        json payload = json::object({{"paths", paths}});
-        //doc->dispatchClientAction({"Gfx::addGProfile", payload}); TODO
     }
 
     void dispatchClientActionsForProfile(Document* doc, const Body& profileBody) {
