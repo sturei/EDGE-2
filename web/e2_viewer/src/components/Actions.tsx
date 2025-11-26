@@ -10,6 +10,7 @@ const actionSuggestions = [
     '{"type":"Gfx::ping", "payload": {} }',
     '{"type":"Gfx::addGPoint", "payload":{"size":5, "position":[1,1,1], "color":16711680}}',
     '{"type":"Gfx::addGLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":8603039}}',
+    '{"type":"Gfx::addGPolyline", "payload":{"positions":[[-2,0,0],[0,0,0],[2,1,0]], "color":8603039}}',
     '{"type":"Gfx::addGPlane", "payload":{"width":3,"height":2, "color":16711680}}',
     '{"type":"Gfx::addGPlane", "payload":{"width":10,"height":10, "texture":{"width":4,"height":4,"data":[0,255,0,255,15,240,63,255,31,224,127,255,47,208,191,255,63,192,0,255,79,176,63,255,95,160,127,255,111,144,191,255,127,128,0,255,143,112,63,255,159,96,127,255,175,80,191,255,191,64,0,255,207,48,63,255,223,32,127,255,239,16,191,255]}}}',
     '{"type":"Gfx::addGSphere", "payload":{"radius":0.75, "color":65280}}',
@@ -32,6 +33,7 @@ const actionSuggestions = [
         document.registerActionFunction(grepActions.pingActionDef);
         document.registerActionFunction(grepActions.addGPointActionDef);
         document.registerActionFunction(grepActions.addGLineActionDef);
+        document.registerActionFunction(grepActions.addGPolylineActionDef);
         document.registerActionFunction(grepActions.addGPlaneActionDef);
         document.registerActionFunction(grepActions.addGSphereActionDef);
         document.registerActionFunction(grepActions.addGBlockActionDef);

@@ -3,6 +3,7 @@ import {
     pingActionDef,
     addGPointActionDef,
     addGLineActionDef,
+    addGPolylineActionDef,
     addGPlaneActionDef,
     addGSphereActionDef,
     addGBlockActionDef,
@@ -44,7 +45,7 @@ describe("grep.actions", () => {
     });
 
     describe("addGPoint action", () => {
-        it("should add GPoint with default size", () => {
+        it("should add GPoint with defaults", () => {
             addGPointActionDef.function(mockDoc, {});
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
@@ -56,13 +57,25 @@ describe("grep.actions", () => {
     });
 
     describe("addGLine action", () => {
-        it("should add GLine with default length", () => {
+        it("should add GLine with defaults", () => {
             addGLineActionDef.function(mockDoc, {});
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
-        it("should add GLine with custom length", () => {
-            addGLineActionDef.function(mockDoc, { length: 3.0 });
+        it("should add GLine with custom start and end", () => {
+            addGLineActionDef.function(mockDoc, { start: [0,0,0], end: [1,1,1] });
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
+        });
+    });
+
+    describe("addGPolyline action", () => {
+        it("should add GPolyline with defaults", () => {
+            addGPolylineActionDef.function(mockDoc, {});
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
+        });
+
+        it("should add GPolyline with custom positions", () => {
+            addGPolylineActionDef.function(mockDoc, { positions: [[0,0,0],[1,1,1],[2,2,2]] });
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
@@ -123,6 +136,10 @@ describe("grep.actions", () => {
 
         it("should have correct type for addGLine action", () => {
             expect(addGLineActionDef.type).toBe("Gfx::addGLine");
+        });
+
+        it("should have correct type for addGPolyline action", () => {
+            expect(addGPolylineActionDef.type).toBe("Gfx::addGPolyline");
         });
 
         it("should have correct type for addGPlane action", () => {

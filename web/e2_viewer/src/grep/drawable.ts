@@ -75,6 +75,12 @@ export interface ILineGeometry {
     end: [number, number, number];
 }
 
+/** Polyline defined by an array of [x,y,z] triples */
+export interface IPolylineGeometry {
+    type: 'polyline';
+    positions: Array<[number, number, number]>;
+}
+
 /** Point at specified position */
 export interface IPointGeometry {
     type: 'point';
@@ -90,7 +96,7 @@ export interface IProfileGeometry {
     paths: Array<Array<[number, number]>>;
 }
 
-export type IAnyGeometry = IBlockGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPointGeometry | IProfileGeometry;
+export type IAnyGeometry = IBlockGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry;
 
 /** Drawable */
 export interface IDrawable {

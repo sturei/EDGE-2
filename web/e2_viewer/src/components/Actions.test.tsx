@@ -13,6 +13,7 @@ vi.mock('../grep/grep.actions.ts', () => ({
     pingActionDef: { type: 'ping' },
     addGPointActionDef: { type: 'addGPoint' },
     addGLineActionDef: { type: 'addGLine' },
+    addGPolylineActionDef: { type: 'addGPolyline' },
     addGPlaneActionDef: { type: 'addGPlane' },
     addGSphereActionDef: { type: 'addGSphere' },
     addGBlockActionDef: { type: 'addGBlock' },

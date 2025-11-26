@@ -43,9 +43,21 @@ function Point({args, children} : {args: [[number, number, number]], children: J
 
 function Line({args, children} : {args: [[number, number, number], [number, number, number]], children: JSX.Element}) {
     const [start, end] = args;
-    // I would use the drei's Line component instead of this home-grown one, but drei's Line generates an error when rendering 
-    // to the mock dom that I use in the unit tests.
+    // Note: drei's Line component generates an error when rendering to the mock dom that I use in the unit tests. Hence this custom Line component.
     const positions = new Float32Array([...start, ...end]);
+    const lineGeometry = new LineGeometry();
+    lineGeometry.setPositions(positions)
+    const line2 = new Line2(lineGeometry);    
+    return (
+        <primitive object={line2} >
+            {children}
+        </primitive>
+    )
+}
+
+function Polyline({args, children} : {args: [Array<[number, number, number]>], children: JSX.Element}) {
+    const [positionsArray] = args;
+    const positions = new Float32Array(positionsArray.flat());
     const lineGeometry = new LineGeometry();
     lineGeometry.setPositions(positions)
     const line2 = new Line2(lineGeometry);    
@@ -118,6 +130,14 @@ export function jsxFromDrawable(drawable: IDrawable) {
             <Line args={[geometry.start, geometry.end]}>
                 <LineAppearance color={appearance?.color??Color.Blue} />
             </Line>
+        );
+    }        
+    else if (geometry.type === 'polyline') {
+        console.log(`Creating polyline with ${geometry.positions.length} positions`);
+        return (
+            <Polyline args={[geometry.positions]}>
+                <LineAppearance color={appearance?.color??Color.Blue} />
+            </Polyline>
         );
     }        
     else if (geometry.type === 'point') {

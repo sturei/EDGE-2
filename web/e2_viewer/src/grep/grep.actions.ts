@@ -36,7 +36,7 @@ function addGLine(doc: Document, payload: any): void {
     store.changeState((model: Model) => {
         const start = payload.start ?? [-1, 0, 0];
         const end = payload.end ?? [1, 0, 0];
-        const color = payload?.color ?? Color.Blue;
+        const color = payload.color ?? Color.Blue;
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
@@ -53,6 +53,28 @@ function addGLine(doc: Document, payload: any): void {
     });
     console.log("added GLine");      // ---DEBUG---
 }
+
+function addGPolyline(doc: Document, payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        const positions = payload.positions ?? [[-1, 0, 0],[1,0,0]];
+        const color = payload.color ?? Color.Blue;
+        let grepModel = model as GRepModel;
+        const drawable: IDrawable = {
+            geometry: {
+                type: 'polyline',
+                positions: positions
+            },
+            appearance: {
+                type: 'line',
+                color: color
+            }
+        };
+        grepModel.addDrawable(drawable);
+    });
+    console.log("added GPolyline");      // ---DEBUG---
+}
+
 
 function addGPlane(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
@@ -167,6 +189,7 @@ function addGProfile(doc: Document, payload: any): void {
 export const pingActionDef = { type: "Gfx::ping", function: ping };
 export const addGPointActionDef = { type: "Gfx::addGPoint", function: addGPoint };
 export const addGLineActionDef = { type: "Gfx::addGLine", function: addGLine };
+export const addGPolylineActionDef = { type: "Gfx::addGPolyline", function: addGPolyline };
 export const addGPlaneActionDef = { type: "Gfx::addGPlane", function: addGPlane };
 export const addGSphereActionDef = { type: "Gfx::addGSphere", function: addGSphere };
 export const addGBlockActionDef = { type: "Gfx::addGBlock", function: addGBlock };
