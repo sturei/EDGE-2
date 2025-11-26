@@ -11,14 +11,14 @@ import * as grepActions from '../grep/grep.actions.ts';
 // Mock the grep actions module
 vi.mock('../grep/grep.actions.ts', () => ({
     pingActionDef: { type: 'ping' },
-    addGPointActionDef: { type: 'addGPoint' },
-    addGLineActionDef: { type: 'addGLine' },
-    addGPolylineActionDef: { type: 'addGPolyline' },
-    addGPlaneActionDef: { type: 'addGPlane' },
-    addGSphereActionDef: { type: 'addGSphere' },
-    addGBlockActionDef: { type: 'addGBlock' },
-    addGShapeActionDef: { type: 'addGShape' },
-    addGProfileActionDef: { type: 'addGProfile' },
+    addPointActionDef: { type: 'addPoint' },
+    addLineActionDef: { type: 'addLine' },
+    addPolylineActionDef: { type: 'addPolyline' },
+    addPlaneActionDef: { type: 'addPlane' },
+    addSphereActionDef: { type: 'addSphere' },
+    addBlockActionDef: { type: 'addBlock' },
+    addShapeActionDef: { type: 'addShape' },
+    addProfileActionDef: { type: 'addProfile' },
     addPingModellerActionDef: { type: 'pingModeller' }
 }));
 

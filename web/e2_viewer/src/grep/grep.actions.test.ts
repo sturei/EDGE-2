@@ -1,13 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
     pingActionDef,
-    addGPointActionDef,
-    addGLineActionDef,
-    addGPolylineActionDef,
-    addGPlaneActionDef,
-    addGSphereActionDef,
-    addGBlockActionDef,
-    addGProfileActionDef
+    addPointActionDef,
+    addLineActionDef,
+    addPolylineActionDef,
+    addPlaneActionDef,
+    addSphereActionDef,
+    addBlockActionDef,
+    addProfileActionDef
 } from "./grep.actions";
 
 // Mock dependencies
@@ -44,83 +44,83 @@ describe("grep.actions", () => {
         });
     });
 
-    describe("addGPoint action", () => {
-        it("should add GPoint with defaults", () => {
-            addGPointActionDef.function(mockDoc, {});
+    describe("addPoint action", () => {
+        it("should add Point with defaults", () => {
+            addPointActionDef.function(mockDoc, {});
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
-        it("should add GPoint with custom size", () => {
-            addGPointActionDef.function(mockDoc, { size: 2.5 });
-            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
-        });
-    });
-
-    describe("addGLine action", () => {
-        it("should add GLine with defaults", () => {
-            addGLineActionDef.function(mockDoc, {});
-            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
-        });
-
-        it("should add GLine with custom start and end", () => {
-            addGLineActionDef.function(mockDoc, { start: [0,0,0], end: [1,1,1] });
+        it("should add Point with custom size", () => {
+            addPointActionDef.function(mockDoc, { size: 2.5 });
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
-    describe("addGPolyline action", () => {
-        it("should add GPolyline with defaults", () => {
-            addGPolylineActionDef.function(mockDoc, {});
+    describe("addLine action", () => {
+        it("should add Line with defaults", () => {
+            addLineActionDef.function(mockDoc, {});
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
-        it("should add GPolyline with custom positions", () => {
-            addGPolylineActionDef.function(mockDoc, { positions: [[0,0,0],[1,1,1],[2,2,2]] });
-            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
-        });
-    });
-
-    describe("addGPlane action", () => {
-        it("should add GPlane with default dimensions", () => {
-            addGPlaneActionDef.function(mockDoc, {});
-            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
-        });
-
-        it("should add GPlane with custom dimensions", () => {
-            addGPlaneActionDef.function(mockDoc, { width: 2.0, height: 3.0 });
+        it("should add Line with custom start and end", () => {
+            addLineActionDef.function(mockDoc, { start: [0,0,0], end: [1,1,1] });
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
-    describe("addGSphere action", () => {
-        it("should add GSphere with default radius", () => {
-            addGSphereActionDef.function(mockDoc, {});
+    describe("addPolyline action", () => {
+        it("should add Polyline with defaults", () => {
+            addPolylineActionDef.function(mockDoc, {});
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
-        it("should add GSphere with custom radius", () => {
-            addGSphereActionDef.function(mockDoc, { radius: 4.0 });
+        it("should add Polyline with custom positions", () => {
+            addPolylineActionDef.function(mockDoc, { positions: [[0,0,0],[1,1,1],[2,2,2]] });
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
-    describe("addGBlock action", () => {
-        it("should add GBlock with default dimensions", () => {
-            addGBlockActionDef.function(mockDoc, {});
+    describe("addPlane action", () => {
+        it("should add Plane with default dimensions", () => {
+            addPlaneActionDef.function(mockDoc, {});
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
 
-        it("should add GBlock with custom dimensions", () => {
+        it("should add Plane with custom dimensions", () => {
+            addPlaneActionDef.function(mockDoc, { width: 2.0, height: 3.0 });
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
+        });
+    });
+
+    describe("addSphere action", () => {
+        it("should add Sphere with default radius", () => {
+            addSphereActionDef.function(mockDoc, {});
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
+        });
+
+        it("should add Sphere with custom radius", () => {
+            addSphereActionDef.function(mockDoc, { radius: 4.0 });
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
+        });
+    });
+
+    describe("addBlock action", () => {
+        it("should add Block with default dimensions", () => {
+            addBlockActionDef.function(mockDoc, {});
+            expect(mockGRepModel.addDrawable).toHaveBeenCalled();
+        });
+
+        it("should add Block with custom dimensions", () => {
             const payload = { width: 2.0, height: 3.0, depth: 4.0 };
-            addGBlockActionDef.function(mockDoc, payload);
+            addBlockActionDef.function(mockDoc, payload);
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });
 
-    describe("addGProfile action", () => {
-        it("should add GProfile with provided paths", () => {
+    describe("addProfile action", () => {
+        it("should add Profile with provided paths", () => {
             const paths = [[[0,0],[1,0],[1,1],[0,1],[0,0]]];
-            addGProfileActionDef.function(mockDoc, { paths });
+            addProfileActionDef.function(mockDoc, { paths });
             expect(mockGRepModel.addDrawable).toHaveBeenCalled();
         });
     });    
@@ -130,32 +130,32 @@ describe("grep.actions", () => {
             expect(pingActionDef.type).toBe("Gfx::ping");
         });
 
-        it("should have correct type for addGPoint action", () => {
-            expect(addGPointActionDef.type).toBe("Gfx::addGPoint");
+        it("should have correct type for addPoint action", () => {
+            expect(addPointActionDef.type).toBe("Gfx::addPoint");
         });
 
-        it("should have correct type for addGLine action", () => {
-            expect(addGLineActionDef.type).toBe("Gfx::addGLine");
+        it("should have correct type for addLine action", () => {
+            expect(addLineActionDef.type).toBe("Gfx::addLine");
         });
 
-        it("should have correct type for addGPolyline action", () => {
-            expect(addGPolylineActionDef.type).toBe("Gfx::addGPolyline");
+        it("should have correct type for addPolyline action", () => {
+            expect(addPolylineActionDef.type).toBe("Gfx::addPolyline");
         });
 
-        it("should have correct type for addGPlane action", () => {
-            expect(addGPlaneActionDef.type).toBe("Gfx::addGPlane");
+        it("should have correct type for addPlane action", () => {
+            expect(addPlaneActionDef.type).toBe("Gfx::addPlane");
         });
 
-        it("should have correct type for addGSphere action", () => {
-            expect(addGSphereActionDef.type).toBe("Gfx::addGSphere");
+        it("should have correct type for addSphere action", () => {
+            expect(addSphereActionDef.type).toBe("Gfx::addSphere");
         });
 
-        it("should have correct type for addGBlock action", () => {
-            expect(addGBlockActionDef.type).toBe("Gfx::addGBlock");
+        it("should have correct type for addBlock action", () => {
+            expect(addBlockActionDef.type).toBe("Gfx::addBlock");
         });
 
-        it("should have correct type for addGProfile action", () => {
-            expect(addGProfileActionDef.type).toBe("Gfx::addGProfile");
+        it("should have correct type for addProfile action", () => {
+            expect(addProfileActionDef.type).toBe("Gfx::addProfile");
         });
     });
 });

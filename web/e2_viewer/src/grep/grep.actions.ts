@@ -8,7 +8,7 @@ function ping(_doc: Document, _payload: any): void {
     console.log("pong");
 }
 
-function addGPoint(doc: Document, payload: any): void {
+function addPoint(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         let sceneModel = model as GRepModel; 
@@ -28,10 +28,10 @@ function addGPoint(doc: Document, payload: any): void {
         };
         sceneModel.addDrawable(drawable);
     });
-    console.log("added GPoint");      // ---DEBUG---
+    console.log("added Point");      // ---DEBUG---
 }
 
-function addGLine(doc: Document, payload: any): void {
+function addLine(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const start = payload.start ?? [-1, 0, 0];
@@ -51,10 +51,10 @@ function addGLine(doc: Document, payload: any): void {
         };
         grepModel.addDrawable(drawable);
     });
-    console.log("added GLine");      // ---DEBUG---
+    console.log("added Line");      // ---DEBUG---
 }
 
-function addGPolyline(doc: Document, payload: any): void {
+function addPolyline(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const positions = payload.positions ?? [[-1, 0, 0],[1,0,0]];
@@ -72,11 +72,11 @@ function addGPolyline(doc: Document, payload: any): void {
         };
         grepModel.addDrawable(drawable);
     });
-    console.log("added GPolyline");      // ---DEBUG---
+    console.log("added Polyline");      // ---DEBUG---
 }
 
 
-function addGPlane(doc: Document, payload: any): void {
+function addPlane(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const width = payload.width ?? 1.0;
@@ -114,10 +114,11 @@ function addGPlane(doc: Document, payload: any): void {
         };
         grepModel.addDrawable(drawable);    
     });
-    console.log("added GPlane");      // ---DEBUG---
+    console.log("added Plane");      // ---DEBUG---
 }
 
-function addGSphere(doc: Document, payload: any): void {
+
+function addSphere(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const radius = payload.radius ?? 1.0;
@@ -136,10 +137,11 @@ function addGSphere(doc: Document, payload: any): void {
         };
         grepModel.addDrawable(drawable);
     });
-    console.log("added GSphere");      // ---DEBUG---
+    console.log("added Sphere");      // ---DEBUG---
 }
 
-function addGBlock(doc: Document, payload: any): void {
+
+function addBlock(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const width = payload.width ?? 2.0;      // length in x direction
@@ -160,11 +162,12 @@ function addGBlock(doc: Document, payload: any): void {
             }
         };
         grepModel.addDrawable(drawable);
-        console.log("added GBlock");      // ---DEBUG---
+        console.log("added Block");      // ---DEBUG---
     });
 }
 
-function addGProfile(doc: Document, payload: any): void {
+
+function addProfile(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
@@ -182,15 +185,15 @@ function addGProfile(doc: Document, payload: any): void {
         };
         grepModel.addDrawable(drawable);
     });
-    console.log("added GProfile");      // ---DEBUG---
+    console.log("added Profile");      // ---DEBUG---
 }
 
 
 export const pingActionDef = { type: "Gfx::ping", function: ping };
-export const addGPointActionDef = { type: "Gfx::addGPoint", function: addGPoint };
-export const addGLineActionDef = { type: "Gfx::addGLine", function: addGLine };
-export const addGPolylineActionDef = { type: "Gfx::addGPolyline", function: addGPolyline };
-export const addGPlaneActionDef = { type: "Gfx::addGPlane", function: addGPlane };
-export const addGSphereActionDef = { type: "Gfx::addGSphere", function: addGSphere };
-export const addGBlockActionDef = { type: "Gfx::addGBlock", function: addGBlock };
-export const addGProfileActionDef = { type: "Gfx::addGProfile", function: addGProfile };
+export const addPointActionDef = { type: "Gfx::addPoint", function: addPoint };
+export const addLineActionDef = { type: "Gfx::addLine", function: addLine };
+export const addPolylineActionDef = { type: "Gfx::addPolyline", function: addPolyline };
+export const addPlaneActionDef = { type: "Gfx::addPlane", function: addPlane };
+export const addSphereActionDef = { type: "Gfx::addSphere", function: addSphere };
+export const addBlockActionDef = { type: "Gfx::addBlock", function: addBlock };
+export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };

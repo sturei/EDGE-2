@@ -21,7 +21,7 @@ namespace e2 {
         // The payload is a point
         const Vec3d& position = acornBody.cell(0).support().position();
         json payload = json::object({{"position", json::array({position.x(), position.y(), position.z()})}});
-        doc->dispatchClientAction({"Gfx::addGPoint", payload});
+        doc->dispatchClientAction({"Gfx::addPoint", payload});
     }
 
     void dispatchClientActionsForSketch(Document* doc, const Body& sketchBody) {
@@ -34,7 +34,7 @@ namespace e2 {
                 positions.push_back(json::array({point.x(), point.y(), point.z()}));
             }
             json payload = json::object({{"positions", positions}});
-            doc->dispatchClientAction({"Gfx::addGPolyline", payload});
+            doc->dispatchClientAction({"Gfx::addPolyline", payload});
             delete tessellatedPointsPtr;
         }
     }
@@ -59,7 +59,7 @@ namespace e2 {
         }
 
         json payload = json::object({{"paths", paths}});
-        doc->dispatchClientAction({"Gfx::addGProfile", payload});
+        doc->dispatchClientAction({"Gfx::addProfile", payload});
     }
 
     static std::array<int, 4> lerp(const std::array<int,4>& colorA, const std::array<int,4>& colorB, double t) {
@@ -105,7 +105,7 @@ namespace e2 {
         // Generate a stack of images representing the SDF of the given object
         int imageWidth = 100;
         int imageHeight = 100;
-        int numSlabsX = 1;       // only one slab in X and Y for now, until "z" is replaced by "position" in the addGPlane action (to allow placing the slabs arbitrarily in XY)
+        int numSlabsX = 1;       // only one slab in X and Y for now, until "z" is replaced by "position" in the addPlane action (to allow placing the slabs arbitrarily in XY)
         int numSlabsY = 1;
         int numSlices = 5;
 
@@ -161,7 +161,7 @@ namespace e2 {
                         })
                     }
                 });
-            doc->dispatchClientAction({"Gfx::addGPlane", payload});
+            doc->dispatchClientAction({"Gfx::addPlane", payload});
             }
         }
     }
