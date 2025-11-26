@@ -24,15 +24,15 @@ int main(int argc, char* argv[]) {
     // std::unique_ptr could be used instead of raw pointers to enforce ownership, but it's a faff. Maybe later.
 
     // Initialize the models
-    BRepModel* brepModel = new BRepModel();                  // an initially empty collection of bodies
-    FRepModel* frepModel = new FRepModel();                 // an initially empty collection of FObjects
-    ShapeModel* shapeModel = new ShapeModel(brepModel, frepModel);
+    BRepModel* sketches = new BRepModel();
+    BRepModel* profiles = new BRepModel();
+    FRepModel* objects = new FRepModel();
+    ShapeModel* shapeModel = new ShapeModel(sketches, profiles, objects);
 
     // Initialise the stores and the document.
     Document* document = new Document({{"shape", new Store(shapeModel)}});    // document takes ownership of the store
 
     // Register action functions
-
     for(auto& action: e2::DocumentActions::allDocumentActions) {
         document->registerActionFunction(action);
     }
@@ -40,11 +40,11 @@ int main(int argc, char* argv[]) {
         document->registerActionFunction(action);
     }
 
-
     // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
     DocumentService::run(document);
 
-    delete document;   // this deletes the stores and models too (if in future the run() loop ever exits)
+    // Clean up and exit
+    delete document;
     return 0;
 }
     

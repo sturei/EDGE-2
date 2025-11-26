@@ -8,12 +8,15 @@
 namespace e2 {
 
     void ShapeModel::print(std::ostream& os) const {
-        os << "ShapeModel with BRepModel and FRepModel" << std::endl;
-        if (m_brepModel) {
-            os << "  BRepModel: " << *m_brepModel  << std::endl;
+        os << "ShapeModel:" << std::endl;
+        if (m_sketches) {
+            os << "  Sketches (BRepModel): " << *m_sketches  << std::endl;
         }
-        if (m_frepModel) {
-            os << "  FRepModel: " << *m_frepModel  << std::endl;
+        if (m_profiles) {
+            os << "  Profiles (BRepModel): " << *m_profiles  << std::endl;
+        }
+        if (m_objects) {
+            os << "  Objects (FRepModel): " << *m_objects  << std::endl;
         }
     }
 };

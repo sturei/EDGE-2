@@ -34,9 +34,9 @@ namespace e2 {
             // This action adds an empty body (a body with no cells) to the brep store.
             Store* store = doc->storeAt("shape");
             store->changeState([](Model* model) {
-                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
+                BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* emptyBody = BRepFixtures::emptyBody();
-                brepModel->addBody(emptyBody);
+                sketches.addBody(emptyBody);
                 std::cerr << "added Empty Body" << std::endl;      // ---LOGGING---
             });
         
@@ -53,15 +53,15 @@ namespace e2 {
 
             Store* store = doc->storeAt("shape");
             store->changeState([acornPosition](Model* model) {
-                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
+                BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* acornBody = BRepFixtures::acornBody(acornPosition);
-                brepModel->addBody(acornBody);
+                sketches.addBody(acornBody);
                 std::cerr << "added Acorn Body" << std::endl;      // ---LOGGING--- 
             });
         }
 
         void addWireRectangle(Document* doc, const json& payload) {
-            // This action adds a wire rectangle to the brep store.
+            // This action adds a wire rectangle as a sketch.
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
                 payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
@@ -71,15 +71,15 @@ namespace e2 {
 
             Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight](Model* model) {
-                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
+                BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* wireRectangleBody = BRepFixtures::wireRectangle(lowerLeft, upperRight);
-                brepModel->addBody(wireRectangleBody);
+                sketches.addBody(wireRectangleBody);
                 std::cerr << "added Wire Rectangle" << std::endl;      // ---LOGGING---
             });
         }
 
         void addWireRoundRect(Document* doc, const json& payload) {
-            // This action adds a wire rounded rectangle to the brep store.
+            // This action adds a wire rounded rectangle as a sketch.
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
                 payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
@@ -90,15 +90,15 @@ namespace e2 {
 
             Store* store = doc->storeAt("shape");
             store->changeState([lowerLeft, upperRight, cornerRadius](Model* model) {
-                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
+                BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* wireRectangleBody = BRepFixtures::wireRoundRect(lowerLeft, upperRight, cornerRadius);
-                brepModel->addBody(wireRectangleBody);
+                sketches.addBody(wireRectangleBody);
                 std::cerr << "added Wire Rounded Rectangle" << std::endl;      // ---LOGGING---
             });
         }
 
         void addSheetRectangle(Document* doc, const json& payload) {
-            // This action adds a sheet rectangle to the brep store.
+            // This action adds a sheet rectangle as a profile
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
                 payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
@@ -110,9 +110,9 @@ namespace e2 {
             store->changeState([lowerLeft, upperRight, doc](Model* model) {
 
                 // update the BRepModel
-                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
+                BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                 Body* sheetRectangleBody = BRepFixtures::sheetRectangle(lowerLeft, upperRight);
-                brepModel->addBody(sheetRectangleBody);
+                profiles.addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
 
                 // update the Scene
@@ -124,7 +124,7 @@ namespace e2 {
         }
 
         void addSheetRoundRect(Document* doc, const json& payload) {
-            // This action adds a sheet rounded rectangle to the brep store.
+            // This action adds a sheet rounded rectangle as a profile
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
                 payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
@@ -137,9 +137,9 @@ namespace e2 {
             store->changeState([lowerLeft, upperRight, cornerRadius, doc](Model* model) {
 
                 // update the BRepModel
-                BRepModel* brepModel = dynamic_cast<ShapeModel*>(model)->brepModel();
+                BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                 Body* sheetRoundRectBody = BRepFixtures::sheetRoundRect(lowerLeft, upperRight, cornerRadius);
-                brepModel->addBody(sheetRoundRectBody);
+                profiles.addBody(sheetRoundRectBody);
                 std::cerr << "added Sheet Rounded Rectangle" << std::endl;      // ---LOGGING---
 
                 // update the scene in the client
@@ -151,7 +151,7 @@ namespace e2 {
         }
 
         void addInfiniteRectangle(Document* doc, const json& payload) {
-            // This action adds a 2d rectangle, with infinite z-extent, to the frep store.
+            // This action adds a 2d rectangle, with infinite z-extent, as an FObject
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
                 payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
@@ -163,9 +163,9 @@ namespace e2 {
             store->changeState([doc, lowerLeft, upperRight](Model* model) {
 
                 // update the FRepModel
-                FRepModel* frepModel = dynamic_cast<ShapeModel*>(model)->frepModel();
+                FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
                 FObject* rectangleObject = FRepFixtures::rectangle(lowerLeft, upperRight);
-                frepModel->addObject(rectangleObject);
+                objects.addObject(rectangleObject);
                 std::cerr << "added Infinite Rectangle" << std::endl;      // ---LOGGING---
 
                 // update the scene in the client
