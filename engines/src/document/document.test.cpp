@@ -39,8 +39,8 @@ namespace DocumentTestActions {
         const std::string& species = payload.at("species");
 
         // add the animal to the model via the state change callback on the store.
-        Store* store = doc.storeAt("zoo");
-        store->changeState([species](Model* model) {
+        Store& store = doc.storeAt("zoo");
+        store.changeState([species](Model* model) {
             auto* zooModel = dynamic_cast<ZooModelFixture*>(model);
             zooModel->animals.push_back(species);
         });
@@ -61,8 +61,8 @@ TEST_F(DocumentTest, AddAnimalAction) {
         {"species", "Elephant"}
     };
     DocumentTestActions::addAnimal(document(), payload);
-    Store* store = document().storeAt("zoo");
-    auto* zooModel = dynamic_cast<const ZooModelFixture*>(store->model());
+    Store& store = document().storeAt("zoo");
+    auto* zooModel = dynamic_cast<const ZooModelFixture*>(store.model());
     EXPECT_EQ(zooModel->animals.size(), 1);
     EXPECT_EQ(zooModel->animals[0], "Elephant");
 };
@@ -81,8 +81,8 @@ TEST_F(DocumentTest, RegisterAndDispatchAction) {
     document().dispatchAction(action);
 
     // Verify that the animal was added to the model
-    Store* store = document().storeAt("zoo");
-    auto* zooModel = dynamic_cast<const ZooModelFixture*>(store->model());
+    Store& store = document().storeAt("zoo");
+    auto* zooModel = dynamic_cast<const ZooModelFixture*>(store.model());
     EXPECT_EQ(zooModel->animals.size(), 1);
     EXPECT_EQ(zooModel->animals[0], "Giraffe");
 };

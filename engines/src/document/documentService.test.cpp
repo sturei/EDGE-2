@@ -23,8 +23,8 @@ namespace DocumentServiceTestActions {
         const std::string& species = payload.at("species");
 
         // add the animal to the model via the state change callback on the store.
-        Store* store = doc.storeAt("zoo");
-        store->changeState([species](Model* model) {
+        Store& store = doc.storeAt("zoo");
+        store.changeState([species](Model* model) {
             auto* zooModel = dynamic_cast<ZooModelFixture*>(model);
             zooModel->animals.push_back(species);
         });

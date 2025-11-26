@@ -51,8 +51,8 @@ namespace e2 {
         }
     }
 
-    Store* Document::storeAt(const std::string& key) const {
-        return m_stores.at(key);
+    Store& Document::storeAt(const std::string& key) const {
+        return *m_stores.at(key);
     }
 
     void Document::registerActionFunction(const ActionDef& action) {

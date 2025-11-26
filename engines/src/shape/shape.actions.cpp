@@ -32,8 +32,8 @@ namespace e2 {
 
         void addEmptyBody(Document& doc, const json& payload) {
             // This action adds an empty body (a body with no cells) to the brep store.
-            Store* store = doc.storeAt("shape");
-            store->changeState([](Model* model) {
+            Store& store = doc.storeAt("shape");
+            store.changeState([](Model* model) {
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* emptyBody = BRepFixtures::emptyBody();
                 sketches.addBody(emptyBody);
@@ -51,8 +51,8 @@ namespace e2 {
                 position.at("z").get<double>()
             );
 
-            Store* store = doc.storeAt("shape");
-            store->changeState([acornPosition, &doc](Model* model) {
+            Store& store = doc.storeAt("shape");
+            store.changeState([acornPosition, &doc](Model* model) {
 
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
@@ -74,8 +74,8 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc.storeAt("shape");
-            store->changeState([lowerLeft, upperRight, &doc](Model* model) {
+            Store& store = doc.storeAt("shape");
+            store.changeState([lowerLeft, upperRight, &doc](Model* model) {
 
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
@@ -98,8 +98,8 @@ namespace e2 {
             Vec3d upperRight = bounds.second;
             double cornerRadius = payload.value("cornerRadius", 0.2);
 
-            Store* store = doc.storeAt("shape");
-            store->changeState([lowerLeft, upperRight, cornerRadius, &doc](Model* model) {
+            Store& store = doc.storeAt("shape");
+            store.changeState([lowerLeft, upperRight, cornerRadius, &doc](Model* model) {
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* wireRectangleBody = BRepFixtures::wireRoundRect(lowerLeft, upperRight, cornerRadius);
@@ -120,8 +120,8 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc.storeAt("shape");
-            store->changeState([lowerLeft, upperRight, &doc](Model* model) {
+            Store& store = doc.storeAt("shape");
+            store.changeState([lowerLeft, upperRight, &doc](Model* model) {
 
                 // update the model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
@@ -145,8 +145,8 @@ namespace e2 {
             Vec3d upperRight = bounds.second;
             double cornerRadius = payload.value("cornerRadius", 0.2);
 
-            Store* store = doc.storeAt("shape");
-            store->changeState([lowerLeft, upperRight, cornerRadius, &doc](Model* model) {
+            Store& store = doc.storeAt("shape");
+            store.changeState([lowerLeft, upperRight, cornerRadius, &doc](Model* model) {
 
                 // update the model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
@@ -168,8 +168,8 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc.storeAt("shape");
-            store->changeState([lowerLeft, upperRight, &doc](Model* model) {
+            Store& store = doc.storeAt("shape");
+            store.changeState([lowerLeft, upperRight, &doc](Model* model) {
 
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();

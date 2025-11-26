@@ -37,7 +37,7 @@ namespace e2 {
             Document() {}
             Document(const std::map<std::string, Store*>& stores) : m_stores(stores) {}
             ~Document();
-            virtual Store* storeAt(const std::string& key) const;     // it's virtual to make it easy to mock out in tests   
+            virtual Store& storeAt(const std::string& key) const;     // it's virtual to make it easy to mock out in tests   
             void registerActionFunction(const ActionDef& action);
             ActionResult dispatchAction(const ActionSpec& action);
             void dispatchClientAction(const ActionSpec& action);
