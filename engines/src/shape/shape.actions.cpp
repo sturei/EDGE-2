@@ -5,7 +5,7 @@
 #include "document/document.h"
 #include "document/store.h"
 #include "utils/vec3d.h"
-#include "scene/sceneActionPayloads.h"
+#include "scene/sceneActions.h"
 
 using json = nlohmann::json;
 
