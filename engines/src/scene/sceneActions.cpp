@@ -34,7 +34,7 @@ namespace e2 {
                 positions.push_back(json::array({point.x(), point.y(), point.z()}));
             }
             json payload = json::object({{"positions", positions}});
-            doc->dispatchClientAction({"Gfx::addPolyline", payload});
+            doc->dispatchClientAction({"Gfx::addGPolyline", payload});
             delete tessellatedPointsPtr;
         }
     }

@@ -31,14 +31,24 @@ async function pingModeller(doc: Document, _payload: any): Promise<void> {
     // The server posts "pong" on its stderr stream and returns "OK".
     await postAction(doc, "Modeller::ping", {});
 }
+async function addWireRectangle(doc: Document, payload: any): Promise<void> {
+    // Create a rectangular wire with specified lowerLeft and upperRight corners. 
+    // The server creates the wire as a sketch in its shape store, and returns client actions to add the appropriate graphics to the scene.
+    await postAction(doc, "Sketches::addRectangle", payload);
+}
+async function addWireRoundRect(doc: Document, payload: any): Promise<void> {
+    // Create a rounded-rectangular wire with specified corners and cornerRadius. 
+    // The server creates the wire as a sketch in its shape store, and returns client actions to add the appropriate graphics to the scene.
+    await postAction(doc, "Sketches::addRoundRect", payload);
+}
 async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
     // Create a rectangular sheet with specified lowerLeft and upperRight corners. 
-    // The server creates the sheet as brep in its shape store, and returns client actions to add the appropriate graphics to the scene.
+    // The server creates the sheet as a profile in its shape store, and returns client actions to add the appropriate graphics to the scene.
     await postAction(doc, "Profiles::addRectangle", payload);
 }
 async function addSheetRoundRect(doc: Document, payload: any): Promise<void> {
     // Create a rounded rectangular sheet with specified corners and cornerRadius. 
-    // The server creates the sheet as brep in its shape store, and returns client actions to add the appropriate graphics to the scene.
+    // The server creates the sheet as a profile in its shape store, and returns client actions to add the appropriate graphics to the scene.
     await postAction(doc, "Profiles::addRoundRect", payload);
 }
 
@@ -49,6 +59,8 @@ async function addInfiniteRectangle(doc: Document, payload: any): Promise<void> 
 }
 
 export const pingModellerActionDef = { type: "Modeller::ping", function: pingModeller };
+export const addWireRectangleActionDef = { type: "Sketches::addRectangle", function: addWireRectangle };
+export const addWireRoundRectActionDef = { type: "Sketches::addRoundRect", function: addWireRoundRect };
 export const addSheetRectangleActionDef = { type: "Profiles::addRectangle", function: addSheetRectangle };
 export const addSheetRoundRectActionDef = { type: "Profiles::addRoundRect", function: addSheetRoundRect };
 export const addRectangleActionDef = { type: "Objects::addInfiniteRectangle", function: addInfiniteRectangle };          

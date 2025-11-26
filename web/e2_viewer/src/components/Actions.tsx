@@ -3,7 +3,7 @@
 import { DocumentContext } from "../Contexts"; 
 import { useContext, useEffect } from "react";
 import * as grepActions from '../grep/grep.actions.ts'  
-import * as brepActions from '../shape/shape.actions.ts'  
+import * as shapeActions from '../shape/shape.actions.ts'  
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
@@ -17,6 +17,8 @@ const actionSuggestions = [
     '{"type":"Gfx::addGBlock", "payload":{"width":1,"height":2,"depth":3, "color":16711680}}',
     '{"type":"Gfx::addGProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":16711680}}',
     '{"type":"Modeller::ping", "payload": {} }',
+    '{"type":"Sketches::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
+    '{"type":"Sketches::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
     '{"type":"Profiles::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
     '{"type":"Profiles::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
     '{"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":-1, "y":-1, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
@@ -39,12 +41,13 @@ const actionSuggestions = [
         document.registerActionFunction(grepActions.addGBlockActionDef);
         document.registerActionFunction(grepActions.addGProfileActionDef);
 
-        document.registerActionFunction(brepActions.pingModellerActionDef);
-        document.registerActionFunction(brepActions.addSheetRectangleActionDef);
-        document.registerActionFunction(brepActions.addSheetRoundRectActionDef);
+        document.registerActionFunction(shapeActions.pingModellerActionDef);
+        document.registerActionFunction(shapeActions.addWireRectangleActionDef);
+        document.registerActionFunction(shapeActions.addWireRoundRectActionDef);
+        document.registerActionFunction(shapeActions.addSheetRectangleActionDef);
+        document.registerActionFunction(shapeActions.addSheetRoundRectActionDef);
 
-        document.registerActionFunction(brepActions.addRectangleActionDef);
-
+        document.registerActionFunction(shapeActions.addRectangleActionDef);
     }, []);
 
     /** This method takes a JSON string from an input form, converts it to an object representing an action, and dispatches the action to 
