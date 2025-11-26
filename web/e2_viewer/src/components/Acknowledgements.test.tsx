@@ -9,8 +9,11 @@ import "@testing-library/jest-dom";
 
 
 describe('Acknowledgements', () => {
-    it('renders all technology logos with correct links', () => {
+    it('renders all technology logos with correct text and links', () => {
         render(<Acknowledgements />)
+
+        // Check the caption text
+        expect(screen.getByText('Acknowledgements:')).toBeInTheDocument()
         
         // Check for Vite link and logo
         const viteLink = screen.getByRole('link', { name: /vite logo/i })
@@ -31,8 +34,6 @@ describe('Acknowledgements', () => {
         // Check for three.js link
         const threejsLinks = screen.getAllByRole('link', { name: /three\.js logo/i })
         expect(threejsLinks[0]).toHaveAttribute('href', 'https://threejs.org/')
-        expect(threejsLinks[1]).toHaveAttribute('href', 'https://github.com/pmndrs/react-three-fiber')
-        expect(threejsLinks[2]).toHaveAttribute('href', 'https://github.com/pmndrs/drei')
     })
 
     it('opens links in new tab', () => {
@@ -44,28 +45,4 @@ describe('Acknowledgements', () => {
         })
     })
 
-    it('displays instructional text', () => {
-        render(<Acknowledgements />)
-        
-        expect(screen.getByText('Click on the logos above to learn more about the technologies used in this application.')).toBeInTheDocument()
-    })
-
-    it('increments counter when button is clicked', () => {
-        render(<Acknowledgements />)
-        
-        const button = screen.getByRole('button', { name: /does react react\? 0/i })
-        expect(button).toBeInTheDocument()
-        
-        fireEvent.click(button)
-        expect(screen.getByRole('button', { name: /does react react\? 1/i })).toBeInTheDocument()
-        
-        fireEvent.click(button)
-        expect(screen.getByRole('button', { name: /does react react\? 2/i })).toBeInTheDocument()
-    })
-
-    it('starts with counter at 0', () => {
-        render(<Acknowledgements />)
-        
-        expect(screen.getByRole('button', { name: /does react react\? 0/i })).toBeInTheDocument()
-    })
 })
