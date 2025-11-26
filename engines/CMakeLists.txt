@@ -61,7 +61,6 @@ set(MODELLING_SERVICE_SOURCES
     src/shape/shapeModel.cpp
     src/shape/shape.actions.cpp
     src/utils/vec3d.cpp
-    src/utils/evaluate.cpp
     src/utils/nearpoint.cpp   
     src/utils/parameterize.cpp
     src/utils/polygonize.cpp
@@ -77,7 +76,6 @@ set(TEST_SOURCES
     src/utils/pla3d.test.cpp
     src/utils/sph3d.test.cpp
     src/utils/cir3d.test.cpp
-    src/utils/evaluate.test.cpp
     src/utils/parameterize.test.cpp
     src/utils/polygonize.test.cpp
     src/brep/body.test.cpp
