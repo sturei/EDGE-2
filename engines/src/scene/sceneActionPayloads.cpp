@@ -16,8 +16,33 @@ using json = nlohmann::json;
  */
 
 namespace e2 {
-    // This function returns the JSON payload for the addGProfile action.
-    void getPayloadForAddGProfile(const Body& profileBody, json& payload) {
+
+        void dispatchClientActionsForAcorn(Document* doc, const Body& acornBody) {
+        // The payload is a point
+        const Vec3d& position = acornBody.cell(0).support().position();
+        json payload = json::object({{"position", json::array({position.x(), position.y(), position.z()})}});
+        doc->dispatchClientAction({"Gfx::addGPoint", payload});
+    }
+
+        void dispatchClientActionsForSketch(Document* doc, const Body& sketchBody) {
+        // The payload is a collection of "paths", representing the sketch edges
+        auto edges = getKSkeleton(1, sketchBody);
+        std::vector<json> paths;
+        for (const auto& edgeIndex : edges) {
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, sketchBody);
+            std::vector<json> path;
+            for (const auto& point : *tessellatedPointsPtr) {
+                path.push_back(json::array({point.x(), point.y()}));
+            }
+            paths.push_back(path);
+            delete tessellatedPointsPtr;
+        }
+
+        json payload = json::object({{"paths", paths}});
+        //doc->dispatchClientAction({"Gfx::addGProfile", payload}); TODO
+    }
+
+    void dispatchClientActionsForProfile(Document* doc, const Body& profileBody) {
         // The payload is a collection of "paths", representing the outline of the given body.
         CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
         auto edges = getKBoundary(1, faceIndex, profileBody);
@@ -36,7 +61,8 @@ namespace e2 {
             delete tessellatedPointsPtr;
         }
 
-        payload = json::object({{"paths", paths}});
+        json payload = json::object({{"paths", paths}});
+        doc->dispatchClientAction({"Gfx::addGProfile", payload});
     }
 
     static std::array<int, 4> lerp(const std::array<int,4>& colorA, const std::array<int,4>& colorB, double t) {
@@ -47,12 +73,14 @@ namespace e2 {
         return {r, g, b, a};
     }
 
-    static std::array<int, 4> distanceToRgb(double d, double range=5.0){
-        
+    static std::array<int, 4> distanceToRgb(double d, double range=5.0) {
+    
         // Map a signed distance value to an RGB integer.
-        // Distances <= -range map to light blue (0xADD8E6)
-        // Distances >= range map to pink (0xFF69B4)
-        // Distances in between map to a gradient
+
+        // Distances <= -range map to opaque black
+        // Distances >= range map to transparent white
+        // Distance between -range and 0 map to a gradient from opaque black to light blue at the zero level surface
+        // Distances between 0 and +range map to a gradient from pink at the zero level surface to transparent white
 
         const auto black = std::array<int,4>{0,0,0,255};
         const auto white = std::array<int,4>{255,255,255,0};
@@ -66,20 +94,18 @@ namespace e2 {
             return white;
         } 
         else if (d < 0) {
-            double t = (d + range) / range; // t goes from 0 to 1 as d goes from -range to 0
+            double t = (d + range) / range;
             return lerp(black, lightBlue, t);
         } 
         else {
-            // interpolate from white to red
-            double t = d / range; // t goes from 0 to 1 as d goes from 0 to range
+            double t = d / range;
             return lerp(pink, white, t);
         }
     }
 
-    void getClientActionsForAddFObject(const FObject& fobject, std::vector<ActionSpec>& actions) {
+    void dispatchClientActionsForObject(Document* doc, const FObject& fobject) {
 
-        // Generate a stack of images representing the SDF of the given FObject.
-        
+        // Generate a stack of images representing the SDF of the given object
         int imageWidth = 100;
         int imageHeight = 100;
         int numSlabsX = 1;       // only one slab in X and Y for now, until "z" is replaced by "position" in the addGPlane action (to allow placing the slabs arbitrarily in XY)
@@ -121,7 +147,7 @@ namespace e2 {
             }
         }
 
-        // Construct the client actions
+        // Construct and dispatch the client actions to display the images
         for(int sliceIndex = 0; sliceIndex < numSlices; ++sliceIndex) {
             double z = -((numSlices / 2) * sliceThickness) + sliceIndex * sliceThickness;
             for (int slabIndex = 0; slabIndex < numSlabsX * numSlabsY; ++slabIndex) {   
@@ -138,7 +164,7 @@ namespace e2 {
                         })
                     }
                 });
-            actions.push_back(ActionSpec{"Gfx::addGPlane", payload});
+            doc->dispatchClientAction({"Gfx::addGPlane", payload});
             }
         }
     }
