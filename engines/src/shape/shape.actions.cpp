@@ -30,9 +30,9 @@ namespace e2 {
             return std::make_pair(lowerLeft, upperRight);
         }
 
-        void addEmptyBody(Document* doc, const json& payload) {
+        void addEmptyBody(Document& doc, const json& payload) {
             // This action adds an empty body (a body with no cells) to the brep store.
-            Store* store = doc->storeAt("shape");
+            Store* store = doc.storeAt("shape");
             store->changeState([](Model* model) {
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* emptyBody = BRepFixtures::emptyBody();
@@ -42,7 +42,7 @@ namespace e2 {
         
         }
 
-        void addAcornBody(Document* doc, const json& payload) {
+        void addAcornBody(Document& doc, const json& payload) {
             // This action adds an acorn body (a body with a single vertex) to the brep store.
             json position = payload.value("position", json::object({{"x", 0}, {"y", 0}, {"z", 0}}));
             Vec3d acornPosition = Vec3d(
@@ -51,8 +51,8 @@ namespace e2 {
                 position.at("z").get<double>()
             );
 
-            Store* store = doc->storeAt("shape");
-            store->changeState([acornPosition, doc](Model* model) {
+            Store* store = doc.storeAt("shape");
+            store->changeState([acornPosition, &doc](Model* model) {
 
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
@@ -65,7 +65,7 @@ namespace e2 {
             });
         }
 
-        void addWireRectangle(Document* doc, const json& payload) {
+        void addWireRectangle(Document& doc, const json& payload) {
             // This action adds a wire rectangle as a sketch.
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
@@ -74,8 +74,8 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc->storeAt("shape");
-            store->changeState([lowerLeft, upperRight, doc](Model* model) {
+            Store* store = doc.storeAt("shape");
+            store->changeState([lowerLeft, upperRight, &doc](Model* model) {
 
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
@@ -88,7 +88,7 @@ namespace e2 {
             });
         }
 
-        void addWireRoundRect(Document* doc, const json& payload) {
+        void addWireRoundRect(Document& doc, const json& payload) {
             // This action adds a wire rounded rectangle as a sketch.
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
@@ -98,8 +98,8 @@ namespace e2 {
             Vec3d upperRight = bounds.second;
             double cornerRadius = payload.value("cornerRadius", 0.2);
 
-            Store* store = doc->storeAt("shape");
-            store->changeState([lowerLeft, upperRight, cornerRadius, doc](Model* model) {
+            Store* store = doc.storeAt("shape");
+            store->changeState([lowerLeft, upperRight, cornerRadius, &doc](Model* model) {
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* wireRectangleBody = BRepFixtures::wireRoundRect(lowerLeft, upperRight, cornerRadius);
@@ -111,7 +111,7 @@ namespace e2 {
             });
         }
 
-        void addSheetRectangle(Document* doc, const json& payload) {
+        void addSheetRectangle(Document& doc, const json& payload) {
             // This action adds a sheet rectangle as a profile
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
@@ -120,8 +120,8 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc->storeAt("shape");
-            store->changeState([lowerLeft, upperRight, doc](Model* model) {
+            Store* store = doc.storeAt("shape");
+            store->changeState([lowerLeft, upperRight, &doc](Model* model) {
 
                 // update the model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
@@ -135,7 +135,7 @@ namespace e2 {
             });
         }
 
-        void addSheetRoundRect(Document* doc, const json& payload) {
+        void addSheetRoundRect(Document& doc, const json& payload) {
             // This action adds a sheet rounded rectangle as a profile
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
@@ -145,8 +145,8 @@ namespace e2 {
             Vec3d upperRight = bounds.second;
             double cornerRadius = payload.value("cornerRadius", 0.2);
 
-            Store* store = doc->storeAt("shape");
-            store->changeState([lowerLeft, upperRight, cornerRadius, doc](Model* model) {
+            Store* store = doc.storeAt("shape");
+            store->changeState([lowerLeft, upperRight, cornerRadius, &doc](Model* model) {
 
                 // update the model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
@@ -159,7 +159,7 @@ namespace e2 {
             });
         }
 
-        void addInfiniteRectangle(Document* doc, const json& payload) {
+        void addInfiniteRectangle(Document& doc, const json& payload) {
             // This action adds a 2d rectangle, with infinite z-extent, as an FObject
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
                 payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
@@ -168,8 +168,8 @@ namespace e2 {
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
 
-            Store* store = doc->storeAt("shape");
-            store->changeState([doc, lowerLeft, upperRight](Model* model) {
+            Store* store = doc.storeAt("shape");
+            store->changeState([lowerLeft, upperRight, &doc](Model* model) {
 
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();

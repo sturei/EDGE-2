@@ -21,7 +21,7 @@ namespace e2 {
 
     struct ActionDef {
         std::string type;
-        std::function<void(Document*, const json&)> function;
+        std::function<void(Document&, const json&)> function;
     };
 
     enum class ActionResult {
@@ -47,7 +47,7 @@ namespace e2 {
 
         private:
             std::map<std::string, Store*> m_stores;                                                     // stores owned by this Document
-            std::map<std::string, std::function<void(Document*, const json&)>> m_actionFunctions;       // action functions registered with this Document
+            std::map<std::string, std::function<void(Document&, const json&)>> m_actionFunctions;       // action functions registered with this Document
             std::vector<ActionSpec> m_clientActions;                                                    // client actions are buffered here
     };
 }

@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
-    DocumentService::run(document);
+    DocumentService::run(*document);
 
     // Clean up and exit
     delete document;

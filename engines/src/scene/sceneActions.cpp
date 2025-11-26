@@ -17,14 +17,14 @@ using json = nlohmann::json;
 
 namespace e2 {
 
-    void dispatchClientActionsForAcorn(Document* doc, const Body& acornBody) {
+    void dispatchClientActionsForAcorn(Document& doc, const Body& acornBody) {
         // The payload is a point
         const Vec3d& position = acornBody.cell(0).support().position();
         json payload = json::object({{"position", json::array({position.x(), position.y(), position.z()})}});
-        doc->dispatchClientAction({"Gfx::addPoint", payload});
+        doc.dispatchClientAction({"Gfx::addPoint", payload});
     }
 
-    void dispatchClientActionsForSketch(Document* doc, const Body& sketchBody) {
+    void dispatchClientActionsForSketch(Document& doc, const Body& sketchBody) {
         // The payload for each edge is a polyline
         auto edges = getKSkeleton(1, sketchBody);
         for (const auto& edgeIndex : edges) {
@@ -34,12 +34,12 @@ namespace e2 {
                 positions.push_back(json::array({point.x(), point.y(), point.z()}));
             }
             json payload = json::object({{"positions", positions}});
-            doc->dispatchClientAction({"Gfx::addPolyline", payload});
+            doc.dispatchClientAction({"Gfx::addPolyline", payload});
             delete tessellatedPointsPtr;
         }
     }
 
-    void dispatchClientActionsForProfile(Document* doc, const Body& profileBody) {
+    void dispatchClientActionsForProfile(Document& doc, const Body& profileBody) {
         // The payload is a collection of "paths", representing the outline of the given body.
         CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
         auto edges = getKBoundary(1, faceIndex, profileBody);
@@ -59,7 +59,7 @@ namespace e2 {
         }
 
         json payload = json::object({{"paths", paths}});
-        doc->dispatchClientAction({"Gfx::addProfile", payload});
+        doc.dispatchClientAction({"Gfx::addProfile", payload});
     }
 
     static std::array<int, 4> lerp(const std::array<int,4>& colorA, const std::array<int,4>& colorB, double t) {
@@ -100,7 +100,7 @@ namespace e2 {
         }
     }
 
-    void dispatchClientActionsForObject(Document* doc, const FObject& fobject) {
+    void dispatchClientActionsForObject(Document& doc, const FObject& fobject) {
 
         // Generate a stack of images representing the SDF of the given object
         int imageWidth = 100;
@@ -161,7 +161,7 @@ namespace e2 {
                         })
                     }
                 });
-            doc->dispatchClientAction({"Gfx::addPlane", payload});
+            doc.dispatchClientAction({"Gfx::addPlane", payload});
             }
         }
     }

@@ -11,7 +11,7 @@ TEST(DocumentActionsTest, PingWritesToStderr) {
     json payload = json::object();  
     Document doc;
 
-    DocumentActions::ping(&doc, payload);
+    DocumentActions::ping(doc, payload);
 
     std::string output = testing::internal::GetCapturedStderr();
     EXPECT_EQ(output, "pong\n");

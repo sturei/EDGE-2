@@ -54,22 +54,22 @@ namespace e2 {
         /** This method dispatches the specified action to the document. 
          * Returns true if successful, false otherwise. In case of failure, response contains the details.
         */
-        bool dispatchAction(Document* document, const ActionSpec& action, ActionResponse& response) {
-            ActionResult result = document->dispatchAction(action);
+        bool dispatchAction(Document& document, const ActionSpec& action, ActionResponse& response) {
+            ActionResult result = document.dispatchAction(action);
             if (result == ActionResult::SUCCESS) {
 
                 // collect any pending client actions and return them in the response.
                 // Implementation note: in future, we might want to stream client actions directly to the client through a websocket or similar, instead of buffering them up
                 // and retrieving them here and bundling them into the response.
                 ordered_json clientActionsArray = ordered_json::array();
-                for (const auto& clientAction : document->getClientActions()) {
+                for (const auto& clientAction : document.getClientActions()) {
                     ordered_json clientActionJson;
                     clientActionJson["type"] = clientAction.type;
                     clientActionJson["payload"] = clientAction.payload;
                     clientActionsArray.push_back(clientActionJson.dump());
                 }
                 response = {"OK", "", clientActionsArray};
-                document->clearClientActions();
+                document.clearClientActions();
             }
             else if (result == ActionResult::UNKNOWN_ACTION) {
                 response = {"ERROR", "Unknown action type: " + action.type};
@@ -90,7 +90,7 @@ namespace e2 {
          * Responses are written to the output stream. TODO: structured responses as JSON.
          * It blocks on input, waiting for a line to be entered.
         */
-        bool runOnce(Document* document, std::istream& input, std::ostream& output) {
+        bool runOnce(Document& document, std::istream& input, std::ostream& output) {
             // Read input and process it. getLine will block and wait for input if there is no input available.
             // We always acknowledge the input on the output stream because clients may be blocking, awaiting a response.
             // Returns false if EOF is reached, true otherwise.
@@ -131,7 +131,7 @@ namespace e2 {
          * Responses are written to the specified output stream (stdout by default). 
          * Errors, logs and debug are written to stderr.
          */
-        void run(Document* document, std::istream& input, std::ostream& output) {
+        void run(Document& document, std::istream& input, std::ostream& output) {
             while (true) {
                 if (!runOnce(document, input, output)) {
                     break;

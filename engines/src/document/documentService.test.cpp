@@ -16,14 +16,14 @@ struct ZooModelFixture : public Model {
 };
 
 namespace DocumentServiceTestActions {
-    void addAnimal(Document* doc, const json& payload) {
+    void addAnimal(Document& doc, const json& payload) {
         // This is a simple action function that adds an animal to the zoo model.
 
         //unpack the payload
         const std::string& species = payload.at("species");
 
         // add the animal to the model via the state change callback on the store.
-        Store* store = doc->storeAt("zoo");
+        Store* store = doc.storeAt("zoo");
         store->changeState([species](Model* model) {
             auto* zooModel = dynamic_cast<ZooModelFixture*>(model);
             zooModel->animals.push_back(species);
@@ -39,14 +39,17 @@ class DocumentServiceTest : public ::testing::Test {
         // As a unit test, probably this should have used a Mock Document instead.
         Model* zooModel = new ZooModelFixture();
         Store* zooStore = new Store(zooModel);            // store takes ownership of the model
-        document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
-        document->registerActionFunction(DocumentServiceTestActions::addAnimalDef);
+        m_document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
+        m_document->registerActionFunction(DocumentServiceTestActions::addAnimalDef);
     }
 
     void TearDown() override {
-        delete document;
+        delete m_document;
     }
-    Document *document;
+    Document& document() {
+        return *m_document;
+    }
+    Document *m_document;
 };
 
 TEST_F(DocumentServiceTest, RunOnce) {
@@ -63,7 +66,7 @@ TEST_F(DocumentServiceTest, RunOnce) {
     // Simulate input and output streams using stringstreams.
     std::istringstream input(actionText);
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"OK\"") != std::string::npos);
     EXPECT_TRUE(outputStr.find("\"reason\":\"\"") != std::string::npos);
@@ -72,7 +75,7 @@ TEST_F(DocumentServiceTest, RunOnce) {
 TEST_F(DocumentServiceTest, RunOnceEmptyLine) {
     std::istringstream input("");
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     std::cerr << "Output: " << outputStr << std::endl;
     EXPECT_TRUE(outputStr.find("\"status\":\"OK\"") != std::string::npos);
@@ -82,7 +85,7 @@ TEST_F(DocumentServiceTest, RunOnceEmptyLine) {
 TEST_F(DocumentServiceTest, RunOnceEmptyLineString) {
     std::istringstream input("\n");
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"OK\"") != std::string::npos);
     EXPECT_TRUE(outputStr.find("Blank line") != std::string::npos);
@@ -92,7 +95,7 @@ TEST_F(DocumentServiceTest, RunOnceInvalidJSON) {
     std::string invalidJson = "{ invalid json }";
     std::istringstream input(invalidJson);
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
     EXPECT_TRUE(outputStr.find("Invalid JSON") != std::string::npos);
@@ -102,7 +105,7 @@ TEST_F(DocumentServiceTest, RunOnceMissingType) {
     std::string missingType = R"({"payload": {"species": "Lion"}})";
     std::istringstream input(missingType);
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
     EXPECT_TRUE(outputStr.find("Invalid JSON") != std::string::npos);
@@ -112,7 +115,7 @@ TEST_F(DocumentServiceTest, RunOnceMissingPayload) {
     std::string missingPayload = R"({"type": "addAnimal"})";
     std::istringstream input(missingPayload);
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
     EXPECT_TRUE(outputStr.find("Invalid JSON") != std::string::npos);
@@ -122,7 +125,7 @@ TEST_F(DocumentServiceTest, RunOnceUnknownAction) {
     std::string unknownAction = R"({"type": "unknownAction", "payload": {}})";
     std::istringstream input(unknownAction);
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
     EXPECT_TRUE(outputStr.find("Unknown action type") != std::string::npos);
@@ -132,7 +135,7 @@ TEST_F(DocumentServiceTest, RunOnceInvalidPayload) {
     std::string invalidPayload = R"({"type": "addAnimal", "payload": {"wrongField": "value"}})";
     std::istringstream input(invalidPayload);
     std::ostringstream output;
-    DocumentService::runOnce(document, input, output);
+    DocumentService::runOnce(document(), input, output);
     std::string outputStr = output.str();
     EXPECT_TRUE(outputStr.find("\"status\":\"ERROR\"") != std::string::npos);
     EXPECT_TRUE(outputStr.find("Invalid payload") != std::string::npos);

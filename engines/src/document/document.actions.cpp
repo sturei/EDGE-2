@@ -10,7 +10,7 @@ using json = nlohmann::json;
 
 namespace e2 {
     namespace DocumentActions {
-        void ping(Document* doc, const json& payload) {
+        void ping(Document& doc, const json& payload) {
             // This action just writes "pong" to stderr. Can be useful sometimes for testing connectivity.
             std::cerr << "pong" << std::endl;
         }

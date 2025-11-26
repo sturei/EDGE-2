@@ -68,7 +68,7 @@ namespace e2 {
                 return ActionResult::UNKNOWN_ACTION;
             }
             auto actionFunction = it->second;
-            actionFunction(this, action.payload);
+            actionFunction(*this, action.payload);
         } catch (const json::exception& e) {
             // std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  <--- DEBUG ---
             return ActionResult::INVALID_PAYLOAD;

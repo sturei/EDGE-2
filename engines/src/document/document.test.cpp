@@ -19,24 +19,27 @@ class DocumentTest : public ::testing::Test {
   void SetUp() override {
       Model* zooModel = new ZooModelFixture();
       Store* zooStore = new Store(zooModel);            // store takes ownership of the model
-      document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
+      m_document = new Document({{"zoo", zooStore}});     // document takes ownership of the store
     }
 
     void TearDown() override {
-      delete document;
+      delete m_document;
     }
-    Document *document;
+    Document *m_document;
+    Document& document() {
+        return *m_document;
+    }
 };
 
 namespace DocumentTestActions {
-    void addAnimal(Document* doc, const json& payload) {
+    void addAnimal(Document& doc, const json& payload) {
         // This is a simple action function that adds an animal to the zoo model.
 
         //unpack the payload
         const std::string& species = payload.at("species");
 
         // add the animal to the model via the state change callback on the store.
-        Store* store = doc->storeAt("zoo");
+        Store* store = doc.storeAt("zoo");
         store->changeState([species](Model* model) {
             auto* zooModel = dynamic_cast<ZooModelFixture*>(model);
             zooModel->animals.push_back(species);
@@ -57,8 +60,8 @@ TEST_F(DocumentTest, AddAnimalAction) {
     {
         {"species", "Elephant"}
     };
-    DocumentTestActions::addAnimal(document, payload);
-    Store* store = document->storeAt("zoo");
+    DocumentTestActions::addAnimal(document(), payload);
+    Store* store = document().storeAt("zoo");
     auto* zooModel = dynamic_cast<const ZooModelFixture*>(store->model());
     EXPECT_EQ(zooModel->animals.size(), 1);
     EXPECT_EQ(zooModel->animals[0], "Elephant");
@@ -68,17 +71,17 @@ TEST_F(DocumentTest, RegisterAndDispatchAction) {
     // Invoke the addAnimal action function via the Document's dispatchAction method.
 
     // Register the addAnimal action function
-    document->registerActionFunction(DocumentTestActions::addAnimalDef);
+    document().registerActionFunction(DocumentTestActions::addAnimalDef);
 
     // Construct the action (type, payload) pair, and dispatch it
     ActionSpec action = {
         "addAnimal", {{"species", "Giraffe"}}
     };
 
-    document->dispatchAction(action);
+    document().dispatchAction(action);
 
     // Verify that the animal was added to the model
-    Store* store = document->storeAt("zoo");
+    Store* store = document().storeAt("zoo");
     auto* zooModel = dynamic_cast<const ZooModelFixture*>(store->model());
     EXPECT_EQ(zooModel->animals.size(), 1);
     EXPECT_EQ(zooModel->animals[0], "Giraffe");
@@ -86,7 +89,7 @@ TEST_F(DocumentTest, RegisterAndDispatchAction) {
 
 TEST_F(DocumentTest, OstreamOutputOperator) {
     std::ostringstream oss;
-    oss << *document;
+    oss << *m_document;
     std::string docStr = oss.str();
 
     // std::cout << "Document output:\n" << docStr << std::endl; // --- IGNORE ---
