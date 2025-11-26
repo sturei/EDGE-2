@@ -17,7 +17,7 @@ async function postAction(doc: Document, type:string,payload: any): Promise<void
         })
     });
 
-    // dispatch any client actions returned by the modeller server.
+    // dispatch any client actions returned by the modeller.
     const data = await response.json();
     console.log("Modeller response:", data);
     const clientActions: ActionSpec[]= data.response.clientActions as ActionSpec[];
@@ -48,7 +48,7 @@ async function addRectangle(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "FRep::addRectangle", payload);
 }
 
-export const pingModellerActionDef = { type: "pingModeller", function: pingModeller };
-export const addSheetRectangleActionDef = { type: "addSheetRectangle", function: addSheetRectangle };
-export const addSheetRoundRectActionDef = { type: "addSheetRoundRect", function: addSheetRoundRect };
-export const addRectangleActionDef = { type: "FRep::addRectangle", function: addRectangle };          
+export const pingModellerActionDef = { type: "Modeller::ping", function: pingModeller };
+export const addSheetRectangleActionDef = { type: "Profiles::addRectangle", function: addSheetRectangle };
+export const addSheetRoundRectActionDef = { type: "Profiles::addRoundRect", function: addSheetRoundRect };
+export const addRectangleActionDef = { type: "Objects::addInfiniteRectangle", function: addRectangle };          

@@ -164,10 +164,10 @@ function addGProfile(doc: Document, payload: any): void {
 }
 
 
-export const pingActionDef = { type: "ping", function: ping };
-export const addGPointActionDef = { type: "addGPoint", function: addGPoint };
-export const addGLineActionDef = { type: "addGLine", function: addGLine };
-export const addGPlaneActionDef = { type: "addGPlane", function: addGPlane };
-export const addGSphereActionDef = { type: "addGSphere", function: addGSphere };
-export const addGBlockActionDef = { type: "addGBlock", function: addGBlock };
-export const addGProfileActionDef = { type: "addGProfile", function: addGProfile };
+export const pingActionDef = { type: "Gfx::ping", function: ping };
+export const addGPointActionDef = { type: "Gfx::addGPoint", function: addGPoint };
+export const addGLineActionDef = { type: "Gfx::addGLine", function: addGLine };
+export const addGPlaneActionDef = { type: "Gfx::addGPlane", function: addGPlane };
+export const addGSphereActionDef = { type: "Gfx::addGSphere", function: addGSphere };
+export const addGBlockActionDef = { type: "Gfx::addGBlock", function: addGBlock };
+export const addGProfileActionDef = { type: "Gfx::addGProfile", function: addGProfile };

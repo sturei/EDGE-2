@@ -138,7 +138,7 @@ namespace e2 {
                         })
                     }
                 });
-            actions.push_back(ActionSpec{"addGPlane", payload});
+            actions.push_back(ActionSpec{"Gfx::addGPlane", payload});
             }
         }
     }

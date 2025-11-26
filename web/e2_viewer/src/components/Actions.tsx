@@ -7,18 +7,18 @@ import * as brepActions from '../shape/shape.actions.ts'
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
-    '{"type":"ping", "payload": {} }',
-    '{"type":"addGPoint", "payload":{"size":5, "position":[1,1,1], "color":16711680}}',
-    '{"type":"addGLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":8603039}}',
-    '{"type":"addGPlane", "payload":{"width":3,"height":2, "color":16711680}}',
-    '{"type":"addGPlane", "payload":{"width":10,"height":10, "texture":{"width":4,"height":4,"data":[0,255,0,255,15,240,63,255,31,224,127,255,47,208,191,255,63,192,0,255,79,176,63,255,95,160,127,255,111,144,191,255,127,128,0,255,143,112,63,255,159,96,127,255,175,80,191,255,191,64,0,255,207,48,63,255,223,32,127,255,239,16,191,255]}}}',
-    '{"type":"addGSphere", "payload":{"radius":0.75, "color":65280}}',
-    '{"type":"addGBlock", "payload":{"width":1,"height":2,"depth":3, "color":16711680}}',
-    '{"type":"addGProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":16711680}}',
-    '{"type":"pingModeller", "payload": {} }',
-    '{"type":"addSheetRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
-    '{"type":"addSheetRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
-    '{"type":"FRep::addRectangle", "payload":{"lowerLeft":{"x":-1, "y":-1, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
+    '{"type":"Gfx::ping", "payload": {} }',
+    '{"type":"Gfx::addGPoint", "payload":{"size":5, "position":[1,1,1], "color":16711680}}',
+    '{"type":"Gfx::addGLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":8603039}}',
+    '{"type":"Gfx::addGPlane", "payload":{"width":3,"height":2, "color":16711680}}',
+    '{"type":"Gfx::addGPlane", "payload":{"width":10,"height":10, "texture":{"width":4,"height":4,"data":[0,255,0,255,15,240,63,255,31,224,127,255,47,208,191,255,63,192,0,255,79,176,63,255,95,160,127,255,111,144,191,255,127,128,0,255,143,112,63,255,159,96,127,255,175,80,191,255,191,64,0,255,207,48,63,255,223,32,127,255,239,16,191,255]}}}',
+    '{"type":"Gfx::addGSphere", "payload":{"radius":0.75, "color":65280}}',
+    '{"type":"Gfx::addGBlock", "payload":{"width":1,"height":2,"depth":3, "color":16711680}}',
+    '{"type":"Gfx::addGProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":16711680}}',
+    '{"type":"Modeller::ping", "payload": {} }',
+    '{"type":"Profiles::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
+    '{"type":"Profiles::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
+    '{"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":-1, "y":-1, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
   ];
   
   export function Actions() {

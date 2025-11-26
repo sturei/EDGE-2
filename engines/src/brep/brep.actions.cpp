@@ -106,7 +106,7 @@ namespace e2 {
                 // update the Scene
                 json clientPayload;
                 getPayloadForAddGProfile(*sheetRectangleBody, clientPayload);
-                doc->dispatchClientAction({"addGProfile", clientPayload});
+                doc->dispatchClientAction({"Gfx::addGProfile", clientPayload});
 
             });
         }
@@ -152,7 +152,7 @@ namespace e2 {
                 // update the scene in the client
                 json clientPayload;
                 getPayloadForAddGProfile(*sheetRoundRectBody, clientPayload);
-                doc->dispatchClientAction({"addGProfile", clientPayload});
+                doc->dispatchClientAction({"Gfx::addGProfile", clientPayload});
 
             });
         }

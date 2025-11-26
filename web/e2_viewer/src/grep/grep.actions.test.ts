@@ -114,31 +114,31 @@ describe("grep.actions", () => {
 
     describe("action definitions", () => {
         it("should have correct type for ping action", () => {
-            expect(pingActionDef.type).toBe("ping");
+            expect(pingActionDef.type).toBe("Gfx::ping");
         });
 
         it("should have correct type for addGPoint action", () => {
-            expect(addGPointActionDef.type).toBe("addGPoint");
+            expect(addGPointActionDef.type).toBe("Gfx::addGPoint");
         });
 
         it("should have correct type for addGLine action", () => {
-            expect(addGLineActionDef.type).toBe("addGLine");
+            expect(addGLineActionDef.type).toBe("Gfx::addGLine");
         });
 
         it("should have correct type for addGPlane action", () => {
-            expect(addGPlaneActionDef.type).toBe("addGPlane");
+            expect(addGPlaneActionDef.type).toBe("Gfx::addGPlane");
         });
 
         it("should have correct type for addGSphere action", () => {
-            expect(addGSphereActionDef.type).toBe("addGSphere");
+            expect(addGSphereActionDef.type).toBe("Gfx::addGSphere");
         });
 
         it("should have correct type for addGBlock action", () => {
-            expect(addGBlockActionDef.type).toBe("addGBlock");
+            expect(addGBlockActionDef.type).toBe("Gfx::addGBlock");
         });
 
         it("should have correct type for addGProfile action", () => {
-            expect(addGProfileActionDef.type).toBe("addGProfile");
+            expect(addGProfileActionDef.type).toBe("Gfx::addGProfile");
         });
     });
 });
