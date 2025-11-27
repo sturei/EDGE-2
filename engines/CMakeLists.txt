@@ -56,7 +56,6 @@ set(MODELLING_SERVICE_SOURCES
     src/frep/functions.cpp
     src/frep/fnavigate.cpp
     src/frep/frepModel.cpp
-    src/frep/fsdf.cpp
     src/scene/sceneActions.cpp
     src/shape/shapeModel.cpp
     src/shape/shape.actions.cpp
@@ -86,7 +85,6 @@ set(TEST_SOURCES
     src/frep/fobject.test.cpp
     src/frep/fnavigate.test.cpp
     src/frep/functions.test.cpp
-    src/frep/fsdf.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp
