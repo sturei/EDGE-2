@@ -128,7 +128,7 @@ namespace e2 {
                             double x = -((numSlabsX * imageWidth / 2) * pixelWidth) + xIndex * pixelWidth;
                             Vec3d position(x, y, z);
                             double sdfValue;
-                            bool evalResult = e2::evaluate(fobject, position, sdfValue);
+                            bool evalResult = fobject.evaluate(position, sdfValue);
                             if (!evalResult) {
                                 sdfValue = std::numeric_limits<double>::max(); // assign a large value if evaluation fails
                             }

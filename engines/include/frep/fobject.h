@@ -10,7 +10,7 @@ namespace e2 {
 
     typedef size_t FNodeIndex;       // Index into the Object's FNode list
     typedef size_t FArgIndex;        // Index into the Object's FArg list
-    typedef size_t FunctionIndex;  // Index into the Object's Function list
+    typedef size_t FunctionIndex;    // Index into the Object's Function list
 
     class Function {
     public:
@@ -80,14 +80,17 @@ namespace e2 {
             bool graphNeedsUpdate() const { return m_graphNeedsUpdate; }    
             void updateGraph();
 
+            bool evaluate(const Vec3d& position, double& output) const;
+
             friend std::ostream& operator<<(std::ostream& os, const FObject& object);
         private:
             std::vector<FNode> m_fnodes;           // all the fnodes in the object
             std::vector<FArg> m_fargs;             // all the fargs in the object
-            std::vector<Function*> m_functions; // all the functions used by the object
+            std::vector<Function*> m_functions;    // all the functions used by the object
             FNodeIndex m_rootIndex = -1;           // the root fnode of the object
             e2::Graph m_graph;                     // graph representing the connectivity of fnodes via fargs
             bool m_graphNeedsUpdate = true;        // whether the graph needs to be rebuilt from the fnodes and fargs
     };
+
 };
 

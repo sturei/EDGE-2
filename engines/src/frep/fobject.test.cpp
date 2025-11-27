@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "frep/fobject.h"
-
+#include "frep/functions.h"
 
 namespace e2 {
 
@@ -143,6 +143,35 @@ TEST_F(FObjectTest, FArgStreamOperator) {
     
     std::string output = oss.str();
     EXPECT_TRUE(output.find("FArg(output=0, input=1)") != std::string::npos);
+}
+
+class FMaxObjectTest : public ::testing::Test {
+protected:
+    Vec3d _position{0,0,0};         // dummy position for convenience
+    FObject maxObject{
+        {   // functions
+            new FMax(),
+            new FConstant(42.0),
+            new FConstant(1.0)
+        },
+        {   // nodes
+            FNode(0),
+            FNode(1),
+            FNode(2)
+        },
+        {   // args
+            FArg(1, 0),
+            FArg(2, 0)
+        },
+        0  // root node
+    };
+};
+
+TEST_F(FMaxObjectTest, FObjectEvaluatesToMax) {
+    double output;
+    bool result = maxObject.evaluate(_position, output );
+    EXPECT_TRUE(result);
+    EXPECT_DOUBLE_EQ(output, 42.0);
 }
 
 } // namespace e2

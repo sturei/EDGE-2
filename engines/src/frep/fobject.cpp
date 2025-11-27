@@ -2,30 +2,29 @@
 
 #include "utils/graph.h"
 #include "frep/fobject.h"
+#include "frep/fnavigate.h"
+
 
 /***
- * The FObject class represents a closed subset of n-dimensional space.
- * It defines the above as the set of points P where f(P) <= 0, f being a continuous 
- * real function of n variables.
+ * The FObject class represents a closed subset of 3-dimensional space as the set of points P 
+ * where f(P) <= 0, f being a continuous real function.
  * 
- * The key concepts of the implementation are FNode, FArg and Function.
+ * The key concepts of the implementation are Function, FNode and FArg.
  * 
- * A function f(p) is either atomic or composed of other functions. FNodes represent these functions 
- * and FArgs represent the arguments to these functions (which are in turn the output of other functions).
+ * Arbitrary functions may be implemented by subclassing the Function class and
+ * attaching an instance of the subclassed function to an FNode. 
+ * Functions may be nullary (having no arguments) or evaluated from the output of other Functions. 
  * 
- * In general, an FNode can have multiple input arguments (represented by multiple FArgs) and its value (output) 
- * may be used as the input to multiple other FNodes (also represented by multiple FArgs).
- * Thus we obtain a directed acyclic graph of FNodes connected by FArgs. This graph is represented explicitly 
- * using the Graph class attached to the FObject. The graph can rebuilt from the FNodes and FArgs 
- * whenever needed.
+ * FNodes and FArgs provide the connectivity between Functions. In general, an FNode can have multiple input arguments 
+ * (represented by multiple FArgs) and its value (output) may be used as the input to multiple other FNodes.
+ * Thus we obtain a directed acyclic graph of FNodes connected by FArgs.
  * 
- * FNodes come with a few built-in types, such as MAX (which returns the maximum of its n arguments, 
- * implementing set intersection). Arbitrary functions may be implemented by subclassing the Function class and
- * attaching an instance of the subclassed function to an FNode (and setting its type to EVALUATION).
- *
+ * This graph is represented explicitly using the Graph class attached to the FObject. The graph can rebuilt 
+ * from the FNodes and FArgs whenever needed.
+ * 
  * FNodes and FArgs, once added to a FObject, cannot be removed (FNodes can be deactivated though).
  * Hence, indexes into the FObject's FNode and FArg vectors remain valid for the lifetime of the FObject.
-
+ *
  * Bibliography:
  * Pasko, Adzhiev, Sourin and Savchenko, "Function representation in geometric modeling: concepts, 
  * implementation and applications", The Visual Computer, 11, 429-446, 1995.
@@ -72,6 +71,42 @@ namespace e2 {
             }
             m_graphNeedsUpdate = false;
         }
+    }
+
+
+    // Evaluates the fobject at the given position, starting from the specified node
+    static bool evaluateNode(const FObject& fobject, FNodeIndex nodeIndex,const Vec3d& position, double& output) {
+        
+        // gather input values
+        const auto inputNodes = getInputFNodes(fobject, nodeIndex);
+        std::vector<double> inputValues;
+        for (const auto& inputNodeIndex : inputNodes) {
+            double inputValue = 0.0;
+            if (evaluateNode(fobject, inputNodeIndex, position, inputValue)) {
+                inputValues.push_back(inputValue);
+            }
+        }
+
+        // evaluate this node
+        const FNode& node = fobject.fnode(nodeIndex);
+        bool result = false;
+        Function* function = fobject.function(nodeIndex);
+        if (function) {
+            result = function->evaluate(position, inputValues, output);
+        } else {    
+            // Oops - no function
+            std::cerr << "No function found for " << node << std::endl;
+        }
+
+        return result;
+    }
+
+    // Evaluates the fobject at the given position, starting from the root node
+    bool FObject::evaluate(const Vec3d& position, double& output) const {
+        FNodeIndex rootIndex = m_rootIndex;
+        bool result = evaluateNode(*this, m_rootIndex, position, output);
+        //std::cerr << "evaluate(FObject) at " << position << ": output = " << output << std::endl;
+        return result;
     }
 
     std::ostream& operator<<(std::ostream& os, const FObject& object) {

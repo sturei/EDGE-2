@@ -79,8 +79,4 @@ namespace e2 {
     typedef class FMax FIntersection;
     typedef class FNegation FComplement;
 
-    // evaluations on FObjects
-    bool evaluate(const FObject& fobject, const Vec3d& position, double& output);
-    bool evaluate(const FObject& fobject, FNodeIndex nodeIndex, const Vec3d& position, double& output);
-
 }

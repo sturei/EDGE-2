@@ -183,12 +183,6 @@ TEST_F(FEvaluateTest, FConstantEvaluateWithZero) {
     EXPECT_DOUBLE_EQ(output, 0.0);
 }
 
-TEST_F(FEvaluateTest, FObjectEvaluatesToMax) {
-    bool result = evaluate(maxObject, _position, output );
-    EXPECT_TRUE(result);
-    EXPECT_DOUBLE_EQ(output, 42.0);
-}
-
 // Print tests
 TEST(FEvaluatePrintTest, FMaxPrint) {
     FMax fmax;
@@ -257,7 +251,7 @@ TEST_F(FSDFTest, FSDFTestBlockEvaluate) {
     };
     for (const auto& [position, expectedSDF] : positionAndExpectedSDF) {
         double sdfOut;  
-        bool result = evaluate(*block, position, sdfOut);   
+        bool result = block->evaluate(position, sdfOut);   
         EXPECT_TRUE(result);
         EXPECT_DOUBLE_EQ(sdfOut, expectedSDF);
     }
@@ -272,7 +266,7 @@ TEST_F(FSDFTest, FSDFTestInfiniteExtrudedRectangleEvaluate) {
     for (const auto& [position, expectedSDF] : positionAndExpectedSDF) {
         double sdfOut;  
 
-        bool result = evaluate(*infiniteExtrudedRectangle, position, sdfOut);   
+        bool result = infiniteExtrudedRectangle->evaluate(position, sdfOut);   
         EXPECT_TRUE(result);
         EXPECT_DOUBLE_EQ(sdfOut, expectedSDF);
     }
@@ -289,7 +283,7 @@ TEST_F(FSDFTest, FSDFTestExtrudedRectangleEvaluate) {
     };
     for (const auto& [position, expectedSDF] : positionAndExpectedSDF) {
         double sdfOut;  
-        bool result = evaluate(*extrudedRectangle, position, sdfOut);   
+        bool result = extrudedRectangle->evaluate(position, sdfOut);   
         EXPECT_TRUE(result);
         EXPECT_DOUBLE_EQ(sdfOut, expectedSDF);
     }
@@ -306,7 +300,7 @@ TEST_F(FSDFTest, FSDFTestExtrudedRectangleExactEvaluate) {
     };
     for (const auto& [position, expectedSDF] : positionAndExpectedSDF) {
         double sdfOut;  
-        bool result = evaluate(*extrudedRectangleExact, position, sdfOut);   
+        bool result = extrudedRectangleExact->evaluate(position, sdfOut);   
         EXPECT_TRUE(result);
         EXPECT_DOUBLE_EQ(sdfOut, expectedSDF);
     }

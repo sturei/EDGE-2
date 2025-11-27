@@ -78,7 +78,7 @@ namespace e2 {
 
     // Evaluates to the value of the wrapped object
     bool FFObject::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
-        bool result = e2::evaluate(m_fobject, positionIn, valueOut);
+        bool result = m_fobject.evaluate(positionIn, valueOut);
         //std::cerr << "FFObject::evaluate: valueOut = " << valueOut << std::endl;
         return result;
     }
@@ -154,39 +154,5 @@ namespace e2 {
         os << "FExtrusionSDF(Depth: " << m_Depth << ")";
     }
 
-    // Evaluates the fobject at the given position, starting from the root node
-    bool evaluate(const FObject& fobject, const Vec3d& position, double& output) {
-        FNodeIndex rootIndex = fobject.rootIndex();
-        bool result = evaluate(fobject, rootIndex, position, output);
-        //std::cerr << "evaluate(FObject) at " << position << ": output = " << output << std::endl;
-        return result;
-    }
-
-    // Evaluates the fobject at the given position, starting from the specified node
-    bool evaluate(const FObject& fobject, FNodeIndex nodeIndex,const Vec3d& position, double& output) {
-        
-        // gather input values
-        const auto inputNodes = getInputFNodes(fobject, nodeIndex);
-        std::vector<double> inputValues;
-        for (const auto& inputNodeIndex : inputNodes) {
-            double inputValue = 0.0;
-            if (evaluate(fobject, inputNodeIndex, position, inputValue)) {
-                inputValues.push_back(inputValue);
-            }
-        }
-
-        // evaluate this node
-        const FNode& node = fobject.fnode(nodeIndex);
-        bool result = false;
-        Function* function = fobject.function(nodeIndex);
-        if (function) {
-            result = function->evaluate(position, inputValues, output);
-        } else {    
-            // Oops - no function
-            std::cerr << "No function found for " << node << std::endl;
-        }
-
-        return result;
-    }
 
 }
