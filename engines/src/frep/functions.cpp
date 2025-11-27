@@ -1,6 +1,5 @@
     
 #include "frep/fobject.h"
-#include "frep/fnavigate.h"
 #include "utils/vec3d.h"
 #include "frep/functions.h"    
 #include "brep/bnearpoint.h"

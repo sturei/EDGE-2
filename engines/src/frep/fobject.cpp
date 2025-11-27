@@ -2,8 +2,6 @@
 
 #include "utils/graph.h"
 #include "frep/fobject.h"
-#include "frep/fnavigate.h"
-
 
 /***
  * The FObject class represents a closed subset of 3-dimensional space as the set of points P 
@@ -73,6 +71,29 @@ namespace e2 {
         }
     }
 
+    // Counts the number of input arguments to the specified fnode
+    size_t arity(const FObject& object, FNodeIndex fNodeIndex) {
+        if (object.graphNeedsUpdate()) {
+            const_cast<FObject&>(object).updateGraph();
+        }
+        const Graph& graph = object.graph();
+        const Graph::NodeView node = graph.node(fNodeIndex);     // indices into graph and object nodes are the same
+        return node.inDegree;
+    }
+
+    // Gets the list of input fnodes to the specified fnode
+    std::vector<FNodeIndex> getInputFNodes(const FObject& object, FNodeIndex fNodeIndex) {
+        if (object.graphNeedsUpdate()) {
+            const_cast<FObject&>(object).updateGraph();
+        }
+        const Graph& graph = object.graph();
+        const Graph::NodeView node = graph.node(fNodeIndex);
+        std::vector<FNodeIndex> inputNodes; 
+        for (size_t i = 0; i < node.inDegree; ++i) {
+            inputNodes.push_back(node.inLink(i).source);
+        }
+        return inputNodes;
+    }   
 
     // Evaluates the fobject at the given position, starting from the specified node
     static bool evaluateNode(const FObject& fobject, FNodeIndex nodeIndex,const Vec3d& position, double& output) {

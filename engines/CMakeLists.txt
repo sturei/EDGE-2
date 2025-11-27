@@ -54,7 +54,6 @@ set(MODELLING_SERVICE_SOURCES
     src/frep/frep.fixtures.cpp
     src/frep/fobject.cpp
     src/frep/functions.cpp
-    src/frep/fnavigate.cpp
     src/frep/frepModel.cpp
     src/scene/sceneActions.cpp
     src/shape/shapeModel.cpp
@@ -80,10 +79,8 @@ set(TEST_SOURCES
     src/brep/body.test.cpp
     src/brep/brepModel.test.cpp
     src/brep/containment.test.cpp
-    src/brep/navigate.test.cpp
     src/brep/tessellate.test.cpp
     src/frep/fobject.test.cpp
-    src/frep/fnavigate.test.cpp
     src/frep/functions.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp

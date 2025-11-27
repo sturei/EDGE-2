@@ -92,5 +92,9 @@ namespace e2 {
             bool m_graphNeedsUpdate = true;        // whether the graph needs to be rebuilt from the fnodes and fargs
     };
 
+    // exported to make them visible to tests
+    size_t arity(const FObject& object, FNodeIndex nodeIndex);
+    std::vector<FNodeIndex> getInputFNodes(const FObject& object, FNodeIndex nodeIndex);
+
 };
 
