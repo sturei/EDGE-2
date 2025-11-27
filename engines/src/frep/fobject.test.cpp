@@ -2,7 +2,7 @@
 #include "frep/fobject.h"
 #include "frep/functions.h"
 
-namespace e2 {
+using namespace e2;
 
 class FObjectTest : public ::testing::Test {
 protected:
@@ -257,5 +257,3 @@ TEST_F(FMaxObjectTest, FObjectEvaluatesToMax) {
         EXPECT_EQ(inputs.size(), 3);
     }
 
-
-} // namespace e2

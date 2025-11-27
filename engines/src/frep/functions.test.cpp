@@ -6,7 +6,7 @@
 #include "utils/vec3d.h"
 #include <vector>
 
-namespace e2 {
+using namespace e2;
 
 class FEvaluateTest : public ::testing::Test {
 protected:
@@ -306,5 +306,3 @@ TEST_F(FSDFTest, FSDFTestExtrudedRectangleExactEvaluate) {
     }
 }
 
-
-} // namespace e2
