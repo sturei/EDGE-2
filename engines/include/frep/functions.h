@@ -3,6 +3,7 @@
 #include "frep/fobject.h"
 #include "utils/vec3d.h"
 #include "utils/pla3d.h"
+#include "utils/sph3d.h"
 #include "brep/body.h"
 
 #include <iostream> 
@@ -11,6 +12,9 @@ namespace e2 {
 
     class FMax : public Function {
     public:
+        FMax() = default;
+        FMax(const FMax&) : Function() {};
+        Function* clone() const override { return new FMax(*this); }
         bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
         void print(std::ostream& os) const override;
     };
@@ -18,18 +22,27 @@ namespace e2 {
 
     class FMin : public Function {
         public:
+            FMin() = default;
+            FMin(const FMin&) : Function() {};
+            Function* clone() const override { return new FMin(*this); }
             bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
     };
 
     class FNegation : public Function {
         public:
+            FNegation() = default;
+            FNegation(const FNegation&) : Function() {};
+            Function* clone() const override { return new FNegation(*this); }
             bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
     };
 
     class FConstant : public Function {
         public:
+            FConstant() = default;
+            FConstant(const FConstant& other) : Function(), m_value(other.m_value) {}
+            Function* clone() const override { return new FConstant(*this); }
             FConstant(double value) : m_value(value) {}
             bool evaluate(const Vec3d& _positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
@@ -39,6 +52,9 @@ namespace e2 {
 
     class FHalfSpace : public Function {
         public:
+            FHalfSpace() = default;
+            FHalfSpace(const FHalfSpace& other) : Function(), m_plane(other.m_plane) {}
+            Function* clone() const override { return new FHalfSpace(*this); }  
             FHalfSpace(const Pla3d& plane) : m_plane(plane) {}
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
@@ -46,8 +62,23 @@ namespace e2 {
             Pla3d m_plane;
     };
 
+    class FSphere : public Function {
+        public:
+            FSphere() = default;
+            FSphere(const FSphere& other) : Function(), m_sphere(other.m_sphere) {}
+            Function* clone() const override { return new FSphere(*this); }
+            FSphere(const Sph3d& sphere) : m_sphere(sphere) {}
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            Sph3d m_sphere;
+    };
+
     class FFObject : public Function {
         public:
+            FFObject() = default;
+            FFObject(const FFObject& other) : Function(), m_fobject(other.m_fobject) {}
+            Function* clone() const override { return new FFObject(*this); }
             FFObject(const FObject& fobject) : m_fobject(fobject) {}
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
@@ -57,6 +88,9 @@ namespace e2 {
 
     class FProfileSDF : public Function {
     public:
+        FProfileSDF() = default;
+        FProfileSDF(const FProfileSDF& other) : Function(), m_profile(other.m_profile) {}   
+        Function* clone() const override { return new FProfileSDF(*this); }
         FProfileSDF(const Body& profile) : m_profile(profile) {}
         bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
         void print(std::ostream& os) const override;
@@ -66,6 +100,9 @@ namespace e2 {
 
     class FExtrusionSDF : public Function {
     public:
+        FExtrusionSDF() = default;
+        FExtrusionSDF(const FExtrusionSDF& other) : Function(), m_Depth(other.m_Depth) {}
+        Function* clone() const override { return new FExtrusionSDF(*this); }
         FExtrusionSDF(double depth) : m_Depth(depth) {}
         bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
         void print(std::ostream& os) const override;

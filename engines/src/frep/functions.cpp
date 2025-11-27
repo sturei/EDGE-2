@@ -75,6 +75,17 @@ namespace e2 {
         os << "FHalfSpace(Plane: " << m_plane << ")";
     }
 
+    // Evaluates to the distance to a sphere
+    bool FSphere::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
+        valueOut = dist(positionIn, m_sphere.center()) - m_sphere.radius();
+        //std::cerr << "FSphere::evaluate: valueOut = " << valueOut << std::endl;
+        return true;
+    }
+
+    void FSphere::print(std::ostream& os) const {
+        os << "FSphere(Sphere: " << m_sphere << ")";
+    }
+
     // Evaluates to the value of the wrapped object
     bool FFObject::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
         bool result = m_fobject.evaluate(positionIn, valueOut);

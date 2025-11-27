@@ -12,6 +12,32 @@
 namespace e2 {
     namespace FRepFixtures {
 
+        /** an Empty object */
+        FObject* emptyObject() {
+            std::vector<Function*> functions;
+            std::vector<FNode> nodes;
+            std::vector<FArg> args;
+            FNodeIndex rootIndex = -1; // no root
+            FObject* emptyObj = new FObject(functions, nodes, args, rootIndex);
+            return emptyObj;
+        }
+
+        /** A sphere centered at the origin with the given radius */
+        FObject* sphere(double radius) {
+            Sph3d sphere(Vec3d(0,0,0), radius);
+            std::vector<Function*> functions = {
+                new FSphere(sphere)
+            };
+            std::vector<FNode> nodes = {
+                FNode(0)
+            };
+            std::vector<FArg> args = {
+            };
+            FNodeIndex rootIndex = 0; // The sphere node is the root
+            FObject* sphereObject = new FObject(functions, nodes, args, rootIndex);
+            return sphereObject;
+        }
+
         /** A 2d object (really an infinite 3d object) consisting of the interior points of a rectangle, defined as the intersection of four half-planes */
         FObject* rectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
             // Create a frep object representing a rectangle defined by lower-left and upper-right corners

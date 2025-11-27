@@ -5,6 +5,8 @@
 
 namespace e2 {
     namespace FRepFixtures {
+        FObject* emptyObject();
+        FObject* sphere(double radius);
         FObject* rectangle(const Vec3d& lowerLeft, const Vec3d& upperRight);
         FObject* block(double width, double height, double depth);
         FObject* infiniteExtrudedProfile(const Body& profileBody);

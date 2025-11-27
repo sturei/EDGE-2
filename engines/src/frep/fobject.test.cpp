@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include "frep/fobject.h"
 #include "frep/functions.h"
 
@@ -6,6 +7,7 @@ using namespace e2;
 
 class FObjectTest : public ::testing::Test {
 protected:
+    // set up an empty object that we can meddle with in tests
     void SetUp() override {
         fobject = new FObject();
     }
@@ -17,8 +19,19 @@ protected:
     FObject* fobject;
 };
 
+
+TEST_F(FObjectTest, InitialStateIsEmpty) {
+    EXPECT_EQ(fobject->numFNodes(), 0);
+    EXPECT_EQ(fobject->numFArgs(), 0);
+}
+
 class MockFunction : public Function {
 public:
+    MockFunction() = default;
+    MockFunction(const MockFunction&) : Function() {};
+    Function* clone() const override { return new MockFunction(*this); }
+    MOCK_METHOD(void, Die, ());
+    ~MockFunction() override { Die(); }
     bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override {
         valueOut = 42.0;
         return true;
@@ -27,11 +40,6 @@ public:
         os << "MockFunction";
     }
 };
-
-TEST_F(FObjectTest, InitialStateIsEmpty) {
-    EXPECT_EQ(fobject->numFNodes(), 0);
-    EXPECT_EQ(fobject->numFArgs(), 0);
-}
 
 TEST_F(FObjectTest, AddFunctionReturnsValidIndex) {
     Function* function = new MockFunction();
@@ -145,9 +153,40 @@ TEST_F(FObjectTest, FArgStreamOperator) {
     EXPECT_TRUE(output.find("FArg(output=0, input=1)") != std::string::npos);
 }
 
+TEST_F(FObjectTest, Copy) {
+    FObject *copy = new FObject(*fobject);
+    EXPECT_EQ(copy->numFNodes(), fobject->numFNodes());
+    EXPECT_EQ(copy->numFArgs(), fobject->numFArgs());
+    delete copy;
+}
+
+TEST_F(FObjectTest, Assignment) {
+    FObject other;
+    other = *fobject;
+    EXPECT_EQ(other.numFNodes(), fobject->numFNodes());
+    EXPECT_EQ(other.numFArgs(), fobject->numFArgs());
+}
+
+TEST_F(FObjectTest, DestructorDestroysFunctions) {
+    MockFunction* mockFunction = new MockFunction();
+    EXPECT_CALL(*mockFunction, Die()).Times(1); // Expect Die to be called
+    FObject fobject({mockFunction}, {}, {}, -1);
+    // fobject goes out of scope here and should call the destructor of mockFunction
+}
+
+TEST_F(FObjectTest, CopyClonesFunctions) {
+    MockFunction* mockFunction = new MockFunction();
+    EXPECT_CALL(*mockFunction, Die()).Times(1); // Expect Die to be called once, on the original function
+    FObject fobject({mockFunction}, {}, {}, -1);
+    FObject copy = fobject;
+    // both objects go out of scope here. The destructor of mockFunction should be called exactly once. The copy should have its own clone.
+}
+
 class FMaxObjectTest : public ::testing::Test {
 protected:
     Vec3d _position{0,0,0};         // dummy position for convenience
+
+    // create an FObject that computes the max of 42.0 and 1.0
     FObject maxObject{
         {   // functions
             new FMax(),
@@ -174,86 +213,86 @@ TEST_F(FMaxObjectTest, FObjectEvaluatesToMax) {
     EXPECT_DOUBLE_EQ(output, 42.0);
 }
 
-    class FNavigateTest : public ::testing::Test {
-    protected:
-        void SetUp() override {
-            // Setup test FObject with known structure
-            const std::vector<FNode> fnodes = {
-                FNode(0), // Dummy function indices
-                FNode(1), // 
-                FNode(2)  //
-            };
-            const std::vector<FArg> fargs = {
-                FArg(1, 0),
-                FArg(2, 0)
-            };
-            fobject = new FObject({}, fnodes, fargs, 0); // root is node 0
-        }
-
-        void TearDown() override {
-            // Cleanup if necessary
-            delete fobject; 
-        }
-        
-        FObject* fobject;
-    };
-
-    TEST_F(FNavigateTest, ArityReturnsCorrectInDegree) {
-        // Test arity function returns correct number of input connections
-        FNodeIndex nodeIndex = 0;
-        size_t expectedArity = 2;
-        
-        EXPECT_EQ(arity(*fobject, nodeIndex), expectedArity);
+class FNavigateTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Setup test FObject with known structure
+        const std::vector<FNode> fnodes = {
+            FNode(0), // Dummy function indices
+            FNode(1), // 
+            FNode(2)  //
+        };
+        const std::vector<FArg> fargs = {
+            FArg(1, 0),
+            FArg(2, 0)
+        };
+        fobject = new FObject({}, fnodes, fargs, 0); // root is node 0
     }
 
-    TEST_F(FNavigateTest, ArityHandlesLeafNode) {
-        // Test arity for leaf node (no inputs)
-        FNodeIndex leafNodeIndex = 1;
-        
-        EXPECT_EQ(arity(*fobject, leafNodeIndex), 0);
+    void TearDown() override {
+        // Cleanup if necessary
+        delete fobject; 
     }
+    
+    FObject* fobject;
+};
 
-    TEST_F(FNavigateTest, GetInputFNodesReturnsCorrectNodes) {
-        // Test getInputFNodes returns correct input node indices
-        FNodeIndex nodeIndex = 0;
-        std::vector<FNodeIndex> inputs = getInputFNodes(*fobject, nodeIndex);
+TEST_F(FNavigateTest, ArityReturnsCorrectInDegree) {
+    // Test arity function returns correct number of input connections
+    FNodeIndex nodeIndex = 0;
+    size_t expectedArity = 2;
+    
+    EXPECT_EQ(arity(*fobject, nodeIndex), expectedArity);
+}
 
-        EXPECT_FALSE(inputs.empty());
-        EXPECT_EQ(inputs.size(), arity(*fobject, nodeIndex));
-    }
+TEST_F(FNavigateTest, ArityHandlesLeafNode) {
+    // Test arity for leaf node (no inputs)
+    FNodeIndex leafNodeIndex = 1;
+    
+    EXPECT_EQ(arity(*fobject, leafNodeIndex), 0);
+}
 
-    TEST_F(FNavigateTest, GetInputFNodesHandlesLeafNode) {
-        // Test getInputFNodes for leaf node returns empty vector
-        FNodeIndex leafNodeIndex = 1;
-        std::vector<FNodeIndex> inputs = getInputFNodes(*fobject, leafNodeIndex);
-        
-        EXPECT_TRUE(inputs.empty());
-    }
+TEST_F(FNavigateTest, GetInputFNodesReturnsCorrectNodes) {
+    // Test getInputFNodes returns correct input node indices
+    FNodeIndex nodeIndex = 0;
+    std::vector<FNodeIndex> inputs = getInputFNodes(*fobject, nodeIndex);
 
-    TEST_F(FNavigateTest, NavigateTest_ArityHandlesChange) {
-        // Test that arity triggers graph update when needed
-        FNodeIndex nodeIndex = 0;
+    EXPECT_FALSE(inputs.empty());
+    EXPECT_EQ(inputs.size(), arity(*fobject, nodeIndex));
+}
 
-        fobject->addFNode(FNode(3)); // Modify object to require graph update
-        fobject->addFArg(FArg(3, 0));
+TEST_F(FNavigateTest, GetInputFNodesHandlesLeafNode) {
+    // Test getInputFNodes for leaf node returns empty vector
+    FNodeIndex leafNodeIndex = 1;
+    std::vector<FNodeIndex> inputs = getInputFNodes(*fobject, leafNodeIndex);
+    
+    EXPECT_TRUE(inputs.empty());
+}
 
-        // Check the updated arity
-        size_t result = arity(*fobject, nodeIndex);
-        
-        EXPECT_EQ(result, 3);
-    }
+TEST_F(FNavigateTest, NavigateTest_ArityHandlesChange) {
+    // Test that arity triggers graph update when needed
+    FNodeIndex nodeIndex = 0;
 
-    TEST_F(FNavigateTest, GetInputFNodesHandlesChanges) {
-        // Test that getInputFNodes triggers graph update when needed
-        FNodeIndex nodeIndex = 0;
-        
-        // Modify object to require graph update
-        fobject->addFNode(FNode(3)); 
-        fobject->addFArg(FArg(3, 0));
+    fobject->addFNode(FNode(3)); // Modify object to require graph update
+    fobject->addFArg(FArg(3, 0));
 
-        // Check the updated inputs
-        std::vector<FNodeIndex> inputs = getInputFNodes(*fobject, nodeIndex);
+    // Check the updated arity
+    size_t result = arity(*fobject, nodeIndex);
+    
+    EXPECT_EQ(result, 3);
+}
 
-        EXPECT_EQ(inputs.size(), 3);
-    }
+TEST_F(FNavigateTest, GetInputFNodesHandlesChanges) {
+    // Test that getInputFNodes triggers graph update when needed
+    FNodeIndex nodeIndex = 0;
+    
+    // Modify object to require graph update
+    fobject->addFNode(FNode(3)); 
+    fobject->addFArg(FArg(3, 0));
+
+    // Check the updated inputs
+    std::vector<FNodeIndex> inputs = getInputFNodes(*fobject, nodeIndex);
+
+    EXPECT_EQ(inputs.size(), 3);
+}
 

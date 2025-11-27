@@ -57,6 +57,37 @@ namespace e2 {
         return m_fargs.size() - 1;
     }
 
+    FObject::FObject(const std::vector<Function*>& functions, const std::vector<FNode>& fnodes, const std::vector<FArg>& fargs, FNodeIndex root) :
+        m_functions(functions), m_fnodes(fnodes), m_fargs(fargs), m_rootIndex(root) {
+        updateGraph();
+    }
+
+    FObject::FObject(const FObject& other)
+        : m_fnodes(other.m_fnodes),
+          m_fargs(other.m_fargs),
+          m_rootIndex(other.m_rootIndex),
+          m_graphNeedsUpdate(other.m_graphNeedsUpdate) {
+        // Deep copy of functions
+        for (const auto& func : other.m_functions) {
+            if (func) {
+                m_functions.push_back(func->clone());
+            } else {
+                m_functions.push_back(nullptr);
+            }
+        }
+        // Copy the graph if it doesn't need an update
+        if (!m_graphNeedsUpdate) {
+            m_graph = other.m_graph;
+        }
+    }
+
+    FObject::~FObject() {
+        // destroy the functions.
+        for (auto& function : m_functions) {
+            delete function;
+        }
+    }
+    
     void FObject::updateGraph() {
         if (m_graphNeedsUpdate) {
             // For now, just rebuild the graph from scratch. Incremental update can come later.

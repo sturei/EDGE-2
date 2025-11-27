@@ -14,7 +14,11 @@ namespace e2 {
 
     class Function {
     public:
-        virtual ~Function() {}
+        Function() = default;
+        virtual ~Function() = default;  
+        Function(const Function&) = delete;
+        void operator=(const Function&) = delete;        
+        virtual Function* clone() const = 0;
         virtual bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const = 0;
         virtual void print(std::ostream& os) const = 0;
     };
@@ -45,19 +49,9 @@ namespace e2 {
     class FObject {
         public:
             FObject() : m_graphNeedsUpdate(false) {}
-            FObject(const std::vector<Function*>& functions,
-                const std::vector<FNode>& fnodes,
-                const std::vector<FArg>& fargs, 
-                FNodeIndex root) :
-                m_functions(functions), m_fnodes(fnodes), m_fargs(fargs), m_rootIndex(root) {
-                updateGraph();
-            }
-            ~FObject() {
-                // destroy the functions.
-                for (auto& function : m_functions) {
-                    delete function;
-                }
-            }
+            FObject(const FObject& other);
+            FObject(const std::vector<Function*>& functions, const std::vector<FNode>& fnodes, const std::vector<FArg>& fargs, FNodeIndex root);
+            ~FObject();
 
             const std::vector<Function*> functions() const { return m_functions; }
             const std::vector<FNode>& fnodes() const { return m_fnodes; }
