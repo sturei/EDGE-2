@@ -3,7 +3,6 @@
 #include "brep/containment.h" 
 #include "brep/navigate.h"
 #include "utils/nearpoint.h"
-#include "utils/evaluate.h"
 
 namespace e2 {  
 

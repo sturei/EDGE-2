@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "utils/evaluate.h"
 #include "brep/tessellate.h"
 
 using namespace e2;

@@ -3,7 +3,7 @@
 #include "utils/vec3d.h"
 #include "brep/navigate.h"
 #include "brep/tessellate.h"
-#include "frep/fevaluate.h"
+#include "frep/functions.h"
 #include "document/document.h"
 
 using json = nlohmann::json;

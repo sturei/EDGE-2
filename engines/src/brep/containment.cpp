@@ -4,7 +4,6 @@
 #include "utils/segment.h"
 #include "utils/parameterize.h"
 #include "utils/vec3d.h"
-#include "utils/evaluate.h"
 
 namespace e2 {
     bool vertexContainsPosition(CellIndex vertexIndex, const Body& body, const Vec3d& pos) {

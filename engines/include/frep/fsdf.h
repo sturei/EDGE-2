@@ -1,6 +1,6 @@
 #pragma once
 
-#include "frep/fevaluate.h"
+#include "frep/functions.h"
 #include "brep/body.h"
 
 namespace e2 {

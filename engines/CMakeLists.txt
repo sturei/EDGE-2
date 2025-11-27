@@ -53,7 +53,7 @@ set(MODELLING_SERVICE_SOURCES
     src/document/store.cpp
     src/frep/frep.fixtures.cpp
     src/frep/fobject.cpp
-    src/frep/fevaluate.cpp
+    src/frep/functions.cpp
     src/frep/fnavigate.cpp
     src/frep/frepModel.cpp
     src/frep/fsdf.cpp
@@ -85,7 +85,7 @@ set(TEST_SOURCES
     src/brep/tessellate.test.cpp
     src/frep/fobject.test.cpp
     src/frep/fnavigate.test.cpp
-    src/frep/fevaluate.test.cpp
+    src/frep/functions.test.cpp
     src/frep/fsdf.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp

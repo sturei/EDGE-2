@@ -2,7 +2,7 @@
 #include "frep/fobject.h"
 #include "frep/fnavigate.h"
 #include "utils/vec3d.h"
-#include "frep/fevaluate.h"    
+#include "frep/functions.h"    
 #include <iostream> 
 
 namespace e2 {

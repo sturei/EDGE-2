@@ -1,7 +1,6 @@
 
 #include "brep/body.h"
 #include "brep/navigate.h"
-#include "utils/evaluate.h"
 #include "utils/parameterize.h"
 
 namespace e2 {

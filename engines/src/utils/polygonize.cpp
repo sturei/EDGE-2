@@ -1,5 +1,4 @@
 #include "utils/polygonize.h"
-#include "utils/evaluate.h"
 #include "brep/navigate.h"
 #include "utils/parameterize.h"
 

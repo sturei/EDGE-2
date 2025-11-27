@@ -2,7 +2,6 @@
 #include "brep/body.h"  
 #include "brep/navigate.h"
 #include "utils/parameterize.h"
-#include "utils/evaluate.h"
 #include "utils/pla3d.h"
 #include "utils/intersect.h"
 
