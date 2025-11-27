@@ -97,21 +97,21 @@ namespace e2 {
 
         // implementation note: it would probably be more sensible to make a rule that the profile is always in the XY plane
 
-        if (!getProfileFace(m_Body, profileFace)) {
+        if (!getProfileFace(m_profile, profileFace)) {
             return false;
         }
 
-        if (!getProfilePlane(profileFace, m_Body, profilePlane)) {
+        if (!getProfilePlane(profileFace, m_profile, profilePlane)) {
             return false;
         }
 
         Vec3d positionOnPlane = nearpoint(profilePlane, positionIn);
 
-        if (!nearpointOnProfile(m_Body, positionOnPlane, nearestPoint, nearestCell)) {
+        if (!nearpointOnProfile(m_profile, positionOnPlane, nearestPoint, nearestCell)) {
             return false;
         }
 
-        if (!pseudoNormalOnProfileCell(nearestCell, m_Body, nearestPoint, normalAtNearest)) {
+        if (!pseudoNormalOnProfileCell(nearestCell, m_profile, nearestPoint, normalAtNearest)) {
             return false;
         }
 
@@ -123,7 +123,7 @@ namespace e2 {
     }
 
     void FProfileSDF::print(std::ostream& os) const {
-        os << "FProfileSDF(Body with " << m_Body.numCells() << " cells)";
+        os << "FProfileSDF(Body with " << m_profile.numCells() << " cells)";
     }
 
     // Evaluates the signed distance function to the profile defined by the Body, in the 2-dimensional plane of the profile.

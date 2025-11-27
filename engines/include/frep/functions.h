@@ -52,16 +52,16 @@ namespace e2 {
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
         private:
-            const FObject& m_fobject;               // reference to another object in the same model
+            const FObject m_fobject;               // copy of the object defining the function. Eventually there will something like an FObjectHandle or FObjectIndex or name alongside, referencing the original, and an update step to sync changes
     };
 
     class FProfileSDF : public Function {
     public:
-        FProfileSDF(const Body& body) : m_Body(body) {}
+        FProfileSDF(const Body& profile) : m_profile(profile) {}
         bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
         void print(std::ostream& os) const override;
     private:
-        const Body& m_Body;        // reference to the body defining the profile. TODO: think about the best way to have such an external reference.
+        const Body m_profile;           // copy of the body defining the profile. Eventually there will something like a BodyHandle or BodyIndex or name alongside, referencing the original, and an update step to sync changes
     };
 
     class FExtrusionSDF : public Function {
@@ -70,7 +70,7 @@ namespace e2 {
         bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
         void print(std::ostream& os) const override;
     private:
-        double m_Depth;           // depth of the extrusion
+        double m_Depth;           // depth of the extrusion. TODO: this should take 2 parameters (workplane bodies) and create and extrusion between them (measured length plus offset in the transform)
     };
 
 
