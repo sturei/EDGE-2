@@ -9,10 +9,10 @@ namespace e2 {
 class FEvaluateTest : public ::testing::Test {
 protected:
     Vec3d position{1.0, 2.0, 3.0};
-    Vec3d _position{0,0,0};         // dummy position for evaluators that don't use it
+    Vec3d _position{0,0,0};         // dummy position for functions that don't use it
     double output;
     FObject maxObject{
-        {   // evaluators
+        {   // functions
             new FMax(),
             new FConstant(42.0),
             new FConstant(1.0)

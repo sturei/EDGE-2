@@ -10,24 +10,24 @@ namespace e2 {
 
     typedef size_t FNodeIndex;       // Index into the Object's FNode list
     typedef size_t FArgIndex;        // Index into the Object's FArg list
-    typedef size_t FEvaluatorIndex;  // Index into the Object's FEvaluator list
+    typedef size_t FunctionIndex;  // Index into the Object's Function list
 
-    class FEvaluator {
+    class Function {
     public:
-        virtual ~FEvaluator() {}
+        virtual ~Function() {}
         virtual bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const = 0;
         virtual void print(std::ostream& os) const = 0;
     };
 
     class FNode {
         public:
-            FNode(FEvaluatorIndex evaluatorIndex, bool active = true) : 
-                m_evaluatorIndex(evaluatorIndex), m_active(active) {}
-            FEvaluatorIndex evaluatorIndex() const { return m_evaluatorIndex; }
+            FNode(FunctionIndex functionIndex, bool active = true) : 
+                m_functionIndex(functionIndex), m_active(active) {}
+            FunctionIndex functionIndex() const { return m_functionIndex; }
             bool isActive() const { return m_active; }
             friend std::ostream& operator<<(std::ostream& os, const FNode& fnode);
         private:
-            FEvaluatorIndex m_evaluatorIndex = -1; // index into the FObject's evaluator list
+            FunctionIndex m_functionIndex = -1; // index into the FObject's function list
             bool m_active = true; // whether the fnode should be evaluated or ignored
     };
 
@@ -45,29 +45,29 @@ namespace e2 {
     class FObject {
         public:
             FObject() : m_graphNeedsUpdate(false) {}
-            FObject(const std::vector<FEvaluator*>& evaluators,
+            FObject(const std::vector<Function*>& functions,
                 const std::vector<FNode>& fnodes,
                 const std::vector<FArg>& fargs, 
                 FNodeIndex root) :
-                m_evaluators(evaluators), m_fnodes(fnodes), m_fargs(fargs), m_rootIndex(root) {
+                m_functions(functions), m_fnodes(fnodes), m_fargs(fargs), m_rootIndex(root) {
                 updateGraph();
             }
             ~FObject() {
-                // destroy the evaluators.
-                for (auto& evaluator : m_evaluators) {
-                    delete evaluator;
+                // destroy the functions.
+                for (auto& function : m_functions) {
+                    delete function;
                 }
             }
 
-            const std::vector<FEvaluator*> evaluators() const { return m_evaluators; }
+            const std::vector<Function*> functions() const { return m_functions; }
             const std::vector<FNode>& fnodes() const { return m_fnodes; }
             const std::vector<FArg>& fargs() const { return m_fargs; }
-            size_t numEvaluators() const { return m_evaluators.size(); }
+            size_t numFunctions() const { return m_functions.size(); }
             size_t numFNodes() const { return m_fnodes.size(); }
             size_t numFArgs() const { return m_fargs.size(); }
 
-            FEvaluatorIndex addEvaluator(FEvaluator* evaluator);
-            FEvaluator* evaluator(FEvaluatorIndex index) const { return m_evaluators[index]; }
+            FunctionIndex addFunction(Function* function);
+            Function* function(FunctionIndex index) const { return m_functions[index]; }
             FNodeIndex addFNode(const FNode& fnode);
             const FNode& fnode(FNodeIndex index) const { return m_fnodes[index]; }
             FArgIndex addFArg(const FArg& farg);
@@ -84,7 +84,7 @@ namespace e2 {
         private:
             std::vector<FNode> m_fnodes;           // all the fnodes in the object
             std::vector<FArg> m_fargs;             // all the fargs in the object
-            std::vector<FEvaluator*> m_evaluators; // all the evaluators used by the object
+            std::vector<Function*> m_functions; // all the functions used by the object
             FNodeIndex m_rootIndex = -1;           // the root fnode of the object
             e2::Graph m_graph;                     // graph representing the connectivity of fnodes via fargs
             bool m_graphNeedsUpdate = true;        // whether the graph needs to be rebuilt from the fnodes and fargs

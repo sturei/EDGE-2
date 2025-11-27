@@ -9,7 +9,7 @@ namespace e2 {
         void SetUp() override {
             // Setup test FObject with known structure
             const std::vector<FNode> fnodes = {
-                FNode(0), // Dummy evaluator indices
+                FNode(0), // Dummy function indices
                 FNode(1), // 
                 FNode(2)  //
             };

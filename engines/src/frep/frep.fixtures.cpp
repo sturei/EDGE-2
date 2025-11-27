@@ -29,7 +29,7 @@ namespace e2 {
             Pla3d bottomPlane(Vec3d(0, lowerLeft.y(), 0), Vec3d(0, -1, 0));
             Pla3d topPlane(Vec3d(0, upperRight.y(), 0), Vec3d(0, 1, 0));   
 
-            std::vector<FEvaluator*> evaluators = {
+            std::vector<Function*> functions = {
                 new FHalfSpace(leftPlane),
                 new FHalfSpace(rightPlane),
                 new FHalfSpace(bottomPlane),
@@ -54,7 +54,7 @@ namespace e2 {
 
             FNodeIndex rootIndex = 4; // The intersection node is the root
 
-            FObject* rectangleObject = new FObject(evaluators, nodes, args, rootIndex);
+            FObject* rectangleObject = new FObject(functions, nodes, args, rootIndex);
             return rectangleObject;
         }
 
@@ -66,7 +66,7 @@ namespace e2 {
             Pla3d frontPlane(halfSize, Vec3d(0, 0, 1));
             Pla3d backPlane(-halfSize, Vec3d(0, 0, -1));
 
-            std::vector<FEvaluator*> evaluators = {
+            std::vector<Function*> functions = {
                 new FFObject(*infinitePrism),
                 new FHalfSpace(frontPlane),
                 new FHalfSpace(backPlane),
@@ -85,13 +85,13 @@ namespace e2 {
                 FArg(2, 3)  // Intersection node arg 3: Back half-space
             };
             FNodeIndex rootIndex = 3; // The intersection node is the root
-            FObject* blockObject = new FObject(evaluators, nodes, args, rootIndex);
+            FObject* blockObject = new FObject(functions, nodes, args, rootIndex);
             return blockObject; 
         }
 
         /** A 2d object (really an infinite 3d object) consisting of the interior points of an extruded profile (represented as a brep) */
         FObject* infiniteExtrudedProfile(const Body& profileBody) {
-            std::vector<FEvaluator*> evaluators = {
+            std::vector<Function*> functions = {
                 new FProfileSDF(profileBody)
             };
             std::vector<FNode> nodes = {
@@ -100,7 +100,7 @@ namespace e2 {
             std::vector<FArg> args = {
             };
             FNodeIndex rootIndex = 0; // The profile SDF node is the root
-            FObject* infiniteExtrudedProfile = new FObject(evaluators, nodes, args, rootIndex);
+            FObject* infiniteExtrudedProfile = new FObject(functions, nodes, args, rootIndex);
             return infiniteExtrudedProfile;
         }
 
@@ -119,7 +119,7 @@ namespace e2 {
             Pla3d basePlane = Pla3d(profilePlane.position() - depth/2 * profilePlane.normal(), profilePlane.normal());
             Pla3d topPlane = Pla3d(profilePlane.position() + depth/2 * profilePlane.normal(), profilePlane.normal());
         
-            std::vector<FEvaluator*> evaluators = {
+            std::vector<Function*> functions = {
                 new FProfileSDF(profileBody),
                 new FHalfSpace(topPlane),
                 new FHalfSpace(basePlane),
@@ -140,7 +140,7 @@ namespace e2 {
                 FArg(4, 3)   // Intersection node arg 3: Complement of base half-space
             };
             FNodeIndex rootIndex = 3; // The intersection node is the root
-            FObject* extrudedProfile = new FObject(evaluators, nodes, args, rootIndex);
+            FObject* extrudedProfile = new FObject(functions, nodes, args, rootIndex);
             return extrudedProfile;
         }
 
@@ -156,7 +156,7 @@ namespace e2 {
                 return nullptr; // could not determine profile plane
             }
 
-            std::vector<FEvaluator*> evaluators = {
+            std::vector<Function*> functions = {
                 new FProfileSDF(profileBody),
                 new FExtrusionSDF(depth)
             };
@@ -169,7 +169,7 @@ namespace e2 {
                 FArg(0, 1),  // Extrusion arg: Profile SDF
             };
             FNodeIndex rootIndex = 1; // The extrusion operator is the root
-            FObject* extrudedProfileExact = new FObject(evaluators, nodes, args, rootIndex);
+            FObject* extrudedProfileExact = new FObject(functions, nodes, args, rootIndex);
             return extrudedProfileExact;    
         }
     }

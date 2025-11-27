@@ -17,14 +17,14 @@ protected:
     FObject* fobject;
 };
 
-class MockEvaluator : public FEvaluator {
+class MockFunction : public Function {
 public:
     bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override {
         valueOut = 42.0;
         return true;
     }
     void print(std::ostream& os) const override {
-        os << "MockEvaluator";
+        os << "MockFunction";
     }
 };
 
@@ -33,23 +33,23 @@ TEST_F(FObjectTest, InitialStateIsEmpty) {
     EXPECT_EQ(fobject->numFArgs(), 0);
 }
 
-TEST_F(FObjectTest, AddEvaluatorReturnsValidIndex) {
-    FEvaluator* evaluator = new MockEvaluator();
-    FEvaluatorIndex index = fobject->addEvaluator(evaluator);
+TEST_F(FObjectTest, AddFunctionReturnsValidIndex) {
+    Function* function = new MockFunction();
+    FunctionIndex index = fobject->addFunction(function);
     EXPECT_EQ(index, 0);
-    EXPECT_EQ(fobject->numEvaluators(), 1);
+    EXPECT_EQ(fobject->numFunctions(), 1);
 }
 
 TEST_F(FObjectTest, AddFNodeReturnsValidIndex) {
-    FNode node(0); // Using 0 as a dummy evaluator index
+    FNode node(0); // Using 0 as a dummy function index
     FNodeIndex index = fobject->addFNode(node);
     EXPECT_EQ(index, 0);
     EXPECT_EQ(fobject->numFNodes(), 1);
 }
 
 TEST_F(FObjectTest, AddMultipleFNodes) {
-    FNode node1(0); // Using 0 as a dummy evaluator index
-    FNode node2(1); // Using 1 as a dummy evaluator index
+    FNode node1(0); // Using 0 as a dummy function index
+    FNode node2(1); // Using 1 as a dummy function index
 
     FNodeIndex index1 = fobject->addFNode(node1);
     FNodeIndex index2 = fobject->addFNode(node2);
@@ -60,8 +60,8 @@ TEST_F(FObjectTest, AddMultipleFNodes) {
 }
 
 TEST_F(FObjectTest, AddFArgReturnsValidIndex) {
-    FNode node1(0); // Using 0 as a dummy evaluator index
-    FNode node2(1); // Using 1 as a dummy evaluator index
+    FNode node1(0); // Using 0 as a dummy function index
+    FNode node2(1); // Using 1 as a dummy function index
 
     FNodeIndex nodeIndex1 = fobject->addFNode(node1);
     FNodeIndex nodeIndex2 = fobject->addFNode(node2);
@@ -74,11 +74,11 @@ TEST_F(FObjectTest, AddFArgReturnsValidIndex) {
 }
 
 TEST_F(FObjectTest, RetrieveFNodeByIndex) {
-    FNode node(0); // Using 0 as a dummy evaluator index
+    FNode node(0); // Using 0 as a dummy function index
     FNodeIndex index = fobject->addFNode(node);
     
     const FNode& retrievedNode = fobject->fnode(index);
-    EXPECT_EQ(retrievedNode.evaluatorIndex(), 0);
+    EXPECT_EQ(retrievedNode.functionIndex(), 0);
 }
 
 TEST_F(FObjectTest, RetrieveFArgByIndex) {
@@ -132,7 +132,7 @@ TEST_F(FObjectTest, FNodeStreamOperator) {
     oss << node;
     
     std::string output = oss.str();
-    EXPECT_TRUE(output.find("FNode(evaluatorIndex=") != std::string::npos);
+    EXPECT_TRUE(output.find("FNode(functionIndex=") != std::string::npos);
 }
 
 TEST_F(FObjectTest, FArgStreamOperator) {

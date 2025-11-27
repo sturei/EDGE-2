@@ -7,26 +7,26 @@
 
 namespace e2 {
 
-    class FMax : public FEvaluator {
+    class FMax : public Function {
     public:
         bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
         void print(std::ostream& os) const override;
     };
 
 
-    class FMin : public FEvaluator {
+    class FMin : public Function {
         public:
             bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
     };
 
-    class FNegation : public FEvaluator {
+    class FNegation : public Function {
         public:
             bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
     };
 
-    class FConstant : public FEvaluator {
+    class FConstant : public Function {
         public:
             FConstant(double value) : m_value(value) {}
             bool evaluate(const Vec3d& _positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
@@ -35,7 +35,7 @@ namespace e2 {
             double m_value;
     };
 
-    class FHalfSpace : public FEvaluator {
+    class FHalfSpace : public Function {
         public:
             FHalfSpace(const Pla3d& plane) : m_plane(plane) {}
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
@@ -44,7 +44,7 @@ namespace e2 {
             Pla3d m_plane;
     };
 
-    class FFObject : public FEvaluator {
+    class FFObject : public Function {
         public:
             FFObject(const FObject& fobject) : m_fobject(fobject) {}
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;

@@ -106,12 +106,12 @@ namespace e2 {
         // evaluate this node
         const FNode& node = fobject.fnode(nodeIndex);
         bool result = false;
-        FEvaluator* evaluator = fobject.evaluator(nodeIndex);
-        if (evaluator) {
-            result = evaluator->evaluate(position, inputValues, output);
+        Function* function = fobject.function(nodeIndex);
+        if (function) {
+            result = function->evaluate(position, inputValues, output);
         } else {    
-            // Oops - no evaluator
-            std::cerr << "No evaluator found for " << node << std::endl;
+            // Oops - no function
+            std::cerr << "No function found for " << node << std::endl;
         }
 
         return result;

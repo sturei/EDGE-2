@@ -8,7 +8,7 @@
  * It defines the above as the set of points P where f(P) <= 0, f being a continuous 
  * real function of n variables.
  * 
- * The key concepts of the implementation are FNode, FArg and FEvaluator.
+ * The key concepts of the implementation are FNode, FArg and Function.
  * 
  * A function f(p) is either atomic or composed of other functions. FNodes represent these functions 
  * and FArgs represent the arguments to these functions (which are in turn the output of other functions).
@@ -20,8 +20,8 @@
  * whenever needed.
  * 
  * FNodes come with a few built-in types, such as MAX (which returns the maximum of its n arguments, 
- * implementing set intersection). Arbitrary functions may be implemented by subclassing the FEvaluator class and
- * attaching an instance of the subclassed evaluator to an FNode (and setting its type to EVALUATION).
+ * implementing set intersection). Arbitrary functions may be implemented by subclassing the Function class and
+ * attaching an instance of the subclassed function to an FNode (and setting its type to EVALUATION).
  *
  * FNodes and FArgs, once added to a FObject, cannot be removed (FNodes can be deactivated though).
  * Hence, indexes into the FObject's FNode and FArg vectors remain valid for the lifetime of the FObject.
@@ -34,7 +34,7 @@
 namespace e2 {
 
     std::ostream& operator<<(std::ostream& os, const FNode& node) {
-        os << "FNode(evaluatorIndex=" << node.m_evaluatorIndex << ")";
+        os << "FNode(functionIndex=" << node.m_functionIndex << ")";
         return os;
     }
 
@@ -43,9 +43,9 @@ namespace e2 {
         return os;
     }
 
-    FEvaluatorIndex FObject::addEvaluator(FEvaluator* evaluator) {
-        m_evaluators.push_back(evaluator);
-        return m_evaluators.size() - 1;
+    FunctionIndex FObject::addFunction(Function* function) {
+        m_functions.push_back(function);
+        return m_functions.size() - 1;
     }
 
     FNodeIndex FObject::addFNode(const FNode& fnode) {
