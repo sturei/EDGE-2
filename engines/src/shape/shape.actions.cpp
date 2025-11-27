@@ -159,6 +159,55 @@ namespace e2 {
             });
         }
 
+        void addEmptyObject(Document& doc, const json& payload) {
+            // This action adds an empty FObject to the shape store.
+            Store& store = doc.storeAt("shape");
+            store.changeState([](Model* model) {
+                FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
+                FObject* emptyObject = FRepFixtures::emptyObject();
+                objects.addObject(emptyObject);
+                std::cerr << "added Empty FObject" << std::endl;      // ---LOGGING---
+            });
+        }
+
+        void addSphereObject(Document& doc, const json& payload) {
+            // This action adds a sphere FObject to the shape store.
+            double radius = payload.value("radius", 1.0);
+
+            Store& store = doc.storeAt("shape");
+            store.changeState([radius, &doc](Model* model) {
+
+                // update the model
+                FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
+                FObject* sphereObject = FRepFixtures::sphere(radius);
+                objects.addObject(sphereObject);
+                std::cerr << "added Sphere FObject" << std::endl;      // ---LOGGING---
+
+                // update the scene in the client
+                dispatchClientActionsForObject(doc, *sphereObject, radius * 3, radius * 3, radius * 2 * 0.99);
+            });
+        }
+
+        void addBlockObject(Document& doc, const json& payload) {
+            // This action adds a block FObject to the shape store.
+            double width = payload.value("width", 1.0);
+            double height = payload.value("height", 1.0);
+            double depth = payload.value("depth", 1.0);
+
+            Store& store = doc.storeAt("shape");
+            store.changeState([width, height, depth, &doc](Model* model) {
+
+                // update the model
+                FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
+                FObject* blockObject = FRepFixtures::block(width, height, depth);
+                objects.addObject(blockObject);
+                std::cerr << "added Block FObject" << std::endl;      // ---LOGGING---
+
+                // update the scene in the client
+                dispatchClientActionsForObject(doc, *blockObject, width * 2, height * 2, depth * 1.5);
+            });
+        }
+        
         void addInfiniteRectangle(Document& doc, const json& payload) {
             // This action adds a 2d rectangle, with infinite z-extent, as an FObject
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
@@ -178,7 +227,61 @@ namespace e2 {
                 std::cerr << "added Infinite Rectangle" << std::endl;      // ---LOGGING---
 
                 // update the scene in the client
-                dispatchClientActionsForObject(doc, *rectangleObject);
+                double width = upperRight.x() - lowerLeft.x();
+                double height = upperRight.y() - lowerLeft.y();
+                dispatchClientActionsForObject(doc, *rectangleObject, width * 3, height * 3);
+            });
+        }
+
+        void addCappedRectangle(Document& doc, const json& payload) {
+            // This action adds a capped rectangle as an FObject
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+            double depth = payload.value("depth", 1.0);
+
+            Store& store = doc.storeAt("shape");
+            store.changeState([lowerLeft, upperRight, depth, &doc](Model* model) {
+
+                // update the model
+                FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
+                FObject* rectangleObject = FRepFixtures::cappedRectangle(lowerLeft, upperRight, depth);
+                objects.addObject(rectangleObject);
+                std::cerr << "added Capped Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the scene in the client
+                double width = upperRight.x() - lowerLeft.x();
+                double height = upperRight.y() - lowerLeft.y();
+                dispatchClientActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
+            });
+        }
+
+        void addExtrudedRectangle(Document& doc, const json& payload) {
+            // This action adds an extruded rectangle as an FObject
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+            double depth = payload.value("depth", 1.0);
+
+            Store& store = doc.storeAt("shape");
+            store.changeState([lowerLeft, upperRight, depth, &doc](Model* model) {
+
+                // update the model
+                FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
+                FObject* rectangleObject = FRepFixtures::extrudedRectangle(lowerLeft, upperRight, depth);
+                objects.addObject(rectangleObject);
+                std::cerr << "added Extruded Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the scene in the client
+                double width = upperRight.x() - lowerLeft.x();
+                double height = upperRight.y() - lowerLeft.y();
+                dispatchClientActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
             });
         }
     }

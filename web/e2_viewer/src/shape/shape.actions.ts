@@ -52,10 +52,30 @@ async function addSheetRoundRect(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Profiles::addRoundRect", payload);
 }
 
+async function addEmptyObject(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Objects::addEmptyObject", payload);
+}
+
+async function addSphereObject(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Objects::addSphereObject", payload);
+}
+
+async function addBlockObject(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Objects::addBlockObject", payload);
+}
+
 async function addInfiniteRectangle(doc: Document, payload: any): Promise<void> {
     // Create an infinite rectangular extrusion with spefified lowerLeft and upperRight corners.
     // The server creates the object as frep in its shape store, and returns client actions to add the appropriate graphics to the scene.
     await postAction(doc, "Objects::addInfiniteRectangle", payload);
+}
+
+async function addCappedRectangle(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Objects::addCappedRectangle", payload);
+}
+
+async function addExtrudedRectangle(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Objects::addExtrudedRectangle", payload);
 }
 
 export const pingModellerActionDef = { type: "Modeller::ping", function: pingModeller };
@@ -63,4 +83,10 @@ export const addWireRectangleActionDef = { type: "Sketches::addRectangle", funct
 export const addWireRoundRectActionDef = { type: "Sketches::addRoundRect", function: addWireRoundRect };
 export const addSheetRectangleActionDef = { type: "Profiles::addRectangle", function: addSheetRectangle };
 export const addSheetRoundRectActionDef = { type: "Profiles::addRoundRect", function: addSheetRoundRect };
+
+export const addEmptyObjectActionDef = { type: "Objects::addEmptyObject", function: addEmptyObject };
+export const addSphereObjectActionDef = { type: "Objects::addSphereObject", function: addSphereObject };
+export const addBlockObjectActionDef = { type: "Objects::addBlockObject", function: addBlockObject };
 export const addRectangleActionDef = { type: "Objects::addInfiniteRectangle", function: addInfiniteRectangle };          
+export const addCappedRectangleActionDef = { type: "Objects::addCappedRectangle", function: addCappedRectangle };
+export const addExtrudedRectangleActionDef = { type: "Objects::addExtrudedRectangle", function: addExtrudedRectangle };

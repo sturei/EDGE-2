@@ -17,11 +17,16 @@ const actionSuggestions = [
     '{"type":"Gfx::addBlock", "payload":{"width":1,"height":2,"depth":3, "color":16711680}}',
     '{"type":"Gfx::addProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":16711680}}',
     '{"type":"Modeller::ping", "payload": {} }',
-    '{"type":"Sketches::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
-    '{"type":"Sketches::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
-    '{"type":"Profiles::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
-    '{"type":"Profiles::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
-    '{"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":-1, "y":-1, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}'
+    '{"type":"Sketches::addRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
+    '{"type":"Sketches::addRoundRect", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
+    '{"type":"Profiles::addRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
+    '{"type":"Profiles::addRoundRect", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
+    '{"type":"Objects::addEmptyObject", "payload":{}}',
+    '{"type":"Objects::addSphereObject", "payload":{"radius":1.5}}',
+    '{"type":"Objects::addBlockObject", "payload":{"width":3, "height":2, "depth":5}}',
+    '{"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
+    '{"type":"Objects::addCappedRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":5}}',
+    '{"type":"Objects::addExtrudedRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":5}}'
   ];
   
   export function Actions() {
@@ -32,22 +37,18 @@ const actionSuggestions = [
         // Register actions with the document. These actions are the only valid way for the application to manipulate the drawlist.
         console.log("Registering actions");
 
-        document.registerActionFunction(grepActions.pingActionDef);
-        document.registerActionFunction(grepActions.addPointActionDef);
-        document.registerActionFunction(grepActions.addLineActionDef);
-        document.registerActionFunction(grepActions.addPolylineActionDef);
-        document.registerActionFunction(grepActions.addPlaneActionDef);
-        document.registerActionFunction(grepActions.addSphereActionDef);
-        document.registerActionFunction(grepActions.addBlockActionDef);
-        document.registerActionFunction(grepActions.addProfileActionDef);
-
-        document.registerActionFunction(shapeActions.pingModellerActionDef);
-        document.registerActionFunction(shapeActions.addWireRectangleActionDef);
-        document.registerActionFunction(shapeActions.addWireRoundRectActionDef);
-        document.registerActionFunction(shapeActions.addSheetRectangleActionDef);
-        document.registerActionFunction(shapeActions.addSheetRoundRectActionDef);
-
-        document.registerActionFunction(shapeActions.addRectangleActionDef);
+        for (const actionDef of Object.values(grepActions)) {
+            if (typeof actionDef === "object" && "type" in actionDef && "function" in actionDef) {
+                document.registerActionFunction(actionDef);
+            }
+        }
+          
+        for (const actionDef of Object.values(shapeActions)) {
+            if (typeof actionDef === "object" && "type" in actionDef && "function" in actionDef) {
+                document.registerActionFunction(actionDef);
+            }
+        }
+        
     }, []);
 
     /** This method takes a JSON string from an input form, converts it to an object representing an action, and dispatches the action to 

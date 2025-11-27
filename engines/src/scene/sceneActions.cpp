@@ -100,20 +100,21 @@ namespace e2 {
         }
     }
 
-    void dispatchClientActionsForObject(Document& doc, const FObject& fobject) {
+    void dispatchClientActionsForObject(Document& doc, const FObject& fobject, double width, double height, double depth) {
 
         // Generate a stack of images representing the SDF of the given object
-        int imageWidth = 100;
-        int imageHeight = 100;
+        
         int numSlabsX = 1;       // only one slab in X and Y for now, until "z" is replaced by "position" in the addPlane action (to allow placing the slabs arbitrarily in XY)
         int numSlabsY = 1;
+
+        // Choose image dimensions to give about 5 texels per world unit
+        int imageWidth = width * 5 / numSlabsX;
+        int imageHeight = height * 5 / numSlabsY;
+
         int numSlices = 5;
 
-        double width = 20.0;
-        double height = 20.0;
-        double depth = 20.0;
-        double pixelWidth = width / (imageWidth * numSlabsX);     // size of each pixel in world units
-        double pixelHeight = height / (imageHeight * numSlabsY); // size of each pixel in world units
+        double pixelWidth = width / (imageWidth * numSlabsX);     // size of each texel in world units
+        double pixelHeight = height / (imageHeight * numSlabsY);  // size of each texel in world units
         double sliceThickness = depth/(numSlices - 1);   // distance between slices
 
         std::vector<std::vector<int>> imageStack; // stack of images, each image is a vector of RGBA integers    

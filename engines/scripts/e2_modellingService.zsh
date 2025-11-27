@@ -14,7 +14,12 @@ Instructions:
     {"type":"Sketches::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
     {"type":"Profiles::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
     {"type":"Profiles::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
+    {"type":"Objects::addEmptyObject", "payload":{}}
+    {"type":"Objects::addSphereObject", "payload":{"radius":1.5}}
+    {"type":"Objects::addBlockObject", "payload":{"width":3, "height":2, "depth":1}}
     {"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
+    {"type":"Objects::addCappedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}
+    {"type":"Objects::addExtrudedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}
 
   Type 'q' to quit, or 'h' to show these instructions again.
 EOM
