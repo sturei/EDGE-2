@@ -173,7 +173,7 @@ namespace e2 {
 
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
-                FObject* rectangleObject = FRepFixtures::rectangle(lowerLeft, upperRight);
+                FObject* rectangleObject = FRepFixtures::infiniteRectangle(lowerLeft, upperRight);
                 objects.addObject(rectangleObject);
                 std::cerr << "added Infinite Rectangle" << std::endl;      // ---LOGGING---
 

@@ -2,7 +2,6 @@
 #include "frep/functions.h"
 #include "frep/fobject.h"
 #include "frep/frep.fixtures.h" 
-#include "brep/brep.fixtures.h"
 #include "utils/vec3d.h"
 #include <vector>
 
@@ -224,20 +223,17 @@ class FSDFTest : public ::testing::Test {
 protected:
     void SetUp() override {
         block = FRepFixtures::block(2.0, 2.0, 2.0);
-        sheetRectangle = BRepFixtures::sheetRectangle(Vec3d(-1.0, -1.0, 0.0), Vec3d(1.0, 1.0, 0.0));
-        infiniteExtrudedRectangle = FRepFixtures::infiniteExtrudedProfile(*sheetRectangle);
-        extrudedRectangle = FRepFixtures::extrudedProfile(*sheetRectangle, 20.0);
-        extrudedRectangleExact = FRepFixtures::extrudedProfileExact(*sheetRectangle, 20.0);
+        infiniteExtrudedRectangle = FRepFixtures::infiniteRectangle(Vec3d(-1.0, -1.0, 0.0), Vec3d(1.0, 1.0, 0.0));
+        extrudedRectangle = FRepFixtures::cappedRectangle(Vec3d(-1.0, -1.0, 0.0), Vec3d(1.0, 1.0, 0.0), 20.0);
+        extrudedRectangleExact = FRepFixtures::extrudedRectangle(Vec3d(-1.0, -1.0, 0.0), Vec3d(1.0, 1.0, 0.0), 20.0);
     }
     void TearDown() override {
         delete block;
-        delete sheetRectangle;
         delete infiniteExtrudedRectangle;
         delete extrudedRectangle;
         delete extrudedRectangleExact;
     }
     FObject* block;                       // unit half-side cube centered at origin, represented as 6 half-planes
-    Body* sheetRectangle;                 // unit half-side square in XY plane centered at origin, represented as brep sheet
     FObject* infiniteExtrudedRectangle;   // infinite prism, represented as unit square, extruded
     FObject* extrudedRectangle;           // finite prism, represented as unit square, extruded by 10
     FObject* extrudedRectangleExact;      // finite prism, represented as unit square, extruded by 10, exact SDF
