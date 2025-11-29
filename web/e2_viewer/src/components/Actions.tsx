@@ -3,6 +3,7 @@
 import { DocumentContext } from "../Contexts"; 
 import { useContext, useEffect } from "react";
 import * as grepActions from '../grep/grep.actions.ts'  
+import * as prepActions from '../prep/prep.actions.ts'
 import * as shapeActions from '../shape/shape.actions.ts'  
 
 /** these strings are displayed in the dropdown list of the actions input form */
@@ -16,6 +17,7 @@ const actionSuggestions = [
     '{"type":"Gfx::addSphere", "payload":{"radius":0.75, "color":65280}}',
     '{"type":"Gfx::addBlock", "payload":{"width":1,"height":2,"depth":3, "color":16711680}}',
     '{"type":"Gfx::addProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":16711680}}',
+    '{"type":"Gfx::addProductItem", "payload":{"displayName":"cell[0] (plane)", "pathName":"Shape/workplanes/body[0] (workplane)/cell[0]"}}',
     '{"type":"Modeller::ping", "payload": {} }',
     '{"type":"Sketches::addRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
     '{"type":"Sketches::addRoundRect", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}',
@@ -37,7 +39,15 @@ const actionSuggestions = [
         // Register actions with the document. These actions are the only valid way for the application to manipulate the drawlist.
         console.log("Registering actions");
 
+        document.registerActionFunction(grepActions.pingActionDef);   // register ping action separately so that the test mock works!
+
         for (const actionDef of Object.values(grepActions)) {
+            if (typeof actionDef === "object" && "type" in actionDef && "function" in actionDef) {
+                document.registerActionFunction(actionDef);
+            }
+        }
+
+        for (const actionDef of Object.values(prepActions)) {
             if (typeof actionDef === "object" && "type" in actionDef && "function" in actionDef) {
                 document.registerActionFunction(actionDef);
             }

@@ -1,9 +1,10 @@
 import { useContext } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Acknowledgements } from './components/Acknowledgements'
-import { Actions } from './components/Actions.tsx'
-import { Scene } from './components/Scene.tsx';
-import { DocumentContext } from './Contexts.ts';
+import { Actions } from './components/Actions'
+import { Scene } from './components/Scene';
+import { Structure } from './components/Structure';
+import { DocumentContext } from './Contexts';
 import './App.css';
 
 function App() {
@@ -17,14 +18,6 @@ function App() {
     )
   }
 
-  function ProductTreePlaceholder() {
-    return (
-      <>
-        <p className="text-gray-500 italic text-sm text-center"> Product tree goes here</p>
-      </>
-    )
-  }
-
   return (
     <div className="w-250">
     <DocumentContext value={document}>
@@ -33,11 +26,11 @@ function App() {
       </div>
       <div className="flex flex-row">
         <div className="left-sidebar w-15rem flex-none bg-blue-100">
-          <div className="grid grid-cols-1 grid-rows-2">
+          <div className="flex flex-col justify-between h-full">
             <div>
-              <ProductTreePlaceholder />
+              <Structure />
             </div>
-            <div className="align-bottom">
+            <div>
               <Acknowledgements />
             </div>
           </div>

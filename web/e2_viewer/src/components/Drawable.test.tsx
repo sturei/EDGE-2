@@ -58,7 +58,7 @@ describe('r3fFromDrawable', () => {
 
     it('should render plane geometry with default color', () => {
         const drawable: IDrawable = {
-            geometry: { type: 'plane', width: 5, height: 6 }
+            geometry: { type: 'plane', width: 5, height: 6, z:0 }
         };
         const result = jsxFromDrawable(drawable);
         expect(result).toBeDefined();

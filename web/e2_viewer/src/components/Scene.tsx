@@ -1,4 +1,4 @@
-/** This component sets up the 3D scene, including lights and cameras. 
+/** This component sets up the 3D graphics scene, including lights and cameras. 
  * It also creates the Scene store and Model within the Document, and uses that to update scene dynamically in response to 
  * state changes in the Scene store.
  */
@@ -7,8 +7,8 @@ import { useContext, useEffect, useState } from "react";
 import { OrbitControls } from '@react-three/drei'
 import { GRepModel } from '../grep/grepModel';
 import { Store } from '../document/store' 
-import { Drawlist } from './Drawlist.tsx'
-import { DocumentContext } from '../Contexts.ts';
+import { Drawlist } from './Drawlist'
+import { DocumentContext } from '../Contexts';
 import { type IDrawable } from "../grep/drawable";
 
 interface ISceneReactState {
@@ -34,7 +34,7 @@ export function Scene(){
         const sceneStore = document.getStore('scene');
         const sceneModel = sceneStore.getModel() as GRepModel;
         const newState:ISceneReactState = { ...reactState };
-        newState.drawlist = sceneModel.drawlist().slice();
+        newState.drawlist = sceneModel.drawlist().slice();   // Copy to force React to see it as changed in case elements have been added/removed/changed. Alternatives exist e.g. make it immutable etc.
         console.log(" New state:", newState);
         setReactState(newState);
     }

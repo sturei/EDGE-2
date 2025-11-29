@@ -17,14 +17,14 @@ using json = nlohmann::json;
 
 namespace e2 {
 
-    void dispatchClientActionsForAcorn(Document& doc, const Body& acornBody) {
+    void dispatchGraphicsActionsForAcorn(Document& doc, const Body& acornBody) {
         // The payload is a point
         const Vec3d& position = acornBody.cell(0).support().position();
         json payload = json::object({{"position", json::array({position.x(), position.y(), position.z()})}});
         doc.dispatchClientAction({"Gfx::addPoint", payload});
     }
 
-    void dispatchClientActionsForSketch(Document& doc, const Body& sketchBody) {
+    void dispatchGraphicsActionsForSketch(Document& doc, const Body& sketchBody) {
         // The payload for each edge is a polyline
         auto edges = getKSkeleton(1, sketchBody);
         for (const auto& edgeIndex : edges) {
@@ -39,7 +39,7 @@ namespace e2 {
         }
     }
 
-    void dispatchClientActionsForProfile(Document& doc, const Body& profileBody) {
+    void dispatchGraphicsActionsForProfile(Document& doc, const Body& profileBody) {
         // The payload is a collection of "paths", representing the outline of the given body.
         CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
         auto edges = getKBoundary(1, faceIndex, profileBody);
@@ -100,7 +100,7 @@ namespace e2 {
         }
     }
 
-    void dispatchClientActionsForObject(Document& doc, const FObject& fobject, double width, double height, double depth) {
+    void dispatchGraphicsActionsForObject(Document& doc, const FObject& fobject, double width, double height, double depth) {
 
         // Generate a stack of images representing the SDF of the given object
         
@@ -166,5 +166,57 @@ namespace e2 {
             }
         }
     }
+
+    static void ensureProductParentsExist(Document& doc) {
+        // Ensure parent items exists in the client
+        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+            {"pathName", "shape/workplanes"},
+            {"displayName", "workplanes"}
+        })});
+        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+            {"pathName", "shape/profiles"},
+            {"displayName", "profiles"}
+        })});
+        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+            {"pathName", "shape/objects"},
+            {"displayName", "objects"}
+        })});
+    }
+
+    void dispatchProductActionsForBody(Document& doc, const Body& body, size_t bodyIndex, const std::string& bodyType, const std::string& parentPathName) {
+
+        ensureProductParentsExist(doc);
+
+        // Add an item for the body
+        std::string bodyPathName = parentPathName + "/" + "body[" + std::to_string(bodyIndex) + "]";
+        std::string bodyDisplayName = "body[" + std::to_string(bodyIndex) + "] " + " (" + bodyType + ")";
+        json bodyPayload = json::object({
+            {"pathName", bodyPathName},
+            {"displayName", bodyDisplayName}
+        });
+        doc.dispatchClientAction({"Gfx::addProductItem", bodyPayload});
+
+        // TODO: add items for cells within the body
+        
+    }
+
+    void dispatchProductActionsForObject(Document& doc, const FObject& fobject, size_t objectIndex, const std::string& objectType, const std::string& parentPathName) {
+
+        ensureProductParentsExist(doc);
+
+        // Add an item for the object
+        std::string objectPathName = parentPathName + "/" + "body[" + std::to_string(objectIndex) + "]";
+        std::string objectDisplayName = "object[" + std::to_string(objectIndex) + "] " + " (" + objectType + ")";
+        json objectPayload = json::object({
+            {"pathName", objectPathName},
+            {"displayName", objectDisplayName}
+        });
+        doc.dispatchClientAction({"Gfx::addProductItem", objectPayload});
+
+        // TODO: add items for fnodes within the object (but maybe need to invent features first)
+        
+    }
+
+
 };
 

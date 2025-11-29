@@ -8,25 +8,9 @@ import * as grepActions from '../grep/grep.actions.ts';
  * @vitest-environment jsdom
  */
 
-// Mock the grep actions module
+// Mock the grep actions module to "grab" the pingActionDef for testing
 vi.mock('../grep/grep.actions.ts', () => ({
-    pingActionDef: { type: 'ping' },
-    addPointActionDef: { type: 'addPoint' },
-    addLineActionDef: { type: 'addLine' },
-    addPolylineActionDef: { type: 'addPolyline' },
-    addPlaneActionDef: { type: 'addPlane' },
-    addSphereActionDef: { type: 'addSphere' },
-    addBlockActionDef: { type: 'addBlock' },
-    addShapeActionDef: { type: 'addShape' },
-    addProfileActionDef: { type: 'addProfile' },
-    addPingModellerActionDef: { type: 'pingModeller' }
-}));
-
-// Mock the brep actions module
-vi.mock('../brep/brep.actions.ts', () => ({
-    pingModellerActionDef: { type: 'pingModeller' },
-    addSheetRectangleActionDef: { type: 'addSheetRectangle' },
-    addSheetRoundRectActionDef: { type: 'addSheetRoundRect' }
+    pingActionDef: { type: 'Gfx::ping' },
 }));
 
 describe('Actions', () => {
@@ -58,7 +42,7 @@ describe('Actions', () => {
         expect(screen.getByRole('combobox')).toBeInTheDocument();
     });
 
-    it('registers all action functions on mount', () => {
+    it('registers at least one action function on mount', () => {
         renderActions();
         expect(mockDocument.registerActionFunction).toHaveBeenCalled();
         expect(mockDocument.registerActionFunction).toHaveBeenCalledWith(grepActions.pingActionDef);

@@ -57,11 +57,13 @@ namespace e2 {
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* acornBody = BRepFixtures::acornBody(acornPosition);
-                sketches.addBody(acornBody);
+                size_t index = sketches.addBody(acornBody);
                 std::cerr << "added Acorn Body" << std::endl;      // ---LOGGING--- 
 
+                // update the product hierarchy in the client
+                dispatchProductActionsForBody(doc, *acornBody, index, "acorn", "shape/workplanes");
                 // update the scene in the client
-                dispatchClientActionsForAcorn(doc, *acornBody);
+                dispatchGraphicsActionsForAcorn(doc, *acornBody);
             });
         }
 
@@ -80,11 +82,14 @@ namespace e2 {
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* wireRectangleBody = BRepFixtures::wireRectangle(lowerLeft, upperRight);
-                sketches.addBody(wireRectangleBody);
+                size_t index = sketches.addBody(wireRectangleBody);
                 std::cerr << "added Wire Rectangle" << std::endl;      // ---LOGGING---
 
+                // update the product hierarchy in the client
+                dispatchProductActionsForBody(doc, *wireRectangleBody, index, "sketch", "shape/workplanes");
+
                 // update the scene in the client
-                dispatchClientActionsForSketch(doc, *wireRectangleBody);
+                dispatchGraphicsActionsForSketch(doc, *wireRectangleBody);
             });
         }
 
@@ -103,11 +108,14 @@ namespace e2 {
                 // update the model
                 BRepModel& sketches = dynamic_cast<ShapeModel*>(model)->sketches();
                 Body* wireRectangleBody = BRepFixtures::wireRoundRect(lowerLeft, upperRight, cornerRadius);
-                sketches.addBody(wireRectangleBody);
+                size_t index = sketches.addBody(wireRectangleBody);
                 std::cerr << "added Wire Rounded Rectangle" << std::endl;      // ---LOGGING---
 
+                // update the product hierarchy in the client
+                dispatchProductActionsForBody(doc, *wireRectangleBody, index, "sketch", "shape/workplanes");
+
                 // update the scene in the client
-                dispatchClientActionsForSketch(doc, *wireRectangleBody);
+                dispatchGraphicsActionsForSketch(doc, *wireRectangleBody);
             });
         }
 
@@ -126,11 +134,14 @@ namespace e2 {
                 // update the model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                 Body* sheetRectangleBody = BRepFixtures::sheetRectangle(lowerLeft, upperRight);
-                profiles.addBody(sheetRectangleBody);
+                size_t index = profiles.addBody(sheetRectangleBody);
                 std::cerr << "added Sheet Rectangle" << std::endl;      // ---LOGGING---
 
+                // update the product hierarchy in the client
+                dispatchProductActionsForBody(doc, *sheetRectangleBody, index, "profile", "shape/profiles");
+
                 // update the scene in the client
-                dispatchClientActionsForProfile(doc, *sheetRectangleBody);
+                dispatchGraphicsActionsForProfile(doc, *sheetRectangleBody);
 
             });
         }
@@ -151,22 +162,29 @@ namespace e2 {
                 // update the model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                 Body* sheetRoundRectBody = BRepFixtures::sheetRoundRect(lowerLeft, upperRight, cornerRadius);
-                profiles.addBody(sheetRoundRectBody);
+                size_t index = profiles.addBody(sheetRoundRectBody);
                 std::cerr << "added Sheet Rounded Rectangle" << std::endl;      // ---LOGGING---
 
+                // update the product hierarchy in the client
+                dispatchProductActionsForBody(doc, *sheetRoundRectBody, index, "profile", "shape/profiles");
+
                 // update the scene in the client
-                dispatchClientActionsForProfile(doc, *sheetRoundRectBody);
+                dispatchGraphicsActionsForProfile(doc, *sheetRoundRectBody);
             });
         }
 
         void addEmptyObject(Document& doc, const json& payload) {
             // This action adds an empty FObject to the shape store.
             Store& store = doc.storeAt("shape");
-            store.changeState([](Model* model) {
+            store.changeState([&doc](Model* model) {
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
                 FObject* emptyObject = FRepFixtures::emptyObject();
-                objects.addObject(emptyObject);
+                size_t index = objects.addObject(emptyObject);
                 std::cerr << "added Empty FObject" << std::endl;      // ---LOGGING---
+
+                // update the product hierarchy in the client
+                dispatchProductActionsForObject(doc, *emptyObject, index, "object", "shape/objects");
+
             });
         }
 
@@ -180,11 +198,14 @@ namespace e2 {
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
                 FObject* sphereObject = FRepFixtures::sphere(radius);
-                objects.addObject(sphereObject);
+                size_t index = objects.addObject(sphereObject);
                 std::cerr << "added Sphere FObject" << std::endl;      // ---LOGGING---
 
+                // update the product hierarchy in the client
+                dispatchProductActionsForObject(doc, *sphereObject, index, "object", "shape/objects");
+
                 // update the scene in the client
-                dispatchClientActionsForObject(doc, *sphereObject, radius * 3, radius * 3, radius * 2 * 0.99);
+                dispatchGraphicsActionsForObject(doc, *sphereObject, radius * 3, radius * 3, radius * 2 * 0.99);
             });
         }
 
@@ -200,11 +221,14 @@ namespace e2 {
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
                 FObject* blockObject = FRepFixtures::block(width, height, depth);
-                objects.addObject(blockObject);
+                size_t index = objects.addObject(blockObject);
                 std::cerr << "added Block FObject" << std::endl;      // ---LOGGING---
 
+                // update the product hierarchy in the client
+                dispatchProductActionsForObject(doc, *blockObject, index, "object", "shape/objects");
+
                 // update the scene in the client
-                dispatchClientActionsForObject(doc, *blockObject, width * 2, height * 2, depth * 1.5);
+                dispatchGraphicsActionsForObject(doc, *blockObject, width * 2, height * 2, depth * 1.5);
             });
         }
         
@@ -223,13 +247,16 @@ namespace e2 {
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
                 FObject* rectangleObject = FRepFixtures::infiniteRectangle(lowerLeft, upperRight);
-                objects.addObject(rectangleObject);
+                size_t index = objects.addObject(rectangleObject);
                 std::cerr << "added Infinite Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the product hierarchy in the client
+                dispatchProductActionsForObject(doc, *rectangleObject, index, "object", "shape/objects");
 
                 // update the scene in the client
                 double width = upperRight.x() - lowerLeft.x();
                 double height = upperRight.y() - lowerLeft.y();
-                dispatchClientActionsForObject(doc, *rectangleObject, width * 3, height * 3);
+                dispatchGraphicsActionsForObject(doc, *rectangleObject, width * 3, height * 3);
             });
         }
 
@@ -249,13 +276,16 @@ namespace e2 {
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
                 FObject* rectangleObject = FRepFixtures::cappedRectangle(lowerLeft, upperRight, depth);
-                objects.addObject(rectangleObject);
+                size_t index = objects.addObject(rectangleObject);
                 std::cerr << "added Capped Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the product hierarchy in the client
+                dispatchProductActionsForObject(doc, *rectangleObject, index, "object", "shape/objects");    
 
                 // update the scene in the client
                 double width = upperRight.x() - lowerLeft.x();
                 double height = upperRight.y() - lowerLeft.y();
-                dispatchClientActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
+                dispatchGraphicsActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
             });
         }
 
@@ -275,13 +305,16 @@ namespace e2 {
                 // update the model
                 FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
                 FObject* rectangleObject = FRepFixtures::extrudedRectangle(lowerLeft, upperRight, depth);
-                objects.addObject(rectangleObject);
+                size_t index = objects.addObject(rectangleObject);
                 std::cerr << "added Extruded Rectangle" << std::endl;      // ---LOGGING---
+
+                // update the product hierarchy in the client
+                dispatchProductActionsForObject(doc, *rectangleObject, index, "object", "shape/objects");
 
                 // update the scene in the client
                 double width = upperRight.x() - lowerLeft.x();
                 double height = upperRight.y() - lowerLeft.y();
-                dispatchClientActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
+                dispatchGraphicsActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
             });
         }
     }
