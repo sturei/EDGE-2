@@ -68,7 +68,7 @@ function Polyline({args, children} : {args: [Array<[number, number, number]>], c
     )
 }
 
-function LineAppearance({color} : {color: number}) {
+function LineAppearance({color} : {color?: number}) {
     // LineMaterial is not part of the main package. The easiest way to use it in r3f seems to be to wrap it like this.
     // If in future I can use drei Line, then this can be removed.
     const lineMaterial = new LineMaterial( { color } );
@@ -90,7 +90,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         console.log(`Creating block with dimensions width = ${geometry.width}, height = ${geometry.height}, depth = ${geometry.depth}`);
         return (
             <Box args={[geometry.width, geometry.height, geometry.depth]}>
-                <meshStandardMaterial color={appearance?.color??Color.Red} />
+                <meshStandardMaterial color={appearance?.color??Color.get("red")} />
             </Box>
         );
     }
@@ -111,7 +111,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         else {
             return (
                 <Plane args={[geometry.width, geometry.height]} position={[0,0,geometry.z]}>
-                    <meshStandardMaterial color={appearance?.color??Color.Blue} side={THREE.DoubleSide} />
+                    <meshStandardMaterial color={appearance?.color??Color.get("blue")} side={THREE.DoubleSide} />
                 </Plane>
             );
         }
@@ -120,7 +120,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         console.log(`Creating sphere with radius: ${geometry.radius}`);
         return (
             <Sphere args={[geometry.radius, 32, 32]}>
-                <meshStandardMaterial color={appearance?.color??Color.Green} />
+                <meshStandardMaterial color={appearance?.color??Color.get("green")} />
             </Sphere>
         );
     }
@@ -128,7 +128,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         console.log(`Creating line from ${geometry.start} to ${geometry.end}`);
         return (
             <Line args={[geometry.start, geometry.end]}>
-                <LineAppearance color={appearance?.color??Color.Blue} />
+                <LineAppearance color={appearance?.color??Color.get("blue")} />
             </Line>
         );
     }        
@@ -136,7 +136,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         console.log(`Creating polyline with ${geometry.positions.length} positions`);
         return (
             <Polyline args={[geometry.positions]}>
-                <LineAppearance color={appearance?.color??Color.Blue} />
+                <LineAppearance color={appearance?.color??Color.get("Blue")} />
             </Polyline>
         );
     }        
@@ -145,7 +145,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         const size = appearance?.type === 'point' ? appearance.size ?? 4 : 4;
         return (
             <Point args={[geometry.position]}>
-                <pointsMaterial color={appearance?.color ?? Color.Green} size={size} sizeAttenuation={false} />
+                <pointsMaterial color={appearance?.color ?? Color.get("green")} size={size} sizeAttenuation={false} />
             </Point>
         );
     }
@@ -153,7 +153,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         console.log(`Creating profile with ${geometry.paths.length} paths`);    // --- DEBUG ---
         return(
             <Profile args={[geometry.paths]}>
-                <meshStandardMaterial color={appearance?.color??Color.White} side={THREE.DoubleSide} />
+                <meshStandardMaterial color={appearance?.color??Color.get("white")} side={THREE.DoubleSide} />
             </Profile>
         )
     }

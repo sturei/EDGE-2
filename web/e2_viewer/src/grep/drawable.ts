@@ -1,19 +1,20 @@
 /**
- * Definitions for drawable geometries and appearances.
- * The drawlist in a GRepModel is just a vector of IDrawable objects.
- * This is a tiny subset of what can be done with three.js/react-three-fiber/drei. Small is simple!
+ * Definitions for drawable items.
+ * A drawable simply a piece of geometry together with its appearance.
+ * The drawlist in a GRepModel is just a vector of drawables.
+ * Of course this is just a tiny subset of what can be done with three.js.
  */
 
 /** Appearances */
 
-export const Color = {
-    Red: 0xff0000,              // 16711680 in decimal
-    Green: 0x00ff00,            // 65280 in decimal
-    Blue: 0x0000ff,             // 255 in decimal
-    White: 0xffffff,            // 16777215 in decimal
-    Gray: 0x808080,             // 8421504 in decimal
-    Yellow: 0xffff00            // 16776960 in decimal
-};
+export const Color = new Map<string, number> ([
+    ["red", 0xff0000],              // 16711680 in decimal
+    ["green", 0x00ff00],            // 65280 in decimal
+    ["blue", 0x0000ff],             // 255 in decimal
+    ["white", 0xffffff],            // 16777215 in decimal
+    ["gray", 0x808080],             // 8421504 in decimal
+    ["yellow", 0xffff00]            // 16776960 in decimal  
+]);
 
 /** Defines the appearance of point-like drawables */
 export interface IPointAppearance {
