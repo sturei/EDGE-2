@@ -5,6 +5,16 @@ import { Actions } from './components/Actions'
 import { Scene } from './components/Scene';
 import { Structure } from './components/Structure';
 import { DocumentContext } from './Contexts';
+
+// At present, React Three Fiber does not include types for Three.js WebGPU extensions, hence this manual extension
+import { extend,type ThreeToJSXElements } from '@react-three/fiber';
+declare module "@react-three/fiber" {
+  interface ThreeElements extends ThreeToJSXElements<typeof THREE> {}
+}
+import * as THREE from "three/webgpu";
+extend(THREE as any)
+import { type WebGPURendererParameters } from "three/src/renderers/webgpu/WebGPURenderer.js";
+
 import './App.css';
 
 function App() {
@@ -36,7 +46,16 @@ function App() {
           </div>
         </div>
         <div className="graphicsArea h-140 flex-1 bg-gray-200">
-          <Canvas>
+          <Canvas
+            gl={async (props) => {
+              console.warn("WebGPU is supported");
+              const renderer = new THREE.WebGPURenderer(
+              props as WebGPURendererParameters
+            );
+            await renderer.init();
+            return renderer;
+          }}
+          >           
             <Scene/>
           </Canvas>
         </div>

@@ -10,6 +10,7 @@ import { Store } from '../document/store'
 import { Drawlist } from './Drawlist'
 import { DocumentContext } from '../Contexts';
 import { type IDrawable } from "../grep/drawable";
+import { Raymarch } from "./Raymarch";
 
 interface ISceneReactState {
     drawlist: IDrawable[]
@@ -44,7 +45,8 @@ export function Scene(){
         <ambientLight color={0x505050} />
         <directionalLight intensity={0.5} position={[0.75, 0.25, 0.25]} />
         <directionalLight intensity={0.5} position={[-0.75, 0.25, 0.25]} />
-        {<Drawlist drawlist={reactState.drawlist} />}
+        <Drawlist drawlist={reactState.drawlist} />
+        <Raymarch />
         <OrbitControls />
         </>
     )

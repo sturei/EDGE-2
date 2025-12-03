@@ -1,7 +1,6 @@
 /**
  * Definitions for drawable items.
- * A drawable simply a piece of geometry together with its appearance.
- * The drawlist in a GRepModel is just a vector of drawables.
+ * A drawable is simply a piece of geometry together with its appearance.
  * Of course this is just a tiny subset of what can be done with three.js.
  */
 
