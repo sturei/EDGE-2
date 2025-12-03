@@ -12,7 +12,6 @@ import { DocumentContext } from '../Contexts';
 import { type IDrawable } from "../grep/drawable";
 import { RaymarchedScene } from "./Raymarch";
 import type { IShaderNode } from '../grep/shaderNode.ts'    
-import { vec3 } from 'three/tsl'
 
 interface ISceneReactState {
     drawlist: IDrawable[]
@@ -39,7 +38,7 @@ export function Scene(){
         {
         type: 'block',
         pathName: 'shape0/block',
-        parameters: new Map([['dimensions', vec3(1.0, 2.0, 1.0)]]),
+        parameters: new Map([['dimensions', {width:1.0, height:2.0, depth:1.0}]]),
         childIndices: []
         },
     ];

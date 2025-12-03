@@ -36,7 +36,8 @@ export const torus = Fn(([position, radius, thickness]: [any, any, any]) => {
     return length(vec2(distance, position.y)).sub(thickness);
 })
 
-export const block = Fn(([position, dimensions] : [any, any]) => {
+export const block = Fn(([position, width, height, depth] : [any, any, any, any]) => {
+    const dimensions = vec3(width, height, depth);
     const distance = abs(position).sub(dimensions);
     return length(max(distance, 0.0)).add(
         min(max(distance.x, max(distance.y, distance.z)), 0.0)

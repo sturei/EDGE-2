@@ -1,6 +1,6 @@
 import { sphere, block } from './sdfPrimitives';
 import { type IShaderNode } from '../../grep/shaderNode';
-import{ Fn, vec3, min } from 'three/tsl';    
+import { Fn, min } from 'three/tsl';    
 
 function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
     const node = nodes[nodeIndex];
@@ -11,9 +11,9 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
         });
     }
     else if (node.type === 'block') {
-        const dimensions = node.parameters?.get('dimensions') ?? vec3(1.0, 1.0, 1.0);
+        const dimensions = node.parameters?.get('dimensions') ?? {width:1.0, height:1.0, depth:1.0};
         return Fn(([position] : [any]) => {
-            return block(position, dimensions);
+            return block(position, dimensions.width, dimensions.height, dimensions.depth);
         });
     }
     else if (node.type === 'union') {

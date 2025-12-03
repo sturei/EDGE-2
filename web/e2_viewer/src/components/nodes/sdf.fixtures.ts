@@ -1,4 +1,4 @@
-import { Fn, vec3, length, abs, max, min, add, mul, time, oscSine } from 'three/tsl'
+import { Fn, vec3, length, abs, max, min, time, oscSine } from 'three/tsl'
 
 const Sphere = Fn(([position, radius]: [any, any]) => {
   return length(position).sub(radius)
