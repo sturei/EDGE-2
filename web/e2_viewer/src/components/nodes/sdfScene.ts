@@ -38,6 +38,17 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
 }
 
 export function generateScene(nodes: IShaderNode[]) {
-    return generateNode(0, nodes);    // root node is always at index 0, by convention
+    try {
+        if (nodes.length == 0) {
+            throw new Error("No nodes provided to generateScene");
+        }
+        return generateNode(0, nodes);    // root node is always at index 0, by convention
+    }
+    catch (error) {
+        console.error("Error generating scene:", error);
+        return Fn(([position] : [any]) => {
+            return sphere(position, 0);   // return a zero-radius sphere on error
+        });
+    }
 }
 
