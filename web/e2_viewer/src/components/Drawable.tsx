@@ -4,10 +4,13 @@
 // Later will come the usual use-memo, use-ref etc.
 
 import  { type IDrawable, Color } from '../grep/drawable';
-import {Box, Sphere, Plane} from '@react-three/drei'  
-import { Line2, LineGeometry, LineMaterial } from 'three-stdlib'
-import * as THREE from 'three';
+import { Box, Sphere, Plane } from '@react-three/drei'  
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js'
+import { Line2NodeMaterial } from 'three/webgpu';
+import { Line2 } from 'three/addons/lines/webgpu/Line2.js';
+import * as THREE from 'three/webgpu';
 import type { JSX } from 'react';
+
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
@@ -69,9 +72,7 @@ function Polyline({args, children} : {args: [Array<[number, number, number]>], c
 }
 
 function LineAppearance({color} : {color?: number}) {
-    // LineMaterial is not part of the main package. The easiest way to use it in r3f seems to be to wrap it like this.
-    // If in future I can use drei Line, then this can be removed.
-    const lineMaterial = new LineMaterial( { color } );
+    const lineMaterial = new Line2NodeMaterial( { color } );
     return (
         <primitive object={lineMaterial} />
     )
@@ -142,6 +143,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
     }        
     else if (geometry.type === 'point') {
         console.log(`Creating point at position: ${geometry.position}`);
+        // Note: size is not honoured in webgpu - points are always 1 pixel. The recommended approach is to use point sprites instead.
         const size = appearance?.type === 'point' ? appearance.size ?? 4 : 4;
         return (
             <Point args={[geometry.position]}>

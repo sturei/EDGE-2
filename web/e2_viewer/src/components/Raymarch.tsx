@@ -66,9 +66,10 @@ function generateRaymarchedScene(nodes: IShaderNode[]) {
         const ambient = vec3(0.2)
 
         // Step 2: Diffuse lighting - gives our shape a 3D look by simulating how light reflects in all directions
-        const lightDir = normalize(vec3(1, 1, 1))
+        const lightDir_1 = normalize(vec3(0.75, 0.25, 0.25))
+        const lightDir_2 = normalize(vec3(-0.75, 0.25, 0.25))
         const lightColor = vec3(1, 1, 0.9)
-        const dp = max(0, dot(lightDir, normal))
+        const dp = max(0, dot(lightDir_1, normal)).add(max(0, dot(lightDir_2, normal))).mul(0.5)
 
         const diffuse = dp.mul(lightColor)
 
@@ -80,7 +81,7 @@ function generateRaymarchedScene(nodes: IShaderNode[]) {
         const hemi = mix(groundColor, skyColor, hemiMix)
 
         // Step 4: Phong specular - Reflective light and highlights
-        const ph = normalize(reflect(lightDir.negate(), normal))
+        const ph = normalize(reflect(lightDir_1.negate(), normal))
         const phongValue = max(0, dot(viewDir, ph)).pow(32)
 
         const specular = vec3(phongValue).toVar()
