@@ -5,19 +5,13 @@
 */
 
 import {    
-    float,
     Fn,
     length,
     vec3,
     vec2,
     min,
-    negate,
     abs,
-    max,
-    time,
-    sin,
-    cos,
-    atan
+    max
 } from 'three/tsl'
 
 export const sphere = Fn(([position, radius]: [any, any]) => {
@@ -54,34 +48,5 @@ export const cylinder = Fn(([position, radius, height]: [any, any, any]) => {
     )
 })
 
-export const corrugatedCylinder = Fn(([position, radius, height]: [any, any, any]) => {
-    const angle = atan(position.x, position.z)
-        const bumps = cos(angle.mul(sin(time).mul(6).add(6))).mul(float(0.15))
-        const distance = vec2(
-          length(position.xz).sub(radius).add(bumps),
-          position.y.abs().sub(height)
-        )
-        return min(max(distance.x, distance.y), 0.0).add(
-          length(max(distance, 0.0))
-        )
-})
-
-export const intersectedSphereBox = Fn(([position, radius]: [any, any]) => {
-    const circle = length(position).sub(radius.add(0.33))
-    const box = block(position, vec3(radius))
-    return max(circle, box)
-})
-
-export const subtractedSphereBox = Fn(([position, radius]: [any, any]) => {
-    const circle = length(position).sub(radius.add(0.33))
-    const box = block(position, vec3(radius))
-    return max(negate(circle), box)
-})
-
-export const unionedSphereBox = Fn(([position, radius]: [any, any]) => {
-    const circle = length(position).sub(radius.add(0.33))
-    const box = block(position, vec3(radius))
-    return min(circle, box)
-})
 
 
