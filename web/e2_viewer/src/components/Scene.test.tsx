@@ -13,7 +13,9 @@ import { Scene } from './Scene';
 
 // Mock react-three-fiber and drei
 vi.mock('@react-three/fiber', () => ({
-    Canvas: ({ children }: { children: React.ReactNode }) => <div data-testid="canvas">{children}</div>
+    Canvas: ({ children }: { children: React.ReactNode }) => <div data-testid="canvas">{children}</div>,
+    useThree: () => ({ camera: {}, scene: {} }),
+    useFrame: vi.fn()
 }));
 
 vi.mock('@react-three/drei', () => ({

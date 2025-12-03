@@ -37,12 +37,12 @@ describe('GRepModel', () => {
             childIndices: [1, 2]
         };
         const firstNode: IShaderNode = {
-            pathName: "node1",
+            pathName: "root/node1",
             type: "sphere",
             parameters: {radius: 1.0}
         };
         const secondNode: IShaderNode = {
-            pathName: "node2",
+            pathName: "root/node2",
             type: "block",
             parameters: {width: 1.0, height: 2.0, depth: 3.0}
         };
