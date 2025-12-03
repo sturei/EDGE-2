@@ -12,6 +12,7 @@ import { type IShaderNode } from '../grep/shaderNode';
 export class GRepModel extends Model {
     private m_drawList: IDrawable[] = [];
     private m_sdfScene: IShaderNode[] = []; // SDF scene as a list of shader nodes, root node at index 0.
+    private m_sdfGuid: string = "Initial State";  // GUID gets updated to indicate that the SDF scene should be updated;
 
     constructor() {
         super();
@@ -56,12 +57,71 @@ export class GRepModel extends Model {
         return this.m_sdfScene;
     }
 
+
     addShaderNode(node: IShaderNode): number {
+        // Prevent adding duplicate nodes
+        const existingNode = this.findNode(node.pathName);
+        if (existingNode) {
+            console.log(`PRepModel.addNode: node with pathName='${node.pathName}' already exists. Skipping add.`);
+            return this.m_sdfScene.indexOf(existingNode);
+        }
+
+        // Check that the path start matches the root item if it exists
+        if (this.m_sdfScene.length > 0) {
+            const rootNode = this.m_sdfScene[0];
+            if (!node.pathName.startsWith(rootNode.pathName)) {
+                throw new Error(`GRepModel.addShaderNode: node pathName='${node.pathName}' does not start with root node pathName='${rootNode.pathName}'`);
+            }
+        }
+
+        // Check that parent node exists.
+        const parentNode = this.findParentNode(node);
+        if (this.m_sdfScene.length > 0 && !parentNode) {
+            throw new Error(`GRepModel.addShaderNode: parent node for pathName='${node.pathName}' does not exist`);
+        }
+
+        // Add the node
         const index = this.m_sdfScene.push(node) - 1;
+
+        // Add the node as a child of its parent
+        if (parentNode) {
+            if (!parentNode.childIndices) {
+                parentNode.childIndices = [];
+            }
+            parentNode.childIndices.push(index);
+            console.log(`  Added as child of parent node=${parentNode.pathName}`);
+        }
 
         console.log(`GRepModel.addShaderNode: node=${node.pathName}, type=${node.type}, index=${index}`);
         return index;
-    }  
+    }
+
+    sdfGuid(): string {
+        return this.m_sdfGuid;
+    }
+
+    setSdfGuid(guid: string): void {
+        this.m_sdfGuid = guid;
+    }
+
+    private findNode(pathName: string): IShaderNode | null {
+        for (const node of this.m_sdfScene) {
+            if (node.pathName === pathName) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    private findParentNode(node: IShaderNode): IShaderNode | null {
+        const parentPathName = node.pathName.substring(0, node.pathName.lastIndexOf('/'));
+        for (const potentialParent of this.m_sdfScene) {
+            if (potentialParent.pathName === parentPathName) {
+                return potentialParent;
+            }
+        }
+        return null;
+    }
 
     toString(): string {
         return `GrepModel(numDrawables=${this.numDrawables()}, numShaderNodes=${this.numShaderNodes()})`;

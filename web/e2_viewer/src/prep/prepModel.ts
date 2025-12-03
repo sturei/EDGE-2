@@ -47,7 +47,7 @@ export class PRepModel extends Model {
             }
         }
 
-        // Ensure parent items exist
+        // Ensure parent items exist.
         this.ensureParentItems(item);
 
         // Add the item
@@ -85,6 +85,7 @@ export class PRepModel extends Model {
         return null;
     }
 
+    // Handy utility - auto-create the parents if they don't exist.
     private ensureParentItems(item: IProductItem): void {
         return this.ensureParentItemsRecursive(item.pathName);
     }
@@ -103,7 +104,7 @@ export class PRepModel extends Model {
 
         // Create parent if it doesn't exist
         if (!this.findItem(parentPath)) {
-            // use the path segment as the display name for want of anything better.
+            // use the path segment as the display name for want of anything better. TODO: add a "displayPathname" concept
             const parentDisplayName = parentPath.substring(parentPath.lastIndexOf('/') + 1);
 
             const parentItem: IProductItem = {

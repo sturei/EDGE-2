@@ -45,7 +45,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="graphicsArea h-140 flex-1 bg-gray-200">
+        <div className="graphicsArea h-140 flex-1 bg-slate-800">
           <Canvas
             gl={async (props) => {
               console.warn("WebGPU is supported");

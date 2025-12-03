@@ -147,7 +147,7 @@ function generateRaymarchedScene(nodes: IShaderNode[]) {
     return raymarch();    
 }
 
-export function RaymarchedScene({nodes}: {nodes: IShaderNode[]}) {
+export function RaymarchedScene({nodes, guid}: {nodes: IShaderNode[], guid: string}) {
   const camera = useThree((state) => state.camera)
   const scene = useThree((state) => state.scene)    
 
@@ -157,15 +157,18 @@ export function RaymarchedScene({nodes}: {nodes: IShaderNode[]}) {
     })
 
     useEffect(() => {
+        if (!nodes || nodes.length === 0) {
+            return;
+        }
         // Set the scene background to the raymarched scene
         console.log("Generating sdf nodes for background");
-        scene.background = new THREE.Color(0xabcdef); // Set background color
+        scene.background = new THREE.Color(0x000000); // Set background color
         scene.backgroundNode = generateRaymarchedScene(nodes);
         return () => {
             scene.background = null; // Clean up on unmount
             scene.backgroundNode = null;
         };
-    }, [scene]);
+    }, [scene, guid]);
 
   return null;
 }

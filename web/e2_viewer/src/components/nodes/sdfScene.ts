@@ -11,9 +11,11 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
         });
     }
     else if (node.type === 'block') {
-        const dimensions = node.parameters?.get('dimensions') ?? {width:1.0, height:1.0, depth:1.0};
+        const width = node.parameters?.get('width') ?? 1.0;
+        const height = node.parameters?.get('height') ?? 1.0;
+        const depth = node.parameters?.get('depth') ?? 1.0;
         return Fn(([position] : [any]) => {
-            return block(position, dimensions.width, dimensions.height, dimensions.depth);
+            return block(position, width, height, depth);
         });
     }
     else if (node.type === 'union') {

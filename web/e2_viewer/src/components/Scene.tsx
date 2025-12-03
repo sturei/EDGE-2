@@ -14,14 +14,17 @@ import { RaymarchedScene } from "./Raymarch";
 import type { IShaderNode } from '../grep/shaderNode.ts'    
 
 interface ISceneReactState {
-    drawlist: IDrawable[]
+    drawlist: IDrawable[],
+    nodes: IShaderNode[],
+    guid: string
 }
-const emptyDrawlist:ISceneReactState = {drawlist: new Array<IDrawable>()};
+const initialState:ISceneReactState = {drawlist: new Array<IDrawable>(), nodes: new Array<IShaderNode>(), guid: "Initial State"};
 
 export function Scene(){
     const document = useContext(DocumentContext);
-    const [reactState, setReactState] = useState(emptyDrawlist);
+    const [reactState, setReactState] = useState(initialState);
 
+    /*
     const nodes : IShaderNode[] = [
         {
         type: 'union',
@@ -42,7 +45,7 @@ export function Scene(){
         childIndices: []
         },
     ];
-
+*/
 
     /** Sets up the Scene Model and Store */
     useEffect(() => {
@@ -59,6 +62,11 @@ export function Scene(){
         const sceneModel = sceneStore.getModel() as GRepModel;
         const newState:ISceneReactState = { ...reactState };
         newState.drawlist = sceneModel.drawlist().slice();   // Copy to force React to see it as changed in case elements have been added/removed/changed. Alternatives exist e.g. make it immutable etc.
+        if (sceneModel.sdfGuid() !== newState.guid) {
+            newState.guid = sceneModel.sdfGuid();
+            newState.nodes = sceneModel.shaderNodes();   // Don't need to copy because the Guid has changed.
+            console.log(" SDF scene updated, new GUID:", newState.guid);
+        }
         console.log(" New state:", newState);
         setReactState(newState);
     }
@@ -69,7 +77,7 @@ export function Scene(){
         <directionalLight intensity={0.5} position={[0.75, 0.25, 0.25]} />
         <directionalLight intensity={0.5} position={[-0.75, 0.25, 0.25]} />
         <Drawlist drawlist={reactState.drawlist} />
-        <RaymarchedScene nodes = {nodes} />
+        <RaymarchedScene nodes={reactState.nodes} guid={reactState.guid} />
         <OrbitControls />
         </>
     )

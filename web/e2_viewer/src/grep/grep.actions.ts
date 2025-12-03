@@ -2,6 +2,7 @@ import { Document } from "../document/document";
 import { Model } from "../document/model";
 import { GRepModel } from "../grep/grepModel";
 import { Color, type IDrawable } from "../grep/drawable";
+import type { IShaderNode } from "./shaderNode";
 
 function ping(_doc: Document, _payload: any): void {
     // This action just writes "pong" to stderr. Useful for testing that the pieces are connected.
@@ -188,6 +189,65 @@ function addProfile(doc: Document, payload: any): void {
     console.log("added Profile");      // ---DEBUG---
 }
 
+function addSdfNode(doc: Document, payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        const type = payload.type;
+        if (!type) {
+            console.error("addSdfNode action requires 'type' in payload");
+            return;
+        }
+        else if (type === 'sphere') {
+            const radius = payload.radius ?? 1.0;
+            const node: IShaderNode = {
+                type: 'sphere',
+                pathName: payload.pathName ?? 'sphere',
+                parameters: new Map([['radius', radius]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'block') {
+            const width = payload.width ?? 1.0;
+            const height = payload.height ?? 1.0;
+            const depth = payload.depth ?? 1.0;
+            const node: IShaderNode = {
+                type: 'block',
+                pathName: payload.pathName ?? 'block',
+                parameters: new Map([['width', width], ['height', height], ['depth', depth]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'union') {
+            const node : IShaderNode = {
+                type: 'union',
+                pathName: payload.pathName ?? 'union',
+                parameters: new Map(),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else {
+            console.error(`addSdfNode action: unknown type '${type}'`);
+        }
+    });
+    console.log("added SDF Node");      // ---DEBUG---
+}
+
+function updateSdfScene(doc: Document, _payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        // Update the SDF scene GUID to indicate that the SDF scene has changed.
+        const newGuid = crypto.randomUUID();
+        grepModel.setSdfGuid(newGuid);
+        console.log("Updated SDF scene GUID to:", newGuid);
+    }
+    );
+}
+
 
 export const pingActionDef = { type: "Gfx::ping", function: ping };
 export const addPointActionDef = { type: "Gfx::addPoint", function: addPoint };
@@ -197,3 +257,5 @@ export const addPlaneActionDef = { type: "Gfx::addPlane", function: addPlane };
 export const addSphereActionDef = { type: "Gfx::addSphere", function: addSphere };
 export const addBlockActionDef = { type: "Gfx::addBlock", function: addBlock };
 export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
+export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
+export const updateSdfSceneActionDef = { type: "Gfx::updateSdfScene", function: updateSdfScene };
