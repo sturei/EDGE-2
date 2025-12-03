@@ -1,85 +1,43 @@
+// Acknowledgements:
+// Much of the shader code is adapted from the excellent tutorials by Inigo Quilez (https://iquilezles.org/) 
+// and the article "How to Create a Liquid Raymarching Scene Using Three.js Shading Language" 
+// by Maryam Hashemi on Codrops (https://tympanus.net/codrops/2024/07/15/how-to-create-a-liquid-raymarching-scene-using-three-js-shading-language/)
+// and the TSL Raymarching tutorial (https://sbcode.net/tsl/raymarching/).
+// Many thanks to them for sharing their knowledge!
+
+
 import { useThree } from '@react-three/fiber'
-import * as THREE from 'three'
+import * as THREE from 'three/webgpu'
 import { useFrame } from '@react-three/fiber'
 import { useEffect } from 'react'
-//import { sdfScene } from './nodes/sdfScene.ts';
-
+import { generateScene } from './nodes/sdfScene.ts';
 
 import {    
     float,
     Fn,
-  uniform,
-  Loop,
+    uniform,
+    Loop,
     If,
     Break,
-  length,
-  vec3,
-  vec2,
+    length,
+    vec3,
+    vec2,
     dot,
     reflect,
     mix,
-    min,
     max,
-    abs,
-    oscSine,
     normalize,
-    positionLocal,
-    time
+    positionLocal
 } from 'three/tsl'
 
 import type { IShaderNode } from '../grep/shaderNode.ts'
-import { sdfScene } from './nodes/sdfScene.ts'
 
-// use this when rendering to a plane instead of the background
-//const raymarchMaterial = new MeshBasicNodeMaterial()
+const uCameraPosition = uniform(new THREE.Vector3())
 
-const cameraPosition = uniform(new THREE.Vector3())
-const cameraTarget = uniform(new THREE.Vector3())
+function generateRaymarchedScene(nodes: IShaderNode[]) {
 
-const Sphere = Fn(([position, radius]: [any, any]) => {
-  return length(position).sub(radius)
-})
-
-const Box = Fn(([position, dimensions] : [any, any]) => {
-        const distance = abs(position).sub(dimensions)
-        //return length(max(distance, 0.0))  // better if you don't need internal calculations. E.g, intersect or subtraction
-        return length(max(distance, 0.0)).add(
-          min(max(distance.x, max(distance.y, distance.z)), 0.0)
-        )
-})
-
-const SmoothMinimum = Fn(([a, b, k]: [any, any, any]) => {
-  const h = max(k.sub(abs(a.sub(b))), 0).div(k)
-  return min(a, b).sub(h.mul(h).mul(k).mul(0.25))
-})
-
-
-const sdfSceneTestFixture = Fn(([position]: [any]) => {
-    const t = time.mul(0.2)
-
-    const sphere = Sphere(position.sub(vec3(0, 0, 0)), 1)
-    const translatedPos = position.add(vec3(oscSine(t).mul(4).sub(2), 0, 0)); // oscSine returns [0,1]
-    const movingSphere = Sphere(translatedPos.sub(vec3(0, 1, 0)), 0.5)
-    const box = Box(position.sub(vec3(0, 0, 0)), vec3(1,2,3).mul(0.5))
-    const distance = SmoothMinimum(sphere, movingSphere, 0.5);
-    distance.assign(min(distance, box));
-
-    return distance
-})
-
-function generateRaymarchedScene() {
-    const nodes : IShaderNode[] = [
-        {
-        type: 'sphere',
-        pathName: 'shape0',
-        parameters: new Map([['radius', 1.0]]),
-        childIndices: []
-        }];
-
-    const sceneNode = sdfSceneTestFixture;
-    const sceneNodeOther = Fn(([position] : [any]) => {
-        return Sphere(position, 1.0);
-    });
+    // The scene node is referenced in the raymarching loop and in the normal calculation
+    const sceneNode = generateScene(nodes);
 
     const calcNormal = Fn(([p]: [any]) => {
         const eps = float(0.0001)
@@ -155,16 +113,15 @@ function generateRaymarchedScene() {
     })
 
     const raymarch = Fn(() => {
-
         // Initialize the ray and its direction
-        const p = positionLocal;   // I assume positionLocal, on the background node, is in view space
-        const rayOrigin = cameraPosition;
+        const p = positionLocal;   // positionLocal, on the background node, is in view space I think.
+        const rayOrigin = uCameraPosition;
         const rayDirection = normalize(p);
 
         // Total distance travelled
         const t = float(0).toVar()
 
-        // Calculate the initial position of the ray - this var is declared here so we can use it in lighting calculations later
+        // Calculate the initial position of the ray
         const ray = rayOrigin.add(rayDirection.mul(t)).toVar()
 
         Loop({ start: 1, end: 80 }, () => {
@@ -185,31 +142,30 @@ function generateRaymarchedScene() {
 
         // add lighting
         return lighting(rayOrigin, ray)
-    })()
+    })
 
-    return raymarch;    
+    return raymarch();    
 }
 
-export function Raymarch() {
+export function RaymarchedScene({nodes}: {nodes: IShaderNode[]}) {
   const camera = useThree((state) => state.camera)
   const scene = useThree((state) => state.scene)    
 
-// extract the camera position and target to pass to the shader
-useFrame(() => {
-    cameraPosition.value.copy(camera.position)
-    cameraTarget.value.copy(new THREE.Vector3(0,0,0)) // for now, looking at origin
-})
+    // extract the camera position and target to pass to the shader
+    useFrame(() => {
+        uCameraPosition.value.copy(camera.position)
+    })
 
-useEffect(() => {
-    // Set the scene background to the raymarched scene
-    console.log("Generating sdf nodes for background");
-    scene.background = new THREE.Color(0xabcdef); // Set background color
-    scene.backgroundNode = generateRaymarchedScene();
-    return () => {
-        scene.background = null; // Clean up on unmount
-        scene.backgroundNode = null;
-    };
-  }, [scene]);
+    useEffect(() => {
+        // Set the scene background to the raymarched scene
+        console.log("Generating sdf nodes for background");
+        scene.background = new THREE.Color(0xabcdef); // Set background color
+        scene.backgroundNode = generateRaymarchedScene(nodes);
+        return () => {
+            scene.background = null; // Clean up on unmount
+            scene.backgroundNode = null;
+        };
+    }, [scene]);
 
   return null;
 }

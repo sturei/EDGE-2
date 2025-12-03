@@ -10,7 +10,9 @@ import { Store } from '../document/store'
 import { Drawlist } from './Drawlist'
 import { DocumentContext } from '../Contexts';
 import { type IDrawable } from "../grep/drawable";
-import { Raymarch } from "./Raymarch";
+import { RaymarchedScene } from "./Raymarch";
+import type { IShaderNode } from '../grep/shaderNode.ts'    
+import { vec3 } from 'three/tsl'
 
 interface ISceneReactState {
     drawlist: IDrawable[]
@@ -20,6 +22,28 @@ const emptyDrawlist:ISceneReactState = {drawlist: new Array<IDrawable>()};
 export function Scene(){
     const document = useContext(DocumentContext);
     const [reactState, setReactState] = useState(emptyDrawlist);
+
+    const nodes : IShaderNode[] = [
+        {
+        type: 'union',
+        pathName: 'shape0',
+        parameters: new Map(),
+        childIndices: [1, 2]
+        },
+        {
+        type: 'sphere',
+        pathName: 'shape0/sphere',
+        parameters: new Map([['radius', 1.5]]),
+        childIndices: []
+        },
+        {
+        type: 'block',
+        pathName: 'shape0/block',
+        parameters: new Map([['dimensions', vec3(1.0, 2.0, 1.0)]]),
+        childIndices: []
+        },
+    ];
+
 
     /** Sets up the Scene Model and Store */
     useEffect(() => {
@@ -46,7 +70,7 @@ export function Scene(){
         <directionalLight intensity={0.5} position={[0.75, 0.25, 0.25]} />
         <directionalLight intensity={0.5} position={[-0.75, 0.25, 0.25]} />
         <Drawlist drawlist={reactState.drawlist} />
-        <Raymarch />
+        <RaymarchedScene nodes = {nodes} />
         <OrbitControls />
         </>
     )
