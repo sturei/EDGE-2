@@ -64,6 +64,10 @@ async function addBlockObject(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Objects::addBlockObject", payload);
 }
 
+async function addCylinderObject(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Objects::addCylinderObject", payload);
+}
+
 async function addInfiniteRectangle(doc: Document, payload: any): Promise<void> {
     // Create an infinite rectangular extrusion with spefified lowerLeft and upperRight corners.
     // The server creates the object as frep in its shape store, and returns client actions to add the appropriate graphics to the scene.
@@ -87,6 +91,7 @@ export const addSheetRoundRectActionDef = { type: "Profiles::addRoundRect", func
 export const addEmptyObjectActionDef = { type: "Objects::addEmptyObject", function: addEmptyObject };
 export const addSphereObjectActionDef = { type: "Objects::addSphereObject", function: addSphereObject };
 export const addBlockObjectActionDef = { type: "Objects::addBlockObject", function: addBlockObject };
+export const addCylinderObjectActionDef = { type: "Objects::addCylinderObject", function: addCylinderObject };
 export const addRectangleActionDef = { type: "Objects::addInfiniteRectangle", function: addInfiniteRectangle };          
 export const addCappedRectangleActionDef = { type: "Objects::addCappedRectangle", function: addCappedRectangle };
 export const addExtrudedRectangleActionDef = { type: "Objects::addExtrudedRectangle", function: addExtrudedRectangle };

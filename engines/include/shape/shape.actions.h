@@ -14,11 +14,12 @@ namespace e2 {
         void addEmptyObject(Document& doc, const nlohmann::json& payload);
         void addSphereObject(Document& doc, const nlohmann::json& payload);
         void addBlockObject(Document& doc, const nlohmann::json& payload);
+        void addCylinderObject(Document& doc, const nlohmann::json& payload);
         void addInfiniteRectangle(Document& doc, const nlohmann::json& payload);
         void addCappedRectangle(Document& doc, const nlohmann::json& payload);
         void addExtrudedRectangle(Document& doc, const nlohmann::json& payload);
 
-        inline static std::array<ActionDef, 12> allShapeActions = {{
+        inline static std::array<ActionDef, 13> allShapeActions = {{
             {"Sketches::addEmptyBody", addEmptyBody},
             {"Sketches::addAcornBody", addAcornBody},
             {"Sketches::addRectangle", addWireRectangle},
@@ -28,6 +29,7 @@ namespace e2 {
             {"Objects::addEmptyObject", addEmptyObject},
             {"Objects::addSphereObject", addSphereObject},
             {"Objects::addBlockObject", addBlockObject},
+            {"Objects::addCylinderObject", addCylinderObject},
             {"Objects::addInfiniteRectangle", addInfiniteRectangle},
             {"Objects::addCappedRectangle", addCappedRectangle},
             {"Objects::addExtrudedRectangle", addExtrudedRectangle}    

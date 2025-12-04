@@ -53,6 +53,21 @@ namespace e2 {
             return blockObject; 
         }
 
+        /** A cylinder with specified radius and depth, centered on the origin, axis aligned with z-axis */
+        FObject* cylinder(double radius, double depth) {
+            std::vector<Function*> functions = {
+                new FCylinder(radius, depth)
+            };
+            std::vector<FNode> nodes = {
+                FNode(0)
+            };
+            std::vector<FArg> args = {
+            };
+            FNodeIndex rootIndex = 0; // The cylinder node is the root
+            FObject* cylinderObject = new FObject(functions, nodes, args, rootIndex);
+            return cylinderObject; 
+        }
+
         /** An infinite extrusion of a rectangular profile */
         FObject* infiniteRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
             Body* profileBody = BRepFixtures::sheetRectangle(lowerLeft, upperRight);

@@ -141,7 +141,6 @@ function addSphere(doc: Document, payload: any): void {
     console.log("added Sphere");      // ---DEBUG---
 }
 
-
 function addBlock(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -166,7 +165,29 @@ function addBlock(doc: Document, payload: any): void {
         console.log("added Block");      // ---DEBUG---
     });
 }
-
+        
+function addCylinder(doc: Document, payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        const radius = payload.radius ?? 1.0;      // radius of the cylinder
+        const depth = payload.depth ?? 2.0;      // length in z direction
+        const color = Color.get(payload.color ?? "yellow");
+        let grepModel = model as GRepModel;
+        const drawable: IDrawable = {
+            geometry: {
+                type: 'cylinder',
+                radius: radius,
+                depth: depth
+            },
+            appearance: {
+                type: 'mesh',
+                color: color
+            }
+        };
+        grepModel.addDrawable(drawable);
+        console.log("added Block");      // ---DEBUG---
+    });
+}
 
 function addProfile(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
@@ -267,6 +288,7 @@ export const addPolylineActionDef = { type: "Gfx::addPolyline", function: addPol
 export const addPlaneActionDef = { type: "Gfx::addPlane", function: addPlane };
 export const addSphereActionDef = { type: "Gfx::addSphere", function: addSphere };
 export const addBlockActionDef = { type: "Gfx::addBlock", function: addBlock };
+export const addCylinderActionDef = { type: "Gfx::addCylinder", function: addCylinder };
 export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
 export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
 export const updateSdfSceneActionDef = { type: "Gfx::updateSdfScene", function: updateSdfScene };

@@ -29,12 +29,26 @@ namespace e2 {
             FBlock(const FBlock& other) : Function(), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth) {}
             Function* clone() const override { return new FBlock(*this); }
 
-            FBlock(const double width, const double height, const double depth);
+            FBlock(double width, double height, double depth);
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
         private:
             double m_width;
             double m_height;
+            double m_depth;
+    };
+
+    class FCylinder : public Function {
+        public:
+            FCylinder() = default;
+            FCylinder(const FCylinder& other) : Function(), m_radius(other.m_radius), m_depth(other.m_depth) {}
+            Function* clone() const override { return new FCylinder(*this); }
+
+            FCylinder(double radius, double depth);
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            double m_radius;
             double m_depth;
     };
 

@@ -46,6 +46,12 @@ export type IAnyAppearance = IPointAppearance | ILineAppearance | IMeshAppearanc
 
 /** Geometries */
 
+/** Sphere centered on the origin */
+export interface ISphereGeometry {
+    type: 'sphere'; 
+    radius: number;
+}
+
 /** Block centered on the origin */
 export interface IBlockGeometry {
     type: 'block';
@@ -54,18 +60,19 @@ export interface IBlockGeometry {
     depth: number;     // length along Z
 }
 
+/** Cylinder centered on the origin */
+export interface ICylinderGeometry {
+    type: 'cylinder';
+    radius: number;    // radius of the cylinder
+    depth: number;     // height of the cylinder along the Z axis
+}
+
 /** Filled rectangle centered on the origin */
 export interface IPlaneGeometry {
     type: 'plane';
     width: number;     // length along X
     height: number;    // length along Y    
     z: number;         // position along Z
-}
-
-/** Sphere centered on the origin */
-export interface ISphereGeometry {
-    type: 'sphere'; 
-    radius: number;
 }
 
 /** Line defined by start and end points */
@@ -96,7 +103,7 @@ export interface IProfileGeometry {
     paths: Array<Array<[number, number]>>;
 }
 
-export type IAnyGeometry = IBlockGeometry | IPlaneGeometry | ISphereGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry;
+export type IAnyGeometry = ISphereGeometry | IBlockGeometry | ICylinderGeometry | IPlaneGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry;
 
 /** Drawable */
 export interface IDrawable {

@@ -18,6 +18,7 @@ const actionSuggestions = [
     '{"type":"Gfx::addPlane", "payload":{"width":10,"height":10, "texture":{"width":4,"height":4,"data":[0,255,0,255,15,240,63,255,31,224,127,255,47,208,191,255,63,192,0,255,79,176,63,255,95,160,127,255,111,144,191,255,127,128,0,255,143,112,63,255,159,96,127,255,175,80,191,255,191,64,0,255,207,48,63,255,223,32,127,255,239,16,191,255]}}}',
     '{"type":"Gfx::addSphere", "payload":{"radius":1.5, "color":"green"}}',
     '{"type":"Gfx::addBlock", "payload":{"width":3,"height":2,"depth":5, "color":"red"}}',
+    '{"type":"Gfx::addCylinder", "payload":{"radius":1.0,"depth":6.0, "color":"yellow"}}',
     '{"type":"Gfx::addProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":"red"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"union", "pathName":"shape1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"sphere", "radius":1.5, "pathName":"shape1/sphere1"}}',
@@ -33,6 +34,7 @@ const actionSuggestions = [
     '{"type":"Objects::addEmptyObject", "payload":{}}',
     '{"type":"Objects::addSphereObject", "payload":{"radius":1.5}}',
     '{"type":"Objects::addBlockObject", "payload":{"width":3, "height":2, "depth":5}}',
+    '{"type":"Objects::addCylinderObject", "payload":{"radius":1.0, "depth":6.0}}',
     '{"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
     '{"type":"Objects::addCappedRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":5}}',
     '{"type":"Objects::addExtrudedRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":5}}'

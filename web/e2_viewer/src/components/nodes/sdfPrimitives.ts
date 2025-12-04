@@ -38,12 +38,12 @@ export const block = Fn(([position, width, height, depth] : [any, any, any, any]
     )
 })
 
-export const cylinder = Fn(([position, radius, height]: [any, any, any]) => {
+export const cylinder = Fn(([position, radius, depth]: [any, any, any]) => {
     const distance = vec2(
-      length(position.xz).sub(radius),
-      position.y.abs().sub(height)
+      length(position.xy).sub(radius),
+      position.z.abs().sub(depth.mul(0.5))
     )
-    return min(max(distance.x, distance.y), 0.0).add(
+    return min(max(distance.x, distance.z), 0.0).add(
         length(max(distance, 0.0))
     )
 })

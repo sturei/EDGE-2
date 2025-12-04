@@ -4,7 +4,7 @@
 // Later will come the usual use-memo, use-ref etc.
 
 import  { type IDrawable, Color } from '../grep/drawable';
-import { Box, Sphere, Plane } from '@react-three/drei'  
+import { Box, Sphere, Cylinder, Plane } from '@react-three/drei'  
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js'
 import { Line2NodeMaterial } from 'three/webgpu';
 import { Line2 } from 'three/addons/lines/webgpu/Line2.js';
@@ -123,6 +123,14 @@ export function jsxFromDrawable(drawable: IDrawable) {
             <Sphere args={[geometry.radius, 32, 32]}>
                 <meshStandardMaterial color={appearance?.color??Color.get("green")} />
             </Sphere>
+        );
+    }
+    else if (geometry.type === 'cylinder') {
+        console.log(`Creating cylinder with radius: ${geometry.radius}, height: ${geometry.depth}`);
+        return (
+            <Cylinder args={[geometry.radius, geometry.radius, geometry.depth, 32]} rotation={[Math.PI/2,0,0]}>
+                <meshStandardMaterial color={appearance?.color??Color.get("yellow")} />
+            </Cylinder>
         );
     }
     else if (geometry.type === 'line') {

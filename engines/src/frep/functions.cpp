@@ -34,7 +34,7 @@ namespace e2 {
     //
 
     // Constructor
-    FBlock::FBlock(const double width, const double height, const double depth) : m_width(width), m_height(height), m_depth(depth) {}
+    FBlock::FBlock(double width, double height, double depth) : m_width(width), m_height(height), m_depth(depth) {}
 
     // Evaluates to the distance to a block
     bool FBlock::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
@@ -48,6 +48,26 @@ namespace e2 {
 
     void FBlock::print(std::ostream& os) const {
         os << "FBlock(Width: " << m_width << ", Height: " << m_height << ", Depth: " << m_depth << ")";
+    }
+
+    //
+    // Cylinder
+    //
+    // Constructor
+    FCylinder::FCylinder(double radius, double depth) : m_radius(radius), m_depth(depth) {}
+
+    // Evaluates to the distance to a cylinder
+    bool FCylinder::evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const {
+
+        double dx = std::sqrt(positionIn.x() * positionIn.x() + positionIn.y() * positionIn.y()) - m_radius;
+        double dy = std::abs(positionIn.z()) - m_depth / 2.0;
+        Vec3d d_pos = Vec3d(std::max(dx, 0.0), std::max(dy, 0.0), 0.0);
+        valueOut = d_pos.magnitude() + std::min(std::max(dx, dy), 0.0);
+        //std::cerr << "FCylinder::evaluate: valueOut = " << valueOut << std::endl;
+        return true;
+    }
+    void FCylinder::print(std::ostream& os) const {
+        os << "FCylinder(Radius: " << m_radius << ", Depth: " << m_depth << ")";
     }
 
     //

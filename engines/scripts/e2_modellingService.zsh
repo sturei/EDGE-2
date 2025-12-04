@@ -17,6 +17,7 @@ Instructions:
     {"type":"Objects::addEmptyObject", "payload":{}}
     {"type":"Objects::addSphereObject", "payload":{"radius":1.5}}
     {"type":"Objects::addBlockObject", "payload":{"width":3, "height":2, "depth":1}}
+    {"type":"Objects::addCylinderObject", "payload":{"radius":1.5, "depth":3}}
     {"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
     {"type":"Objects::addCappedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}
     {"type":"Objects::addExtrudedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}

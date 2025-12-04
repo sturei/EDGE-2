@@ -231,6 +231,28 @@ namespace e2 {
                 dispatchGraphicsActionsForObject(doc, *blockObject, width * 2, height * 2, depth * 1.5);
             });
         }
+
+        void addCylinderObject(Document& doc, const json& payload) {
+            // This action adds a block FObject to the shape store.
+            double radius = payload.value("radius", 1.0);
+            double depth = payload.value("depth", 1.0);
+
+            Store& store = doc.storeAt("shape");
+            store.changeState([radius, depth, &doc](Model* model) {
+
+                // update the model
+                FRepModel& objects = dynamic_cast<ShapeModel*>(model)->objects();
+                FObject* cylinderObject = FRepFixtures::cylinder(radius, depth);
+                size_t index = objects.addObject(cylinderObject);
+                std::cerr << "added Cylinder FObject" << std::endl;      // ---LOGGING---
+
+                // update the product hierarchy in the client
+                dispatchProductActionsForObject(doc, *cylinderObject, index, "object", "shape/objects");
+
+                // update the scene in the client
+                dispatchGraphicsActionsForObject(doc, *cylinderObject, radius * 2, radius * 2, depth * 1.5);
+            });
+        }
         
         void addInfiniteRectangle(Document& doc, const json& payload) {
             // This action adds a 2d rectangle, with infinite z-extent, as an FObject
