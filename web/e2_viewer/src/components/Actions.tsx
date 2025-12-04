@@ -22,6 +22,7 @@ const actionSuggestions = [
     '{"type":"Gfx::addSdfNode", "payload":{"type":"union", "pathName":"shape1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"sphere", "radius":1.5, "pathName":"shape1/sphere1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"block", "width":3.0, "height":2.0, "depth":5.0, "pathName":"shape1/block1"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"shape1/cylinder1"}}',
     '{"type":"Gfx::updateSdfScene", "payload":{}}',
     '{"type":"Gfx::addProductItem", "payload":{"displayName":"cell[0] (plane)", "pathName":"Unnamed (shape)/workplanes/body[0] (workplane)/cell[0]"}}',
     '{"type":"Modeller::ping", "payload": {} }',

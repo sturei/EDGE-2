@@ -45,7 +45,7 @@ namespace e2 {
         //std::cerr << "FBlock::evaluate: valueOut = " << valueOut << std::endl;
         return true;
     }
-    
+
     void FBlock::print(std::ostream& os) const {
         os << "FBlock(Width: " << m_width << ", Height: " << m_height << ", Depth: " << m_depth << ")";
     }
@@ -66,8 +66,6 @@ namespace e2 {
         CellIndex nearestCell;
         Vec3d normalAtNearest;
 
-        // implementation note: it would probably be more sensible to make a rule that the profile is always in the XY plane
-
         if (!getProfileFace(m_profile, profileFace)) {
             return false;
         }
@@ -76,6 +74,7 @@ namespace e2 {
             return false;
         }
 
+        // By convention,  the profile plane is always the XY-plane
         Vec3d positionOnPlane = nearpoint(profilePlane, positionIn);
 
         if (!nearpointOnProfile(m_profile, positionOnPlane, nearestPoint, nearestCell)) {
@@ -102,21 +101,22 @@ namespace e2 {
     //
 
     // Constructor
-    FExtrusionSDF::FExtrusionSDF(double depth) : m_Depth(depth) {}
+    FExtrusionSDF::FExtrusionSDF(double depth) : m_depth(depth) {}
 
-    // Evaluates the signed distance function to the profile defined by the Body, in the 2-dimensional plane of the profile.
+    // Evaluates the signed distance function to a profile, extruded by +/ depth/2
     bool FExtrusionSDF::evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const {
         if (argsIn.size() != 1) {
             return false;
         }
 
         // see https://iquilezles.org/articles/distfunctions/ for derivation
-        // Note: this implementation assumes that the profile in in the XY plane, extrusion of +/- m_depth/2 along Z.
+        // By convention, the profile is always on the X-Y plane.
+        // The extrusion is of +/- m_depth/2 along Z.
 
         double profileSDF = argsIn[0];
         double d = profileSDF;
         double w_x = d;
-        double w_y = std::abs(positionIn.z()) - m_Depth/2;
+        double w_y = std::abs(positionIn.z()) - m_depth/2;
         double w_max = std::max(w_x, w_y);
         double w_x_pos = std::max(w_x, 0.0);
         double w_y_pos = std::max(w_y, 0.0);
@@ -128,7 +128,7 @@ namespace e2 {
     }
 
     void FExtrusionSDF::print(std::ostream& os) const {
-        os << "FExtrusionSDF(Depth: " << m_Depth << ")";
+        os << "FExtrusionSDF(Depth: " << m_depth << ")";
     }
 
     //

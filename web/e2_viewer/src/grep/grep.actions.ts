@@ -220,6 +220,17 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
+        else if (type === 'cylinder') {
+            const radius = payload.radius ?? 1.0;
+            const depth = payload.depth ?? 1.0;
+            const node: IShaderNode = {
+                type: 'cylinder',
+                pathName: payload.pathName ?? 'cylinder',
+                parameters: new Map([['radius', radius], ['depth', depth]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
         else if (type === 'union') {
             const node : IShaderNode = {
                 type: 'union',

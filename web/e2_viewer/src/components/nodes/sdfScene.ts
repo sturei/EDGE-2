@@ -1,4 +1,4 @@
-import { sphere, block } from './sdfPrimitives';
+import { sphere, block, cylinder } from './sdfPrimitives';
 import { type IShaderNode } from '../../grep/shaderNode';
 import { Fn, min } from 'three/tsl';    
 
@@ -16,6 +16,13 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
         const depth = node.parameters?.get('depth') ?? 1.0;
         return Fn(([position] : [any]) => {
             return block(position, width, height, depth);
+        });
+    }
+    else if (node.type === 'cylinder') {
+        const radius = node.parameters?.get('radius') ?? 1.0;
+        const depth = node.parameters?.get('depth') ?? 1.0;
+        return Fn(([position] : [any]) => {
+            return cylinder(position, radius, depth);
         });
     }
     else if (node.type === 'union') {

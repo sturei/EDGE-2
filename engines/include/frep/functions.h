@@ -54,14 +54,14 @@ namespace e2 {
     class FExtrusionSDF : public Function {
         public:
             FExtrusionSDF() = default;
-            FExtrusionSDF(const FExtrusionSDF& other) : Function(), m_Depth(other.m_Depth) {}
+            FExtrusionSDF(const FExtrusionSDF& other) : Function(), m_depth(other.m_depth) {}
             Function* clone() const override { return new FExtrusionSDF(*this); }
 
             FExtrusionSDF(double depth);
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
         private:
-            double m_Depth;           // depth of the extrusion. TODO: this should take 2 parameters (workplane bodies) and create and extrusion between them (measured length plus offset in the transform)
+            double m_depth;
     };
 
     class FHalfSpace : public Function {
