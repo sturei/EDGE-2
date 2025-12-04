@@ -10,44 +10,58 @@
 
 namespace e2 {
 
-    class FMax : public Function {
-    public:
-        FMax() = default;
-        FMax(const FMax&) : Function() {};
-        Function* clone() const override { return new FMax(*this); }
-        bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
-        void print(std::ostream& os) const override;
-    };
-
-
-    class FMin : public Function {
+    class FSphere : public Function {
         public:
-            FMin() = default;
-            FMin(const FMin&) : Function() {};
-            Function* clone() const override { return new FMin(*this); }
-            bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
-            void print(std::ostream& os) const override;
-    };
+            FSphere() = default;
+            FSphere(const FSphere& other) : Function(), m_sphere(other.m_sphere) {}
+            Function* clone() const override { return new FSphere(*this); }
 
-    class FNegation : public Function {
-        public:
-            FNegation() = default;
-            FNegation(const FNegation&) : Function() {};
-            Function* clone() const override { return new FNegation(*this); }
-            bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
-            void print(std::ostream& os) const override;
-    };
-
-    class FConstant : public Function {
-        public:
-            FConstant() = default;
-            FConstant(const FConstant& other) : Function(), m_value(other.m_value) {}
-            Function* clone() const override { return new FConstant(*this); }
-            FConstant(double value) : m_value(value) {}
-            bool evaluate(const Vec3d& _positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            FSphere(const Sph3d& sphere);
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
         private:
-            double m_value;
+            Sph3d m_sphere;
+    };
+
+    class FBlock : public Function {
+        public:
+            FBlock() = default;
+            FBlock(const FBlock& other) : Function(), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth) {}
+            Function* clone() const override { return new FBlock(*this); }
+
+            FBlock(const double width, const double height, const double depth);
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            double m_width;
+            double m_height;
+            double m_depth;
+    };
+
+    class FProfileSDF : public Function {
+        public:
+            FProfileSDF() = default;
+            FProfileSDF(const FProfileSDF& other) : Function(), m_profile(other.m_profile) {}   
+            Function* clone() const override { return new FProfileSDF(*this); }
+
+            FProfileSDF(const Body& profile);
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            const Body m_profile;           // copy of the body defining the profile. Eventually there will something like a BodyHandle or BodyIndex or name alongside, referencing the original, and an update step to sync changes
+    };
+
+    class FExtrusionSDF : public Function {
+        public:
+            FExtrusionSDF() = default;
+            FExtrusionSDF(const FExtrusionSDF& other) : Function(), m_Depth(other.m_Depth) {}
+            Function* clone() const override { return new FExtrusionSDF(*this); }
+
+            FExtrusionSDF(double depth);
+            bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            double m_Depth;           // depth of the extrusion. TODO: this should take 2 parameters (workplane bodies) and create and extrusion between them (measured length plus offset in the transform)
     };
 
     class FHalfSpace : public Function {
@@ -55,65 +69,76 @@ namespace e2 {
             FHalfSpace() = default;
             FHalfSpace(const FHalfSpace& other) : Function(), m_plane(other.m_plane) {}
             Function* clone() const override { return new FHalfSpace(*this); }  
-            FHalfSpace(const Pla3d& plane) : m_plane(plane) {}
+            FHalfSpace(const Pla3d& plane);
+
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
         private:
             Pla3d m_plane;
     };
 
-    class FSphere : public Function {
+    class FMin : public Function {
         public:
-            FSphere() = default;
-            FSphere(const FSphere& other) : Function(), m_sphere(other.m_sphere) {}
-            Function* clone() const override { return new FSphere(*this); }
-            FSphere(const Sph3d& sphere) : m_sphere(sphere) {}
-            bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            FMin() = default;
+            FMin(const FMin&) : Function() {};
+            Function* clone() const override { return new FMin(*this); }
+
+            bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
-        private:
-            Sph3d m_sphere;
     };
+
+    typedef class FMin FUnion;
+ 
+    class FMax : public Function {
+    public:
+        FMax() = default;
+        FMax(const FMax&) : Function() {};
+        Function* clone() const override { return new FMax(*this); }
+
+        bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
+        void print(std::ostream& os) const override;
+    };
+
+    typedef class FMax FIntersection;
+
+    class FNegation : public Function {
+        public:
+            FNegation() = default;
+            FNegation(const FNegation&) : Function() {};
+            Function* clone() const override { return new FNegation(*this); }
+
+            bool evaluate(const Vec3d& _positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+    };
+
+    typedef class FNegation FComplement;
 
     class FFObject : public Function {
         public:
             FFObject() = default;
             FFObject(const FFObject& other) : Function(), m_fobject(other.m_fobject) {}
             Function* clone() const override { return new FFObject(*this); }
-            FFObject(const FObject& fobject) : m_fobject(fobject) {}
+
+            FFObject(const FObject& fobject);
             bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
             void print(std::ostream& os) const override;
         private:
             const FObject m_fobject;               // copy of the object defining the function. Eventually there will something like an FObjectHandle or FObjectIndex or name alongside, referencing the original, and an update step to sync changes
     };
 
-    class FProfileSDF : public Function {
-    public:
-        FProfileSDF() = default;
-        FProfileSDF(const FProfileSDF& other) : Function(), m_profile(other.m_profile) {}   
-        Function* clone() const override { return new FProfileSDF(*this); }
-        FProfileSDF(const Body& profile) : m_profile(profile) {}
-        bool evaluate(const Vec3d& positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
-        void print(std::ostream& os) const override;
-    private:
-        const Body m_profile;           // copy of the body defining the profile. Eventually there will something like a BodyHandle or BodyIndex or name alongside, referencing the original, and an update step to sync changes
-    };
+    class FConstant : public Function {
+        public:
+            FConstant() = default;
+            FConstant(const FConstant& other) : Function(), m_value(other.m_value) {}
+            Function* clone() const override { return new FConstant(*this); }
 
-    class FExtrusionSDF : public Function {
-    public:
-        FExtrusionSDF() = default;
-        FExtrusionSDF(const FExtrusionSDF& other) : Function(), m_Depth(other.m_Depth) {}
-        Function* clone() const override { return new FExtrusionSDF(*this); }
-        FExtrusionSDF(double depth) : m_Depth(depth) {}
-        bool evaluate(const Vec3d& positionIn, const std::vector<double>& argsIn, double& valueOut) const override;
-        void print(std::ostream& os) const override;
-    private:
-        double m_Depth;           // depth of the extrusion. TODO: this should take 2 parameters (workplane bodies) and create and extrusion between them (measured length plus offset in the transform)
+            FConstant(double value);
+            bool evaluate(const Vec3d& _positionIn, const std::vector<double>& _argsIn, double& valueOut) const override;
+            void print(std::ostream& os) const override;
+        private:
+            double m_value;
     };
-
 
     // set-theoretic operations, assuming set is defined as all P where f(P) <= 0
-    typedef class FMin FUnion;
-    typedef class FMax FIntersection;
-    typedef class FNegation FComplement;
 
 }

@@ -105,7 +105,8 @@ function generateRaymarchedScene(nodes: IShaderNode[]) {
         // Step 3
         lighting.addAssign(hemi.mul(0.2))
 
-        const finalColor = vec3(0.1, 0.2, 0.3).mul(lighting).toVar()
+        const baseColor = vec3(0.1, 0.2, 0.3)
+        const finalColor = baseColor.mul(lighting).toVar()
 
         // Step 4 & 5
         finalColor.addAssign(specular)

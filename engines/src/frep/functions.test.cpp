@@ -243,7 +243,7 @@ TEST_F(FSDFTest, FSDFTestBlockEvaluate) {
     std::array<std::pair<Vec3d, double>, 3> positionAndExpectedSDF = {
         std::make_pair(Vec3d(0.0, 0.0, 0.0), -1.0), // inside the block
         std::make_pair(Vec3d(1.0, 1.0, 1.0), 0.0),  // on the surface
-        std::make_pair(Vec3d(2.0, 2.0, 2.0), 1.0)   // outside
+        std::make_pair(Vec3d(2.0, 2.0, 2.0), sqrt(3))   // outside
     };
     for (const auto& [position, expectedSDF] : positionAndExpectedSDF) {
         double sdfOut;  

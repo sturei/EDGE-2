@@ -40,43 +40,15 @@ namespace e2 {
 
         /** A block with specified width, height and depth, centered on the origin */
         FObject* block(double width, double height, double depth) {
-            Vec3d halfDiag(width / 2.0, height / 2.0, depth / 2.0);
-
-            Pla3d leftPlane(halfDiag, Vec3d(1, 0, 0));
-            Pla3d rightPlane(-halfDiag, Vec3d(-1, 0, 0));    
-            Pla3d topPlane(halfDiag, Vec3d(0, 1, 0));
-            Pla3d bottomPlane(-halfDiag, Vec3d(0, -1, 0));
-            Pla3d frontPlane(halfDiag, Vec3d(0, 0, 1));
-            Pla3d backPlane(-halfDiag, Vec3d(0, 0, -1));
-
             std::vector<Function*> functions = {
-                new FHalfSpace(leftPlane),
-                new FHalfSpace(rightPlane),
-                new FHalfSpace(topPlane),
-                new FHalfSpace(bottomPlane),
-                new FHalfSpace(frontPlane),
-                new FHalfSpace(backPlane),
-                new FIntersection()
+                new FBlock(width, height, depth)
             };
-
             std::vector<FNode> nodes = {
-                FNode(0),  // Left
-                FNode(1),  // Right
-                FNode(2),  // Top
-                FNode(3),  // Bottom
-                FNode(4),  // Front
-                FNode(5),  // Back
-                FNode(6)   // Intersection node
+                FNode(0)
             };
             std::vector<FArg> args = {
-                FArg(0, 6), // Intersection node arg 1: Left half-space
-                FArg(1, 6), // Intersection node arg 2: Right half-space
-                FArg(2, 6), // Intersection node arg 3: Top half-space
-                FArg(3, 6), // Intersection node arg 4: Bottom half-space
-                FArg(4, 6), // Intersection node arg 5: Front half-space
-                FArg(5, 6)  // Intersection node arg 6: Back half-space
             };
-            FNodeIndex rootIndex = 6; // The intersection node is the root
+            FNodeIndex rootIndex = 0; // The block node is the root
             FObject* blockObject = new FObject(functions, nodes, args, rootIndex);
             return blockObject; 
         }
