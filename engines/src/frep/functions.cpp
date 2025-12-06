@@ -53,6 +53,7 @@ namespace e2 {
     //
     // Cylinder
     //
+    
     // Constructor
     FCylinder::FCylinder(double radius, double depth) : m_radius(radius), m_depth(depth) {}
 

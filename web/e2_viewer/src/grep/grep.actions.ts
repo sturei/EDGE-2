@@ -252,10 +252,49 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
+        else if (type === 'profile') {
+            const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
+            const node: IShaderNode = {
+                type: 'profile',
+                pathName: payload.pathName ?? 'profile',
+                parameters: new Map([['paths', paths]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'halfSpace') {
+            const planePosition = payload.planePosition ?? [0, 0, 0];
+            const planeNormal = payload.planeNormal ?? [0, 0, 1];
+            const node : IShaderNode = {
+                type: 'halfSpace',
+                pathName: payload.pathName ?? 'halfSpace',
+                parameters: new Map([['planePosition', planePosition], ['planeNormal', planeNormal]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
         else if (type === 'union') {
             const node : IShaderNode = {
                 type: 'union',
                 pathName: payload.pathName ?? 'union',
+                parameters: new Map(),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'intersection') {
+            const node : IShaderNode = {
+                type: 'intersection',
+                pathName: payload.pathName ?? 'intersection',
+                parameters: new Map(),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'complement') {
+            const node : IShaderNode = {
+                type: 'complement',
+                pathName: payload.pathName ?? 'complement',
                 parameters: new Map(),
                 childIndices: undefined
             };
