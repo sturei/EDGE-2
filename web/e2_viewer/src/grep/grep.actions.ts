@@ -262,6 +262,16 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
+        else if (type === 'extrusion') {
+            const depth = payload.depth ?? 2.0;
+            const node : IShaderNode = {
+                type: 'extrusion',
+                pathName: payload.pathName ?? 'extrusion',
+                parameters: new Map([['depth', depth]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
         else if (type === 'halfSpace') {
             const planePosition = payload.planePosition ?? [0, 0, 0];
             const planeNormal = payload.planeNormal ?? [0, 0, 1];

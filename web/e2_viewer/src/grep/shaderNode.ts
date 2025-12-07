@@ -1,6 +1,6 @@
 /** Definition of items that will become nodes in an sdf shader */
 
-export type ShaderNodeType = 'sphere' | 'block' | 'cylinder' | 'profile' | 'halfSpace' | 'union' | 'intersection' | 'complement';
+export type ShaderNodeType = 'sphere' | 'block' | 'cylinder' | 'profile' | 'extrusion' | 'halfSpace' | 'union' | 'intersection' | 'complement';
 
 export interface IShaderNode {
     pathName: string;       // unique identifier for this node

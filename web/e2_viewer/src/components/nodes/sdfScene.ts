@@ -1,6 +1,6 @@
 import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
 import { type IShaderNode } from '../../grep/shaderNode';
-import { Fn, int, min, max, negate, vec2, vec3, array } from 'three/tsl';    
+import { Fn, int, float, min, max, negate, sqrt, vec2, vec3, array } from 'three/tsl';    
 
 function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
     const node = nodes[nodeIndex];
@@ -93,6 +93,27 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
 
         return Fn(([position] : [any]) => {
             return profile(position, tslPaths, tslNormals, tslPathLengths);
+        });
+    }
+    else if (node.type === 'extrusion') {
+        const depth = node.parameters?.get('depth') ?? 2.0;
+        const childIndices = node.childIndices;
+        if (!childIndices || childIndices.length == 0) {
+            throw new Error("Complement node missing childIndices");
+        }
+        if (childIndices.length != 1) {
+            throw new Error("Complement node must have exactly one child");
+        }
+        const tslDepth = float(depth);
+        return Fn(([position] : [any]) => {
+            const profileSDF = generateNode(childIndices[0], nodes)(position).toVar();
+            const w_x = profileSDF;;
+            const w_y = position.z.abs().sub(tslDepth.mul(0.5));
+            const w_max = max(w_x, w_y);
+            const w_x_pos = max(w_x, 0.0);
+            const w_y_pos = max(w_y, 0.0);
+            const w_length = sqrt( w_x_pos.mul(w_x_pos).add( w_y_pos.mul(w_y_pos) ) );
+            return min(w_max, 0.0).add( w_length );
         });
     }
     else if (node.type === 'halfSpace') {
