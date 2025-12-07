@@ -167,6 +167,45 @@ namespace e2 {
         }
     }
 
+    static void ensureObjectParentsExist(Document& doc) {
+        // Ensure parent items exists in the client
+        doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+            {"pathName", "objects"},
+            {"type", "intersection"}
+        })});
+        doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+            {"pathName", "objects/blanks"},
+            {"type", "union"}
+        })});
+        //doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+        //    {"pathName", "objects/tools"},
+        //    {"type", "complement"}
+        //})});
+        //doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+        //    {"pathName", "objects/tools/tools"},
+        //    {"type", "union"}
+        //})});   
+    }
+
+    void dispatchGraphicsActionsForScene(Document& doc) {
+
+        ensureObjectParentsExist(doc);
+
+        // hard-coded for now
+
+        doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+            {"pathName", "objects/blanks/block1"},
+            {"type", "block"},
+            {"width", 10.0},
+            {"height", 10.0},
+            {"depth", 5.0}
+        })});
+
+        doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
+
+    }
+
+
     static void ensureProductParentsExist(Document& doc) {
         // Ensure parent items exists in the client
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
@@ -196,7 +235,7 @@ namespace e2 {
         });
         doc.dispatchClientAction({"Gfx::addProductItem", bodyPayload});
 
-        // TODO: add items for cells within the body
+        // TODO: add items for cells within the body?
         
     }
 

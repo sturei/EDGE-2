@@ -334,9 +334,12 @@ namespace e2 {
                 dispatchProductActionsForObject(doc, *rectangleObject, index, "object", "shape/objects");
 
                 // update the scene in the client
-                double width = upperRight.x() - lowerLeft.x();
-                double height = upperRight.y() - lowerLeft.y();
-                dispatchGraphicsActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
+                //double width = upperRight.x() - lowerLeft.x();
+                //double height = upperRight.y() - lowerLeft.y();
+                //dispatchGraphicsActionsForObject(doc, *rectangleObject, width * 3, height * 3, depth * 1.5);
+
+                // update the scene in the client
+                dispatchGraphicsActionsForScene(doc);
             });
         }
     }
