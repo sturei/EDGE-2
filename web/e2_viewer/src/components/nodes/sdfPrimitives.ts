@@ -7,14 +7,18 @@
 import {    
     Fn,
     length,
+    lengthSq,
     vec3,
     vec2,
     min,
     abs,
     max,
+    sign,
     float,
+    sqrt,
     int,
-    Loop
+    Loop,
+    If
 } from 'three/tsl'
 
 // sphere centered on origin with given radius
@@ -76,8 +80,9 @@ export const path = Fn(([position, pathPoints]: [any, any, any]) => {
 })
 
 // profile (array of non-contiguous but oriented paths) in XY plane
-export const profile = Fn(([position, profilePaths, profilePathLengths]: [any,any, any]) => {
-    const minDistance = float(99999.99).toVar(); // Large initial value
+export const profile = Fn(([position, profilePaths, profileNormals, profilePathLengths]: [any,any, any, any]) => {
+    const minDistanceSq = float(99999.99).toVar(); // Large initial value
+    const minSign = int(1).toVar(); // positive = outside, negative = inside 
     const numPaths = int(profilePathLengths.count);
     const index = int(0);
 
@@ -103,19 +108,23 @@ export const profile = Fn(([position, profilePaths, profilePathLengths]: [any,an
             const currentClosest = p1.add(segmentDir.mul(t));
 
             // Calculate distance to this segment's closest point
-            const dist = length(position.xy.sub(currentClosest));
+            const distSq = lengthSq(position.xy.sub(currentClosest));
 
-            // Update minimum distance
-            minDistance.assign(min(minDistance, dist));
-
-            // TODO: calculate the sign of the distance based on whether position is inside or outside the profile (a cross-product would do it)
+            If( distSq.lessThan(minDistanceSq), () => {
+                // Determine which side of the segment the position is on
+                const normal = profileNormals.element(index);
+                const toPoint = position.xy.sub(currentClosest);
+                const dotProduct = normal.dot(toPoint);
+                minSign.assign(sign(dotProduct));
+                minDistanceSq.assign(distSq);
+            });
 
             index.addAssign(1);   // move to next segment
         });
         index.addAssign(1);   // move to next path
     } );
 
-    return minDistance;
+    return minDistanceSq.sqrt().mul(minSign);
 
 })
 

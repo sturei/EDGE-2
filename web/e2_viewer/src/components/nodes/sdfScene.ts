@@ -1,4 +1,4 @@
-import { sphere, block, cylinder, path, profile, halfSpace } from './sdfPrimitives';
+import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
 import { type IShaderNode } from '../../grep/shaderNode';
 import { Fn, int, min, max, negate, vec2, vec3, array } from 'three/tsl';    
 
@@ -28,26 +28,71 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
     else if (node.type === 'profile') {
         const paths = node.parameters?.get('paths') ?? new Array<Array<[number,number]>>();
 
+        let normals = node.parameters?.get('normals');
+        if (!normals) {
+            // compute psuedonormals for each point (cross product of tangent and normal Z)
+            const computedNormals: Array<Array<[number,number]>> = [];
+            for (let p = 0; p < paths.length; p++) {
+                const pathPoints = paths[p];
+                const pathNormals: Array<[number,number]> = [];
+                const numPoints = pathPoints.length;
+                for (let i = 0; i < numPoints - 1; i++) {
+                    const p0 = pathPoints[i];
+                    const p1 = pathPoints[i+1];
+                    const tangent = [p1[0]-p0[0], p1[1]-p0[1]];
+                    const normal = [tangent[1], -tangent[0]]; // -90 degree rotation in XY plane
+                    const length = Math.sqrt(normal[0]*normal[0] + normal[1]*normal[1]);
+                    if (length > 0) {
+                        normal[0] /= length;
+                        normal[1] /= length;
+                    }
+                    pathNormals.push( [normal[0], normal[1]] );
+                }
+                // add the normal for the last point in the current path (same as the previous point)
+                if (numPoints > 0) {
+                    pathNormals.push(pathNormals[pathNormals.length - 1]);
+                }
+
+                // TODO: compute averaged normals at each vertex
+                computedNormals.push(pathNormals);
+            }
+            normals = computedNormals;
+        }
+
+        console.log("Profile paths:", paths);       // --- DEBUG ---
+        console.log("Profile normals:", normals);   // --- DEBUG ---
+
         // concatenate the paths into a single array, and keep track of lengths
         const concatenatedPaths: Array<any> = [];
+        const concatenatedNormals: Array<any> = []; 
         const pathLengths: Array<any> = [];
         for (let i = 0; i < paths.length; i++) {
             const pathPoints = paths[i];
-            const vec2Array: Array<any> = pathPoints.map( (pt: [number,number]) => {
+            const vec2Points: Array<any> = pathPoints.map( (pt: [number,number]) => {
                 return vec2(pt[0], pt[1]);
             });
-            concatenatedPaths.push(...vec2Array);
-            pathLengths.push(int(vec2Array.length));
+            concatenatedPaths.push(...vec2Points);
+
+            pathLengths.push(int(pathPoints.length));
+
+            if (normals) {
+                const pathNormals = normals[i];
+                const vec2Normals: Array<any> = pathNormals.map( (nrm: [number,number]) => {
+                    return vec2(nrm[0], nrm[1]);
+                });
+                concatenatedNormals.push(...vec2Normals);
+            }
         }
 
         //console.log("Concatenated paths:", concatenatedPaths);      // --- DEBUG ---  
         //console.log("Path lengths:", pathLengths);     // --- DEBUG ---
         
         const tslPaths = array(concatenatedPaths);
+        const tslNormals = array(concatenatedNormals);
         const tslPathLengths = array(pathLengths);
 
         return Fn(([position] : [any]) => {
-            return profile(position, tslPaths, tslPathLengths);
+            return profile(position, tslPaths, tslNormals, tslPathLengths);
         });
     }
     else if (node.type === 'halfSpace') {
