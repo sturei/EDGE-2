@@ -92,7 +92,7 @@ namespace e2 {
             Primitive(const Primitive&) = delete;
             void operator=(const Primitive&) = delete;
 
-            Primitive(const std::string& pathname, const std::string& displayName, PrimitiveType primitiveType, const Vec3d& position, const Vec3d& rotation);
+            Primitive(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, PrimitiveType primitiveType, const Vec3d& position, const Vec3d& rotation);
 
             PrimitiveType primitiveType() const { return m_primitiveType; }
             const Vec3d& position() const { return m_position; }
@@ -111,7 +111,7 @@ namespace e2 {
             Block(const Block&) = delete;
             void operator=(const Block&) = delete;
 
-            Block(const std::string& pathname, const std::string& displayName, double width, double height, double depth);
+            Block(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, double width, double height, double depth);
 
             double width() const { return m_width; }
             double height() const { return m_height; }
@@ -132,7 +132,7 @@ namespace e2 {
             Sphere(const Sphere&) = delete;
             void operator=(const Sphere&) = delete;
 
-            Sphere(const std::string& pathname, const std::string& displayName, double radius);
+            Sphere(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, double radius);
 
             double radius() const { return m_radius; }
 
@@ -149,7 +149,7 @@ namespace e2 {
             Cylinder(const Cylinder&) = delete;
             void operator=(const Cylinder&) = delete;
 
-            Cylinder(const std::string& pathname, const std::string& displayName, double radius, double depth);
+            Cylinder(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, double radius, double depth);
 
             double radius() const { return m_radius; }
             double depth() const { return m_depth; }

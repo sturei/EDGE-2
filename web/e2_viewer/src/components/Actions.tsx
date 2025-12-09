@@ -44,7 +44,9 @@ const actionSuggestions = [
     '{"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}',
     '{"type":"Objects::addCappedRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":5}}',
     '{"type":"Objects::addExtrudedRectangle", "payload":{"lowerLeft":{"x":-3, "y":-2, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":5}}',
-    '{"type":"Features::addPrimitive", "payload":{"primitiveType" : "block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}'
+    '{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}',
+    '{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "featureEffect":"subtract", "width":1, "height":1, "depth":2, "pathName":"shape/features/cut1"}}'
+
   ];
   
   export function Actions() {

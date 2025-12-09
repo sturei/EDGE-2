@@ -349,16 +349,20 @@ namespace e2 {
             std::string pathName = payload.value("pathName", "shape/features/unnamedPrimitive");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             std::string primitiveType = payload.value("primitiveType", "block");
+            std::string featureEffect = payload.value("featureEffect", "add");
+            FeatureEffect featureEffectEnum = featureEffect == "add" ? FeatureEffect::ADD :
+                                            featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
+                                            FeatureEffect::MODIFY;
             size_t featureIndex = -1;
             if (primitiveType == "block") {
                 double width = payload.value("width", 2.0);
                 double height = payload.value("height", 2.0);
                 double depth = payload.value("depth", 2.0);
 
-                store.changeState([pathName, displayName, width, height, depth, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffectEnum, width, height, depth, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                    Feature* blockFeature = new Block(pathName, displayName, width, height, depth);
+                    Feature* blockFeature = new Block(pathName, displayName, featureEffectEnum, width, height, depth);
                     size_t index = features.addFeature(blockFeature);
                     std::cerr << "added Block Primitive" << std::endl;      // ---LOGGING---
 

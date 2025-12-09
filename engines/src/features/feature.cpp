@@ -31,16 +31,19 @@ namespace e2 {
     // Primitive
     //
 
-    Primitive::Primitive(const std::string& pathname, const std::string& displayName, PrimitiveType primitiveType, const Vec3d& position, const Vec3d& rotation)
-        : Feature(pathname, displayName, FeatureType::PRIMITIVE, FeatureEffect::ADD), 
+    Primitive::Primitive(
+        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
+        PrimitiveType primitiveType, const Vec3d& position, const Vec3d& rotation)
+        : Feature(pathname, displayName, FeatureType::PRIMITIVE, featureEffect), 
           m_primitiveType(primitiveType), m_position(position), m_rotation(rotation) {} 
 
-    //
+    //  
     // Block
     //
 
-    Block::Block(const std::string& pathname, const std::string& displayName, double width, double height, double depth)
-        : Primitive(pathname, displayName, PrimitiveType::BLOCK, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
+    Block::Block(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
+        double width, double height, double depth)
+        : Primitive(pathname, displayName, featureEffect, PrimitiveType::BLOCK, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
           m_width(width), m_height(height), m_depth(depth) {}   
 
     void Block::print(std::ostream& os) const {
@@ -57,8 +60,8 @@ namespace e2 {
     // Sphere
     //  
 
-    Sphere::Sphere(const std::string& pathname, const std::string& displayName, double radius)
-        : Primitive(pathname, displayName, PrimitiveType::SPHERE, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
+    Sphere::Sphere(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, double radius)
+        : Primitive(pathname, displayName, featureEffect, PrimitiveType::SPHERE, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
           m_radius(radius) {}
 
     void Sphere::print(std::ostream& os) const {
@@ -72,8 +75,8 @@ namespace e2 {
     //
     // Cylinder
     //
-    Cylinder::Cylinder(const std::string& pathname, const std::string& displayName, double radius, double depth)
-        : Primitive(pathname, displayName, PrimitiveType::CYLINDER, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
+    Cylinder::Cylinder(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, double radius, double depth)
+        : Primitive(pathname, displayName, featureEffect, PrimitiveType::CYLINDER, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
           m_radius(radius), m_depth(depth) {}
 
     void Cylinder::print(std::ostream& os) const {
