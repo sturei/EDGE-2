@@ -300,7 +300,7 @@ namespace e2 {
         // Add an item for the feature
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         const Feature& feature = features.feature(featureIndex);
-        std::string featurePathName = "shape/features/feature[" + std::to_string(featureIndex) + "]";
+        std::string featurePathName = feature.pathname();
         std::string featureDisplayName = "";
         featureDisplayName += " " + toString(feature.featureEffect());
         featureDisplayName += " " + feature.displayName();
@@ -314,6 +314,9 @@ namespace e2 {
         doc.dispatchClientAction({"Gfx::addProductItem", featurePayload});
     }
     void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
+
+        // clear the scene and rebuild it
+        //doc.dispatchClientAction({"Gfx::clearSdfScene", json::object({})});
 
         // ensure parent items "objects", "objects/blanks", "objects/tools/tools" exist
         ensureObjectParentsExist(doc);

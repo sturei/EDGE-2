@@ -14,6 +14,7 @@ namespace e2 {
         const Feature& feature(size_t index) const { return *m_features[index]; }
         size_t addFeature(Feature* feature);
         void removeFeature(size_t index);
+        Feature* findFeature(const std::string& pathname) const;
         void print(std::ostream& os) const override;
     private:
         std::vector<Feature*> m_features; 

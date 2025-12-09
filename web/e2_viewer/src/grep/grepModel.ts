@@ -57,6 +57,10 @@ export class GRepModel extends Model {
         return this.m_sdfScene;
     }
 
+    clearShaderNodes(): void {
+        this.m_sdfScene = [];
+        console.log("GRepModel.clearShaderNodes: cleared all shader nodes.");
+    }
 
     addShaderNode(node: IShaderNode): number {
         // Prevent adding duplicate nodes
