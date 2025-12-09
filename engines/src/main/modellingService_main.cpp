@@ -1,8 +1,6 @@
 #include "document/document.h"
 #include "document/documentService.h"
 #include "document/document.actions.h"
-#include "frep/frepModel.h"
-#include "brep/brepModel.h"
 #include "shape/shapeModel.h"
 #include "shape/shape.actions.h"
 
@@ -21,13 +19,14 @@ int main(int argc, char* argv[]) {
     // Note on resource management:
     // Document takes ownership of its stores; stores take ownership of their models; models own all of their data. 
     // It's a 'total ownership' resource model, with the document at the top of the hierarchy.
-    // std::unique_ptr could be used instead of raw pointers to enforce ownership, but it's a faff. Maybe later.
+    // std::unique_ptr could be used instead of raw pointers to enforce ownership. Maybe later.
 
     // Initialize the models
     BRepModel* sketches = new BRepModel();
     BRepModel* profiles = new BRepModel();
     FRepModel* objects = new FRepModel();
-    ShapeModel* shapeModel = new ShapeModel(sketches, profiles, objects);
+    FeatureModel* features = new FeatureModel();
+    ShapeModel* shapeModel = new ShapeModel(sketches, profiles, objects, features);
 
     // Initialise the stores and the document.
     Document* document = new Document({{"shape", new Store(shapeModel)}});    // document takes ownership of the store

@@ -5,6 +5,7 @@
 #include "brep/tessellate.h"
 #include "frep/functions.h"
 #include "document/document.h"
+#include "shape/shapeModel.h"
 
 using json = nlohmann::json;
 
@@ -168,23 +169,59 @@ namespace e2 {
     }
 
     static void ensureObjectParentsExist(Document& doc) {
+
         // Ensure parent items exists in the client
-        doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
-            {"pathName", "objects"},
-            {"type", "intersection"}
-        })});
-        doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
-            {"pathName", "objects/blanks"},
-            {"type", "union"}
-        })});
-        //doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
-        //    {"pathName", "objects/tools"},
-        //    {"type", "complement"}
-        //})});
-        //doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
-        //    {"pathName", "objects/tools/tools"},
-        //    {"type", "union"}
-        //})});   
+    
+        std::cerr << "ensuring object parents exist" << std::endl;      // ---DEBUG---    
+
+        const Store& store = doc.storeAt("shape");
+        const FeatureModel& features = dynamic_cast<const ShapeModel*>(store.model())->features();
+
+        std::cerr << "got features " << features << std::endl;      // ---DEBUG---
+
+        int numBlanks = 0;
+        int numTools = 0;
+        for (Feature* f : features.features()) {
+            if (!f) {
+                continue;
+            }
+            if (f->featureEffect() == FeatureEffect::ADD) {
+                numBlanks++;
+            }
+            if (f->featureEffect() == FeatureEffect::SUBTRACT) {    
+                numTools++;
+            }   
+        }
+        
+        std::cerr << "numBlanks: " << numBlanks << ", numTools: " << numTools << std::endl;      // ---DEBUG---
+
+        if (numBlanks + numTools > 0) {
+            // add the root node: "objects"
+            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+                {"pathName", "objects"},
+                {"type", "intersection"}
+            })});
+        }
+
+        if (numBlanks > 0) {
+            // add the "blanks" node to hold all the additive features
+            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+                {"pathName", "objects/blanks"},
+                {"type", "union"}
+            })});
+        }
+
+        if (numTools > 0) {
+            // add the "tools/tools" node to hold all the subtractive features
+            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+                {"pathName", "objects/tools"},
+                {"type", numBlanks == 0 ? "union" : "complement"}     // if there are no blanks, union the tools so we can see them
+            })});
+            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+                {"pathName", "objects/tools/tools"},
+                {"type", "union"}
+            })});
+        }
     }
 
     void dispatchGraphicsActionsForScene(Document& doc) {
@@ -205,7 +242,6 @@ namespace e2 {
 
     }
 
-
     static void ensureProductParentsExist(Document& doc) {
         // Ensure parent items exists in the client
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
@@ -217,8 +253,8 @@ namespace e2 {
             {"displayName", "profiles"}
         })});
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
-            {"pathName", "shape/objects"},
-            {"displayName", "objects"}
+            {"pathName", "shape/features"},
+            {"displayName", "features"}
         })});
     }
 
@@ -256,6 +292,65 @@ namespace e2 {
         
     }
 
+    void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
+
+        // Ensure parent item "shape/features" exists
+        ensureProductParentsExist(doc);
+        
+        // Add an item for the feature
+        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
+        const Feature& feature = features.feature(featureIndex);
+        std::string featurePathName = "shape/features/feature[" + std::to_string(featureIndex) + "]";
+        std::string featureDisplayName = "";
+        featureDisplayName += " " + toString(feature.featureEffect());
+        featureDisplayName += " " + feature.displayName();
+        featureDisplayName += " (" + toString(feature.featureType()) + ")";
+
+        json featurePayload = json::object({
+            {"pathName", featurePathName},
+            {"displayName", featureDisplayName}
+        });
+
+        doc.dispatchClientAction({"Gfx::addProductItem", featurePayload});
+    }
+    void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
+
+        // ensure parent items "objects", "objects/blanks", "objects/tools/tools" exist
+        ensureObjectParentsExist(doc);
+        
+        // Each feature maps to an SDF node. Add the SDF node for the new feature.
+        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
+        const Feature& feature = features.feature(featureIndex);
+        std::string objectPathName = "objects/";
+        if (feature.featureEffect() == FeatureEffect::ADD) {
+            objectPathName += "blanks/";
+        } else if (feature.featureEffect() == FeatureEffect::SUBTRACT) {
+            objectPathName += "tools/tools/";
+        } else {
+            // TODO: MODIFY features. We currently do not add anything to the graphics scene for them
+            return;
+        }
+        objectPathName += "feature[" + std::to_string(featureIndex) + "]";
+
+        if (const Primitive* primitiveFeature = dynamic_cast<const Primitive*>(&feature)) {
+            // TODO: handle position and rotation
+            if (const Block* blockFeature = dynamic_cast<const Block*>(primitiveFeature)) {
+                double width = blockFeature->width();
+                double height = blockFeature->height();
+                double depth = blockFeature->depth();
+                json featurePayload = json::object({
+                    {"pathName", objectPathName},
+                    {"type", "block"},
+                    {"width", width},
+                    {"height", height},
+                    {"depth", depth}
+                });
+                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
+                return;
+            }
+        }
+    }
 
 };
 

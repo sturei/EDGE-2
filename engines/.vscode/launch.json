@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) Launch with input redirection (does not work, sadly)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/e2_modellingService",
+            "args": ["<", "${workspaceFolder}/build/e2_modellingService_input.txt"],
+            "stopAtEntry": true,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        }
+
+    ]
+}

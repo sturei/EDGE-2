@@ -63,6 +63,11 @@ export class GRepModel extends Model {
         const existingNode = this.findNode(node.pathName);
         if (existingNode) {
             console.log(`PRepModel.addNode: node with pathName='${node.pathName}' already exists. Skipping add.`);
+            if (existingNode.type !== node.type) {
+                // update the existing node type, to support making tools visible by toggling between 'complement' and 'union' type
+                console.log(`  updating existing node type='${existingNode.type}' to match new node type='${node.type}'`);
+                existingNode.type = node.type;
+            }
             return this.m_sdfScene.indexOf(existingNode);
         }
 

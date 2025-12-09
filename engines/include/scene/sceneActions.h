@@ -13,4 +13,7 @@ namespace e2 {
     void dispatchProductActionsForBody(Document& doc, const Body& body, size_t bodyIndex, const std::string& bodyType, const std::string& parentPathName);
     void dispatchProductActionsForObject(Document& doc, const FObject& fobject, size_t objectIndex, const std::string& objectType, const std::string& parentPathName);
 
+    void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex);
+    void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex);
+
 };

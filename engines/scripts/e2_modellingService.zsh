@@ -21,7 +21,7 @@ Instructions:
     {"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
     {"type":"Objects::addCappedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}
     {"type":"Objects::addExtrudedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}
-
+    {"type":"Features::addPrimitive", "payload":{"primitiveType" : "block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}
   Type 'q' to quit, or 'h' to show these instructions again.
 EOM
 

@@ -51,6 +51,8 @@ set(MODELLING_SERVICE_SOURCES
     src/document/documentService.cpp
     src/document/model.cpp
     src/document/store.cpp
+    src/features/feature.cpp
+    src/features/featureModel.cpp
     src/frep/frep.fixtures.cpp
     src/frep/fobject.cpp
     src/frep/functions.cpp
