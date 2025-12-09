@@ -21,4 +21,14 @@ function addProductItem(doc: Document, payload: any): void {
     console.log(`Added Product Item: ${displayName}`);          //--- DEBUG ---
 }
 
+function clearProductItems(doc: Document, _payload: any): void {
+    const store = doc.getStore("structure");
+    store.changeState((model: Model) => {
+        let structureModel = model as PRepModel; 
+        structureModel.clearItems();
+    });
+    console.log("Cleared all Product Items");          //--- DEBUG ---
+}
+
 export const addProductItemActionDef = { type: "Gfx::addProductItem", function: addProductItem };
+export const clearProductItemsActionDef = { type: "Gfx::clearProductItems", function: clearProductItems };  

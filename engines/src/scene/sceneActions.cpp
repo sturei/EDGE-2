@@ -168,6 +168,22 @@ namespace e2 {
         }
     }
 
+    static void ensureProductParentsExist(Document& doc) {
+        // Ensure parent items exists in the client
+        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+            {"pathName", "shape/workplanes"},
+            {"displayName", "workplanes"}
+        })});
+        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+            {"pathName", "shape/profiles"},
+            {"displayName", "profiles"}
+        })});
+        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+            {"pathName", "shape/features"},
+            {"displayName", "features"}
+        })});
+    }
+
     static void ensureObjectParentsExist(Document& doc) {
 
         // Ensure parent items exists in the client
@@ -242,22 +258,6 @@ namespace e2 {
 
     }
 
-    static void ensureProductParentsExist(Document& doc) {
-        // Ensure parent items exists in the client
-        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
-            {"pathName", "shape/workplanes"},
-            {"displayName", "workplanes"}
-        })});
-        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
-            {"pathName", "shape/profiles"},
-            {"displayName", "profiles"}
-        })});
-        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
-            {"pathName", "shape/features"},
-            {"displayName", "features"}
-        })});
-    }
-
     void dispatchProductActionsForBody(Document& doc, const Body& body, size_t bodyIndex, const std::string& bodyType, const std::string& parentPathName) {
 
         ensureProductParentsExist(doc);
@@ -294,25 +294,30 @@ namespace e2 {
 
     void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
 
-        // Ensure parent item "shape/features" exists
+        doc.dispatchClientAction({"Gfx::clearProductItems", json::object({})});  
+
+        // Ensure parent items, especially "shape/features", exists
         ensureProductParentsExist(doc);
         
-        // Add an item for the feature
+        // Add an item for each feature
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
-        const Feature& feature = features.feature(featureIndex);
-        std::string featurePathName = feature.pathname();
-        std::string featureDisplayName = "";
-        featureDisplayName += " " + toString(feature.featureEffect());
-        featureDisplayName += " " + feature.displayName();
-        featureDisplayName += " (" + toString(feature.featureType()) + ")";
+        for (size_t featureIndex = 0; featureIndex < features.numFeatures(); ++featureIndex) {  
+            const Feature& feature = features.feature(featureIndex);
+            std::string featurePathName = feature.pathname();
+            std::string featureDisplayName = "";
+            featureDisplayName += " " + toString(feature.featureEffect());
+            featureDisplayName += " " + feature.displayName();
+            featureDisplayName += " (" + toString(feature.featureType()) + ")";
 
-        json featurePayload = json::object({
-            {"pathName", featurePathName},
-            {"displayName", featureDisplayName}
-        });
+            json featurePayload = json::object({
+                {"pathName", featurePathName},
+                {"displayName", featureDisplayName}
+            });
 
-        doc.dispatchClientAction({"Gfx::addProductItem", featurePayload});
+            doc.dispatchClientAction({"Gfx::addProductItem", featurePayload});
+        }
     }
+
     void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         // clear the scene and rebuild it

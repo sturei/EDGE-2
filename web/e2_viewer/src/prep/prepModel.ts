@@ -75,6 +75,11 @@ export class PRepModel extends Model {
         return null;
     }
 
+    clearItems(): void {
+        this.m_items = [];
+        console.log("PRepModel.clearItems: cleared all items.");
+    }
+
     private findParentItem(item: IProductItem): IProductItem | null {
         const parentPathName = item.pathName.substring(0, item.pathName.lastIndexOf('/'));
         for (const potentialParent of this.m_items) {
