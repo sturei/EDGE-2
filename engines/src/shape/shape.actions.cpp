@@ -371,7 +371,39 @@ namespace e2 {
                     // update the graphical scene in the client
                     dispatchGraphicsActionsForNewFeature(doc, index);
                 });
-            };
+            }
+            else if (primitiveType == "sphere") {
+                double radius = payload.value("radius", 1.0);
+
+                store.changeState([pathName, displayName, featureEffectEnum, radius, &doc](Model* model) {
+                    // update the model
+                    FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* sphereFeature = new Sphere(pathName, displayName, featureEffectEnum, radius);
+                    size_t index = features.addFeature(sphereFeature);
+                    std::cerr << "added Sphere Primitive" << std::endl;      // ---LOGGING---
+
+                    // update the product hierarchy in the client
+                    dispatchProductActionsForNewFeature(doc, index);
+                    // update the graphical scene in the client
+                    dispatchGraphicsActionsForNewFeature(doc, index);
+                });
+            }
+            else if (primitiveType == "cylinder") {
+                double radius = payload.value("radius", 1.0);
+                double depth = payload.value("depth", 2.0);
+                store.changeState([pathName, displayName, featureEffectEnum, radius, depth, &doc](Model* model) {
+                    // update the model
+                    FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* cylinderFeature = new Cylinder(pathName, displayName, featureEffectEnum, radius, depth);
+                    size_t index = features.addFeature(cylinderFeature);
+                    std::cerr << "added Cylinder Primitive" << std::endl;      // ---LOGGING---
+
+                    // update the product hierarchy in the client
+                    dispatchProductActionsForNewFeature(doc, index);
+                    // update the graphical scene in the client
+                    dispatchGraphicsActionsForNewFeature(doc, index);
+                });
+            }
         }
     }
 };

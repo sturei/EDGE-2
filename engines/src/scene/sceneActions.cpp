@@ -349,6 +349,30 @@ namespace e2 {
                 doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
                 return;
             }
+            else if (const Sphere* sphereFeature = dynamic_cast<const Sphere*>(primitiveFeature)) {
+                double radius = sphereFeature->radius();
+                json featurePayload = json::object({
+                    {"pathName", objectPathName},
+                    {"type", "sphere"},
+                    {"radius", radius}
+                });
+                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
+                return;
+            }
+            else if (const Cylinder* cylinderFeature = dynamic_cast<const Cylinder*>(primitiveFeature)) {
+                double radius = cylinderFeature->radius();
+                double depth = cylinderFeature->depth();
+                json featurePayload = json::object({
+                    {"pathName", objectPathName},
+                    {"type", "cylinder"},
+                    {"radius", radius},
+                    {"depth", depth}
+                });
+                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
+                return;
+            }
         }
     }
 
