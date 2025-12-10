@@ -167,6 +167,21 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
             return current;
         });
     }
+    else if (node.type === 'translation') {
+        const translation = node.parameters?.get('translation') ?? [0, 0, 0];
+        const t = vec3(translation[0], translation[1], translation[2]);
+        const childIndices = node.childIndices;
+        if (!childIndices || childIndices.length == 0) {
+            throw new Error("Translation node missing childIndices");
+        }
+        if (childIndices.length != 1) {
+            throw new Error("Translation node must have exactly one child");
+        }
+        return Fn(([position] : [any]) => {
+            const translatedPos = position.sub(t);
+            return generateNode(childIndices[0], nodes)(translatedPos);
+        });
+    }
     else {
         throw new Error(`Unsupported node type: ${node.type}`);
     }

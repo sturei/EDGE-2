@@ -26,6 +26,8 @@ const actionSuggestions = [
     '{"type":"Gfx::addSdfNode", "payload":{"type":"union", "pathName":"objects/tools/tools"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"block", "width":3.0, "height":2.0, "depth":5.0, "pathName":"objects/blanks/block1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/blanks/cylinder1"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"translation", "translation":[0.5,0,0], "pathName":"objects/blanks/translation"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/blanks/translation/cylinder2"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"extrusion", "depth":6.0, "pathName":"objects/blanks/extrusion1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"profile", "paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "pathName":"objects/blanks/extrusion1/profile1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"sphere", "radius":1.5, "pathName":"objects/tools/tools/sphere1"}}',

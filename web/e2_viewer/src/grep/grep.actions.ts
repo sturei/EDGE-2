@@ -310,6 +310,16 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
+        else if (type === 'translation') {
+            const translation = payload.translation ?? [0, 0, 0];
+            const node : IShaderNode = {
+                type: 'translation',
+                pathName: payload.pathName ?? 'translation',
+                parameters: new Map([['translation', translation]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
         else {
             console.error(`addSdfNode action: unknown type '${type}'`);
         }
