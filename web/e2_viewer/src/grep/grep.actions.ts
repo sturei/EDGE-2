@@ -320,6 +320,16 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
+        else if (type === 'rotation') {
+            const rotation = payload.rotation ?? [0, 0, 0];
+            const node : IShaderNode = {
+                type: 'rotation',
+                pathName: payload.pathName ?? 'rotation',
+                parameters: new Map([['rotation', rotation]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
         else {
             console.error(`addSdfNode action: unknown type '${type}'`);
         }

@@ -1,6 +1,7 @@
 import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
 import { type IShaderNode } from '../../grep/shaderNode';
-import { Fn, int, float, min, max, negate, sqrt, vec2, vec3, array } from 'three/tsl';    
+import { Fn, int, float, min, max, negate, rotate, sqrt, vec2, vec3, array } from 'three/tsl';    
+import { Euler } from 'three/webgpu';
 
 function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
     const node = nodes[nodeIndex];
@@ -180,6 +181,21 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
         return Fn(([position] : [any]) => {
             const translatedPos = position.sub(t);
             return generateNode(childIndices[0], nodes)(translatedPos);
+        });
+    }
+    else if (node.type === 'rotation') {
+        const rotation = node.parameters?.get('rotation') ?? [0, 0, 0];     // Euler angles in radians
+        const r = vec3(rotation[0], rotation[1], rotation[2]);
+        const childIndices = node.childIndices;
+        if (!childIndices || childIndices.length == 0) {
+            throw new Error("Rotation node missing childIndices");
+        }
+        if (childIndices.length != 1) {
+            throw new Error("Rotation node must have exactly one child");
+        }
+        return Fn(([position] : [any]) => {
+            const rotatedPos = rotate(position, r);
+            return generateNode(childIndices[0], nodes)(rotatedPos);
         });
     }
     else {

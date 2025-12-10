@@ -28,6 +28,8 @@ const actionSuggestions = [
     '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/blanks/cylinder1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"translation", "translation":[0.5,0,0], "pathName":"objects/blanks/translation"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/blanks/translation/cylinder2"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"rotation", "rotation":[1.57079632679,0,0], "pathName":"objects/blanks/rotation"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/blanks/rotation/cylinder3"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"extrusion", "depth":6.0, "pathName":"objects/blanks/extrusion1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"profile", "paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "pathName":"objects/blanks/extrusion1/profile1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"sphere", "radius":1.5, "pathName":"objects/tools/tools/sphere1"}}',
