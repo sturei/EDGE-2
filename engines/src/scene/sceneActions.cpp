@@ -321,68 +321,66 @@ namespace e2 {
     void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         // clear the scene and rebuild it
-        //doc.dispatchClientAction({"Gfx::clearSdfScene", json::object({})});
+        doc.dispatchClientAction({"Gfx::clearSdfScene", json::object({})});
 
         // ensure parent items "objects", "objects/blanks", "objects/tools/tools" exist
         ensureObjectParentsExist(doc);
         
-        // Each feature maps to an SDF node. Add the SDF node for the new feature.
+        // Each feature maps to an SDF object (the root of an SDF node tree)
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
-        const Feature& feature = features.feature(featureIndex);
-        std::string objectPathName = "objects/";
-        if (feature.featureEffect() == FeatureEffect::ADD) {
-            objectPathName += "blanks/";
-        } else if (feature.featureEffect() == FeatureEffect::SUBTRACT) {
-            objectPathName += "tools/tools/";
-        } else {
-            // TODO: MODIFY features. We currently do not add anything to the graphics scene for them
-            return;
-        }
-        objectPathName += "feature[" + std::to_string(featureIndex) + "]";
+        for (size_t featureIndex = 0; featureIndex < features.numFeatures(); ++featureIndex) {  
+            const Feature& feature = features.feature(featureIndex);
+            std::string objectPathName = "objects/";
+            if (feature.featureEffect() == FeatureEffect::ADD) {
+                objectPathName += "blanks/";
+            } else if (feature.featureEffect() == FeatureEffect::SUBTRACT) {
+                objectPathName += "tools/tools/";
+            } else {
+                // TODO: MODIFY features. We currently do not add anything to the graphics scene for them
+                continue;
+            }
+            objectPathName += "feature[" + std::to_string(featureIndex) + "]";
 
-        if (const Primitive* primitiveFeature = dynamic_cast<const Primitive*>(&feature)) {
-            // TODO: handle position and rotation
-            if (const Block* blockFeature = dynamic_cast<const Block*>(primitiveFeature)) {
-                double width = blockFeature->width();
-                double height = blockFeature->height();
-                double depth = blockFeature->depth();
-                json featurePayload = json::object({
-                    {"pathName", objectPathName},
-                    {"type", "block"},
-                    {"width", width},
-                    {"height", height},
-                    {"depth", depth}
-                });
-                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
-                doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
-                return;
-            }
-            else if (const Sphere* sphereFeature = dynamic_cast<const Sphere*>(primitiveFeature)) {
-                double radius = sphereFeature->radius();
-                json featurePayload = json::object({
-                    {"pathName", objectPathName},
-                    {"type", "sphere"},
-                    {"radius", radius}
-                });
-                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
-                doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
-                return;
-            }
-            else if (const Cylinder* cylinderFeature = dynamic_cast<const Cylinder*>(primitiveFeature)) {
-                double radius = cylinderFeature->radius();
-                double depth = cylinderFeature->depth();
-                json featurePayload = json::object({
-                    {"pathName", objectPathName},
-                    {"type", "cylinder"},
-                    {"radius", radius},
-                    {"depth", depth}
-                });
-                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
-                doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
-                return;
+            if (const Primitive* primitiveFeature = dynamic_cast<const Primitive*>(&feature)) {
+                // TODO: handle position and rotation
+                if (const Block* blockFeature = dynamic_cast<const Block*>(primitiveFeature)) {
+                    double width = blockFeature->width();
+                    double height = blockFeature->height();
+                    double depth = blockFeature->depth();
+                    json featurePayload = json::object({
+                        {"pathName", objectPathName},
+                        {"type", "block"},
+                        {"width", width},
+                        {"height", height},
+                        {"depth", depth}
+                    });
+                    doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                }
+                else if (const Sphere* sphereFeature = dynamic_cast<const Sphere*>(primitiveFeature)) {
+                    double radius = sphereFeature->radius();
+                    json featurePayload = json::object({
+                        {"pathName", objectPathName},
+                        {"type", "sphere"},
+                        {"radius", radius}
+                    });
+                    doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                }
+                else if (const Cylinder* cylinderFeature = dynamic_cast<const Cylinder*>(primitiveFeature)) {
+                    double radius = cylinderFeature->radius();
+                    double depth = cylinderFeature->depth();
+                    json featurePayload = json::object({
+                        {"pathName", objectPathName},
+                        {"type", "cylinder"},
+                        {"radius", radius},
+                        {"depth", depth}
+                    });
+                    doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                }
             }
         }
+
+        // Finally, update the SDF scene
+        doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
     }
-
 };
 
