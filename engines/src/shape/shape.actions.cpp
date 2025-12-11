@@ -405,6 +405,44 @@ namespace e2 {
                 });
             }
         }
+
+        void addExtrusion(Document& doc, const json& payload) {
+            // This action adds an extrusion feature as a feature
+            Store& store = doc.storeAt("shape");
+            std::string pathName = payload.value("pathName", "shape/features/unnamedExtrusion");
+            std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
+            std::string featureEffect = payload.value("featureEffect", "add");
+            FeatureEffect featureEffectEnum = featureEffect == "add" ? FeatureEffect::ADD :
+                                            featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
+                                            FeatureEffect::MODIFY;
+            // For now we hard-code the profile body as a rounded rectangle.
+            // In near future it can come from profiles[0]
+            // or (better) by a profilePath in the payload.
+            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
+                payload.value("lowerLeft", json::object({{"x", -3}, {"y", -2}, {"z", 0}})),
+                payload.value("upperRight", json::object({{"x", 3 }, {"y", 2}, {"z", 0}}))
+            );
+            Vec3d lowerLeft = bounds.first;
+            Vec3d upperRight = bounds.second;
+            double depth = payload.value("depth", 1.0);
+
+            store.changeState([pathName, displayName, featureEffectEnum, lowerLeft, upperRight, depth, &doc](Model* model) {
+                // update the model
+                FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                //Body* profileBody = BRepFixtures::sheetRectangle(lowerLeft, upperRight);
+                Body* profileBody = BRepFixtures::sheetRoundRect(lowerLeft, upperRight, 0.4);
+                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, *profileBody, depth);
+                size_t index = features.addFeature(extrusionFeature);
+                std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
+
+                delete profileBody;             // feature took a copy of it
+
+                // update the product hierarchy in the client
+                dispatchProductActionsForNewFeature(doc, index);
+                // update the graphical scene in the client
+                dispatchGraphicsActionsForNewFeature(doc, index);
+            });     
+        }
     }
 };
 

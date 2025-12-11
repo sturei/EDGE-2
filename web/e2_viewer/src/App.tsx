@@ -5,6 +5,7 @@ import { Actions } from './components/Actions'
 import { Scene } from './components/Scene';
 import { Structure } from './components/Structure';
 import { DocumentContext } from './Contexts';
+import { Stats } from '@react-three/drei';
 
 // At present, React Three Fiber does not include types for Three.js WebGPU extensions, hence this manual extension
 import { extend,type ThreeToJSXElements } from '@react-three/fiber';
@@ -48,7 +49,7 @@ function App() {
         <div className="graphicsArea h-140 flex-1 bg-slate-800">
           <Canvas
             gl={async (props) => {
-              console.warn("WebGPU is supported");
+              console.warn("Using WebGPU renderer");
               const renderer = new THREE.WebGPURenderer(
               props as WebGPURendererParameters
             );
@@ -57,6 +58,7 @@ function App() {
           }}
           >           
             <Scene/>
+            <Stats />
           </Canvas>
         </div>
         <div className="right-sidebar w-10remflex-none bg-blue-100">

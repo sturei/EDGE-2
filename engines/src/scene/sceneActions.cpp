@@ -29,7 +29,9 @@ namespace e2 {
         // The payload for each edge is a polyline
         auto edges = getKSkeleton(1, sketchBody);
         for (const auto& edgeIndex : edges) {
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, sketchBody);
+            double atolDegrees = 16.0;
+            double atol = atolDegrees * M_PI/180.0;
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, sketchBody, atol);
             std::vector<json> positions;
             for (const auto& point : *tessellatedPointsPtr) {
                 positions.push_back(json::array({point.x(), point.y(), point.z()}));
@@ -47,7 +49,9 @@ namespace e2 {
         std::vector<json> paths;
         for (const auto& edgePair : edges) {
             CellIndex edgeIndex = edgePair.first;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
+            double atolDegrees = 16.0;
+            double atol = atolDegrees * M_PI/180.0;
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody, atol);
             std::vector<json> path;
             for (const auto& point : *tessellatedPointsPtr) {
                     path.push_back(json::array({point.x(), point.y()}));
@@ -318,6 +322,35 @@ namespace e2 {
         }
     }
 
+    static void dispatchGraphicsActionsForSdfProfile(Document& doc, const std::string& pathName, const Body& profileBody) {
+        // The payload is a collection of "paths", representing the outline of the given body.
+        CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
+        auto edges = getKBoundary(1, faceIndex, profileBody);
+        std::vector<json> paths;
+        for (const auto& edgePair : edges) {
+            CellIndex edgeIndex = edgePair.first;
+            double atolDegrees = 16.0;
+            double atol = atolDegrees * M_PI/180.0;
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody, atol);
+            std::vector<json> path;
+            for (const auto& point : *tessellatedPointsPtr) {
+                    path.push_back(json::array({point.x(), point.y()}));
+            }
+            if (edgePair.second == -1) {
+                std::reverse(path.begin(), path.end());
+            }
+            paths.push_back(path);
+            delete tessellatedPointsPtr;
+        }
+
+        json payload = json::object({
+            {"pathName", pathName},
+            {"type", "profile"},
+            {"paths", paths}
+        });
+        doc.dispatchClientAction({"Gfx::addSdfNode", payload});
+    }
+
     void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         // clear the scene and rebuild it
@@ -376,6 +409,16 @@ namespace e2 {
                     });
                     doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
                 }
+            }
+            else if (const Extrusion* extrusionFeature = dynamic_cast<const Extrusion*>(&feature)) {
+                double depth = extrusionFeature->depth();
+                json featurePayload = json::object({
+                    {"pathName", objectPathName},
+                    {"type", "extrusion"},
+                    {"depth", depth}
+                });
+                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                dispatchGraphicsActionsForSdfProfile(doc, objectPathName + "/profile", extrusionFeature->profileBody());    
             }
         }
 

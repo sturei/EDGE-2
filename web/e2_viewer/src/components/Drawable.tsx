@@ -161,6 +161,9 @@ export function jsxFromDrawable(drawable: IDrawable) {
     }
     else if (geometry.type === 'profile'){
         console.log(`Creating profile with ${geometry.paths.length} paths`);    // --- DEBUG ---
+        for (let p = 0; p < geometry.paths.length; p++) {
+            console.log(`  Path ${p} with ${geometry.paths[p].length} points`);   // --- DEBUG ---
+        }
         return(
             <Profile args={[geometry.paths]}>
                 <meshStandardMaterial color={appearance?.color??Color.get("white")} side={THREE.DoubleSide} />

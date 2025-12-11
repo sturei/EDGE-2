@@ -24,6 +24,8 @@ Instructions:
     {"type":"Features::addPrimitive", "payload":{"primitiveType" : "block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}
     {"type":"Features::addPrimitive", "payload":{"primitiveType" : "sphere", "radius":1.5, "pathName":"shape/features/sphere1"}}
     {"type":"Features::addPrimitive", "payload":{"primitiveType" : "cylinder", "radius":1.5, "depth":3, "pathName":"shape/features/cylinder1"}}
+    {"type":"Features::addExtrusion", "payload":{"depth":3, "pathName":"shape/features/extrusion1"}}
+
   Type 'q' to quit, or 'h' to show these instructions again.
 EOM
 

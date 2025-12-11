@@ -83,11 +83,11 @@ export const profile = Fn(([position, profilePaths, profileNormals, profilePathL
     const minDistanceSq = float(99999.99).toVar(); // Large initial value
     const minSign = int(1).toVar(); // positive = outside, negative = inside 
     const numPaths = int(profilePathLengths.count);
-    const index = int(0);
+    const index = int(0).toVar();  // index into concatenated paths
 
     // Loop over each path in the profile
     Loop( {start: 0, end: numPaths, condition: '<' }, ( { i } ) => {
-        const numPoints = int(profilePathLengths.element(i));
+        const numPoints = int(profilePathLengths.element(i)).toVar();
 
         // Loop over each segment in the path
         Loop( {start: 0, end: numPoints.add(-1), condition: '<' }, () => {
@@ -98,7 +98,7 @@ export const profile = Fn(([position, profilePaths, profileNormals, profilePathL
             const delta = position.xy.sub(p1);
 
             // Project position onto the infinite line (p1 + t * segmentDir)
-            const t = delta.dot(segmentDir).div(segmentDir.dot(segmentDir));
+            const t = delta.dot(segmentDir).div(segmentDir.dot(segmentDir)).toVar();
 
             // Clamp t to the segment (0 to 1)
             t.assign(max(min(t, 1.0), 0.0));
@@ -124,7 +124,6 @@ export const profile = Fn(([position, profilePaths, profileNormals, profilePathL
     } );
 
     return minDistanceSq.sqrt().mul(minSign);
-
 })
 
 // half-space defined by plane position and normal

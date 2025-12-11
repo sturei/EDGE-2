@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream> 
 #include <utils/vec3d.h>
+#include "brep/body.h"
 
 namespace e2 {
     
@@ -160,4 +161,25 @@ namespace e2 {
             double m_radius;
             double m_depth;
     };
+
+    class Extrusion : public Feature {
+        public:
+            Extrusion() = default;
+            virtual ~Extrusion() = default;
+            Extrusion(const Extrusion&) = delete;
+            void operator=(const Extrusion&) = delete;
+
+            Extrusion(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
+                const Body& profileBody, double depth);
+
+            const Body& profileBody() const { return m_profileBody; }
+            double depth() const { return m_depth; }
+
+            void print(std::ostream& os) const override;
+
+        private:
+            Body m_profileBody;                     // copy of the profile body. Later this may be a reference, and the extrusion profile will update to match it.
+            double m_depth;                         // extrusion depth +/- depth/2 along Z. Later this may be a reference to a 2nd workplane and the depth and position will update to match it.
+    };
+
 }

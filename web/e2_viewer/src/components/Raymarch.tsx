@@ -73,7 +73,7 @@ function generateRaymarchedScene(nodes: IShaderNode[]) {
 
         const diffuse = dp.mul(lightColor)
 
-        // Steo 3: Hemisphere light - a mix between a sky and ground colour based on normals
+        // Step 3: Hemisphere light - a mix between a sky and ground colour based on normals
         const skyColor = vec3(0, 0.3, 0.6)
         const groundColor = vec3(0.6, 0.3, 0.1)
 
@@ -133,12 +133,12 @@ function generateRaymarchedScene(nodes: IShaderNode[]) {
 
             // If we're close enough, it's a hit, so we can do an early return
             If(d.lessThan(0.001), () => {
-            Break()
+                Break()
             })
 
             // If we've travelled too far, we can return now and consider that this ray didn't hit anything
             If(t.greaterThan(100), () => {
-            Break()
+                Break()
             })
         })
 

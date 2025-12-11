@@ -32,6 +32,7 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
         let normals = node.parameters?.get('normals');
         if (!normals) {
             // compute psuedonormals for each point (cross product of tangent and normal Z)
+            console.log("Computing profile normals");   // --- DEBUG ---
             const computedNormals: Array<Array<[number,number]>> = [];
             for (let p = 0; p < paths.length; p++) {
                 const pathPoints = paths[p];
@@ -60,7 +61,10 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
             normals = computedNormals;
         }
 
-        console.log("Profile paths:", paths);       // --- DEBUG ---
+        console.log("Profile with " + paths.length + " paths:");       // --- DEBUG ---
+        for (let p = 0; p < paths.length; p++) {
+            console.log(`  Path ${p} with ${paths[p].length} points`);   // --- DEBUG ---
+        }
         console.log("Profile normals:", normals);   // --- DEBUG ---
 
         // concatenate the paths into a single array, and keep track of lengths
@@ -85,7 +89,7 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
             }
         }
 
-        //console.log("Concatenated paths:", concatenatedPaths);      // --- DEBUG ---  
+        console.log("Concatenated paths has total length:", concatenatedPaths.length);      // --- DEBUG ---  
         //console.log("Path lengths:", pathLengths);     // --- DEBUG ---
         
         const tslPaths = array(concatenatedPaths);

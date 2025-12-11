@@ -88,4 +88,21 @@ namespace e2 {
            << ", depth=" << m_depth << ")";
     }
 
+    //
+    // Extrusion
+    //
+    Extrusion::Extrusion(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
+        const Body& profileBody, double depth)
+        : Feature(pathname, displayName, FeatureType::EXTRUSION, featureEffect), 
+          m_profileBody(profileBody), m_depth(depth) {}
+
+    void Extrusion::print(std::ostream& os) const {
+        os << "Extrusion(pathname=" << pathname()
+           << ", displayName=" << displayName()
+           << ", featureType=" << featureType()
+           << ", featureEffect=" << featureEffect()
+           << ", depth=" << m_depth
+           << ", profileBodyCells=" << m_profileBody.numCells() << ")";
+    }   
+
 } // namespace e2
