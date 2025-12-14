@@ -252,6 +252,39 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
+        else if (type === 'circle') {
+            const radius = payload.radius ?? 1.0;
+            const node: IShaderNode = {
+                type: 'circle',
+                pathName: payload.pathName ?? 'circle',
+                parameters: new Map([['radius', radius]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'rectangle') {
+            const width = payload.width ?? 1.0;
+            const height = payload.height ?? 1.0;
+            const node: IShaderNode = {
+                type: 'rectangle',
+                pathName: payload.pathName ?? 'rectangle',
+                parameters: new Map([['width', width], ['height', height]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'roundRect') {
+            const width = payload.width ?? 1.0;
+            const height = payload.height ?? 1.0;
+            const radius = payload.radius ?? 0.1;
+            const node: IShaderNode = {
+                type: 'roundRect',
+                pathName: payload.pathName ?? 'roundRect',
+                parameters: new Map([['width', width], ['height', height], ['radius', radius]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
         else if (type === 'profile') {
             const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
             const node: IShaderNode = {
@@ -310,40 +343,11 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
-        else if (type === 'translation') {
-            const translation = payload.translation ?? [0, 0, 0];
-            const node : IShaderNode = {
-                type: 'translation',
-                pathName: payload.pathName ?? 'translation',
-                parameters: new Map([['translation', translation]]),
-                childIndices: undefined
-            };
-            grepModel.addShaderNode(node);
-        }
-        else if (type === 'rotation') {
-            const rotation = payload.rotation ?? [0, 0, 0];
-            const node : IShaderNode = {
-                type: 'rotation',
-                pathName: payload.pathName ?? 'rotation',
-                parameters: new Map([['rotation', rotation]]),
-                childIndices: undefined
-            };
-            grepModel.addShaderNode(node);
-        }
         else {
             console.error(`addSdfNode action: unknown type '${type}'`);
         }
     });
     console.log("added SDF Node");      // ---DEBUG---
-}
-
-function clearSdfScene(doc: Document, _payload: any): void {
-    const store = doc.getStore("scene");
-    store.changeState((model: Model) => {
-        let grepModel = model as GRepModel;
-        grepModel.clearShaderNodes();
-        console.log("Cleared SDF scene");
-    });
 }
 
 function updateSdfScene(doc: Document, _payload: any): void {
@@ -370,4 +374,3 @@ export const addCylinderActionDef = { type: "Gfx::addCylinder", function: addCyl
 export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
 export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
 export const updateSdfSceneActionDef = { type: "Gfx::updateSdfScene", function: updateSdfScene };
-export const clearSdfSceneActionDef = { type: "Gfx::clearSdfScene", function: clearSdfScene };

@@ -1,7 +1,6 @@
 import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
 import { type IShaderNode } from '../../grep/shaderNode';
-import { Fn, int, float, min, max, negate, rotate, sqrt, vec2, vec3, array } from 'three/tsl';    
-import { Euler } from 'three/webgpu';
+import { Fn, int, float, min, max, abs, negate, rotate, sqrt, length, vec2, vec3, array } from 'three/tsl';    
 
 function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
     const node = nodes[nodeIndex];
@@ -24,6 +23,44 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
         const depth = node.parameters?.get('depth') ?? 1.0;
         return Fn(([position] : [any]) => {
             return cylinder(position, radius, depth);
+        });
+    }
+    else if (node.type === 'circle'){
+        const radius = node.parameters?.get('radius') ?? 1.0;
+        return Fn(([position] : [any]) => {
+            const d = length(position.xy).sub(radius);
+            return d;
+        });
+    }
+    else if (node.type === 'rectangle'){
+        // quilez: https://iquilezles.org/articles/distfunctions2d/
+        //float sdBox( in vec2 p, in vec2 b )
+        //vec2 d = abs(p)-b;
+        //return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+        const width = node.parameters?.get('width') ?? 1.0;
+        const height = node.parameters?.get('height') ?? 1.0;
+        return Fn(([position] : [any]) => {
+            // A bit verbose, but eventually the inner Fn will be added to the primitives.
+            return Fn(([position, width, height] : [any, any, any]) => { 
+                const dimensions = vec2(width.mul(0.5), height.mul(0.5));
+                const distance = abs(position.xy).sub(dimensions);
+                return length(max(distance, 0.0)).add(
+                    min(max(distance.x, distance.y), 0.0));
+            })(position, width, height);
+        });
+    }   
+    else if (node.type === 'roundRect'){
+        const width = node.parameters?.get('width') ?? 1.0;
+        const height = node.parameters?.get('height') ?? 1.0;
+        const radius = node.parameters?.get('radius') ?? 0.1;
+        // this one does it the other way - getting the inputs from the closure
+        return Fn(([position] : [any]) => {
+            //const dimensions = vec2(width.mul(0.5), height.mul(0.5));
+            const dimensions = vec2(width*0.5, height*0.5);
+            const distance = abs(position.xy).sub(dimensions.sub(vec2(radius)));
+            return length(max(distance, 0.0)).add(
+                min(max(distance.x, distance.y), 0.0)
+            ).sub(radius);
         });
     }
     else if (node.type === 'profile') {
