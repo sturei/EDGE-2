@@ -517,7 +517,7 @@ namespace e2 {
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* roundRectBody = BRepFixtures::roundRect2DSheet(width, height, cornerRadius);
                     size_t profileIndex = profiles.addBody(roundRectBody);
-                    
+
                     std::cerr << "added RoundRect2D Primitive" << std::endl;      // ---LOGGING---
 
                     // update the product hierarchy in the client
@@ -535,35 +535,23 @@ namespace e2 {
             std::string pathName = payload.value("pathName", "shape/features/unnamedExtrusion");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             std::string featureEffect = payload.value("featureEffect", "add");
-            FeatureEffect featureEffectEnum = featureEffect == "add" ? FeatureEffect::ADD :
-                                            featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
-                                            FeatureEffect::MODIFY;
-            // For now we hard-code the profile body as a rounded rectangle.
-            // In near future it can come from profiles[0]
-            // or (better) by a profilePath in the payload.
-            std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -3}, {"y", -2}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 3 }, {"y", 2}, {"z", 0}}))
-            );
-            Vec3d lowerLeft = bounds.first;
-            Vec3d upperRight = bounds.second;
+            FeatureEffect featureEffectEnum = 
+                featureEffect == "add" ? FeatureEffect::ADD :
+                featureEffect == "subtract" ? FeatureEffect::SUBTRACT : FeatureEffect::MODIFY;
+            std::string profilePathName = payload.value("profilePathName", "shape/profiles/unnamedProfile");
             double depth = payload.value("depth", 1.0);
 
-            store.changeState([pathName, displayName, featureEffectEnum, lowerLeft, upperRight, depth, &doc](Model* model) {
+            store.changeState([pathName, displayName, featureEffectEnum, profilePathName, depth, &doc](Model* model) {
                 // update the model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                //Body* profileBody = BRepFixtures::sheetRectangle(lowerLeft, upperRight);
-                //Body* profileBody = BRepFixtures::sheetRoundRect(lowerLeft, upperRight, 0.4);
-                //Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, *profileBody, depth);
-                //size_t index = features.addFeature(extrusionFeature);
-                std::cerr << "TODO!! add Extrusion Feature" << std::endl;      // ---LOGGING---
-
-                //delete profileBody;             // feature took a copy of it
+                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, profilePathName, depth);
+                size_t index = features.addFeature(extrusionFeature);
+                std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
 
                 // update the product hierarchy in the client
-                //dispatchProductActionsForNewFeature(doc, index);
+                dispatchProductActionsForNewFeature(doc, index);
                 // update the graphical scene in the client
-                //dispatchGraphicsActionsForNewFeature(doc, index);
+                dispatchGraphicsActionsForNewFeature(doc, index);
             });     
         }
     }

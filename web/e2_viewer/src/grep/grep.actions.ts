@@ -219,7 +219,8 @@ function addSdfNode(doc: Document, payload: any): void {
             console.error("addSdfNode action requires 'type' in payload");
             return;
         }
-        else if (type === 'sphere') {
+        
+        if (type === 'sphere') {
             const radius = payload.radius ?? 1.0;
             const node: IShaderNode = {
                 type: 'sphere',
@@ -276,11 +277,11 @@ function addSdfNode(doc: Document, payload: any): void {
         else if (type === 'roundRect') {
             const width = payload.width ?? 1.0;
             const height = payload.height ?? 1.0;
-            const radius = payload.radius ?? 0.1;
+            const cornerRadius = payload.cornerRadius ?? 0.1;
             const node: IShaderNode = {
                 type: 'roundRect',
                 pathName: payload.pathName ?? 'roundRect',
-                parameters: new Map([['width', width], ['height', height], ['radius', radius]]),
+                parameters: new Map([['width', width], ['height', height], ['cornerRadius', cornerRadius]]),
                 childIndices: undefined
             };
             grepModel.addShaderNode(node);

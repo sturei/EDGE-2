@@ -204,13 +204,13 @@ namespace e2 {
             Extrusion(const Extrusion&) = delete;
             void operator=(const Extrusion&) = delete;
             Extrusion(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-                const std::string& profilePathname, double depth);
-            const std::string& profilePathname() const { return m_profilePathname; }
+                const std::string& profilePathName, double depth);
+            const std::string& profilePathName() const { return m_profilePathName; }
             double depth() const { return m_depth; }
             std::string displayType() const override { return "Extrusion"; }
             void print(std::ostream& os) const override;
         private:
-            std::string m_profilePathname;
+            std::string m_profilePathName;
             double m_depth;                     // extrusion depth +/- depth/2 along the profile normal. Later this may change to reference a second profile or workplane
     };
 }

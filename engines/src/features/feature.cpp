@@ -161,7 +161,7 @@ namespace e2 {
         : Primitive2D(pathname, displayName, featureEffect, position, rotation, position2D, rotation2D), 
           m_width(width), m_height(height), m_cornerRadius(cornerRadius) {
     }   
-    
+
     void RoundRect2D::print(std::ostream& os) const {
         os << "RoundRect2D(pathname=" << pathname()
            << ", displayName=" << displayName()
@@ -176,16 +176,16 @@ namespace e2 {
     //
 
     Extrusion::Extrusion(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-        const std::string& profilePathname, double depth)
+        const std::string& profilePathName, double depth)
         : Feature(pathname, displayName, featureEffect), 
-          m_profilePathname(profilePathname), m_depth(depth) {
+          m_profilePathName(profilePathName), m_depth(depth) {
 }
 
     void Extrusion::print(std::ostream& os) const {
         os << "Extrusion(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
-           << ", profilePathname=" << m_profilePathname
+           << ", profilePathName=" << m_profilePathName
            << ", depth=" << m_depth << ")";
     }   
 

@@ -27,7 +27,7 @@ Instructions:
     {"type":"Features::addPrimitive2D", "payload":{"primitiveType" : "rectangle", "width":3, "height":2, "pathName":"shape/profiles/rectangle1"}}
     {"type":"Features::addPrimitive2D", "payload":{"primitiveType" : "circle", "radius":1.5, "pathName":"shape/profiles/circle1"}}
     {"type":"Features::addPrimitive2D", "payload":{"primitiveType" : "roundRect", "width":3, "height":2, "cornerRadius":0.2, "pathName":"shape/profiles/roundRect1"}}
-    {"type":"Features::addExtrusion", "payload":{"depth":3, "pathName":"shape/features/extrusion1"}}
+    {"type":"Features::addExtrusion", "payload":{"depth":3, "profilePathName":"shape/profiles/roundRect1", "pathName":"shape/features/extrusion1"}}
 
   Type 'q' to quit, or 'h' to show these instructions again.
 EOM
