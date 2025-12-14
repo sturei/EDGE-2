@@ -210,6 +210,27 @@ function addProfile(doc: Document, payload: any): void {
     console.log("added Profile");      // ---DEBUG---
 }
 
+function addContour(doc: Document, payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
+        const color = Color.get(payload.color ?? "green");
+        let grepModel = model as GRepModel;
+        const drawable: IDrawable = {
+            geometry: {
+                type: 'contour',
+                paths: paths
+            },
+            appearance: {
+                type: 'mesh',
+                color: color
+            }
+        };
+        grepModel.addDrawable(drawable);
+    });
+    console.log("added Profile");      // ---DEBUG---
+}
+
 function addSdfNode(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -219,7 +240,7 @@ function addSdfNode(doc: Document, payload: any): void {
             console.error("addSdfNode action requires 'type' in payload");
             return;
         }
-        
+
         if (type === 'sphere') {
             const radius = payload.radius ?? 1.0;
             const node: IShaderNode = {
@@ -382,6 +403,7 @@ export const addSphereActionDef = { type: "Gfx::addSphere", function: addSphere 
 export const addBlockActionDef = { type: "Gfx::addBlock", function: addBlock };
 export const addCylinderActionDef = { type: "Gfx::addCylinder", function: addCylinder };
 export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
+export const addContourActionDef = { type: "Gfx::addContour", function: addContour };
 export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
 export const updateSdfSceneActionDef = { type: "Gfx::updateSdfScene", function: updateSdfScene };
 export const clearSdfSceneActionDef = { type: "Gfx::clearSdfScene", function: clearSdfScene };      

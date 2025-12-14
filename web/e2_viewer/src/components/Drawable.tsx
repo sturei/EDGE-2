@@ -14,23 +14,6 @@ import type { JSX } from 'react';
 
 //const identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 
-function Profile({args, children} : {args: [Array<Array<[number, number]>>], children: JSX.Element}) {
-    const [paths] = args;
-    const shape = new THREE.Shape();
-    for (const path of paths) {
-        shape.moveTo(path[0][0], path[0][1]);
-        for (let i = 1; i < path.length; i++) {
-            shape.lineTo(path[i][0], path[i][1]);
-        }
-    }
-    return (
-        <mesh>
-            <shapeGeometry args={[shape]} />
-            {children}
-        </mesh> 
-    )
-}
-
 function Point({args, children} : {args: [[number, number, number]], children: JSX.Element}) {
     const [position] = args;
     const positions = new Float32Array(position);
@@ -68,6 +51,44 @@ function Polyline({args, children} : {args: [Array<[number, number, number]>], c
         <primitive object={line2} >
             {children}
         </primitive>
+    )
+}
+
+function Profile({args, children} : {args: [Array<Array<[number, number]>>], children: JSX.Element}) {
+    const [paths] = args;
+    const shape = new THREE.Shape();
+    for (const path of paths) {
+        shape.moveTo(path[0][0], path[0][1]);
+        for (let i = 1; i < path.length; i++) {
+            shape.lineTo(path[i][0], path[i][1]);
+        }
+    }
+    return (
+        <mesh>
+            <shapeGeometry args={[shape]} />
+            {children}
+        </mesh> 
+    )
+}
+
+function Contour({args, children} : {args: [Array<Array<[number, number]>>], children: JSX.Element}) {
+    const [paths] = args;
+    const polylines = new Array<Array<[number, number, number]>>();
+    for (const path of paths) {
+        const polyline = new Array<[number, number, number]>();
+        for (let i = 0; i < path.length; i++) {
+            polyline.push([path[i][0], path[i][1], 0]);
+        }
+        polylines.push(polyline);
+    }
+    return (
+        <group>
+            {polylines.map( (pline, index) => (
+                <Polyline key={index} args={[pline]}>
+                    {children}
+                </Polyline>
+            ))}
+        </group>
     )
 }
 
@@ -169,6 +190,20 @@ export function jsxFromDrawable(drawable: IDrawable) {
                 <meshStandardMaterial color={appearance?.color??Color.get("white")} side={THREE.DoubleSide} />
             </Profile>
         )
+    }
+    else if (geometry.type === 'contour'){
+        console.log(`Creating contour with ${geometry.paths.length} paths`);    // --- DEBUG ---
+        for (let p = 0; p < geometry.paths.length; p++) {
+            console.log(`  Path ${p} with ${geometry.paths[p].length} points`);   // --- DEBUG ---
+        }
+        return(
+            <Contour args={[geometry.paths]}>
+                <LineAppearance color={appearance?.color??Color.get("Blue")} />
+            </Contour>
+        )
+    }
+    else {
+        console.warn("jsxFromDrawable: unknown geometry type in drawable:", drawable);
     }
 
 }

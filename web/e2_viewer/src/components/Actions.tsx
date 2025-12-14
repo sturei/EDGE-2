@@ -20,6 +20,7 @@ const actionSuggestions = [
     '{"type":"Gfx::addBlock", "payload":{"width":2,"height":3,"depth":5, "color":"red"}}',
     '{"type":"Gfx::addCylinder", "payload":{"radius":1.0,"depth":6.0, "color":"yellow"}}',
     '{"type":"Gfx::addProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":"red"}}',
+    '{"type":"Gfx::addContour", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":"red"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"intersection", "pathName":"objects"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"union", "pathName":"objects/blanks"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"complement", "pathName":"objects/tools"}}',

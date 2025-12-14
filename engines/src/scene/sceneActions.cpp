@@ -394,7 +394,7 @@ namespace e2 {
         }
 
         json payload = json::object({{"paths", paths}});
-        doc.dispatchClientAction({"Gfx::addProfile", payload});
+        doc.dispatchClientAction({"Gfx::addContour", payload});
     }
 
     static void addSdfNodeForFeature(Document& doc, const Feature* feature, const std::string& objectPathName) {
