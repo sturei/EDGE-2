@@ -24,6 +24,9 @@ Instructions:
     {"type":"Features::addPrimitive", "payload":{"primitiveType" : "block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}
     {"type":"Features::addPrimitive", "payload":{"primitiveType" : "sphere", "radius":1.5, "pathName":"shape/features/sphere1"}}
     {"type":"Features::addPrimitive", "payload":{"primitiveType" : "cylinder", "radius":1.5, "depth":3, "pathName":"shape/features/cylinder1"}}
+    {"type":"Features::addPrimitive2D", "payload":{"primitiveType" : "rectangle", "width":3, "height":2, "pathName":"shape/profiles/rectangle1"}}
+    {"type":"Features::addPrimitive2D", "payload":{"primitiveType" : "circle", "radius":1.5, "pathName":"shape/profiles/circle1"}}
+    {"type":"Features::addPrimitive2D", "payload":{"primitiveType" : "roundRect", "width":3, "height":2, "cornerRadius":0.2, "pathName":"shape/profiles/roundRect1"}}
     {"type":"Features::addExtrusion", "payload":{"depth":3, "pathName":"shape/features/extrusion1"}}
 
   Type 'q' to quit, or 'h' to show these instructions again.

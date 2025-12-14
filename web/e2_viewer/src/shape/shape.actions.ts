@@ -86,6 +86,10 @@ async function addPrimitive(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Features::addPrimitive", payload);
 }
 
+async function addPrimitive2D(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Features::addPrimitive2D", payload);
+}
+
 async function addExtrusion(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Features::addExtrusion", payload);
 }
@@ -104,7 +108,9 @@ export const addCylinderObjectActionDef = { type: "Objects::addCylinderObject", 
 export const addRectangleActionDef = { type: "Objects::addInfiniteRectangle", function: addInfiniteRectangle };          
 export const addCappedRectangleActionDef = { type: "Objects::addCappedRectangle", function: addCappedRectangle };
 export const addExtrudedRectangleActionDef = { type: "Objects::addExtrudedRectangle", function: addExtrudedRectangle };
+
 export const addPrimitiveActionDef = { type: "Features::addPrimitive", function: addPrimitive };
+export const addPrimitive2DActionDef = { type: "Features::addPrimitive2D", function: addPrimitive2D };
 export const addExtrusionActionDef = { type: "Features::addExtrusion", function: addExtrusion };
 
 

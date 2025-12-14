@@ -14,7 +14,7 @@ namespace e2 {
             return body;
         }
 
-        /** A body with a single point cell */      
+        /** A 0-D body with a single point cell */      
         Body* acornBody(const Vec3d& position) {
             Body* body = new Body({
                 Cell(position)
@@ -22,7 +22,31 @@ namespace e2 {
             return body;
         }
 
-        /** A body consisting of a 4-sided rectangular wireframe, z=0 plane, no interior */
+        /** A wireframe body with a single circle, z=0 plane */
+        Body* wireCircle(const Vec3d& center, double radius) {
+            Cir3d circle(center, radius, Vec3d(0,0,1), Vec3d(1,0,0));
+            Body* body = new Body({
+                Cell(circle)
+            });
+            return body;
+        }
+
+        /** A sheet body with a single disk, z=0 plane */
+        Body* sheetCircle(const Vec3d& center, double radius) {
+            Body* body = wireCircle(center, radius);
+
+            // Add a face cell for the interior
+            Cell faceCell(Pla3d(Vec3d(0,0,0), Vec3d(0,0,1)));
+            size_t faceCellIndex = body->addCell(faceCell);
+
+            // Connect the face to its boundary
+            body->addCocell(Cocell(faceCellIndex, 0, +1));
+
+            body->updateGraph();            
+            return body;
+        }
+
+       /** A wireframe body consisting of a 4-sided rectangular wireframe, z=0 plane */
         Body* wireRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
 
             // project the input positions to z=0 plane
@@ -65,7 +89,7 @@ namespace e2 {
             return body;
         }
 
-        /** A body consisting of a 4-sided rectangular sheet, z=0 plane, with interior */
+        /** A sheet body consisting of a 4-sided rectangular sheet, z=0 plane */
         Body* sheetRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
             Body* body = wireRectangle(lowerLeft, upperRight);
             // Add a face cell for the interior
@@ -81,7 +105,7 @@ namespace e2 {
             return body;
         }
 
-        /** A body consisting of a 4-sided rectangular wireframe with rounded corners, z=0 plane, no interior */
+        /** A wireframe body consisting of a 4-sided rectangular with rounded corners, z=0 plane, no interior */
         Body* wireRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
 
             double r = cornerRadius; // corner radius
@@ -163,7 +187,7 @@ namespace e2 {
             return body;
         }
 
-        /** A body consisting of a 4-sided rectangular sheet with rounded corners, z=0 plane, with interior */
+        /** A sheet body consisting of a 4-sided rectangular sheet with rounded corners, z=0 plane */
         Body* sheetRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
             Body* body = wireRoundRect(lowerLeft, upperRight, cornerRadius);
             // Add a face cell for the interior
@@ -183,7 +207,28 @@ namespace e2 {
             return body;
         }
 
-        
+        /** Canonical disk */
+        Body* circle2DSheet(double radius) {
+            Vec3d center(0,0,0);
+            Body* body = sheetCircle(center, radius);
+            return body;
+        }
+
+        /** Canonical filled rectangle */
+        Body* rectangle2DSheet(double width, double height) {
+            Vec3d lowerLeft(-width/2, -height/2, 0);
+            Vec3d upperRight(width/2, height/2, 0);
+            Body* body = sheetRectangle(lowerLeft, upperRight);
+            return body;
+        }
+
+        /** Canonical filled roundRect */
+        Body* roundRect2DSheet(double width, double height, double cornerRadius) {
+            Vec3d lowerLeft(-width/2, -height/2, 0);
+            Vec3d upperRight(width/2, height/2, 0);
+            Body* body = sheetRoundRect(lowerLeft, upperRight, cornerRadius);
+            return body;
+        }
     };
 };
 

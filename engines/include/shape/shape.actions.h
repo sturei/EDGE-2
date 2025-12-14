@@ -19,9 +19,10 @@ namespace e2 {
         void addCappedRectangle(Document& doc, const nlohmann::json& payload);
         void addExtrudedRectangle(Document& doc, const nlohmann::json& payload);
         void addPrimitive(Document& doc, const nlohmann::json& payload);
+        void addPrimitive2D(Document& doc, const nlohmann::json& payload);
         void addExtrusion(Document& doc, const nlohmann::json& payload);
 
-        inline static std::array<ActionDef, 15> allShapeActions = {{
+        inline static std::array<ActionDef, 16> allShapeActions = {{
             {"Sketches::addEmptyBody", addEmptyBody},
             {"Sketches::addAcornBody", addAcornBody},
             {"Sketches::addRectangle", addWireRectangle},
@@ -36,6 +37,7 @@ namespace e2 {
             {"Objects::addCappedRectangle", addCappedRectangle},
             {"Objects::addExtrudedRectangle", addExtrudedRectangle},
             {"Features::addPrimitive", addPrimitive},
+            {"Features::addPrimitive2D", addPrimitive2D},          // eventually the name of this action will be changed to Profiles::addPrimitive, replacing the outdated Profiles::addRectangle and Profiles::addRoundRect actions
             {"Features::addExtrusion", addExtrusion}
         }};
     }

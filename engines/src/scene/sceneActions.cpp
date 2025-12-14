@@ -205,6 +205,9 @@ namespace e2 {
             if (!f) {
                 continue;
             }
+            if (dynamic_cast<const Profile*>(f)) {
+                continue;   // skip 2D features (profiles) - those are represented as planar meshes, not SDF nodes
+            }
             if (f->featureEffect() == FeatureEffect::ADD) {
                 numBlanks++;
             }
@@ -298,9 +301,14 @@ namespace e2 {
 
     void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
 
+        //
+        // Features are listed in the viewer's product tree under "shape/features" or "shape/profiles" for 3D and 2D features (a.k.a. profiles) respectively.
+        // 
+
+        // For now, clear the product items and rebuild from scratch (could be optimized later)
         doc.dispatchClientAction({"Gfx::clearProductItems", json::object({})});  
 
-        // Ensure parent items, especially "shape/features", exists
+        // Ensure parent items, especially "shape/features" and "shape/profiles" exist
         ensureProductParentsExist(doc);
         
         // Add an item for each feature
@@ -309,9 +317,9 @@ namespace e2 {
             const Feature& feature = features.feature(featureIndex);
             std::string featurePathName = feature.pathname();
             std::string featureDisplayName = "";
-            featureDisplayName += " " + toString(feature.featureEffect());
+            featureDisplayName += " " + feature.displayEffect();
             featureDisplayName += " " + feature.displayName();
-            featureDisplayName += " (" + toString(feature.featureType()) + ")";
+            featureDisplayName += " (" + feature.displayType() + ")";
 
             json featurePayload = json::object({
                 {"pathName", featurePathName},
@@ -322,6 +330,7 @@ namespace e2 {
         }
     }
 
+    // TOGO
     static void dispatchGraphicsActionsForSdfProfile(Document& doc, const std::string& pathName, const Body& profileBody) {
         // The payload is a collection of "paths", representing the outline of the given body.
         CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
@@ -351,19 +360,69 @@ namespace e2 {
         doc.dispatchClientAction({"Gfx::addSdfNode", payload});
     }
 
+    void dispatchGraphicsActionsForNewProfile(Document& doc, size_t profileIndex) {
+
+        //
+        // Profiles are represented graphically in the viewer as planar meshes.
+        //
+
+        // TODO: rebuild from scratch (could be optimized later) - so that refreshing the browser, or using multiple browsers against the same service, stays more or less in sync. (Future - do it better!
+
+        const BRepModel& profiles = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->profiles();
+        const Body& profileBody = *profiles.body(profileIndex);
+
+        // The payload is a collection of "paths", representing the outline of the profile body. 
+        // Paths are correctly oriented, but need not be contiguous.
+
+        CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
+        auto edges = getKBoundary(1, faceIndex, profileBody);
+        std::vector<json> paths;
+        for (const auto& edgePair : edges) {
+            CellIndex edgeIndex = edgePair.first;
+            double atolDegrees = 16.0;
+            double atol = atolDegrees * M_PI/180.0;
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody, atol);
+            std::vector<json> path;
+            for (const auto& point : *tessellatedPointsPtr) {
+                path.push_back(json::array({point.x(), point.y()}));
+            }
+            if (edgePair.second == -1) {
+                std::reverse(path.begin(), path.end());
+            }
+            paths.push_back(path);
+            delete tessellatedPointsPtr;
+        }
+
+        json payload = json::object({{"paths", paths}});
+        doc.dispatchClientAction({"Gfx::addProfile", payload});
+    }
+
     void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
 
-        // clear the scene and rebuild it
+        // 3D Features are represented graphically in the viewer as the f=0 level set of a signed distance function (SDF).
+
+        // Each feature maps to an SDF node, that may in turn contain child nodes.
+        // By design, all the subtractive features (a.k.a. "tools") are subtracted from all the additive features (a.k.a. "blanks") to form the final shape.
+        // This formulation has some advantages:
+        // 1. features are order-independent
+        //    - features can be reordered for better understanding
+        //    - tools can be added before blanks if desired
+        //    - features can be suppressed or filtered out without breaking other features
+        //    - features could be added by several users simultaneously without conflict
+
+        // For now, clear the scene and rebuild it from scratch (could be optimized later)
         doc.dispatchClientAction({"Gfx::clearSdfScene", json::object({})});
 
-        // ensure parent items "objects", "objects/blanks", "objects/tools/tools" exist
+        // ensure parent items "objects", "objects/blanks", "objects/tools/tools" (if needed) exist
         ensureObjectParentsExist(doc);
         
-        // Each feature maps to an SDF object (the root of an SDF node tree)
+        // Build the SDF nodes for each feature and add to the scene
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         for (size_t featureIndex = 0; featureIndex < features.numFeatures(); ++featureIndex) {  
             const Feature& feature = features.feature(featureIndex);
             std::string objectPathName = "objects/";
+
+            // additive features go under "blanks", subtractive features go under "tools/tools"
             if (feature.featureEffect() == FeatureEffect::ADD) {
                 objectPathName += "blanks/";
             } else if (feature.featureEffect() == FeatureEffect::SUBTRACT) {
@@ -372,6 +431,8 @@ namespace e2 {
                 // TODO: MODIFY features. We currently do not add anything to the graphics scene for them
                 continue;
             }
+
+            // Append the feature index to the object path name to make it unique
             objectPathName += "feature[" + std::to_string(featureIndex) + "]";
 
             if (const Primitive* primitiveFeature = dynamic_cast<const Primitive*>(&feature)) {
@@ -418,7 +479,7 @@ namespace e2 {
                     {"depth", depth}
                 });
                 doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
-                dispatchGraphicsActionsForSdfProfile(doc, objectPathName + "/profile", extrusionFeature->profileBody());    
+                //dispatchGraphicsActionsForSdfProfile(doc, objectPathName + "/profile", extrusionFeature->profileBody());    
             }
         }
 

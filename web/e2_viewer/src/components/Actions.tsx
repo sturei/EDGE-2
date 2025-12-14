@@ -55,6 +55,9 @@ const actionSuggestions = [
     '{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "featureEffect":"subtract", "width":1, "height":1, "depth":2, "pathName":"shape/features/cut1"}}',
     '{"type":"Features::addPrimitive", "payload":{"primitiveType" : "sphere", "radius":1.5, "pathName":"shape/features/sphere1"}}',
     '{"type":"Features::addPrimitive", "payload":{"primitiveType" : "cylinder", "radius":1, "depth":3, "pathName":"shape/features/cylinder1"}}',
+    '{"type":"Features::addPrimitive2D", "payload":{"primitiveType":"rectangle", "width":3, "height":2, "pathName":"shape/profiles/rectangle1"}}',
+    '{"type":"Features::addPrimitive2D", "payload":{"primitiveType":"circle", "radius":1.0, "pathName":"shape/profiles/circle1"}}',
+    '{"type":"Features::addPrimitive2D", "payload":{"primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2, "pathName":"shape/profiles/roundRect1"}}',
     '{"type":"Features::addExtrusion", "payload":{"depth":3, "pathName":"shape/features/extrusion1"}}'
   ];
   

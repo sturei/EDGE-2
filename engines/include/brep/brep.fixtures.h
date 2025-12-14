@@ -9,6 +9,11 @@ namespace e2 {
         Body* sheetRectangle(const Vec3d& lowerLeft = Vec3d(-1,-1,0), const Vec3d& upperRight = Vec3d(1,1,0));
         Body* wireRoundRect(const Vec3d& lowerLeft = Vec3d(-1,-1,0), const Vec3d& upperRight = Vec3d(1,1,0), double cornerRadius = 0.2);
         Body* sheetRoundRect(const Vec3d& lowerLeft = Vec3d(-1,-1,0), const Vec3d& upperRight = Vec3d(1,1,0), double cornerRadius = 0.2);
+
+        Body* circle2DSheet(double radius = 1.0);
+        Body* rectangle2DSheet(double width = 3.0, double height = 2.0);
+        Body* roundRect2DSheet(double width = 3.0, double height = 2.0, double cornerRadius = 0.2);
+
     };
 };
 

@@ -30,6 +30,29 @@ namespace e2 {
             return std::make_pair(lowerLeft, upperRight);
         }
 
+        std::pair<Vec3d, Vec3d> parsePositionRotationJson(const json& positionJson, const json& rotationJson) {
+            Vec3d position = Vec3d(
+                positionJson.at("x").get<double>(),
+                positionJson.at("y").get<double>(),
+                positionJson.at("z").get<double>()
+            );
+            Vec3d rotation = Vec3d(
+                rotationJson.at("x").get<double>(),
+                rotationJson.at("y").get<double>(),
+                rotationJson.at("z").get<double>()
+            );
+            return std::make_pair(position, rotation);
+        }
+
+        std::pair<Vec3d, double> parsePositionRotation2DJson(const json& positionJson, double rotationJson) {
+            Vec3d position = Vec3d(
+                positionJson.at("x").get<double>(),
+                positionJson.at("y").get<double>(),
+                0.0
+            );
+            return std::make_pair(position, rotationJson);
+        }
+
         void addEmptyBody(Document& doc, const json& payload) {
             // This action adds an empty body (a body with no cells) to the brep store.
             Store& store = doc.storeAt("shape");
@@ -39,7 +62,6 @@ namespace e2 {
                 sketches.addBody(emptyBody);
                 std::cerr << "added Empty Body" << std::endl;      // ---LOGGING---
             });
-        
         }
 
         void addAcornBody(Document& doc, const json& payload) {
@@ -406,6 +428,107 @@ namespace e2 {
             }
         }
 
+        void addPrimitive2D(Document& doc, const json& payload) {
+            // This action adds a primitive profile feature as a feature
+            Store& store = doc.storeAt("shape");
+            std::string pathName = payload.value("pathName", "shape/profiles/unnamedPrimitive");
+            std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
+            std::string primitiveType = payload.value("primitiveType", "rectangle");
+            std::string featureEffect = payload.value("featureEffect", "add");
+            FeatureEffect featureEffectEnum = featureEffect == "add" ? FeatureEffect::ADD :
+                                            featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
+                                            FeatureEffect::MODIFY;
+            std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
+                payload.value("position", json::object({{"x", 0}, {"y", 0}, {"z", 0}})),
+                payload.value("rotation", json::object({{"x", 0 }, {"y", 0}, {"z", 0}}))
+            );
+            std::pair<Vec3d, double> posRot2D = parsePositionRotation2DJson(
+                payload.value("position", json::object({{"x", 0}, {"y", 0}})),
+                payload.value("rotation", 0));
+
+            size_t featureIndex = -1;
+            if (primitiveType == "rectangle") {
+                double width = payload.value("width", 3.0);
+                double height = payload.value("height", 2.0);
+
+                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, posRot2D, width, height, &doc](Model* model) {
+                    // update the model
+                    FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* rectangleFeature = new Rectangle2D(
+                        pathName, displayName, featureEffectEnum, 
+                        posRot3D.first, posRot3D.second, 
+                        posRot2D.first, posRot2D.second,
+                        width, height);
+                    size_t featureIndex = features.addFeature(rectangleFeature);
+
+                    BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
+                    Body* rectangleBody = BRepFixtures::rectangle2DSheet(width, height);
+                    size_t profileIndex = profiles.addBody(rectangleBody);        
+
+                    std::cerr << "added Rectangle2D Primitive" << std::endl;      // ---LOGGING---
+
+                    // update the product hierarchy in the client
+                    dispatchProductActionsForNewFeature(doc, featureIndex);
+                    // update the graphical scene in the client
+                    dispatchGraphicsActionsForNewFeature(doc, featureIndex);
+                    dispatchGraphicsActionsForNewProfile(doc, profileIndex);
+                });
+            }
+            else if (primitiveType == "circle") {
+                double radius = payload.value("radius", 1.0);
+
+                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, posRot2D, radius, &doc](Model* model) {
+                    // update the model
+                    FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* circleFeature = new Circle2D(
+                        pathName, displayName, featureEffectEnum, 
+                        posRot3D.first, posRot3D.second, 
+                        posRot2D.first, posRot2D.second,
+                        radius);
+                    size_t featureIndex = features.addFeature(circleFeature);
+
+                    BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
+                    Body* circleBody = BRepFixtures::circle2DSheet(radius);
+                    size_t profileIndex = profiles.addBody(circleBody); 
+
+                    std::cerr << "added Circle2D Primitive" << std::endl;      // ---LOGGING---
+
+                    // update the product hierarchy in the client
+                    dispatchProductActionsForNewFeature(doc, featureIndex);
+                    // update the graphical scene in the client
+                    dispatchGraphicsActionsForNewFeature(doc, featureIndex);
+                    dispatchGraphicsActionsForNewProfile(doc, profileIndex);
+                });
+            }
+            else if (primitiveType == "roundRect") {
+                double width = payload.value("width", 2.0);
+                double height = payload.value("height", 2.0);
+                double cornerRadius = payload.value("cornerRadius", 0.2);
+                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, posRot2D, width, height, cornerRadius, &doc](Model* model) {
+                    // update the model
+                    FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* roundRectFeature = new RoundRect2D(
+                        pathName, displayName, featureEffectEnum,
+                        posRot3D.first, posRot3D.second, 
+                        posRot2D.first, posRot2D.second,
+                        width, height, cornerRadius);
+                    size_t featureIndex = features.addFeature(roundRectFeature);
+
+                    BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
+                    Body* roundRectBody = BRepFixtures::roundRect2DSheet(width, height, cornerRadius);
+                    size_t profileIndex = profiles.addBody(roundRectBody);
+                    
+                    std::cerr << "added RoundRect2D Primitive" << std::endl;      // ---LOGGING---
+
+                    // update the product hierarchy in the client
+                    dispatchProductActionsForNewFeature(doc, featureIndex);
+                    // update the graphical scene in the client
+                    dispatchGraphicsActionsForNewFeature(doc, featureIndex);
+                    dispatchGraphicsActionsForNewProfile(doc, profileIndex);
+               });
+            }
+        }
+
         void addExtrusion(Document& doc, const json& payload) {
             // This action adds an extrusion feature as a feature
             Store& store = doc.storeAt("shape");
@@ -430,17 +553,17 @@ namespace e2 {
                 // update the model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                 //Body* profileBody = BRepFixtures::sheetRectangle(lowerLeft, upperRight);
-                Body* profileBody = BRepFixtures::sheetRoundRect(lowerLeft, upperRight, 0.4);
-                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, *profileBody, depth);
-                size_t index = features.addFeature(extrusionFeature);
-                std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
+                //Body* profileBody = BRepFixtures::sheetRoundRect(lowerLeft, upperRight, 0.4);
+                //Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, *profileBody, depth);
+                //size_t index = features.addFeature(extrusionFeature);
+                std::cerr << "TODO!! add Extrusion Feature" << std::endl;      // ---LOGGING---
 
-                delete profileBody;             // feature took a copy of it
+                //delete profileBody;             // feature took a copy of it
 
                 // update the product hierarchy in the client
-                dispatchProductActionsForNewFeature(doc, index);
+                //dispatchProductActionsForNewFeature(doc, index);
                 // update the graphical scene in the client
-                dispatchGraphicsActionsForNewFeature(doc, index);
+                //dispatchGraphicsActionsForNewFeature(doc, index);
             });     
         }
     }

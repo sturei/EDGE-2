@@ -362,6 +362,15 @@ function updateSdfScene(doc: Document, _payload: any): void {
     );
 }
 
+function clearSdfScene(doc: Document, _payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        grepModel.clearShaderNodes();
+        console.log("Cleared SDF scene nodes.");
+    }
+    );
+}
 
 export const pingActionDef = { type: "Gfx::ping", function: ping };
 export const addPointActionDef = { type: "Gfx::addPoint", function: addPoint };
@@ -374,3 +383,4 @@ export const addCylinderActionDef = { type: "Gfx::addCylinder", function: addCyl
 export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
 export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
 export const updateSdfSceneActionDef = { type: "Gfx::updateSdfScene", function: updateSdfScene };
+export const clearSdfSceneActionDef = { type: "Gfx::clearSdfScene", function: clearSdfScene };      
