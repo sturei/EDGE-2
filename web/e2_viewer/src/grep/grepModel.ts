@@ -7,11 +7,11 @@
 
 import { Model } from '../document/model';
 import {type IDrawable} from './drawables/drawable';
-import { type IShaderNode } from './nodes/sdfNode';
+import { type ISdfNode } from './nodes/sdfNode';
 
 export class GRepModel extends Model {
     private m_drawList: IDrawable[] = [];
-    private m_sdfScene: IShaderNode[] = []; // SDF scene as a list of shader nodes, root node at index 0.
+    private m_sdfScene: ISdfNode[] = []; // SDF scene as a list of shader nodes, root node at index 0.
     private m_sdfGuid: string = "Initial State";  // GUID gets updated to indicate that the SDF scene should be updated;
 
     constructor() {
@@ -45,7 +45,7 @@ export class GRepModel extends Model {
         return this.m_sdfScene.length;
     }
 
-    shaderNode(index: number): IShaderNode {
+    shaderNode(index: number): ISdfNode {
         const node = this.m_sdfScene[index];
         if (!node) {
             throw new Error(`GRepModel.shaderNode: no shader node at index ${index}`);
@@ -53,7 +53,7 @@ export class GRepModel extends Model {
         return node;
     }
 
-    shaderNodes(): IShaderNode[] {
+    shaderNodes(): ISdfNode[] {
         return this.m_sdfScene;
     }
 
@@ -62,7 +62,7 @@ export class GRepModel extends Model {
         console.log("GRepModel.clearShaderNodes: cleared all shader nodes.");
     }
 
-    addShaderNode(node: IShaderNode): number {
+    addShaderNode(node: ISdfNode): number {
         // Prevent adding duplicate nodes
         const existingNode = this.findNode(node.pathName);
         if (existingNode) {
@@ -113,7 +113,7 @@ export class GRepModel extends Model {
         this.m_sdfGuid = guid;
     }
 
-    private findNode(pathName: string): IShaderNode | null {
+    private findNode(pathName: string): ISdfNode | null {
         for (const node of this.m_sdfScene) {
             if (node.pathName === pathName) {
                 return node;
@@ -122,7 +122,7 @@ export class GRepModel extends Model {
         return null;
     }
 
-    private findParentNode(node: IShaderNode): IShaderNode | null {
+    private findParentNode(node: ISdfNode): ISdfNode | null {
         const parentPathName = node.pathName.substring(0, node.pathName.lastIndexOf('/'));
         for (const potentialParent of this.m_sdfScene) {
             if (potentialParent.pathName === parentPathName) {

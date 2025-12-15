@@ -30,11 +30,11 @@ import {
     positionLocal
 } from 'three/tsl'
 
-import type { IShaderNode } from '../grep/nodes/sdfNode.ts'
+import type { ISdfNode } from '../grep/nodes/sdfNode.ts'
 
 const uCameraPosition = uniform(new THREE.Vector3())
 
-function generateRaymarchedScene(nodes: IShaderNode[]) {
+function generateRaymarchedScene(nodes: ISdfNode[]) {
 
     // The scene node is referenced in the raymarching loop and in the normal calculation
     const sceneNode = generateScene(nodes);
@@ -149,7 +149,7 @@ function generateRaymarchedScene(nodes: IShaderNode[]) {
     return raymarch();    
 }
 
-export function RaymarchedScene({nodes, guid}: {nodes: IShaderNode[], guid: string}) {
+export function RaymarchedScene({nodes, guid}: {nodes: ISdfNode[], guid: string}) {
   const camera = useThree((state) => state.camera)
   const scene = useThree((state) => state.scene)    
 
@@ -167,7 +167,8 @@ export function RaymarchedScene({nodes, guid}: {nodes: IShaderNode[], guid: stri
         scene.background = new THREE.Color(0x000000); // Set background color
         scene.backgroundNode = generateRaymarchedScene(nodes);
         return () => {
-            scene.background = null; // Clean up on unmount
+            // Clean up on unmount
+            scene.background = null; 
             scene.backgroundNode = null;
         };
     }, [scene, guid]);

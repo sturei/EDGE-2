@@ -2,7 +2,7 @@ import { Document } from "../document/document";
 import { Model } from "../document/model";
 import { GRepModel } from "../grep/grepModel";
 import { Color, type IDrawable } from "./drawables/drawable";
-import type { IShaderNode } from "./nodes/sdfNode";
+import type { ISdfNode } from "./nodes/sdfNode";
 
 function ping(_doc: Document, _payload: any): void {
     // This action just writes "pong" to stderr. Useful for testing that the pieces are connected.
@@ -243,7 +243,7 @@ function addSdfNode(doc: Document, payload: any): void {
 
         if (type === 'sphere') {
             const radius = payload.radius ?? 1.0;
-            const node: IShaderNode = {
+            const node: ISdfNode = {
                 type: 'sphere',
                 pathName: payload.pathName ?? 'sphere',
                 parameters: new Map([['radius', radius]]),
@@ -255,7 +255,7 @@ function addSdfNode(doc: Document, payload: any): void {
             const width = payload.width ?? 1.0;
             const height = payload.height ?? 1.0;
             const depth = payload.depth ?? 1.0;
-            const node: IShaderNode = {
+            const node: ISdfNode = {
                 type: 'block',
                 pathName: payload.pathName ?? 'block',
                 parameters: new Map([['width', width], ['height', height], ['depth', depth]]),
@@ -266,7 +266,7 @@ function addSdfNode(doc: Document, payload: any): void {
         else if (type === 'cylinder') {
             const radius = payload.radius ?? 1.0;
             const depth = payload.depth ?? 1.0;
-            const node: IShaderNode = {
+            const node: ISdfNode = {
                 type: 'cylinder',
                 pathName: payload.pathName ?? 'cylinder',
                 parameters: new Map([['radius', radius], ['depth', depth]]),
@@ -276,7 +276,7 @@ function addSdfNode(doc: Document, payload: any): void {
         }
         else if (type === 'circle') {
             const radius = payload.radius ?? 1.0;
-            const node: IShaderNode = {
+            const node: ISdfNode = {
                 type: 'circle',
                 pathName: payload.pathName ?? 'circle',
                 parameters: new Map([['radius', radius]]),
@@ -287,7 +287,7 @@ function addSdfNode(doc: Document, payload: any): void {
         else if (type === 'rectangle') {
             const width = payload.width ?? 1.0;
             const height = payload.height ?? 1.0;
-            const node: IShaderNode = {
+            const node: ISdfNode = {
                 type: 'rectangle',
                 pathName: payload.pathName ?? 'rectangle',
                 parameters: new Map([['width', width], ['height', height]]),
@@ -299,7 +299,7 @@ function addSdfNode(doc: Document, payload: any): void {
             const width = payload.width ?? 1.0;
             const height = payload.height ?? 1.0;
             const cornerRadius = payload.cornerRadius ?? 0.1;
-            const node: IShaderNode = {
+            const node: ISdfNode = {
                 type: 'roundRect',
                 pathName: payload.pathName ?? 'roundRect',
                 parameters: new Map([['width', width], ['height', height], ['cornerRadius', cornerRadius]]),
@@ -309,7 +309,7 @@ function addSdfNode(doc: Document, payload: any): void {
         }
         else if (type === 'profile') {
             const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
-            const node: IShaderNode = {
+            const node: ISdfNode = {
                 type: 'profile',
                 pathName: payload.pathName ?? 'profile',
                 parameters: new Map([['paths', paths]]),
@@ -319,7 +319,7 @@ function addSdfNode(doc: Document, payload: any): void {
         }
         else if (type === 'extrusion') {
             const depth = payload.depth ?? 2.0;
-            const node : IShaderNode = {
+            const node : ISdfNode = {
                 type: 'extrusion',
                 pathName: payload.pathName ?? 'extrusion',
                 parameters: new Map([['depth', depth]]),
@@ -330,7 +330,7 @@ function addSdfNode(doc: Document, payload: any): void {
         else if (type === 'halfSpace') {
             const planePosition = payload.planePosition ?? [0, 0, 0];
             const planeNormal = payload.planeNormal ?? [0, 0, 1];
-            const node : IShaderNode = {
+            const node : ISdfNode = {
                 type: 'halfSpace',
                 pathName: payload.pathName ?? 'halfSpace',
                 parameters: new Map([['planePosition', planePosition], ['planeNormal', planeNormal]]),
@@ -339,7 +339,7 @@ function addSdfNode(doc: Document, payload: any): void {
             grepModel.addShaderNode(node);
         }
         else if (type === 'union') {
-            const node : IShaderNode = {
+            const node : ISdfNode = {
                 type: 'union',
                 pathName: payload.pathName ?? 'union',
                 parameters: new Map(),
@@ -348,7 +348,7 @@ function addSdfNode(doc: Document, payload: any): void {
             grepModel.addShaderNode(node);
         }
         else if (type === 'intersection') {
-            const node : IShaderNode = {
+            const node : ISdfNode = {
                 type: 'intersection',
                 pathName: payload.pathName ?? 'intersection',
                 parameters: new Map(),
@@ -357,7 +357,7 @@ function addSdfNode(doc: Document, payload: any): void {
             grepModel.addShaderNode(node);
         }
         else if (type === 'complement') {
-            const node : IShaderNode = {
+            const node : ISdfNode = {
                 type: 'complement',
                 pathName: payload.pathName ?? 'complement',
                 parameters: new Map(),
@@ -368,7 +368,7 @@ function addSdfNode(doc: Document, payload: any): void {
         else if (type === 'translation') {
             // TODO: combine into a single transform node that can do translation and rotation (rotation first)
             const translation = payload.translation ?? [0, 0, 0];
-            const node : IShaderNode = {
+            const node : ISdfNode = {
                 type: 'translation',
                 pathName: payload.pathName ?? 'translation',
                 parameters: new Map([['translation', translation]]),
@@ -378,7 +378,7 @@ function addSdfNode(doc: Document, payload: any): void {
         }
         else if (type === 'rotation') {
             const angles = payload.rotation ?? [0, 0, 0];
-            const node : IShaderNode = {
+            const node : ISdfNode = {
                 type: 'rotation',
                 pathName: payload.pathName ?? 'rotation',
                 parameters: new Map([['rotation', angles]]),

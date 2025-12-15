@@ -11,14 +11,14 @@ import { Drawlist } from './Drawlist'
 import { DocumentContext } from '../Contexts';
 import { type IDrawable } from "../grep/drawables/drawable.ts";
 import { RaymarchedScene } from "./Raymarch";
-import type { IShaderNode } from '../grep/nodes/sdfNode.ts'    
+import type { ISdfNode } from '../grep/nodes/sdfNode.ts'    
 
 interface ISceneReactState {
     drawlist: IDrawable[],
-    nodes: IShaderNode[],
+    nodes: ISdfNode[],
     guid: string
 }
-const initialState:ISceneReactState = {drawlist: new Array<IDrawable>(), nodes: new Array<IShaderNode>(), guid: "Initial State"};
+const initialState:ISceneReactState = {drawlist: new Array<IDrawable>(), nodes: new Array<ISdfNode>(), guid: "Initial State"};
 
 export function Scene(){
     const document = useContext(DocumentContext);

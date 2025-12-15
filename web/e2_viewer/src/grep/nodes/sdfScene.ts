@@ -1,8 +1,8 @@
 import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
-import { type IShaderNode } from './sdfNode';
+import { type ISdfNode } from './sdfNode';
 import { Fn, int, float, min, max, abs, negate, rotate, sqrt, length, vec2, vec3, array } from 'three/tsl';    
 
-function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
+function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
     const node = nodes[nodeIndex];
     if (node.type === 'sphere') {
         const radius = node.parameters?.get('radius') ?? 1.0;
@@ -244,7 +244,7 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
     }
 }
 
-export function generateScene(nodes: IShaderNode[]) {
+export function generateScene(nodes: ISdfNode[]) {
     try {
         if (nodes.length == 0) {
             throw new Error("No nodes provided to generateScene");

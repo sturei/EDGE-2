@@ -1,7 +1,7 @@
 import { GRepModel } from './grepModel.ts'
 import type { IDrawable } from './drawables/drawable.ts';
 import { describe, expect, it } from 'vitest'
-import type { IShaderNode } from './nodes/sdfNode.ts';
+import type { ISdfNode } from './nodes/sdfNode.ts';
 
 describe('GRepModel', () => {
     it('should handle drawable items correctly', () => {
@@ -30,18 +30,18 @@ describe('GRepModel', () => {
     });
     it('should handle shader nodes correctly', () => {
         const model = new GRepModel();
-        const rootNode: IShaderNode = {
+        const rootNode: ISdfNode = {
             pathName: "root",
             type: "union",
             parameters: {},
             childIndices: [1, 2]
         };
-        const firstNode: IShaderNode = {
+        const firstNode: ISdfNode = {
             pathName: "root/node1",
             type: "sphere",
             parameters: {radius: 1.0}
         };
-        const secondNode: IShaderNode = {
+        const secondNode: ISdfNode = {
             pathName: "root/node2",
             type: "block",
             parameters: {width: 1.0, height: 2.0, depth: 3.0}
