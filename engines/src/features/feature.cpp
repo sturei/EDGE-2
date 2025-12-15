@@ -176,9 +176,9 @@ namespace e2 {
     //
 
     Extrusion::Extrusion(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-        const std::string& profilePathName, double depth)
+        const std::string& profilePathName, double depth, bool doubleSided)
         : Feature(pathname, displayName, featureEffect), 
-          m_profilePathName(profilePathName), m_depth(depth) {
+          m_profilePathName(profilePathName), m_depth(depth), m_doubleSided(doubleSided) {
 }
 
     void Extrusion::print(std::ostream& os) const {
@@ -186,7 +186,8 @@ namespace e2 {
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
            << ", profilePathName=" << m_profilePathName
-           << ", depth=" << m_depth << ")";
+           << ", depth=" << m_depth
+           << ", doubleSided=" << (m_doubleSided ? "true" : "false") <<  ")";
     }   
 
 } // namespace e2

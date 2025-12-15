@@ -540,11 +540,12 @@ namespace e2 {
                 featureEffect == "subtract" ? FeatureEffect::SUBTRACT : FeatureEffect::MODIFY;
             std::string profilePathName = payload.value("profilePathName", "shape/profiles/unnamedProfile");
             double depth = payload.value("depth", 1.0);
+            bool doubleSided = payload.value("doubleSided", false);
 
-            store.changeState([pathName, displayName, featureEffectEnum, profilePathName, depth, &doc](Model* model) {
+            store.changeState([pathName, displayName, featureEffectEnum, profilePathName, depth, doubleSided, &doc](Model* model) {
                 // update the model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, profilePathName, depth);
+                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, profilePathName, depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
 

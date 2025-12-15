@@ -465,7 +465,7 @@ namespace e2 {
 
             // to avoid z-fighting when subtracting. TODO: think of a better way!
             double epsilon = extrusionFeature->featureEffect() == FeatureEffect::SUBTRACT ? 0.01 : 0.0;
-            bool doubleSided = false; // TODO: extrusionFeature->doubleSided();
+            bool doubleSided = extrusionFeature->doubleSided();
 
             json transformPayload = json::object({
                 {"pathName", objectPathName},
