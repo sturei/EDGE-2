@@ -242,147 +242,119 @@ function addSdfNode(doc: Document, payload: any): void {
         }
 
         if (type === 'sphere') {
-            const radius = payload.radius ?? 1.0;
             const node: ISdfNode = {
                 type: 'sphere',
                 pathName: payload.pathName ?? 'sphere',
-                parameters: new Map([['radius', radius]]),
-                childIndices: undefined
+                radius: payload.radius ?? 1.0,
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'block') {
-            const width = payload.width ?? 1.0;
-            const height = payload.height ?? 1.0;
-            const depth = payload.depth ?? 1.0;
             const node: ISdfNode = {
                 type: 'block',
                 pathName: payload.pathName ?? 'block',
-                parameters: new Map([['width', width], ['height', height], ['depth', depth]]),
-                childIndices: undefined
+                width: payload.width ?? 1.0,
+                height: payload.height ?? 1.0,
+                depth: payload.depth ?? 1.0
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'cylinder') {
-            const radius = payload.radius ?? 1.0;
-            const depth = payload.depth ?? 1.0;
             const node: ISdfNode = {
                 type: 'cylinder',
                 pathName: payload.pathName ?? 'cylinder',
-                parameters: new Map([['radius', radius], ['depth', depth]]),
-                childIndices: undefined
+                radius: payload.radius ?? 1.0,
+                depth: payload.depth ?? 1.0
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'circle') {
-            const radius = payload.radius ?? 1.0;
             const node: ISdfNode = {
                 type: 'circle',
                 pathName: payload.pathName ?? 'circle',
-                parameters: new Map([['radius', radius]]),
-                childIndices: undefined
+                radius: payload.radius ?? 1.0
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'rectangle') {
-            const width = payload.width ?? 1.0;
-            const height = payload.height ?? 1.0;
             const node: ISdfNode = {
                 type: 'rectangle',
                 pathName: payload.pathName ?? 'rectangle',
-                parameters: new Map([['width', width], ['height', height]]),
-                childIndices: undefined
+                width:  payload.width ?? 1.0,
+                height: payload.height ?? 1.0
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'roundRect') {
-            const width = payload.width ?? 1.0;
-            const height = payload.height ?? 1.0;
-            const cornerRadius = payload.cornerRadius ?? 0.1;
             const node: ISdfNode = {
                 type: 'roundRect',
                 pathName: payload.pathName ?? 'roundRect',
-                parameters: new Map([['width', width], ['height', height], ['cornerRadius', cornerRadius]]),
-                childIndices: undefined
+                width:  payload.width ?? 1.0,
+                height: payload.height ?? 1.0,
+                cornerRadius: payload.cornerRadius ?? 0.1
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'profile') {
-            const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
             const node: ISdfNode = {
                 type: 'profile',
                 pathName: payload.pathName ?? 'profile',
-                parameters: new Map([['paths', paths]]),
-                childIndices: undefined
+                paths: payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]],
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'extrusion') {
-            const depth = payload.depth ?? 2.0;
             const node : ISdfNode = {
                 type: 'extrusion',
                 pathName: payload.pathName ?? 'extrusion',
-                parameters: new Map([['depth', depth]]),
-                childIndices: undefined
+                depth: payload.depth ?? 2.0
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'halfSpace') {
-            const planePosition = payload.planePosition ?? [0, 0, 0];
-            const planeNormal = payload.planeNormal ?? [0, 0, 1];
             const node : ISdfNode = {
                 type: 'halfSpace',
                 pathName: payload.pathName ?? 'halfSpace',
-                parameters: new Map([['planePosition', planePosition], ['planeNormal', planeNormal]]),
-                childIndices: undefined
+                position: payload.position ?? [0, 0, 0],
+                normal: payload.normal ?? [0, 0, 1]
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'union') {
             const node : ISdfNode = {
                 type: 'union',
-                pathName: payload.pathName ?? 'union',
-                parameters: new Map(),
-                childIndices: undefined
+                pathName: payload.pathName ?? 'union'
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'intersection') {
             const node : ISdfNode = {
                 type: 'intersection',
-                pathName: payload.pathName ?? 'intersection',
-                parameters: new Map(),
-                childIndices: undefined
+                pathName: payload.pathName ?? 'intersection'
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'complement') {
             const node : ISdfNode = {
                 type: 'complement',
-                pathName: payload.pathName ?? 'complement',
-                parameters: new Map(),
-                childIndices: undefined
+                pathName: payload.pathName ?? 'complement'
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'translation') {
             // TODO: combine into a single transform node that can do translation and rotation (rotation first)
-            const translation = payload.translation ?? [0, 0, 0];
             const node : ISdfNode = {
                 type: 'translation',
                 pathName: payload.pathName ?? 'translation',
-                parameters: new Map([['translation', translation]]),
-                childIndices: undefined
+                translation: payload.translation ?? [0, 0, 0]   
             };
             grepModel.addShaderNode(node);
         }
         else if (type === 'rotation') {
-            const angles = payload.rotation ?? [0, 0, 0];
             const node : ISdfNode = {
                 type: 'rotation',
                 pathName: payload.pathName ?? 'rotation',
-                parameters: new Map([['rotation', angles]]),
-                childIndices: undefined
+                rotation: payload.rotation ?? [0, 0, 0]
             };
             grepModel.addShaderNode(node);
         }

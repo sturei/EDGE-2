@@ -33,18 +33,19 @@ describe('GRepModel', () => {
         const rootNode: ISdfNode = {
             pathName: "root",
             type: "union",
-            parameters: {},
             childIndices: [1, 2]
         };
         const firstNode: ISdfNode = {
             pathName: "root/node1",
             type: "sphere",
-            parameters: {radius: 1.0}
+            radius: 1.0
         };
         const secondNode: ISdfNode = {
             pathName: "root/node2",
             type: "block",
-            parameters: {width: 1.0, height: 2.0, depth: 3.0}
+            width: 1.0, 
+            height: 2.0, 
+            depth: 3.0
         };
 
         expect(model.numShaderNodes()).toBe(0);

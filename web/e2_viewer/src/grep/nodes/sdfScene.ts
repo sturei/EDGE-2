@@ -6,30 +6,23 @@ import * as THREE from 'three/webgpu';
 function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
     const node = nodes[nodeIndex];
     if (node.type === 'sphere') {
-        const radius = node.parameters?.get('radius') ?? 1.0;
         return Fn(([position] : [THREE.Node]) => {
-            return sphere(position, radius);
+            return sphere(position, node.radius);
         });
     }
     else if (node.type === 'block') {
-        const width:number = node.parameters?.get('width') ?? 1.0;
-        const height = node.parameters?.get('height') ?? 1.0;
-        const depth = node.parameters?.get('depth') ?? 1.0;
         return Fn(([position] : [any]) => {
-            return block(position, width, height, depth);
+            return block(position, node.width, node.height, node.depth);
         });
     }
     else if (node.type === 'cylinder') {
-        const radius = node.parameters?.get('radius') ?? 1.0;
-        const depth = node.parameters?.get('depth') ?? 1.0;
         return Fn(([position] : [any]) => {
-            return cylinder(position, radius, depth);
+            return cylinder(position, node.radius, node.depth);
         });
     }
     else if (node.type === 'circle'){
-        const radius = node.parameters?.get('radius') ?? 1.0;
         return Fn(([position] : [any]) => {
-            const d = length(position.xy).sub(radius);
+            const d = length(position.xy).sub(node.radius);
             return d;
         });
     }
@@ -38,8 +31,8 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         //float sdBox( in vec2 p, in vec2 b )
         //vec2 d = abs(p)-b;
         //return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
-        const width = node.parameters?.get('width') ?? 1.0;
-        const height = node.parameters?.get('height') ?? 1.0;
+        const width = node.width;
+        const height = node.height;
         return Fn(([position] : [any]) => {
             // A bit verbose, but eventually the inner Fn will be added to the primitives.
             return Fn(([position, width, height] : [any, any, any]) => { 
@@ -51,9 +44,9 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }   
     else if (node.type === 'roundRect'){
-        const width = node.parameters?.get('width') ?? 1.0;
-        const height = node.parameters?.get('height') ?? 1.0;
-        const radius = node.parameters?.get('cornerRadius') ?? 0.1;
+        const width = node.width;
+        const height = node.height;
+        const radius = node.cornerRadius;
         // this one does it the other way - getting the inputs from the closure
         return Fn(([position] : [any]) => {
             //const dimensions = vec2(width.mul(0.5), height.mul(0.5));
@@ -65,9 +58,9 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'profile') {
-        const paths = node.parameters?.get('paths') ?? new Array<Array<[number,number]>>();
+        const paths = node.paths;
 
-        let normals = node.parameters?.get('normals');
+        let normals = undefined; // TODO: add optional (client-supplied) normals to the node. Only needed if profile will be actually used! (it's slow). Or, compute containment by another method..
         if (!normals) {
             // compute psuedonormals for each point (cross product of tangent and normal Z)
             console.log("Computing profile normals");   // --- DEBUG ---
@@ -139,7 +132,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'extrusion') {
-        const depth = node.parameters?.get('depth') ?? 2.0;
+        const depth = node.depth;
         const childIndices = node.childIndices;
         if (!childIndices || childIndices.length == 0) {
             throw new Error("Complement node missing childIndices");
@@ -160,8 +153,8 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'halfSpace') {
-        const planePosition = node.parameters?.get('planePosition') ?? [0, 0, 0];
-        const planeNormal = node.parameters?.get('planeNormal') ?? [0, 0, 1];
+        const planePosition = node.position;
+        const planeNormal = node.normal;
         const p = vec3(planePosition[0], planePosition[1], planePosition[2]);
         const n = vec3(planeNormal[0], planeNormal[1], planeNormal[2]);
         return Fn(([position] : [any]) => {
@@ -211,7 +204,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'translation') {
-        const translation = node.parameters?.get('translation') ?? [0, 0, 0];
+        const translation = node.translation;
         const t = vec3(translation[0], translation[1], translation[2]);
         const childIndices = node.childIndices;
         if (!childIndices || childIndices.length == 0) {
@@ -226,7 +219,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'rotation') {
-        const rotation = node.parameters?.get('rotation') ?? [0, 0, 0];     // Euler angles in radians
+        const rotation = node.rotation;
         const r = vec3(rotation[0], rotation[1], rotation[2]);
         const childIndices = node.childIndices;
         if (!childIndices || childIndices.length == 0) {
