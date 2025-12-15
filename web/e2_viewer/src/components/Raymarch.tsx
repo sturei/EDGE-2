@@ -30,7 +30,7 @@ import {
     positionLocal
 } from 'three/tsl'
 
-import type { IShaderNode } from '../grep/nodes/shaderNode.ts'
+import type { IShaderNode } from '../grep/nodes/sdfNode.ts'
 
 const uCameraPosition = uniform(new THREE.Vector3())
 

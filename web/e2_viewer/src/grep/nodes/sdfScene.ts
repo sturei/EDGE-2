@@ -1,5 +1,5 @@
 import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
-import { type IShaderNode } from './shaderNode';
+import { type IShaderNode } from './sdfNode';
 import { Fn, int, float, min, max, abs, negate, rotate, sqrt, length, vec2, vec3, array } from 'three/tsl';    
 
 function generateNode(nodeIndex: number, nodes: IShaderNode[]) {

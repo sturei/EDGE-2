@@ -1,7 +1,7 @@
 import { GRepModel } from './grepModel.ts'
 import type { IDrawable } from './drawables/drawable.ts';
 import { describe, expect, it } from 'vitest'
-import type { IShaderNode } from './nodes/shaderNode.ts';
+import type { IShaderNode } from './nodes/sdfNode.ts';
 
 describe('GRepModel', () => {
     it('should handle drawable items correctly', () => {

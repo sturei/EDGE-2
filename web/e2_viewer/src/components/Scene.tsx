@@ -11,7 +11,7 @@ import { Drawlist } from './Drawlist'
 import { DocumentContext } from '../Contexts';
 import { type IDrawable } from "../grep/drawables/drawable.ts";
 import { RaymarchedScene } from "./Raymarch";
-import type { IShaderNode } from '../grep/nodes/shaderNode.ts'    
+import type { IShaderNode } from '../grep/nodes/sdfNode.ts'    
 
 interface ISceneReactState {
     drawlist: IDrawable[],

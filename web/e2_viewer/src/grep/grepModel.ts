@@ -7,7 +7,7 @@
 
 import { Model } from '../document/model';
 import {type IDrawable} from './drawables/drawable';
-import { type IShaderNode } from './nodes/shaderNode';
+import { type IShaderNode } from './nodes/sdfNode';
 
 export class GRepModel extends Model {
     private m_drawList: IDrawable[] = [];
