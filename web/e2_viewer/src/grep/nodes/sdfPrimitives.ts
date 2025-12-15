@@ -13,12 +13,20 @@ import {
     min,
     abs,
     max,
+    mul,
     sign,
     float,
     int,
     Loop,
     If
 } from 'three/tsl'
+
+import * as THREE from 'three/webgpu';
+// Implementation note: the above line brings in the types, including the types for THREE.Node etc. 
+// Unfortunately, at time of writing, the types are out-of-date and cannot be used, hence the widespread use of 'any' in this file.
+// The arguments and return types are THREE.Node, in general, or more specific types such as THREE.ArrayNode.
+// As a rule-of-thumb, arguments should be THREE.Node or value types that convert to THREE.Node according to
+// https://github.com/mrdoob/three.js/wiki/Three.js-Shading-Language#constants-and-explicit-conversions
 
 // sphere centered on origin with given radius
 export const sphere = Fn(([position, radius]: [any, any]) => {
@@ -27,7 +35,7 @@ export const sphere = Fn(([position, radius]: [any, any]) => {
 
 // block centered on origin with given dimensions in x, y, z
 export const block = Fn(([position, width, height, depth] : [any, any, any, any]) => {
-    const dimensions = vec3(width.mul(0.5), height.mul(0.5), depth.mul(0.5));
+    const dimensions = vec3(mul(width, 0.5), mul(height, 0.5), mul(depth, 0.5))    ;
     const distance = abs(position).sub(dimensions);
     return length(max(distance, 0.0)).add(
         min(max(distance.x, max(distance.y, distance.z)), 0.0)
@@ -35,11 +43,11 @@ export const block = Fn(([position, width, height, depth] : [any, any, any, any]
 })
 
 // cylinder centered on origin with given radius and depth along Z
-export const cylinder = Fn(([position, radius, depth]: [any, any, any]) => {
+export const cylinder = Fn(([position, radius, depth]: [any, THREE.Node | number, THREE.Node | number]) => {
     const distance = float(0).toVar();
     const delta = vec2(
       length(position.xy).sub(radius),
-      position.z.abs().sub(depth.mul(0.5))
+      position.z.abs().sub(mul(depth, 0.5))
     )
     distance.assign(min(max(delta.x, delta.z), 0.0).add(
         length(max(delta, 0.0))
@@ -47,39 +55,15 @@ export const cylinder = Fn(([position, radius, depth]: [any, any, any]) => {
     return distance;
 })
 
-// path (polyline) in XY plane
-export const path = Fn(([position, pathPoints]: [any, any, any]) => {    
-    const minDistance = float(99999.99).toVar(); // Large initial value
-    const numPoints = int(pathPoints.count);
+// profile (array of non-contiguous but oriented paths) in XY plane. The arguments are ArrayNodes.
+export const profile = Fn(([position, profilePaths, profileNormals, profilePathLengths]: [any, any, any, any]) => {
 
-    // Loop over each segment (between successive points) in the path
-    Loop( {start: 0, end: numPoints.add(-1), condition: '<' }, ( { i } ) => {
-        const p1 = pathPoints.element(i);
-        const p2 = pathPoints.element((i as any).add(1));
+    // Implementation note:
+    // This could be made more efficient, e.g. see Iniquez's article on polygonal SDFs
+    // However, even with the more efficient approach, this is way too slow to be a real-time SDF primitive.
+    // I guess it's to do with the Loop and If constructs.
+    // With current technology, it's probably necessary to bake the profile SDF into a 2D texture and sample it.
 
-        const segmentDir = p2.sub(p1);
-        const queryToP1 = position.xy.sub(p1);
-
-        // Project position onto the infinite line (p1 + t * segmentDir)
-        let t = queryToP1.dot(segmentDir).div(segmentDir.dot(segmentDir));
-
-        // Clamp t to the segment (0 to 1)
-        t = max(min(t, 1.0), 0.0);
-
-        // Calculate the closest point on the segment
-        const currentClosest = p1.add(segmentDir.mul(t));
-
-        // Calculate distance to this segment's closest point
-        const dist = length(position.xy.sub(currentClosest));
-
-        minDistance.assign(min(minDistance, dist));
-    } );
-
-    return minDistance;
-})
-
-// profile (array of non-contiguous but oriented paths) in XY plane
-export const profile = Fn(([position, profilePaths, profileNormals, profilePathLengths]: [any,any, any, any]) => {
     const minDistanceSq = float(99999.99).toVar(); // Large initial value
     const minSign = int(1).toVar(); // positive = outside, negative = inside 
     const numPaths = int(profilePathLengths.count);

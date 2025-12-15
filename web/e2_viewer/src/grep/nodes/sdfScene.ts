@@ -1,17 +1,18 @@
 import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
 import { Fn, int, float, min, max, abs, negate, rotate, sqrt, length, vec2, vec3, array } from 'three/tsl';    
+import * as THREE from 'three/webgpu';
 
 function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
     const node = nodes[nodeIndex];
     if (node.type === 'sphere') {
         const radius = node.parameters?.get('radius') ?? 1.0;
-        return Fn(([position] : [any]) => {
+        return Fn(([position] : [THREE.Node]) => {
             return sphere(position, radius);
         });
     }
     else if (node.type === 'block') {
-        const width = node.parameters?.get('width') ?? 1.0;
+        const width:number = node.parameters?.get('width') ?? 1.0;
         const height = node.parameters?.get('height') ?? 1.0;
         const depth = node.parameters?.get('depth') ?? 1.0;
         return Fn(([position] : [any]) => {
