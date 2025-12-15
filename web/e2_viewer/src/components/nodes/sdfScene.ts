@@ -52,7 +52,7 @@ function generateNode(nodeIndex: number, nodes: IShaderNode[]) {
     else if (node.type === 'roundRect'){
         const width = node.parameters?.get('width') ?? 1.0;
         const height = node.parameters?.get('height') ?? 1.0;
-        const radius = node.parameters?.get('radius') ?? 0.1;
+        const radius = node.parameters?.get('cornerRadius') ?? 0.1;
         // this one does it the other way - getting the inputs from the closure
         return Fn(([position] : [any]) => {
             //const dimensions = vec2(width.mul(0.5), height.mul(0.5));

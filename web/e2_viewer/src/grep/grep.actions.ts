@@ -365,6 +365,27 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addShaderNode(node);
         }
+        else if (type === 'translation') {
+            // TODO: combine into a single transform node that can do translation and rotation (rotation first)
+            const translation = payload.translation ?? [0, 0, 0];
+            const node : IShaderNode = {
+                type: 'translation',
+                pathName: payload.pathName ?? 'translation',
+                parameters: new Map([['translation', translation]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
+        else if (type === 'rotation') {
+            const angles = payload.rotation ?? [0, 0, 0];
+            const node : IShaderNode = {
+                type: 'rotation',
+                pathName: payload.pathName ?? 'rotation',
+                parameters: new Map([['rotation', angles]]),
+                childIndices: undefined
+            };
+            grepModel.addShaderNode(node);
+        }
         else {
             console.error(`addSdfNode action: unknown type '${type}'`);
         }

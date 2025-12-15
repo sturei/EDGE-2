@@ -29,9 +29,7 @@ namespace e2 {
         // The payload for each edge is a polyline
         auto edges = getKSkeleton(1, sketchBody);
         for (const auto& edgeIndex : edges) {
-            double atolDegrees = 16.0;
-            double atol = atolDegrees * M_PI/180.0;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, sketchBody, atol);
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, sketchBody);
             std::vector<json> positions;
             for (const auto& point : *tessellatedPointsPtr) {
                 positions.push_back(json::array({point.x(), point.y(), point.z()}));
@@ -49,9 +47,7 @@ namespace e2 {
         std::vector<json> paths;
         for (const auto& edgePair : edges) {
             CellIndex edgeIndex = edgePair.first;
-            double atolDegrees = 16.0;
-            double atol = atolDegrees * M_PI/180.0;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody, atol);
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
             std::vector<json> path;
             for (const auto& point : *tessellatedPointsPtr) {
                     path.push_back(json::array({point.x(), point.y()}));
@@ -338,9 +334,7 @@ namespace e2 {
         std::vector<json> paths;
         for (const auto& edgePair : edges) {
             CellIndex edgeIndex = edgePair.first;
-            double atolDegrees = 16.0;
-            double atol = atolDegrees * M_PI/180.0;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody, atol);
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
             std::vector<json> path;
             for (const auto& point : *tessellatedPointsPtr) {
                     path.push_back(json::array({point.x(), point.y()}));
@@ -379,9 +373,7 @@ namespace e2 {
         std::vector<json> paths;
         for (const auto& edgePair : edges) {
             CellIndex edgeIndex = edgePair.first;
-            double atolDegrees = 16.0;
-            double atol = atolDegrees * M_PI/180.0;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody, atol);
+            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
             std::vector<json> path;
             for (const auto& point : *tessellatedPointsPtr) {
                 path.push_back(json::array({point.x(), point.y()}));
@@ -397,7 +389,7 @@ namespace e2 {
         doc.dispatchClientAction({"Gfx::addContour", payload});
     }
 
-    static void addSdfNodeForFeature(Document& doc, const Feature* feature, const std::string& objectPathName) {
+    static void addSdfNodeForFeature(Document& doc, const Feature* feature, std::string objectPathName) {
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         
         // TODO: handle position and rotation
@@ -470,17 +462,30 @@ namespace e2 {
         }
         else if (const Extrusion* extrusionFeature = dynamic_cast<const Extrusion*>(feature)) {
             double depth = extrusionFeature->depth();
+
+            // to avoid z-fighting when subtracting. TODO: think of a better way!
+            double epsilon = extrusionFeature->featureEffect() == FeatureEffect::SUBTRACT ? 0.01 : 0.0;
+            bool doubleSided = false; // TODO: extrusionFeature->doubleSided();
+
+            json transformPayload = json::object({
+                {"pathName", objectPathName},
+                {"type", "translation"},
+                {"translation", json::array({0.0, 0.0, doubleSided ? 0.0 : depth / 2.0})}
+            });
+
+            objectPathName += "/extrusion";
             json featurePayload = json::object({
                 {"pathName", objectPathName},
                 {"type", "extrusion"},
-                {"depth", depth}
+                {"depth", depth+epsilon}
             });
 
-            // add the profile as a child
             std::string profilePathName = extrusionFeature->profilePathName();
             Feature* profile = features.findFeature(profilePathName);
             if (profile) {
+                doc.dispatchClientAction({"Gfx::addSdfNode", transformPayload});
                 doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                // add the profile feature as a child, recursively
                 addSdfNodeForFeature(doc, profile, objectPathName + "/profile");
             }
         }        

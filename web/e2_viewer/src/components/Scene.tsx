@@ -24,29 +24,6 @@ export function Scene(){
     const document = useContext(DocumentContext);
     const [reactState, setReactState] = useState(initialState);
 
-    /*
-    const nodes : IShaderNode[] = [
-        {
-        type: 'union',
-        pathName: 'shape0',
-        parameters: new Map(),
-        childIndices: [1, 2]
-        },
-        {
-        type: 'sphere',
-        pathName: 'shape0/sphere',
-        parameters: new Map([['radius', 1.5]]),
-        childIndices: []
-        },
-        {
-        type: 'block',
-        pathName: 'shape0/block',
-        parameters: new Map([['dimensions', {width:1.0, height:2.0, depth:1.0}]]),
-        childIndices: []
-        },
-    ];
-*/
-
     /** Sets up the Scene Model and Store */
     useEffect(() => {
         console.log(" Setting up the Scene's Model and Store");

@@ -19,7 +19,7 @@ export const Color = new Map<string, number> ([
 export interface IPointAppearance {
     type: 'point';
     color?: number;               // color of the point   
-    size?: number;                // size of the point in pixels
+    size?: number;                // size of the point in pixels. Note: size is not honoured in webgpu - points are always 1 pixel. The recommended approach is to use point sprites instead.
     // other point appearance properties can be added here. See three.js PointsMaterial for more options.
 }
 
@@ -94,16 +94,27 @@ export interface IPointGeometry {
     position: [number, number, number];
 }
 
-/** Filled profile defined by an array of 2D paths. 
+/** 
+ * Filled profile defined by its boundary.
+ * Boundary is an array of paths. 
  * Each path is an array of [x,y] tuples.
- * Paths must be consistently oriented with the interior on the left. 
- * The union of the paths must form the boundary of a simple polygon. */
+ * Paths must be consistently oriented with the interior on the left.
+ * Paths need not be contiguous. 
+ */
 export interface IProfileGeometry {
     type: 'profile';
     paths: Array<Array<[number, number]>>;
 }
 
-export type IAnyGeometry = ISphereGeometry | IBlockGeometry | ICylinderGeometry | IPlaneGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry;
+/**
+ * Wireframe contour (similar to IProfileGeometry, but renders the boundary, not the interior.
+ */
+export interface IContourGeometry {
+    type: 'contour';
+    paths: Array<Array<[number, number]>>;
+}
+
+export type IAnyGeometry = ISphereGeometry | IBlockGeometry | ICylinderGeometry | IPlaneGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry | IContourGeometry;
 
 /** Drawable */
 export interface IDrawable {
