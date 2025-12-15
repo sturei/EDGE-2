@@ -48,6 +48,8 @@ function App() {
         </div>
         <div className="graphicsArea h-140 flex-1 bg-slate-800">
           <Canvas
+            camera={{ position: [50, 50, 50], fov: 10, near: 0.1, far: 1000, up: [0, 0, 1] }}
+            orthographic={false}
             gl={async (props) => {
               console.warn("Using WebGPU renderer");
               const renderer = new THREE.WebGPURenderer(
