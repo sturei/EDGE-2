@@ -8,25 +8,12 @@ Instructions:
   The payload must be valid JSON e.g. a string, number, array or object.
   Examples:
     {"type":"Modeller::ping", "payload":{}}
-    {"type":"Sketches::addEmptyBody", "payload":{}}
-    {"type":"Sketches::addAcornBody", "payload":{"x":3, "y":2, "z":1}}
-    {"type":"Sketches::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"Sketches::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
-    {"type":"Profiles::addRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"Profiles::addRoundRect", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "cornerRadius":0.2}}
-    {"type":"Objects::addEmptyObject", "payload":{}}
-    {"type":"Objects::addSphereObject", "payload":{"radius":1.5}}
-    {"type":"Objects::addBlockObject", "payload":{"width":3, "height":2, "depth":1}}
-    {"type":"Objects::addCylinderObject", "payload":{"radius":1.5, "depth":3}}
-    {"type":"Objects::addInfiniteRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}}}
-    {"type":"Objects::addCappedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}
-    {"type":"Objects::addExtrudedRectangle", "payload":{"lowerLeft":{"x":0, "y":0, "z":0}, "upperRight":{"x":3, "y":2, "z":0}, "depth":1}}
-    {"type":"Features::addPrimitive", "payload":{"primitiveType" : "block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}
-    {"type":"Features::addPrimitive", "payload":{"primitiveType" : "sphere", "radius":1.5, "pathName":"shape/features/sphere1"}}
-    {"type":"Features::addPrimitive", "payload":{"primitiveType" : "cylinder", "radius":1.5, "depth":3, "pathName":"shape/features/cylinder1"}}
-    {"type":"Profiles::addPrimitive", "payload":{"primitiveType" : "rectangle", "width":3, "height":2, "pathName":"shape/profiles/rectangle1"}}
-    {"type":"Profiles::addPrimitive", "payload":{"primitiveType" : "circle", "radius":1.5, "pathName":"shape/profiles/circle1"}}
-    {"type":"Profiles::addPrimitive", "payload":{"primitiveType" : "roundRect", "width":3, "height":2, "cornerRadius":0.2, "pathName":"shape/profiles/roundRect1"}}
+    {"type":"Profiles::addPrimitive", "payload":{"primitiveType":"rectangle", "width":3, "height":2, "pathName":"shape/profiles/rectangle1"}}
+    {"type":"Profiles::addPrimitive", "payload":{"primitiveType":"circle", "radius":1.5, "pathName":"shape/profiles/circle1"}}
+    {"type":"Profiles::addPrimitive", "payload":{"primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2, "pathName":"shape/profiles/roundRect1"}}
+    {"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}
+    {"type":"Features::addPrimitive", "payload":{"primitiveType":"sphere", "radius":1.5, "pathName":"shape/features/sphere1"}}
+    {"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "radius":1.5, "depth":3, "pathName":"shape/features/cylinder1"}}
     {"type":"Features::addExtrusion", "payload":{"depth":3, "profilePathName":"shape/profiles/roundRect1", "pathName":"shape/features/extrusion1"}}
 
   Type 'q' to quit, or 'h' to show these instructions again.
