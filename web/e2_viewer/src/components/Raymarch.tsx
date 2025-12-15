@@ -10,7 +10,7 @@ import { useThree } from '@react-three/fiber'
 import * as THREE from 'three/webgpu'
 import { useFrame } from '@react-three/fiber'
 import { useEffect } from 'react'
-import { generateScene } from './nodes/sdfScene.ts';
+import { generateScene } from '../grep/nodes/sdfScene.ts';
 
 import {    
     float,
@@ -30,7 +30,7 @@ import {
     positionLocal
 } from 'three/tsl'
 
-import type { IShaderNode } from '../grep/shaderNode.ts'
+import type { IShaderNode } from '../grep/nodes/shaderNode.ts'
 
 const uCameraPosition = uniform(new THREE.Vector3())
 

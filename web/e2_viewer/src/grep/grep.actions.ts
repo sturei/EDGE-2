@@ -2,7 +2,7 @@ import { Document } from "../document/document";
 import { Model } from "../document/model";
 import { GRepModel } from "../grep/grepModel";
 import { Color, type IDrawable } from "./drawables/drawable";
-import type { IShaderNode } from "./shaderNode";
+import type { IShaderNode } from "./nodes/shaderNode";
 
 function ping(_doc: Document, _payload: any): void {
     // This action just writes "pong" to stderr. Useful for testing that the pieces are connected.
