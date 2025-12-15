@@ -234,6 +234,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else {
+        // @ts-ignore to suppress 'never' type error (want to keep the code in case new types are added later, that are erroneously not handled here)
         throw new Error(`Unsupported node type: ${node.type}`);
     }
 }
