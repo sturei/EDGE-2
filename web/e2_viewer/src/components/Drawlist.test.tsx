@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Drawlist } from './Drawlist';
-import type { IDrawable } from '../grep/drawable';
+import type { IDrawable } from '../grep/drawables/drawable';
 import "@testing-library/jest-dom";
 
 /**

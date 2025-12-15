@@ -1,5 +1,5 @@
 import { GRepModel } from './grepModel.ts'
-import type { IDrawable } from './drawable.ts';
+import type { IDrawable } from './drawables/drawable.ts';
 import { describe, expect, it } from 'vitest'
 import type { IShaderNode } from './shaderNode.ts';
 

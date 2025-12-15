@@ -9,7 +9,7 @@ import { GRepModel } from '../grep/grepModel';
 import { Store } from '../document/store' 
 import { Drawlist } from './Drawlist'
 import { DocumentContext } from '../Contexts';
-import { type IDrawable } from "../grep/drawable";
+import { type IDrawable } from "../grep/drawables/drawable.ts";
 import { RaymarchedScene } from "./Raymarch";
 import type { IShaderNode } from '../grep/shaderNode.ts'    
 

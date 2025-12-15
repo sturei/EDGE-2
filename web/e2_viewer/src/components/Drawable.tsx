@@ -3,7 +3,7 @@
 // Implementation note: as written, it's not efficient from a React point of view. It will create new geometry on every react-three-fiber render.
 // Later will come the usual use-memo, use-ref etc.
 
-import  { type IDrawable, Color } from '../grep/drawable';
+import  { type IDrawable, Color } from '../grep/drawables/drawable';
 import { Box, Sphere, Cylinder, Plane } from '@react-three/drei'  
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js'
 import { Line2NodeMaterial } from 'three/webgpu';

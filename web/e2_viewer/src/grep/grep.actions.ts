@@ -1,7 +1,7 @@
 import { Document } from "../document/document";
 import { Model } from "../document/model";
 import { GRepModel } from "../grep/grepModel";
-import { Color, type IDrawable } from "../grep/drawable";
+import { Color, type IDrawable } from "./drawables/drawable";
 import type { IShaderNode } from "./shaderNode";
 
 function ping(_doc: Document, _payload: any): void {

@@ -6,7 +6,7 @@
 
 
 import { Model } from '../document/model';
-import {type IDrawable} from '../grep/drawable';
+import {type IDrawable} from './drawables/drawable';
 import { type IShaderNode } from '../grep/shaderNode';
 
 export class GRepModel extends Model {
