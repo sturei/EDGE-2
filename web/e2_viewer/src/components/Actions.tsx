@@ -5,6 +5,8 @@ import { useContext, useEffect } from "react";
 import * as grepActions from '../grep/grep.actions.ts'  
 import * as prepActions from '../prep/prep.actions.ts'
 import * as shapeActions from '../shape/shape.actions.ts'  
+import * as drawableActions from '../grep/drawables/drawable.actions.ts'
+import * as sdfActions from '../grep/nodes/sdf.actions.ts'
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
@@ -53,24 +55,20 @@ const actionSuggestions = [
 
     useEffect(() => {
 
-        // Register actions with the document. These actions are the only valid way for the application to manipulate the drawlist.
+        // Register actions with the document. These actions are the only valid way for the application to manipulate the model.
         console.log("Registering actions");
 
         document.registerActionFunction(grepActions.pingActionDef);   // register ping action separately so that the test mock works!
 
-        for (const actionDef of Object.values(grepActions)) {
-            if (typeof actionDef === "object" && "type" in actionDef && "function" in actionDef) {
-                document.registerActionFunction(actionDef);
-            }
-        }
+        const grepActionDefs = Object.values(grepActions);
+        const prepActionDefs = Object.values(prepActions);
+        const shapeActionDefs = Object.values(shapeActions);
+        const drawableActionDefs = Object.values(drawableActions);
+        const sdfActionDefs = Object.values(sdfActions);
 
-        for (const actionDef of Object.values(prepActions)) {
-            if (typeof actionDef === "object" && "type" in actionDef && "function" in actionDef) {
-                document.registerActionFunction(actionDef);
-            }
-        }
-          
-        for (const actionDef of Object.values(shapeActions)) {
+        const allActionDefs = grepActionDefs.concat(prepActionDefs, shapeActionDefs, drawableActionDefs, sdfActionDefs);
+
+        for (const actionDef of allActionDefs) {
             if (typeof actionDef === "object" && "type" in actionDef && "function" in actionDef) {
                 document.registerActionFunction(actionDef);
             }
