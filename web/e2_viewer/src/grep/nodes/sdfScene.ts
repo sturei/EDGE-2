@@ -1,6 +1,6 @@
 import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
-import { Fn, int, float, min, max, negate, rotate, sqrt, vec2, vec3, array } from 'three/tsl';    
+import { Fn, int, min, max, negate, rotate, vec2, vec3, array } from 'three/tsl';    
 import * as THREE from 'three/webgpu';
 
 // compute outward-pointing normals for profile
@@ -38,7 +38,7 @@ function computeProfileNormals(paths: Array<Array<[number, number]>>): Array<Arr
 function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
     const node = nodes[nodeIndex];
     if (node.type === 'sphere') {
-        return Fn(([position] : [THREE.Node]) => {
+        return Fn(([position] : [any]) => {
             return sphere(position, node.radius);
         });
     }

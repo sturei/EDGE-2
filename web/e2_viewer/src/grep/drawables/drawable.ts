@@ -6,6 +6,14 @@
 
 /** Appearances */
 
+export type AppearanceType = 'point' | 'line' | 'mesh';
+
+export interface IBaseAppearance {
+    type: AppearanceType;
+};
+
+/** A simple color map from color names to hexadecimal color values */
+
 export const Color = new Map<string, number> ([
     ["red", 0xff0000],              // 16711680 in decimal
     ["green", 0x00ff00],            // 65280 in decimal
@@ -16,7 +24,7 @@ export const Color = new Map<string, number> ([
 ]);
 
 /** Defines the appearance of point-like drawables */
-export interface IPointAppearance {
+export interface IPointAppearance extends IBaseAppearance {
     type: 'point';
     color?: number;               // color of the point   
     size?: number;                // size of the point in pixels. Note: size is not honoured in webgpu - points are always 1 pixel. The recommended approach is to use point sprites instead.
@@ -24,14 +32,14 @@ export interface IPointAppearance {
 }
 
 /** Defines the appearance of line-like drawables */
-export interface ILineAppearance {
+export interface ILineAppearance extends IBaseAppearance {
     type: 'line';
     color?: number;
     // other line appearance properties can be added here. See three.js LineMaterial for more options.
 }
 
 /** Defines the appearance of surface- or solid-like drawables */
-export interface IMeshAppearance {
+export interface IMeshAppearance extends IBaseAppearance {
     type: 'mesh';
     color?: number;
     texture?: {
@@ -46,14 +54,23 @@ export type IAppearance = IPointAppearance | ILineAppearance | IMeshAppearance;
 
 /** Geometries */
 
+// "group" could be useful in future?
+export type GeometryType = 'sphere' | 'block' | 'cylinder' | 'plane' | 'line' | 'polyline' | 'point' | 'profile' | 'contour';
+
+export interface IBaseGeometry {
+    type: GeometryType;
+    position?: [number, number, number];
+    rotation?: [number, number, number];   // Euler angles in radians
+}
+
 /** Sphere centered on the origin */
-export interface ISphereGeometry {
+export interface ISphereGeometry extends IBaseGeometry {
     type: 'sphere'; 
     radius: number;
 }
 
 /** Block centered on the origin */
-export interface IBlockGeometry {
+export interface IBlockGeometry extends IBaseGeometry {
     type: 'block';
     width: number;     // length along X
     height: number;    // length along Y
@@ -61,37 +78,35 @@ export interface IBlockGeometry {
 }
 
 /** Cylinder centered on the origin */
-export interface ICylinderGeometry {
+export interface ICylinderGeometry extends IBaseGeometry {
     type: 'cylinder';
     radius: number;    // radius of the cylinder
     depth: number;     // height of the cylinder along the Z axis
 }
 
 /** Filled rectangle centered on the origin */
-export interface IPlaneGeometry {
+export interface IPlaneGeometry extends IBaseGeometry {
     type: 'plane';
     width: number;     // length along X
     height: number;    // length along Y    
-    z: number;         // position along Z
 }
 
 /** Line defined by start and end points */
-export interface ILineGeometry {
+export interface ILineGeometry extends IBaseGeometry {
     type: 'line';
     start: [number, number, number];
     end: [number, number, number];
 }
 
 /** Polyline defined by an array of [x,y,z] triples */
-export interface IPolylineGeometry {
+export interface IPolylineGeometry extends IBaseGeometry {
     type: 'polyline';
     positions: Array<[number, number, number]>;
 }
 
-/** Point at specified position */
-export interface IPointGeometry {
+/** Point at origin */
+export interface IPointGeometry extends IBaseGeometry {
     type: 'point';
-    position: [number, number, number];
 }
 
 /** 
@@ -101,7 +116,7 @@ export interface IPointGeometry {
  * Paths must be consistently oriented with the interior on the left.
  * Paths need not be contiguous. 
  */
-export interface IProfileGeometry {
+export interface IProfileGeometry extends IBaseGeometry {
     type: 'profile';
     paths: Array<Array<[number, number]>>;
 }
@@ -109,7 +124,7 @@ export interface IProfileGeometry {
 /**
  * Wireframe contour (similar to IProfileGeometry, but renders the boundary, not the interior.
  */
-export interface IContourGeometry {
+export interface IContourGeometry extends IBaseGeometry {
     type: 'contour';
     paths: Array<Array<[number, number]>>;
 }
@@ -120,6 +135,5 @@ export type IGeometry = ISphereGeometry | IBlockGeometry | ICylinderGeometry | I
 export interface IDrawable {
     geometry?: IGeometry;
     appearance?: IAppearance;
- //   matrix?: number[];
 }   
 

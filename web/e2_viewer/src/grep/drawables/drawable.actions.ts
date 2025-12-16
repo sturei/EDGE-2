@@ -2,15 +2,13 @@ import { Document } from "../../document/document";
 import { Model } from "../../document/model";
 import { GRepModel } from "../../grep/grepModel";
 import { Color, type IDrawable } from "../drawables/drawable";
-import type { ISdfNode } from "../nodes/sdfNode";
-
 
 function addPoint(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
         let sceneModel = model as GRepModel; 
         const size = payload.size ?? 1.0;
-        const position = payload.position ?? [0, 0, 0];
         const color = Color.get(payload.color ?? "red");
         const drawable: IDrawable = {
             geometry: {
@@ -31,6 +29,8 @@ function addPoint(doc: Document, payload: any): void {
 function addLine(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const start = payload.start ?? [-1, 0, 0];
         const end = payload.end ?? [1, 0, 0];
         const color = Color.get(payload.color ?? "blue");
@@ -39,7 +39,9 @@ function addLine(doc: Document, payload: any): void {
             geometry: {
                 type: 'line',
                 start: start,
-                end: end
+                end: end,
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'line',
@@ -54,13 +56,17 @@ function addLine(doc: Document, payload: any): void {
 function addPolyline(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const positions = payload.positions ?? [[-1, 0, 0],[1,0,0]];
         const color = Color.get(payload.color ?? "blue");
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
                 type: 'polyline',
-                positions: positions
+                positions: positions,
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'line',
@@ -76,9 +82,10 @@ function addPolyline(doc: Document, payload: any): void {
 function addPlane(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const width = payload.width ?? 1.0;
         const height = payload.height ?? 1.0;
-        const z = payload.z ?? 0.0;
         const color = Color.get(payload.color ?? "blue");
         let texture = undefined;
         if (payload.texture) {
@@ -100,7 +107,8 @@ function addPlane(doc: Document, payload: any): void {
                 type: 'plane',
                 width: width,
                 height: height,
-                z: z
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'mesh',
@@ -118,6 +126,8 @@ function addPlane(doc: Document, payload: any): void {
 function addSphere(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const radius = payload.radius ?? 1.0;
         const color = Color.get(payload.color ?? "blue");
 
@@ -125,7 +135,9 @@ function addSphere(doc: Document, payload: any): void {
         const drawable: IDrawable = {
             geometry: {
                 type: 'sphere',
-                radius: radius
+                radius: radius,
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'mesh',
@@ -140,6 +152,8 @@ function addSphere(doc: Document, payload: any): void {
 function addBlock(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const width = payload.width ?? 2.0;      // length in x direction
         const height = payload.height ?? 2.0;    // length in y direction
         const depth = payload.depth ?? 2.0;      // length in z direction
@@ -150,7 +164,9 @@ function addBlock(doc: Document, payload: any): void {
                 type: 'block',
                 width: width,
                 height: height,
-                depth: depth
+                depth: depth,
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'mesh',
@@ -165,6 +181,8 @@ function addBlock(doc: Document, payload: any): void {
 function addCylinder(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const radius = payload.radius ?? 1.0;      // radius of the cylinder
         const depth = payload.depth ?? 2.0;      // length in z direction
         const color = Color.get(payload.color ?? "yellow");
@@ -173,7 +191,9 @@ function addCylinder(doc: Document, payload: any): void {
             geometry: {
                 type: 'cylinder',
                 radius: radius,
-                depth: depth
+                depth: depth,
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'mesh',
@@ -188,13 +208,17 @@ function addCylinder(doc: Document, payload: any): void {
 function addProfile(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
         const color = Color.get(payload.color ?? "green");
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
                 type: 'profile',
-                paths: paths
+                paths: paths,
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'mesh',
@@ -209,13 +233,17 @@ function addProfile(doc: Document, payload: any): void {
 function addContour(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
+        const position = payload.position ?? [0, 0, 0];
+        const rotation = payload.rotation ?? [0, 0, 0];
         const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
         const color = Color.get(payload.color ?? "green");
         let grepModel = model as GRepModel;
         const drawable: IDrawable = {
             geometry: {
                 type: 'contour',
-                paths: paths
+                paths: paths,
+                position: position,
+                rotation: rotation
             },
             appearance: {
                 type: 'mesh',
