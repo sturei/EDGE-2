@@ -3,7 +3,6 @@
 #include "utils/vec3d.h"
 #include "brep/navigate.h"
 #include "brep/tessellate.h"
-#include "frep.deprecated/functions.h"
 #include "document/document.h"
 #include "shape/shapeModel.h"
 
@@ -98,73 +97,6 @@ namespace e2 {
         else {
             double t = d / range;
             return lerp(pink, white, t);
-        }
-    }
-
-    void dispatchGraphicsActionsForObject(Document& doc, const FObject& fobject, double width, double height, double depth) {
-
-        // Generate a stack of images representing the SDF of the given object
-        
-        int numSlabsX = 1;       // only one slab in X and Y for now, until "z" is replaced by "position" in the addPlane action (to allow placing the slabs arbitrarily in XY)
-        int numSlabsY = 1;
-
-        // Choose image dimensions to give about 5 texels per world unit
-        int imageWidth = width * 5 / numSlabsX;
-        int imageHeight = height * 5 / numSlabsY;
-
-        int numSlices = 5;
-
-        double pixelWidth = width / (imageWidth * numSlabsX);     // size of each texel in world units
-        double pixelHeight = height / (imageHeight * numSlabsY);  // size of each texel in world units
-        double sliceThickness = depth/(numSlices - 1);   // distance between slices
-
-        std::vector<std::vector<int>> imageStack; // stack of images, each image is a vector of RGBA integers    
-        for (int sliceIndex = 0; sliceIndex < numSlices; ++sliceIndex) {
-            double z = -((numSlices / 2) * sliceThickness) + sliceIndex * sliceThickness;
-            for (int ySlabIndex = 0; ySlabIndex < numSlabsY; ++ySlabIndex) {
-                for (int xSlabIndex = 0; xSlabIndex < numSlabsX; ++xSlabIndex) {    
-                    std::vector<int> image; // single image as a vector of RGB integers
-                    for (int yIndex = ySlabIndex * imageHeight; yIndex < (ySlabIndex + 1) * imageHeight; ++yIndex) {
-                        double y = -((numSlabsY * imageHeight / 2) * pixelHeight) + yIndex * pixelHeight;
-                        for (int xIndex = xSlabIndex * imageWidth; xIndex < (xSlabIndex + 1) * imageWidth; ++xIndex) {
-                            double x = -((numSlabsX * imageWidth / 2) * pixelWidth) + xIndex * pixelWidth;
-                            Vec3d position(x, y, z);
-                            double sdfValue;
-                            bool evalResult = fobject.evaluate(position, sdfValue);
-                            if (!evalResult) {
-                                sdfValue = std::numeric_limits<double>::max(); // assign a large value if evaluation fails
-                            }
-                            auto rgb = distanceToRgb(sdfValue, 5.0); // map sdfValue to RGB
-                            image.push_back(rgb[0]); // R
-                            image.push_back(rgb[1]); // G
-                            image.push_back(rgb[2]); // B
-                            image.push_back(rgb[3]); // A
-                        }
-                    }
-                    imageStack.push_back(image);
-                }
-            }
-        }
-
-        // Construct and dispatch the client actions to display the images
-        for(int sliceIndex = 0; sliceIndex < numSlices; ++sliceIndex) {
-            double z = -((numSlices / 2) * sliceThickness) + sliceIndex * sliceThickness;
-            for (int slabIndex = 0; slabIndex < numSlabsX * numSlabsY; ++slabIndex) {   
-                auto& image = imageStack[sliceIndex + slabIndex];
-                json payload = json::object({
-                    {"width", width},
-                    {"height", height},
-                    {"z", z},
-                    {"texture", 
-                        json::object({
-                            {"width", imageWidth},
-                            {"height", imageHeight},
-                            {"data", image}
-                        })
-                    }
-                });
-            doc.dispatchClientAction({"Gfx::addPlane", payload});
-            }
         }
     }
 
@@ -275,23 +207,6 @@ namespace e2 {
         doc.dispatchClientAction({"Gfx::addProductItem", bodyPayload});
 
         // TODO: add items for cells within the body?
-        
-    }
-
-    void dispatchProductActionsForObject(Document& doc, const FObject& fobject, size_t objectIndex, const std::string& objectType, const std::string& parentPathName) {
-
-        ensureProductParentsExist(doc);
-
-        // Add an item for the object
-        std::string objectPathName = parentPathName + "/" + "body[" + std::to_string(objectIndex) + "]";
-        std::string objectDisplayName = "object[" + std::to_string(objectIndex) + "] " + " (" + objectType + ")";
-        json objectPayload = json::object({
-            {"pathName", objectPathName},
-            {"displayName", objectDisplayName}
-        });
-        doc.dispatchClientAction({"Gfx::addProductItem", objectPayload});
-
-        // TODO: add items for fnodes within the object (but maybe need to invent features first)
         
     }
 
