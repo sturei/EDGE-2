@@ -148,4 +148,3 @@ export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => 
 export const halfSpace = Fn(([position, planePosition, planeNormal]: [any, any, any]) => {
     return position.sub(planePosition).dot(planeNormal);
 })
-

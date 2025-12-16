@@ -42,7 +42,7 @@ export interface IMeshAppearance {
     // other mesh appearance properties can be added here. See three.js MeshStandardMaterial for more options.
 }
 
-export type IAnyAppearance = IPointAppearance | ILineAppearance | IMeshAppearance; 
+export type IAppearance = IPointAppearance | ILineAppearance | IMeshAppearance; 
 
 /** Geometries */
 
@@ -114,12 +114,12 @@ export interface IContourGeometry {
     paths: Array<Array<[number, number]>>;
 }
 
-export type IAnyGeometry = ISphereGeometry | IBlockGeometry | ICylinderGeometry | IPlaneGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry | IContourGeometry;
+export type IGeometry = ISphereGeometry | IBlockGeometry | ICylinderGeometry | IPlaneGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry | IContourGeometry;
 
 /** Drawable */
 export interface IDrawable {
-    geometry?: IAnyGeometry;
-    appearance?: IAnyAppearance;
+    geometry?: IGeometry;
+    appearance?: IAppearance;
  //   matrix?: number[];
 }   
 
