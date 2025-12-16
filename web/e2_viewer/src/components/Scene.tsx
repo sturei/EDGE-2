@@ -41,7 +41,7 @@ export function Scene(){
         newState.drawlist = sceneModel.drawlist().slice();   // Copy to force React to see it as changed in case elements have been added/removed/changed. Alternatives exist e.g. make it immutable etc.
         if (sceneModel.sdfGuid() !== newState.guid) {
             newState.guid = sceneModel.sdfGuid();
-            newState.nodes = sceneModel.shaderNodes();   // Don't need to copy because the Guid has changed.
+            newState.nodes = sceneModel.sdfNodes();   // Don't need to copy because the Guid has changed.
             console.log(" SDF scene updated, new GUID:", newState.guid);
         }
         console.log(" New state:", newState);

@@ -48,19 +48,18 @@ describe('GRepModel', () => {
             depth: 3.0
         };
 
-        expect(model.numShaderNodes()).toBe(0);
-        model.addShaderNode(rootNode);
-        expect(model.numShaderNodes()).toBe(1);
-        expect(model.shaderNode(0)).toBe(rootNode);
-        model.addShaderNode(firstNode);
-        expect(model.numShaderNodes()).toBe(2);
-        expect(model.shaderNodes()).toEqual([rootNode, firstNode]);
-        expect(model.shaderNode(1)).toBe(firstNode);
-        model.addShaderNode(secondNode);
-        expect(model.numShaderNodes()).toBe(3);
-        expect(model.shaderNodes()).toEqual([rootNode, firstNode, secondNode]);
-        expect(model.shaderNode(2)).toBe(secondNode);
-
+        expect(model.numSdfNodes()).toBe(0);
+        model.addSdfNode(rootNode);
+        expect(model.numSdfNodes()).toBe(1);
+        expect(model.sdfNode(0)).toBe(rootNode);
+        model.addSdfNode(firstNode);
+        expect(model.numSdfNodes()).toBe(2);
+        expect(model.sdfNodes()).toEqual([rootNode, firstNode]);
+        expect(model.sdfNode(1)).toBe(firstNode);
+        model.addSdfNode(secondNode);
+        expect(model.numSdfNodes()).toBe(3);
+        expect(model.sdfNodes()).toEqual([rootNode, firstNode, secondNode]);
+        expect(model.sdfNode(2)).toBe(secondNode);
         
     });
 });

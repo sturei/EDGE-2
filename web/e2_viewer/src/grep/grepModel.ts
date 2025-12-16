@@ -36,33 +36,32 @@ export class GRepModel extends Model {
 
     addDrawable(item: IDrawable): number {
         const index = this.m_drawList.push(item) - 1;
-
         console.log(`GRepModel.addDrawable: item=${item.geometry?.type??"unknown"}, index=${index}`);
         return index;
     }
 
-    numShaderNodes(): number {
+    numSdfNodes(): number {
         return this.m_sdfScene.length;
     }
 
-    shaderNode(index: number): ISdfNode {
+    sdfNode(index: number): ISdfNode {
         const node = this.m_sdfScene[index];
         if (!node) {
-            throw new Error(`GRepModel.shaderNode: no shader node at index ${index}`);
+            throw new Error(`GRepModel.SdfNode: no shader node at index ${index}`);
         }
         return node;
     }
 
-    shaderNodes(): ISdfNode[] {
+    sdfNodes(): ISdfNode[] {
         return this.m_sdfScene;
     }
 
-    clearShaderNodes(): void {
+    clearSdfNodes(): void {
         this.m_sdfScene = [];
-        console.log("GRepModel.clearShaderNodes: cleared all shader nodes.");
+        console.log("GRepModel.clearSdfNodes: cleared all shader nodes.");
     }
 
-    addShaderNode(node: ISdfNode): number {
+    addSdfNode(node: ISdfNode): number {
         // Prevent adding duplicate nodes
         const existingNode = this.findNode(node.pathName);
         if (existingNode) {
@@ -73,14 +72,14 @@ export class GRepModel extends Model {
         if (this.m_sdfScene.length > 0) {
             const rootNode = this.m_sdfScene[0];
             if (!node.pathName.startsWith(rootNode.pathName)) {
-                throw new Error(`GRepModel.addShaderNode: node pathName='${node.pathName}' does not start with root node pathName='${rootNode.pathName}'`);
+                throw new Error(`GRepModel.addSdfNode: node pathName='${node.pathName}' does not start with root node pathName='${rootNode.pathName}'`);
             }
         }
 
         // Check that parent node exists.
         const parentNode = this.findParentNode(node);
         if (this.m_sdfScene.length > 0 && !parentNode) {
-            throw new Error(`GRepModel.addShaderNode: parent node for pathName='${node.pathName}' does not exist`);
+            throw new Error(`GRepModel.addSdfNode: parent node for pathName='${node.pathName}' does not exist`);
         }
 
         // Add the node
@@ -95,7 +94,7 @@ export class GRepModel extends Model {
             console.log(`  Added as child of parent node=${parentNode.pathName}`);
         }
 
-        console.log(`GRepModel.addShaderNode: node=${node.pathName}, type=${node.type}, index=${index}`);
+        console.log(`GRepModel.addSdfNode: node=${node.pathName}, type=${node.type}, index=${index}`);
         return index;
     }
 
@@ -127,7 +126,7 @@ export class GRepModel extends Model {
     }
 
     toString(): string {
-        return `GrepModel(numDrawables=${this.numDrawables()}, numShaderNodes=${this.numShaderNodes()})`;
+        return `GrepModel(numDrawables=${this.numDrawables()}, numSdfNodes=${this.numSdfNodes()})`;
     }
 }
 

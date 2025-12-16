@@ -19,7 +19,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 pathName: payload.pathName ?? 'sphere',
                 radius: payload.radius ?? 1.0,
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'block') {
             const node: ISdfNode = {
@@ -29,7 +29,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 height: payload.height ?? 1.0,
                 depth: payload.depth ?? 1.0
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'cylinder') {
             const node: ISdfNode = {
@@ -38,7 +38,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 radius: payload.radius ?? 1.0,
                 depth: payload.depth ?? 1.0
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'circle') {
             const node: ISdfNode = {
@@ -46,7 +46,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 pathName: payload.pathName ?? 'circle',
                 radius: payload.radius ?? 1.0
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'rectangle') {
             const node: ISdfNode = {
@@ -55,7 +55,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 width:  payload.width ?? 1.0,
                 height: payload.height ?? 1.0
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'roundRect') {
             const node: ISdfNode = {
@@ -65,7 +65,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 height: payload.height ?? 1.0,
                 cornerRadius: payload.cornerRadius ?? 0.1
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'profile') {
             const node: ISdfNode = {
@@ -73,7 +73,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 pathName: payload.pathName ?? 'profile',
                 paths: payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]],
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'extrusion') {
             const node : ISdfNode = {
@@ -81,7 +81,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 pathName: payload.pathName ?? 'extrusion',
                 depth: payload.depth ?? 2.0
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'halfSpace') {
             const node : ISdfNode = {
@@ -90,28 +90,28 @@ function addSdfNode(doc: Document, payload: any): void {
                 position: payload.position ?? [0, 0, 0],
                 normal: payload.normal ?? [0, 0, 1]
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'union') {
             const node : ISdfNode = {
                 type: 'union',
                 pathName: payload.pathName ?? 'union'
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'intersection') {
             const node : ISdfNode = {
                 type: 'intersection',
                 pathName: payload.pathName ?? 'intersection'
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'complement') {
             const node : ISdfNode = {
                 type: 'complement',
                 pathName: payload.pathName ?? 'complement'
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'translation') {
             const node : ISdfNode = {
@@ -119,7 +119,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 pathName: payload.pathName ?? 'translation',
                 position: payload.position ?? [0, 0, 0]   
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else if (type === 'rotation') {
             const node : ISdfNode = {
@@ -127,7 +127,7 @@ function addSdfNode(doc: Document, payload: any): void {
                 pathName: payload.pathName ?? 'rotation',
                 angles: payload.angles ?? [0, 0, 0]
             };
-            grepModel.addShaderNode(node);
+            grepModel.addSdfNode(node);
         }
         else {
             console.error(`addSdfNode action: unknown type '${type}'`);
@@ -152,7 +152,7 @@ function clearSdfScene(doc: Document, _payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         let grepModel = model as GRepModel;
-        grepModel.clearShaderNodes();
+        grepModel.clearSdfNodes();
         console.log("Cleared SDF scene nodes.");
     }
     );
