@@ -385,7 +385,14 @@ namespace e2 {
             delete tessellatedPointsPtr;
         }
 
-        json payload = json::object({{"paths", paths}});
+        const Tfm3d& tfm3d = profiles.transform(profileIndex);
+        const Vec3d& p = tfm3d.position();
+        const Vec3d& r = tfm3d.angles();
+        json payload = json::object({
+            {"paths", paths},
+            {"position", json::array({p.x(), p.y(), p.z()})},
+            {"rotation", json::array({r.x(), r.y(), r.z()})}
+        });
         doc.dispatchClientAction({"Gfx::addContour", payload});
     }
 

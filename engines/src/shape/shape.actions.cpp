@@ -448,8 +448,8 @@ namespace e2 {
                 payload.value("rotation", json::array({0,0,0}))
             );
             std::pair<Vec3d, double> posRot2D = parsePositionRotation2DJson(
-                payload.value("position", json::array({0,0})),
-                payload.value("rotation", 0));
+                payload.value("position2D", json::array({0,0})),
+                payload.value("rotation2D", 0));
 
             size_t featureIndex = -1;
             if (primitiveType == "rectangle") {
@@ -467,8 +467,11 @@ namespace e2 {
                     size_t featureIndex = features.addFeature(rectangleFeature);
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
-                    Body* rectangleBody = BRepFixtures::rectangle2DSheet(width, height);
-                    size_t profileIndex = profiles.addBody(rectangleBody);        
+                    Body* rectangleBody = BRepFixtures::rectangle2DSheet(width, height);     // TODO: take 2D position/rotation into account. Ditto for other 2D primitives
+                    Vec3d position = posRot3D.first;
+
+                    Tfm3d tfm3d(posRot3D.first, posRot3D.second);
+                    size_t profileIndex = profiles.addBody(rectangleBody, tfm3d);        
 
                     std::cerr << "added Rectangle2D Primitive" << std::endl;      // ---LOGGING---
 
@@ -494,7 +497,9 @@ namespace e2 {
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* circleBody = BRepFixtures::circle2DSheet(radius);
-                    size_t profileIndex = profiles.addBody(circleBody); 
+
+                    Tfm3d tfm3d(posRot3D.first, posRot3D.second);
+                    size_t profileIndex = profiles.addBody(circleBody, tfm3d); 
 
                     std::cerr << "added Circle2D Primitive" << std::endl;      // ---LOGGING---
 
@@ -521,7 +526,9 @@ namespace e2 {
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* roundRectBody = BRepFixtures::roundRect2DSheet(width, height, cornerRadius);
-                    size_t profileIndex = profiles.addBody(roundRectBody);
+
+                    Tfm3d tfm3d(posRot3D.first, posRot3D.second);
+                    size_t profileIndex = profiles.addBody(roundRectBody, tfm3d);
 
                     std::cerr << "added RoundRect2D Primitive" << std::endl;      // ---LOGGING---
 

@@ -20,6 +20,9 @@ async function postAction(doc: Document, type:string,payload: any): Promise<void
     // dispatch any client actions returned by the modeller.
     const data = await response.json();
     console.log("Modeller response:", data);
+    if (data.response.status === "ERROR") {
+        console.warn(`Error from modeller server: ${data.response.reason}`);
+    }
     const clientActions: ActionSpec[]= data.response.clientActions as ActionSpec[];
     for (const action of clientActions) {
         doc.dispatchAction(action);
