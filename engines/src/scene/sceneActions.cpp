@@ -3,7 +3,7 @@
 #include "utils/vec3d.h"
 #include "brep/navigate.h"
 #include "brep/tessellate.h"
-#include "frep/functions.h"
+#include "frep.deprecated/functions.h"
 #include "document/document.h"
 #include "shape/shapeModel.h"
 

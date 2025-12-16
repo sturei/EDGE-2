@@ -1,5 +1,5 @@
 #pragma once
-#include "frep/fobject.h"
+#include "frep.deprecated/fobject.h"
 #include "document/model.h"
 
 // Note: FRepModel owns its objects.

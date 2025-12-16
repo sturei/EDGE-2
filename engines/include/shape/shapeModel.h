@@ -1,6 +1,6 @@
 #pragma once
 #include "brep/brepModel.h"
-#include "frep/frepModel.h"
+#include "frep.deprecated/frepModel.h"
 #include "features/featureModel.h"
 
 namespace e2 {

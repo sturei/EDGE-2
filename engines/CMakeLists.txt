@@ -53,10 +53,10 @@ set(MODELLING_SERVICE_SOURCES
     src/document/store.cpp
     src/features/feature.cpp
     src/features/featureModel.cpp
-    src/frep/frep.fixtures.cpp
-    src/frep/fobject.cpp
-    src/frep/functions.cpp
-    src/frep/frepModel.cpp
+    src/frep.deprecated/frep.fixtures.cpp
+    src/frep.deprecated/fobject.cpp
+    src/frep.deprecated/functions.cpp
+    src/frep.deprecated/frepModel.cpp
     src/scene/sceneActions.cpp
     src/shape/shapeModel.cpp
     src/shape/shape.actions.cpp
@@ -82,8 +82,8 @@ set(TEST_SOURCES
     src/brep/brepModel.test.cpp
     src/brep/containment.test.cpp
     src/brep/tessellate.test.cpp
-    src/frep/fobject.test.cpp
-    src/frep/functions.test.cpp
+    src/frep.deprecated/fobject.test.cpp
+    src/frep.deprecated/functions.test.cpp
     src/document/store.test.cpp
     src/document/document.test.cpp
     src/document/document.actions.test.cpp

@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "frep/functions.h"
-#include "frep/fobject.h"
-#include "frep/frep.fixtures.h" 
+#include "frep.deprecated/functions.h"
+#include "frep.deprecated/fobject.h"
+#include "frep.deprecated/frep.fixtures.h" 
 #include "utils/vec3d.h"
 #include <vector>
 

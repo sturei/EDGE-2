@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "utils/graph.h"
-#include "frep/fobject.h"
+#include "frep.deprecated/fobject.h"
 
 /***
  * The FObject class represents a closed subset of 3-dimensional space as the set of points P 

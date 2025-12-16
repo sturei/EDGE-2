@@ -1,6 +1,6 @@
 #include <nlohmann/json.hpp>
 #include "brep/brep.fixtures.h"
-#include "frep/frep.fixtures.h"
+#include "frep.deprecated/frep.fixtures.h"
 #include "shape/shapeModel.h"
 #include "document/document.h"
 #include "document/store.h"

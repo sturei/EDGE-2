@@ -1,6 +1,6 @@
 #pragma once
 #include "brep/body.h"
-#include "frep/fobject.h"
+#include "frep.deprecated/fobject.h"
 #include "document/document.h"
 
 namespace e2 {

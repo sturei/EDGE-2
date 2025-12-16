@@ -1,6 +1,6 @@
 #pragma once
 
-#include "frep/fobject.h"
+#include "frep.deprecated/fobject.h"
 #include "utils/vec3d.h"
 #include "utils/pla3d.h"
 #include "utils/sph3d.h"

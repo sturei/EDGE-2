@@ -1,4 +1,4 @@
-#include "frep/frepModel.h"
+#include "frep.deprecated/frepModel.h"
 #include "document/model.h"
 
 /**

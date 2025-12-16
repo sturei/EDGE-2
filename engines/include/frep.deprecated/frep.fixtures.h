@@ -1,5 +1,5 @@
 #pragma once
-#include "frep/fobject.h"
+#include "frep.deprecated/fobject.h"
 #include "brep/body.h"
 
 

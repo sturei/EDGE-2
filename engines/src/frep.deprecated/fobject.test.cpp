@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "frep/fobject.h"
-#include "frep/functions.h"
+#include "frep.deprecated/fobject.h"
+#include "frep.deprecated/functions.h"
 
 using namespace e2;
 

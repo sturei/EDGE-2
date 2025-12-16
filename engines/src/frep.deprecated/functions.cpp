@@ -1,7 +1,7 @@
     
-#include "frep/fobject.h"
+#include "frep.deprecated/fobject.h"
 #include "utils/vec3d.h"
-#include "frep/functions.h"    
+#include "frep.deprecated/functions.h"    
 #include "brep/bnearpoint.h"
 #include "brep/navigate.h"
 #include "utils/nearpoint.h"
