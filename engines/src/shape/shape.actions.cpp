@@ -18,36 +18,36 @@ namespace e2 {
 
         std::pair<Vec3d, Vec3d> parseLowerUpperJson(const json& llJson, const json& urJson) {
             Vec3d lowerLeft = Vec3d(
-                llJson.at("x").get<double>(),
-                llJson.at("y").get<double>(),
-                llJson.at("z").get<double>()
+                llJson.at(0).get<double>(),
+                llJson.at(1).get<double>(),
+                llJson.at(2).get<double>()
             );
             Vec3d upperRight = Vec3d(
-                urJson.at("x").get<double>(),
-                urJson.at("y").get<double>(),
-                urJson.at("z").get<double>()
+                urJson.at(0).get<double>(),
+                urJson.at(1).get<double>(),
+                urJson.at(2).get<double>()
             );
             return std::make_pair(lowerLeft, upperRight);
         }
 
         std::pair<Vec3d, Vec3d> parsePositionRotationJson(const json& positionJson, const json& rotationJson) {
             Vec3d position = Vec3d(
-                positionJson.at("x").get<double>(),
-                positionJson.at("y").get<double>(),
-                positionJson.at("z").get<double>()
+                positionJson.at(0).get<double>(),
+                positionJson.at(1).get<double>(),
+                positionJson.at(2).get<double>()
             );
             Vec3d rotation = Vec3d(
-                rotationJson.at("x").get<double>(),
-                rotationJson.at("y").get<double>(),
-                rotationJson.at("z").get<double>()
+                rotationJson.at(0).get<double>(),
+                rotationJson.at(1).get<double>(),
+                rotationJson.at(2).get<double>()
             );
             return std::make_pair(position, rotation);
         }
 
         std::pair<Vec3d, double> parsePositionRotation2DJson(const json& positionJson, double rotationJson) {
             Vec3d position = Vec3d(
-                positionJson.at("x").get<double>(),
-                positionJson.at("y").get<double>(),
+                positionJson.at(0).get<double>(),
+                positionJson.at(1).get<double>(),
                 0.0
             );
             return std::make_pair(position, rotationJson);
@@ -92,8 +92,8 @@ namespace e2 {
         void addWireRectangle(Document& doc, const json& payload) {
             // This action adds a wire rectangle as a sketch.
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+                payload.value("lowerLeft", json::array({0,0,0})),
+                payload.value("upperRight", json::array({1,1,0}))
             );
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
@@ -118,8 +118,8 @@ namespace e2 {
         void addWireRoundRect(Document& doc, const json& payload) {
             // This action adds a wire rounded rectangle as a sketch.
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+                payload.value("lowerLeft", json::array({0,0,0})),
+                payload.value("upperRight", json::array({1,1,0}))
             );
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
@@ -144,8 +144,8 @@ namespace e2 {
         void addSheetRectangle(Document& doc, const json& payload) {
             // This action adds a sheet rectangle as a profile
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+                payload.value("lowerLeft", json::array({0,0,0})),
+                payload.value("upperRight", json::array({1,1,0}))
             );
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
@@ -171,8 +171,8 @@ namespace e2 {
         void addSheetRoundRect(Document& doc, const json& payload) {
             // This action adds a sheet rounded rectangle as a profile
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+                payload.value("lowerLeft", json::array({0,0,0})),
+                payload.value("upperRight", json::array({1,1,0}))
             );
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
@@ -279,8 +279,8 @@ namespace e2 {
         void addInfiniteRectangle(Document& doc, const json& payload) {
             // This action adds a 2d rectangle, with infinite z-extent, as an FObject
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+                payload.value("lowerLeft", json::array({0,0,0})),
+                payload.value("upperRight", json::array({1,1,0}))
             );
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
@@ -307,8 +307,8 @@ namespace e2 {
         void addCappedRectangle(Document& doc, const json& payload) {
             // This action adds a capped rectangle as an FObject
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+                payload.value("lowerLeft", json::array({0,0,0})),
+                payload.value("upperRight", json::array({1, 1, 0}))
             );
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
@@ -336,8 +336,8 @@ namespace e2 {
         void addExtrudedRectangle(Document& doc, const json& payload) {
             // This action adds an extruded rectangle as an FObject
             std::pair<Vec3d, Vec3d> bounds = parseLowerUpperJson(
-                payload.value("lowerLeft", json::object({{"x", -1}, {"y", -1}, {"z", 0}})),
-                payload.value("upperRight", json::object({{"x", 1 }, {"y", 1}, {"z", 0}}))
+                payload.value("lowerLeft", json::array({0,0,0})),
+                payload.value("upperRight", json::array({1,1,0}))
             );
             Vec3d lowerLeft = bounds.first;
             Vec3d upperRight = bounds.second;
@@ -375,16 +375,21 @@ namespace e2 {
             FeatureEffect featureEffectEnum = featureEffect == "add" ? FeatureEffect::ADD :
                                             featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
                                             FeatureEffect::MODIFY;
+            std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
+                payload.value("position", json::array({0,0,0})),
+                payload.value("rotation", json::array({0,0,0}))
+            );
+
             size_t featureIndex = -1;
             if (primitiveType == "block") {
                 double width = payload.value("width", 2.0);
                 double height = payload.value("height", 2.0);
                 double depth = payload.value("depth", 2.0);
 
-                store.changeState([pathName, displayName, featureEffectEnum, width, height, depth, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, width, height, depth, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                    Feature* blockFeature = new Block(pathName, displayName, featureEffectEnum, width, height, depth);
+                    Feature* blockFeature = new Block(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, width, height, depth);
                     size_t index = features.addFeature(blockFeature);
                     std::cerr << "added Block Primitive" << std::endl;      // ---LOGGING---
 
@@ -397,10 +402,10 @@ namespace e2 {
             else if (primitiveType == "sphere") {
                 double radius = payload.value("radius", 1.0);
 
-                store.changeState([pathName, displayName, featureEffectEnum, radius, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, radius, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                    Feature* sphereFeature = new Sphere(pathName, displayName, featureEffectEnum, radius);
+                    Feature* sphereFeature = new Sphere(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, radius);
                     size_t index = features.addFeature(sphereFeature);
                     std::cerr << "added Sphere Primitive" << std::endl;      // ---LOGGING---
 
@@ -413,10 +418,10 @@ namespace e2 {
             else if (primitiveType == "cylinder") {
                 double radius = payload.value("radius", 1.0);
                 double depth = payload.value("depth", 2.0);
-                store.changeState([pathName, displayName, featureEffectEnum, radius, depth, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, radius, depth, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                    Feature* cylinderFeature = new Cylinder(pathName, displayName, featureEffectEnum, radius, depth);
+                    Feature* cylinderFeature = new Cylinder(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, radius, depth);
                     size_t index = features.addFeature(cylinderFeature);
                     std::cerr << "added Cylinder Primitive" << std::endl;      // ---LOGGING---
 
@@ -439,11 +444,11 @@ namespace e2 {
                                             featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
                                             FeatureEffect::MODIFY;
             std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
-                payload.value("position", json::object({{"x", 0}, {"y", 0}, {"z", 0}})),
-                payload.value("rotation", json::object({{"x", 0 }, {"y", 0}, {"z", 0}}))
+                payload.value("position", json::array({0,0,0})),
+                payload.value("rotation", json::array({0,0,0}))
             );
             std::pair<Vec3d, double> posRot2D = parsePositionRotation2DJson(
-                payload.value("position", json::object({{"x", 0}, {"y", 0}})),
+                payload.value("position", json::array({0,0})),
                 payload.value("rotation", 0));
 
             size_t featureIndex = -1;
@@ -538,14 +543,19 @@ namespace e2 {
             FeatureEffect featureEffectEnum = 
                 featureEffect == "add" ? FeatureEffect::ADD :
                 featureEffect == "subtract" ? FeatureEffect::SUBTRACT : FeatureEffect::MODIFY;
+            std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
+                payload.value("position", json::array({0,0,0})),
+                payload.value("rotation", json::array({0,0,0}))
+            );
+
             std::string profilePathName = payload.value("profilePathName", "shape/profiles/unnamedProfile");
             double depth = payload.value("depth", 1.0);
             bool doubleSided = payload.value("doubleSided", false);
 
-            store.changeState([pathName, displayName, featureEffectEnum, profilePathName, depth, doubleSided, &doc](Model* model) {
+            store.changeState([pathName, displayName, featureEffectEnum, posRot3D, profilePathName, depth, doubleSided, &doc](Model* model) {
                 // update the model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, profilePathName, depth, doubleSided);
+                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, profilePathName, depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
 

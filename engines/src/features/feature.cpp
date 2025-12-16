@@ -11,8 +11,8 @@ namespace e2 {
     // Feature
     //
 
-    Feature::Feature(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect)
-        : m_pathname(pathname), m_displayName(displayName), m_featureEffect(featureEffect){
+    Feature::Feature(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation )
+        : m_pathname(pathname), m_displayName(displayName), m_featureEffect(featureEffect), m_position(position), m_rotation(rotation) {
     }
 
     std::ostream& operator<<(std::ostream& os, const Feature& feature) {
@@ -25,19 +25,17 @@ namespace e2 {
     //
 
     Primitive::Primitive(
-        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-        const Vec3d& position, const Vec3d& rotation)
-        : Feature(pathname, displayName, featureEffect), 
-          m_position(position), m_rotation(rotation) {
+        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation)
+        : Feature(pathname, displayName, featureEffect, position, rotation) {
     } 
         
     //  
     // Block
     //
 
-    Block::Block(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
+    Block::Block(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation,
         double width, double height, double depth)
-        : Primitive(pathname, displayName, featureEffect, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
+        : Primitive(pathname, displayName, featureEffect, position, rotation), 
           m_width(width), m_height(height), m_depth(depth) {    
     }   
 
@@ -45,6 +43,8 @@ namespace e2 {
         os << "Block(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
            << ", width=" << m_width
            << ", height=" << m_height
            << ", depth=" << m_depth << ")";
@@ -54,14 +54,16 @@ namespace e2 {
     // Sphere
     //  
 
-    Sphere::Sphere(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, double radius)
-        : Primitive(pathname, displayName, featureEffect, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
+    Sphere::Sphere(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, double radius)
+        : Primitive(pathname, displayName, featureEffect, position, rotation), 
           m_radius(radius) {}
 
     void Sphere::print(std::ostream& os) const {
         os << "Sphere(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
            << ", radius=" << m_radius << ")";
     }   
 
@@ -69,14 +71,16 @@ namespace e2 {
     // Cylinder
     //
 
-    Cylinder::Cylinder(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, double radius, double depth)
-        : Primitive(pathname, displayName, featureEffect, Vec3d(0, 0, 0), Vec3d(0, 0, 0)), 
+    Cylinder::Cylinder(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, double radius, double depth)
+        : Primitive(pathname, displayName, featureEffect, position, rotation), 
           m_radius(radius), m_depth(depth) {}
 
     void Cylinder::print(std::ostream& os) const {
         os << "Cylinder(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
            << ", radius=" << m_radius
            << ", depth=" << m_depth << ")";
     }
@@ -86,7 +90,7 @@ namespace e2 {
     //
 
     Profile::Profile(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation )
-        : Feature(pathname, displayName, featureEffect), m_position(position), m_rotation(rotation) {
+        : Feature(pathname, displayName, featureEffect, position, rotation) {
 
         // at the moment, only ADD profiles are supported. Modify and subtract would probably work from functional standpoint, but the profile graphics (which is based on brep) is not done yet
         if (featureEffect == FeatureEffect::MODIFY) {
@@ -101,8 +105,7 @@ namespace e2 {
     // Primitive2D
     //
 
-    Primitive2D::Primitive2D(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-        const Vec3d& position, const Vec3d& rotation, 
+    Primitive2D::Primitive2D(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
         const Vec3d& position2D, double rotation2D)
         : Profile(pathname, displayName, featureEffect, position, rotation), 
           m_position2D(position2D), m_rotation2D(rotation2D) {
@@ -113,8 +116,7 @@ namespace e2 {
     //
 
     Rectangle2D::Rectangle2D(
-        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-        const Vec3d& position, const Vec3d& rotation, 
+        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
         const Vec3d& position2D, double rotation2D, 
         double width, double height)
         : Primitive2D(pathname, displayName, featureEffect, position, rotation, position2D, rotation2D), 
@@ -125,6 +127,8 @@ namespace e2 {
         os << "Rectangle2D(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
            << ", width=" << m_width
            << ", height=" << m_height << ")";
     }   
@@ -134,8 +138,7 @@ namespace e2 {
     //
 
     Circle2D::Circle2D(
-        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-        const Vec3d& position, const Vec3d& rotation, 
+        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
         const Vec3d& position2D, double rotation2D, 
         double radius)
         : Primitive2D(pathname, displayName, featureEffect, position, rotation, position2D, rotation2D), 
@@ -146,6 +149,8 @@ namespace e2 {
         os << "Circle2D(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
            << ", radius=" << m_radius << ")";
     }   
 
@@ -154,8 +159,7 @@ namespace e2 {
     //
     
     RoundRect2D::RoundRect2D(
-        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-        const Vec3d& position, const Vec3d& rotation, 
+        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
         const Vec3d& position2D, double rotation2D, 
         double width, double height, double cornerRadius)
         : Primitive2D(pathname, displayName, featureEffect, position, rotation, position2D, rotation2D), 
@@ -166,6 +170,8 @@ namespace e2 {
         os << "RoundRect2D(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
            << ", width=" << m_width
            << ", height=" << m_height
            << ", cornerRadius=" << m_cornerRadius << ")";
@@ -175,9 +181,9 @@ namespace e2 {
     // Extrusion
     //
 
-    Extrusion::Extrusion(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
+    Extrusion::Extrusion(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation,
         const std::string& profilePathName, double depth, bool doubleSided)
-        : Feature(pathname, displayName, featureEffect), 
+        : Feature(pathname, displayName, featureEffect, position, rotation), 
           m_profilePathName(profilePathName), m_depth(depth), m_doubleSided(doubleSided) {
 }
 
@@ -185,6 +191,8 @@ namespace e2 {
         os << "Extrusion(pathname=" << pathname()
            << ", displayName=" << displayName()
            << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
            << ", profilePathName=" << m_profilePathName
            << ", depth=" << m_depth
            << ", doubleSided=" << (m_doubleSided ? "true" : "false") <<  ")";

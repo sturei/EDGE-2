@@ -3,6 +3,7 @@
 #include "document/document.actions.h"
 #include "shape/shapeModel.h"
 #include "shape/shape.actions.h"
+#include <fstream>
 
 using namespace e2;
 
@@ -20,6 +21,19 @@ int main(int argc, char* argv[]) {
     // Document takes ownership of its stores; stores take ownership of their models; models own all of their data. 
     // It's a 'total ownership' resource model, with the document at the top of the hierarchy.
     // std::unique_ptr could be used instead of raw pointers to enforce ownership. Maybe later.
+
+    // parse arguments
+    std::istream* input = &std::cin;
+    std::ostream* output = &std::cout;
+
+    if (argc > 1) {
+        const char* inputFile = argv[1];
+        input = new std::ifstream(inputFile);
+    }
+    if (argc > 2) {
+        const char* outputFile = argv[2];
+        output = new std::ofstream(outputFile);
+    }
 
     // Initialize the models
     BRepModel* sketches = new BRepModel();
@@ -39,8 +53,8 @@ int main(int argc, char* argv[]) {
         document->registerActionFunction(action);
     }
 
-    // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout. 
-    DocumentService::run(*document);
+    // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout (by default)
+    DocumentService::run(*document, *input, *output);
 
     // Clean up and exit
     delete document;

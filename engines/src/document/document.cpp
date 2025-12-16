@@ -70,10 +70,10 @@ namespace e2 {
             auto actionFunction = it->second;
             actionFunction(*this, action.payload);
         } catch (const json::exception& e) {
-            // std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  <--- DEBUG ---
+            std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  // <--- DEBUG ---
             return ActionResult::INVALID_PAYLOAD;
         } catch (const std::exception& e) {
-            // std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl;  <--- DEBUG ---
+            // std::cerr << "Error dispatching action: " << action.type << " - " << e.what() << std::endl; // <--- DEBUG ---
             return ActionResult::INTERNAL_ERROR;
         }
         return ActionResult::SUCCESS;

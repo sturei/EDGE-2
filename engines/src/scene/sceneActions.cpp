@@ -392,20 +392,36 @@ namespace e2 {
     static void addSdfNodeForFeature(Document& doc, const Feature* feature, std::string objectPathName) {
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         
-        // TODO: handle position and rotation
+        const Vec3d& position = feature->position();
+        const Vec3d& rotation = feature->rotation();
+        json translationNode = json::object({
+            {"pathName", objectPathName},
+            {"type", "translation"},
+            {"position", json::array({position.x(), position.y(), position.z()})}
+        });
+        objectPathName += "/rotation";
+        json rotationNode = json::object({
+            {"pathName", objectPathName},
+            {"type", "rotation"},
+            {"angles", json::array({rotation.x(), rotation.y(), rotation.z()})}
+        }); 
 
         if (const Block* blockFeature = dynamic_cast<const Block*>(feature)) {
             double width = blockFeature->width();
             double height = blockFeature->height();
             double depth = blockFeature->depth();
-            json featurePayload = json::object({
+            objectPathName += "/block";
+            json featureNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "block"},
                 {"width", width},
                 {"height", height},
                 {"depth", depth}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+            doc.dispatchClientAction({"Gfx::addSdfNode", translationNode});
+            doc.dispatchClientAction({"Gfx::addSdfNode", rotationNode});
+            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            return;
         }
         else if (const Sphere* sphereFeature = dynamic_cast<const Sphere*>(feature)) {
             double radius = sphereFeature->radius();
@@ -467,14 +483,14 @@ namespace e2 {
             double epsilon = extrusionFeature->featureEffect() == FeatureEffect::SUBTRACT ? 0.01 : 0.0;
             bool doubleSided = extrusionFeature->doubleSided();
 
-            json transformPayload = json::object({
+            json localTransformNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "translation"},
-                {"translation", json::array({0.0, 0.0, doubleSided ? 0.0 : depth / 2.0})}
+                {"position", json::array({0.0, 0.0, doubleSided ? 0.0 : depth / 2.0})}
             });
 
             objectPathName += "/extrusion";
-            json featurePayload = json::object({
+            json featureNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "extrusion"},
                 {"depth", depth+epsilon}
@@ -483,8 +499,8 @@ namespace e2 {
             std::string profilePathName = extrusionFeature->profilePathName();
             Feature* profile = features.findFeature(profilePathName);
             if (profile) {
-                doc.dispatchClientAction({"Gfx::addSdfNode", transformPayload});
-                doc.dispatchClientAction({"Gfx::addSdfNode", featurePayload});
+                doc.dispatchClientAction({"Gfx::addSdfNode", localTransformNode});
+                doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
                 // add the profile feature as a child, recursively
                 addSdfNodeForFeature(doc, profile, objectPathName + "/profile");
             }

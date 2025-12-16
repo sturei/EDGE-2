@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(lldb) Launch with input redirection (does not work, sadly)",
+            "name": "(lldb) Launch with input from build/scratch.txt",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/e2_modellingService",
-            "args": ["<", "${workspaceFolder}/build/e2_modellingService_input.txt"],
+            "args": ["${workspaceFolder}/build/scratch.txt"],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",
             "environment": [],
