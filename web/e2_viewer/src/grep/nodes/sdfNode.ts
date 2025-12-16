@@ -76,12 +76,12 @@ export interface IComplementSdfNode extends IBaseSdfNode {
 
 export interface ITranslationSdfNode extends IBaseSdfNode {
     type: 'translation';
-    translation: [number, number, number];
+    position: [number, number, number];
 };
 
 export interface IRotationSdfNode extends IBaseSdfNode {
     type: 'rotation';
-    rotation: [number, number, number]; // Euler angles in radians
+    angles: [number, number, number]; // Euler angles in radians
 };
 
 export type ISdfNode = 

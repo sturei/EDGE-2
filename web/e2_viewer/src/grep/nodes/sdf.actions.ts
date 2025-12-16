@@ -114,11 +114,10 @@ function addSdfNode(doc: Document, payload: any): void {
             grepModel.addShaderNode(node);
         }
         else if (type === 'translation') {
-            // TODO: combine into a single transform node that can do translation and rotation (rotation first)
             const node : ISdfNode = {
                 type: 'translation',
                 pathName: payload.pathName ?? 'translation',
-                translation: payload.translation ?? [0, 0, 0]   
+                position: payload.position ?? [0, 0, 0]   
             };
             grepModel.addShaderNode(node);
         }
@@ -126,7 +125,7 @@ function addSdfNode(doc: Document, payload: any): void {
             const node : ISdfNode = {
                 type: 'rotation',
                 pathName: payload.pathName ?? 'rotation',
-                rotation: payload.rotation ?? [0, 0, 0]
+                angles: payload.angles ?? [0, 0, 0]
             };
             grepModel.addShaderNode(node);
         }

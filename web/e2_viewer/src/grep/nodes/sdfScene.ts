@@ -1,7 +1,6 @@
 import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
 import { Fn, int, min, max, negate, rotate, vec2, vec3, array } from 'three/tsl';    
-import * as THREE from 'three/webgpu';
 
 // compute outward-pointing normals for profile
 function computeProfileNormals(paths: Array<Array<[number, number]>>): Array<Array<[number,number]>> {
@@ -185,8 +184,8 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'translation') {
-        const translation = node.translation;
-        const t = vec3(translation[0], translation[1], translation[2]);
+        const position = node.position;
+        const t = vec3(position[0], position[1], position[2]);
         const childIndices = node.childIndices;
         if (!childIndices || childIndices.length == 0) {
             throw new Error("Translation node missing childIndices");
@@ -200,8 +199,8 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'rotation') {
-        const rotation = node.rotation;
-        const r = vec3(rotation[0], rotation[1], rotation[2]);
+        const angles = node.angles;
+        const r = vec3(angles[0], angles[1], angles[2]);
         const childIndices = node.childIndices;
         if (!childIndices || childIndices.length == 0) {
             throw new Error("Rotation node missing childIndices");
