@@ -1,8 +1,40 @@
-import { sphere, block, cylinder, profile, halfSpace } from './sdfPrimitives';
+import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
-import { Fn, int, float, min, max, abs, negate, rotate, sqrt, length, vec2, vec3, array } from 'three/tsl';    
+import { Fn, int, float, min, max, negate, rotate, sqrt, vec2, vec3, array } from 'three/tsl';    
 import * as THREE from 'three/webgpu';
 
+// compute outward-pointing normals for profile
+function computeProfileNormals(paths: Array<Array<[number, number]>>): Array<Array<[number,number]>> {
+    console.log("Computing profile normals");   // --- DEBUG ---
+    const computedNormals: Array<Array<[number,number]>> = [];
+    for (let p = 0; p < paths.length; p++) {
+        const pathPoints = paths[p];
+        const pathNormals: Array<[number,number]> = [];
+        const numPoints = pathPoints.length;
+        for (let i = 0; i < numPoints - 1; i++) {
+            const p0 = pathPoints[i];
+            const p1 = pathPoints[i+1];
+            const tangent = [p1[0]-p0[0], p1[1]-p0[1]];
+            const normal = [tangent[1], -tangent[0]]; // -90 degree rotation in XY plane
+            const length = Math.sqrt(normal[0]*normal[0] + normal[1]*normal[1]);
+            if (length > 0) {
+                normal[0] /= length;
+                normal[1] /= length;
+            }
+            pathNormals.push( [normal[0], normal[1]] );
+        }
+        // add the normal for the last point in the current path (same as the previous point)
+        if (numPoints > 0) {
+            pathNormals.push(pathNormals[pathNormals.length - 1]);
+        }
+
+        // TODO: compute averaged normals at each vertex
+        computedNormals.push(pathNormals);
+    }
+    return computedNormals;
+}
+
+// generate the TSL code for a given node
 function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
     const node = nodes[nodeIndex];
     if (node.type === 'sphere') {
@@ -22,39 +54,17 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
     }
     else if (node.type === 'circle'){
         return Fn(([position] : [any]) => {
-            const d = length(position.xy).sub(node.radius);
-            return d;
+            return circle(position, node.radius);
         });
     }
     else if (node.type === 'rectangle'){
-        // quilez: https://iquilezles.org/articles/distfunctions2d/
-        //float sdBox( in vec2 p, in vec2 b )
-        //vec2 d = abs(p)-b;
-        //return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
-        const width = node.width;
-        const height = node.height;
         return Fn(([position] : [any]) => {
-            // A bit verbose, but eventually the inner Fn will be added to the primitives.
-            return Fn(([position, width, height] : [any, any, any]) => { 
-                const dimensions = vec2(width.mul(0.5), height.mul(0.5));
-                const distance = abs(position.xy).sub(dimensions);
-                return length(max(distance, 0.0)).add(
-                    min(max(distance.x, distance.y), 0.0));
-            })(position, width, height);
+            return rectangle(position, node.width, node.height);
         });
     }   
     else if (node.type === 'roundRect'){
-        const width = node.width;
-        const height = node.height;
-        const radius = node.cornerRadius;
-        // this one does it the other way - getting the inputs from the closure
         return Fn(([position] : [any]) => {
-            //const dimensions = vec2(width.mul(0.5), height.mul(0.5));
-            const dimensions = vec2(width*0.5, height*0.5);
-            const distance = abs(position.xy).sub(dimensions.sub(vec2(radius)));
-            return length(max(distance, 0.0)).add(
-                min(max(distance.x, distance.y), 0.0)
-            ).sub(radius);
+            return roundRect(position, node.width, node.height, node.cornerRadius);
         });
     }
     else if (node.type === 'profile') {
@@ -62,34 +72,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
 
         let normals = undefined; // TODO: add optional (client-supplied) normals to the node. Only needed if profile will be actually used! (it's slow). Or, compute containment by another method..
         if (!normals) {
-            // compute psuedonormals for each point (cross product of tangent and normal Z)
-            console.log("Computing profile normals");   // --- DEBUG ---
-            const computedNormals: Array<Array<[number,number]>> = [];
-            for (let p = 0; p < paths.length; p++) {
-                const pathPoints = paths[p];
-                const pathNormals: Array<[number,number]> = [];
-                const numPoints = pathPoints.length;
-                for (let i = 0; i < numPoints - 1; i++) {
-                    const p0 = pathPoints[i];
-                    const p1 = pathPoints[i+1];
-                    const tangent = [p1[0]-p0[0], p1[1]-p0[1]];
-                    const normal = [tangent[1], -tangent[0]]; // -90 degree rotation in XY plane
-                    const length = Math.sqrt(normal[0]*normal[0] + normal[1]*normal[1]);
-                    if (length > 0) {
-                        normal[0] /= length;
-                        normal[1] /= length;
-                    }
-                    pathNormals.push( [normal[0], normal[1]] );
-                }
-                // add the normal for the last point in the current path (same as the previous point)
-                if (numPoints > 0) {
-                    pathNormals.push(pathNormals[pathNormals.length - 1]);
-                }
-
-                // TODO: compute averaged normals at each vertex
-                computedNormals.push(pathNormals);
-            }
-            normals = computedNormals;
+            normals = computeProfileNormals(paths);
         }
 
         console.log("Profile with " + paths.length + " paths:");       // --- DEBUG ---
@@ -99,66 +82,58 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         console.log("Profile normals:", normals);   // --- DEBUG ---
 
         // concatenate the paths into a single array, and keep track of lengths
+        // (I couldn't make an array of arrays in TSL, but maybe that was due to my inexperience)
         const concatenatedPaths: Array<any> = [];
         const concatenatedNormals: Array<any> = []; 
         const pathLengths: Array<any> = [];
         for (let i = 0; i < paths.length; i++) {
             const pathPoints = paths[i];
-            const vec2Points: Array<any> = pathPoints.map( (pt: [number,number]) => {
-                return vec2(pt[0], pt[1]);
-            });
+            const vec2Points: Array<any> = pathPoints.map(pt => vec2(pt[0], pt[1]));
             concatenatedPaths.push(...vec2Points);
-
             pathLengths.push(int(pathPoints.length));
-
             if (normals) {
                 const pathNormals = normals[i];
-                const vec2Normals: Array<any> = pathNormals.map( (nrm: [number,number]) => {
-                    return vec2(nrm[0], nrm[1]);
-                });
+                const vec2Normals: Array<any> = pathNormals.map(nrm => vec2(nrm[0], nrm[1]));
                 concatenatedNormals.push(...vec2Normals);
             }
         }
 
         console.log("Concatenated paths has total length:", concatenatedPaths.length);      // --- DEBUG ---  
-        //console.log("Path lengths:", pathLengths);     // --- DEBUG ---
-        
+
+        // convert concatenated arrays to TSL arrays
         const tslPaths = array(concatenatedPaths);
         const tslNormals = array(concatenatedNormals);
         const tslPathLengths = array(pathLengths);
 
+        // return the profile SDF function
+        // Implementation note: the generated functions is too slow for real-time use. Maybe try passing in consts for the lengths? Something about non-dynamic loops in GLSL?
         return Fn(([position] : [any]) => {
             return profile(position, tslPaths, tslNormals, tslPathLengths);
         });
     }
     else if (node.type === 'extrusion') {
-        const depth = node.depth;
         const childIndices = node.childIndices;
+
+        // Implementation note; We do the error checking here, at generation time, rather than deferring to render time when the error would be impossible to recover from.
         if (!childIndices || childIndices.length == 0) {
-            throw new Error("Complement node missing childIndices");
+            throw new Error("Extrusion node missing childIndices");
         }
         if (childIndices.length != 1) {
-            throw new Error("Complement node must have exactly one child");
+            throw new Error("Extrusion node must have exactly one child");
         }
-        const tslDepth = float(depth);
+
         return Fn(([position] : [any]) => {
-            const profileSDF = generateNode(childIndices[0], nodes)(position).toVar();
-            const w_x = profileSDF;;
-            const w_y = position.z.abs().sub(tslDepth.mul(0.5));
-            const w_max = max(w_x, w_y);
-            const w_x_pos = max(w_x, 0.0);
-            const w_y_pos = max(w_y, 0.0);
-            const w_length = sqrt( w_x_pos.mul(w_x_pos).add( w_y_pos.mul(w_y_pos) ) );
-            return min(w_max, 0.0).add( w_length );
+            const tslProfile = generateNode(childIndices[0], nodes)(position);
+            return extrusion(position, tslProfile, node.depth);
         });
-    }
+    }   
     else if (node.type === 'halfSpace') {
-        const planePosition = node.position;
-        const planeNormal = node.normal;
-        const p = vec3(planePosition[0], planePosition[1], planePosition[2]);
-        const n = vec3(planeNormal[0], planeNormal[1], planeNormal[2]);
+        const p = node.position;
+        const n = node.normal;
+        const tslP = vec3(p[0], p[1], p[2]);
+        const tslN = vec3(n[0], n[1], n[2]);
         return Fn(([position] : [any]) => {
-            return halfSpace(position, p, n);
+            return halfSpace(position, tslP, tslN);
         });
     }
     else if (node.type === 'union') {
@@ -180,6 +155,11 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         if (!childIndices || childIndices.length == 0) {
             throw new Error("Intersection node missing childIndices");
         }
+        // Implementation note: 2 different approaches seem to be possible here:
+        // 1. Loop through children in TSL code
+        // 2. Loop through children here at generation time
+        // Approach 1 is taken here because Loop is slow, at least it was for Profile SDF. 
+        // FWIW. approach 2 is taken for extrusion above - there is only one child there, so no loop needed.
         return Fn(([position] : [any]) => {
             let current = generateNode(childIndices[0], nodes)(position);
             for (let i = 1; i < childIndices.length; i++) {
@@ -190,6 +170,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'complement') {
+        // Implementation note: follows the pattern of union, but could have been done like extrusion above.
         const childIndices = node.childIndices;
         if (!childIndices || childIndices.length == 0) {
             throw new Error("Complement node missing childIndices");

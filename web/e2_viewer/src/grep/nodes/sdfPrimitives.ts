@@ -15,6 +15,7 @@ import {
     max,
     mul,
     sign,
+    sqrt,
     float,
     int,
     Loop,
@@ -53,6 +54,29 @@ export const cylinder = Fn(([position, radius, depth]: [any, THREE.Node | number
         length(max(delta, 0.0))
     ));
     return distance;
+})
+
+// circle centered on origin with given radius. Returns distance in XY plane.
+export const circle = Fn(([position, radius]: [any, any]) => {
+    return length(position.xy).sub(radius);
+})
+
+// rectangle centered on origin with given width and height. Returns distance in XY plane.
+export const rectangle = Fn(([position, width, height]: [any, any, any]) => {
+    const dimensions = vec2(mul(width, 0.5), mul(height, 0.5));
+    const distance = abs(position.xy).sub(dimensions);
+    return length(max(distance, 0.0)).add(
+        min(max(distance.x, distance.y), 0.0)
+    )
+})
+
+// rounded rectangle centered on origin with given width, height and corner radius. Returns distance in XY plane.
+export const roundRect = Fn(([position, width, height, cornerRadius]: [any, any, any, any]) => {
+    const dimensions = vec2(mul(width, 0.5), mul(height, 0.5));
+    const distance = abs(position.xy).sub(dimensions.sub(vec2(cornerRadius)));
+    return length(max(distance, 0.0)).add(
+        min(max(distance.x, distance.y), 0.0)
+    ).sub(cornerRadius);
 })
 
 // profile (array of non-contiguous but oriented paths) in XY plane. The arguments are ArrayNodes.
@@ -108,6 +132,16 @@ export const profile = Fn(([position, profilePaths, profileNormals, profilePathL
     } );
 
     return minDistanceSq.sqrt().mul(minSign);
+})
+
+export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => {
+    const w_x = tslProfile;
+    const w_y = position.z.abs().sub(mul(depth, 0.5));
+    const w_max = max(w_x, w_y);
+    const w_x_pos = max(w_x, 0.0);
+    const w_y_pos = max(w_y, 0.0);
+    const w_length = sqrt( w_x_pos.mul(w_x_pos).add( w_y_pos.mul(w_y_pos) ) );
+    return min(w_max, 0.0).add( w_length );
 })
 
 // half-space defined by plane position and normal
