@@ -80,6 +80,7 @@ namespace e2 {
     }
 
     void Document::dispatchClientAction(const ActionSpec& action) {
+        std::cerr << "Dispatching client action of type: " << action.type << " with payload: " << action.payload.dump() << std::endl;  //--- DEBUG ---
         m_clientActions.push_back(action);
     }
 
