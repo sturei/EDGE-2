@@ -34,56 +34,6 @@ async function pingModeller(doc: Document, _payload: any): Promise<void> {
     // The server posts "pong" on its stderr stream and returns "OK".
     await postAction(doc, "Modeller::ping", {});
 }
-async function addWireRectangle(doc: Document, payload: any): Promise<void> {
-    // Create a rectangular wire with specified lowerLeft and upperRight corners. 
-    // The server creates the wire as a sketch in its shape store, and returns client actions to add the appropriate graphics to the scene.
-    await postAction(doc, "Sketches::addRectangle", payload);
-}
-async function addWireRoundRect(doc: Document, payload: any): Promise<void> {
-    // Create a rounded-rectangular wire with specified corners and cornerRadius. 
-    // The server creates the wire as a sketch in its shape store, and returns client actions to add the appropriate graphics to the scene.
-    await postAction(doc, "Sketches::addRoundRect", payload);
-}
-async function addSheetRectangle(doc: Document, payload: any): Promise<void> {
-    // Create a rectangular sheet with specified lowerLeft and upperRight corners. 
-    // The server creates the sheet as a profile in its shape store, and returns client actions to add the appropriate graphics to the scene.
-    await postAction(doc, "Profiles::addRectangle", payload);
-}
-async function addSheetRoundRect(doc: Document, payload: any): Promise<void> {
-    // Create a rounded rectangular sheet with specified corners and cornerRadius. 
-    // The server creates the sheet as a profile in its shape store, and returns client actions to add the appropriate graphics to the scene.
-    await postAction(doc, "Profiles::addRoundRect", payload);
-}
-
-async function addEmptyObject(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Objects::addEmptyObject", payload);
-}
-
-async function addSphereObject(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Objects::addSphereObject", payload);
-}
-
-async function addBlockObject(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Objects::addBlockObject", payload);
-}
-
-async function addCylinderObject(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Objects::addCylinderObject", payload);
-}
-
-async function addInfiniteRectangle(doc: Document, payload: any): Promise<void> {
-    // Create an infinite rectangular extrusion with spefified lowerLeft and upperRight corners.
-    // The server creates the object as frep in its shape store, and returns client actions to add the appropriate graphics to the scene.
-    await postAction(doc, "Objects::addInfiniteRectangle", payload);
-}
-
-async function addCappedRectangle(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Objects::addCappedRectangle", payload);
-}
-
-async function addExtrudedRectangle(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Objects::addExtrudedRectangle", payload);
-}
 
 async function addPrimitive2D(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Profiles::addPrimitive", payload);
@@ -98,18 +48,6 @@ async function addExtrusion(doc: Document, payload: any): Promise<void> {
 }
 
 export const pingModellerActionDef = { type: "Modeller::ping", function: pingModeller };
-export const addWireRectangleActionDef = { type: "Sketches::addRectangle", function: addWireRectangle };
-export const addWireRoundRectActionDef = { type: "Sketches::addRoundRect", function: addWireRoundRect };
-export const addSheetRectangleActionDef = { type: "Profiles::addRectangle", function: addSheetRectangle };
-export const addSheetRoundRectActionDef = { type: "Profiles::addRoundRect", function: addSheetRoundRect };
-
-export const addEmptyObjectActionDef = { type: "Objects::addEmptyObject", function: addEmptyObject };
-export const addSphereObjectActionDef = { type: "Objects::addSphereObject", function: addSphereObject };
-export const addBlockObjectActionDef = { type: "Objects::addBlockObject", function: addBlockObject };
-export const addCylinderObjectActionDef = { type: "Objects::addCylinderObject", function: addCylinderObject };
-export const addRectangleActionDef = { type: "Objects::addInfiniteRectangle", function: addInfiniteRectangle };          
-export const addCappedRectangleActionDef = { type: "Objects::addCappedRectangle", function: addCappedRectangle };
-export const addExtrudedRectangleActionDef = { type: "Objects::addExtrudedRectangle", function: addExtrudedRectangle };
 
 export const addPrimitive2DActionDef = { type: "Profiles::addPrimitive", function: addPrimitive2D };
 export const addPrimitiveActionDef = { type: "Features::addPrimitive", function: addPrimitive };
