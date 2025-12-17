@@ -66,10 +66,8 @@ namespace e2 {
                     size_t index = features.addFeature(blockFeature);
                     std::cerr << "added Block Primitive" << std::endl;      // ---LOGGING---
 
-                    // update the product hierarchy in the client
-                    dispatchProductActionsForNewFeature(doc, index);
-                    // update the graphical scene in the client
-                    dispatchGraphicsActionsForNewFeature(doc, index);
+                    // update the viewer
+                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "sphere") {
@@ -82,10 +80,8 @@ namespace e2 {
                     size_t index = features.addFeature(sphereFeature);
                     std::cerr << "added Sphere Primitive" << std::endl;      // ---LOGGING---
 
-                    // update the product hierarchy in the client
-                    dispatchProductActionsForNewFeature(doc, index);
-                    // update the graphical scene in the client
-                    dispatchGraphicsActionsForNewFeature(doc, index);
+                    // update the viewer
+                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "cylinder") {
@@ -98,10 +94,9 @@ namespace e2 {
                     size_t index = features.addFeature(cylinderFeature);
                     std::cerr << "added Cylinder Primitive" << std::endl;      // ---LOGGING---
 
-                    // update the product hierarchy in the client
-                    dispatchProductActionsForNewFeature(doc, index);
-                    // update the graphical scene in the client
-                    dispatchGraphicsActionsForNewFeature(doc, index);
+                    // update the viewer
+                    dispatchGraphicsActionsForModifiedScene(doc);
+
                 });
             }
         }
@@ -148,11 +143,8 @@ namespace e2 {
 
                     std::cerr << "added Rectangle2D Primitive" << std::endl;      // ---LOGGING---
 
-                    // update the product hierarchy in the client
-                    dispatchProductActionsForNewFeature(doc, featureIndex);
-                    // update the graphical scene in the client
-                    dispatchGraphicsActionsForNewFeature(doc, featureIndex);
-                    dispatchGraphicsActionsForNewProfile(doc, profileIndex);
+                    // update the viewer
+                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "circle") {
@@ -176,11 +168,8 @@ namespace e2 {
 
                     std::cerr << "added Circle2D Primitive" << std::endl;      // ---LOGGING---
 
-                    // update the product hierarchy in the client
-                    dispatchProductActionsForNewFeature(doc, featureIndex);
-                    // update the graphical scene in the client
-                    dispatchGraphicsActionsForNewFeature(doc, featureIndex);
-                    dispatchGraphicsActionsForNewProfile(doc, profileIndex);
+                    // update the viewer
+                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "roundRect") {
@@ -205,11 +194,8 @@ namespace e2 {
 
                     std::cerr << "added RoundRect2D Primitive" << std::endl;      // ---LOGGING---
 
-                    // update the product hierarchy in the client
-                    dispatchProductActionsForNewFeature(doc, featureIndex);
-                    // update the graphical scene in the client
-                    dispatchGraphicsActionsForNewFeature(doc, featureIndex);
-                    dispatchGraphicsActionsForNewProfile(doc, profileIndex);
+                    // update the viewer
+                    dispatchGraphicsActionsForModifiedScene(doc);
                });
             }
         }
@@ -239,10 +225,8 @@ namespace e2 {
                 size_t index = features.addFeature(extrusionFeature);
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
 
-                // update the product hierarchy in the client
-                dispatchProductActionsForNewFeature(doc, index);
-                // update the graphical scene in the client
-                dispatchGraphicsActionsForNewFeature(doc, index);
+                // update the viewer
+                dispatchGraphicsActionsForModifiedScene(doc);
             });     
         }
     }

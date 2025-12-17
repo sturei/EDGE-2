@@ -91,7 +91,7 @@ namespace e2 {
     }
 
     // Ensures that the product tree in the client is updated to reflect the features in the model
-    void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
+    static void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         //
         // Features are listed in the viewer's product tree under "shape/features" or "shape/profiles" for 3D and 2D features respectively.
@@ -123,7 +123,7 @@ namespace e2 {
     }
 
     // Ensures that the graphics scene in the client is updated to reflect the profiles in the model
-    void dispatchGraphicsActionsForNewProfile(Document& doc, size_t profileIndex) {
+    static void dispatchGraphicsActionsForNewProfile(Document& doc, size_t profileIndex) {
 
         //
         // Profiles are represented graphically in the viewer as planar wireframe.
@@ -314,7 +314,7 @@ namespace e2 {
         addSdfNodeForFeature(doc, feature, objectPathName + "/feature");
     }
 
-    void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
+    static void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         // 3D Features are represented graphically in the viewer as the f=0 level set of a signed distance function (SDF).
 
@@ -362,6 +362,13 @@ namespace e2 {
 
         // Finally, update the SDF scene
         doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
+    }
+
+    void dispatchGraphicsActionsForModifiedScene(Document& doc) {
+        // For now, just rebuild the entire graphics scene from scratch
+        dispatchProductActionsForNewFeature(doc, 0);    // productIndex is ignored in the current implementation
+        dispatchGraphicsActionsForNewProfile(doc, 0);   // profileIndex is ignored in the current implementation
+        dispatchGraphicsActionsForNewFeature(doc, 0);   // featureIndex is ignored in the current implementation
     }
 };
 
