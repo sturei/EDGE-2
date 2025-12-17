@@ -50,9 +50,11 @@ namespace e2 {
             }
         }   
 
+        // This action adds a primitive feature as a feature
         void addPrimitive(Document& doc, const json& payload) {
-            // This action adds a primitive feature as a feature
             Store& store = doc.storeAt("shape");
+
+            // unpack the payload
             std::string pathName = payload.value("pathName", "shape/features/unnamedPrimitive");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             std::string primitiveType = payload.value("primitiveType", "block");
@@ -64,12 +66,14 @@ namespace e2 {
 
             size_t featureIndex = -1;
             if (primitiveType == "block") {
+
+                // unpack the payload
                 double width = payload.value("width", 2.0);
                 double height = payload.value("height", 2.0);
                 double depth = payload.value("depth", 2.0);
 
+                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, width, height, depth, &doc](Model* model) {
-                    // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* blockFeature = new Block(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, width, height, depth);
                     size_t index = features.addFeature(blockFeature);
@@ -77,10 +81,12 @@ namespace e2 {
                 });
             }
             else if (primitiveType == "sphere") {
+
+                // unpack the payload
                 double radius = payload.value("radius", 1.0);
 
+                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, radius, &doc](Model* model) {
-                    // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* sphereFeature = new Sphere(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, radius);
                     size_t index = features.addFeature(sphereFeature);
@@ -88,8 +94,12 @@ namespace e2 {
                 });
             }
             else if (primitiveType == "cylinder") {
+
+                // unpack the payload
                 double radius = payload.value("radius", 1.0);
                 double depth = payload.value("depth", 2.0);
+
+                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, radius, depth, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
@@ -100,9 +110,11 @@ namespace e2 {
             }
         }
 
+        // This action adds a profile feature as a feature
         void addPrimitive2D(Document& doc, const json& payload) {
-            // This action adds a primitive profile feature as a feature
             Store& store = doc.storeAt("shape");
+
+            // unpack the payload
             std::string pathName = payload.value("pathName", "shape/profiles/unnamedPrimitive");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             std::string primitiveType = payload.value("primitiveType", "rectangle");
@@ -117,11 +129,13 @@ namespace e2 {
 
             size_t featureIndex = -1;
             if (primitiveType == "rectangle") {
+
+                // unpack the payload
                 double width = payload.value("width", 3.0);
                 double height = payload.value("height", 2.0);
 
+                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, width, height, &doc](Model* model) {
-                    // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* rectangleFeature = new Rectangle2D(
                         pathName, displayName, featureEffect, 
@@ -141,8 +155,11 @@ namespace e2 {
                 });
             }
             else if (primitiveType == "circle") {
+
+                // unpack the payload
                 double radius = payload.value("radius", 1.0);
 
+                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, radius, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
@@ -163,11 +180,14 @@ namespace e2 {
                 });
             }
             else if (primitiveType == "roundRect") {
+
+                // unpack the payload
                 double width = payload.value("width", 2.0);
                 double height = payload.value("height", 2.0);
                 double cornerRadius = payload.value("cornerRadius", 0.2);
+
+                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, width, height, cornerRadius, &doc](Model* model) {
-                    // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* roundRectFeature = new RoundRect2D(
                         pathName, displayName, featureEffect,
@@ -187,9 +207,11 @@ namespace e2 {
             }
         }
 
+        // This action adds an extrusion feature as a feature
         void addExtrusion(Document& doc, const json& payload) {
-            // This action adds an extrusion feature as a feature
             Store& store = doc.storeAt("shape");
+
+            // unpack the payload
             std::string pathName = payload.value("pathName", "shape/features/unnamedExtrusion");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             FeatureEffect featureEffect = parseFeatureEffectString(payload.value("featureEffect", "add"));
@@ -197,13 +219,12 @@ namespace e2 {
                 payload.value("position", json::array({0,0,0})),
                 payload.value("rotation", json::array({0,0,0}))
             );
-
             std::string profilePathName = payload.value("profilePathName", "shape/profiles/unnamedProfile");
             double depth = payload.value("depth", 1.0);
             bool doubleSided = payload.value("doubleSided", false);
 
+            // update the model
             store.changeState([pathName, displayName, featureEffect, posRot3D, profilePathName, depth, doubleSided, &doc](Model* model) {
-                // update the model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                 Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, profilePathName, depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
