@@ -15,7 +15,7 @@ using json = nlohmann::json;
 namespace e2 {
     namespace ShapeActions {
 
-        std::pair<Vec3d, Vec3d> parsePositionRotationJson(const json& positionJson, const json& rotationJson) {
+        static std::pair<Vec3d, Vec3d> parsePositionRotationJson(const json& positionJson, const json& rotationJson) {
             Vec3d position = Vec3d(
                 positionJson.at(0).get<double>(),
                 positionJson.at(1).get<double>(),
@@ -29,7 +29,7 @@ namespace e2 {
             return std::make_pair(position, rotation);
         }
 
-        std::pair<Vec3d, double> parsePositionRotation2DJson(const json& positionJson, double rotationJson) {
+        static std::pair<Vec3d, double> parsePositionRotation2DJson(const json& positionJson, double rotationJson) {
             Vec3d position = Vec3d(
                 positionJson.at(0).get<double>(),
                 positionJson.at(1).get<double>(),
@@ -38,16 +38,25 @@ namespace e2 {
             return std::make_pair(position, rotationJson);
         }
 
+        static FeatureEffect parseFeatureEffectString(const std::string& featureEffectStr) {
+            if (featureEffectStr == "add") {
+                return FeatureEffect::ADD;
+            }
+            else if (featureEffectStr == "subtract") {
+                return FeatureEffect::SUBTRACT;
+            }
+            else {
+                return FeatureEffect::MODIFY;
+            }
+        }   
+
         void addPrimitive(Document& doc, const json& payload) {
             // This action adds a primitive feature as a feature
             Store& store = doc.storeAt("shape");
             std::string pathName = payload.value("pathName", "shape/features/unnamedPrimitive");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             std::string primitiveType = payload.value("primitiveType", "block");
-            std::string featureEffect = payload.value("featureEffect", "add");
-            FeatureEffect featureEffectEnum = featureEffect == "add" ? FeatureEffect::ADD :
-                                            featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
-                                            FeatureEffect::MODIFY;
+            FeatureEffect featureEffect = parseFeatureEffectString(payload.value("featureEffect", "add"));
             std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
                 payload.value("position", json::array({0,0,0})),
                 payload.value("rotation", json::array({0,0,0}))
@@ -59,10 +68,10 @@ namespace e2 {
                 double height = payload.value("height", 2.0);
                 double depth = payload.value("depth", 2.0);
 
-                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, width, height, depth, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffect, posRot3D, width, height, depth, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                    Feature* blockFeature = new Block(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, width, height, depth);
+                    Feature* blockFeature = new Block(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, width, height, depth);
                     size_t index = features.addFeature(blockFeature);
                     std::cerr << "added Block Primitive" << std::endl;      // ---LOGGING---
                 });
@@ -70,10 +79,10 @@ namespace e2 {
             else if (primitiveType == "sphere") {
                 double radius = payload.value("radius", 1.0);
 
-                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, radius, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffect, posRot3D, radius, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                    Feature* sphereFeature = new Sphere(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, radius);
+                    Feature* sphereFeature = new Sphere(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, radius);
                     size_t index = features.addFeature(sphereFeature);
                     std::cerr << "added Sphere Primitive" << std::endl;      // ---LOGGING---
                 });
@@ -81,10 +90,10 @@ namespace e2 {
             else if (primitiveType == "cylinder") {
                 double radius = payload.value("radius", 1.0);
                 double depth = payload.value("depth", 2.0);
-                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, radius, depth, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffect, posRot3D, radius, depth, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                    Feature* cylinderFeature = new Cylinder(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, radius, depth);
+                    Feature* cylinderFeature = new Cylinder(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, radius, depth);
                     size_t index = features.addFeature(cylinderFeature);
                     std::cerr << "added Cylinder Primitive" << std::endl;      // ---LOGGING---
                 });
@@ -97,10 +106,7 @@ namespace e2 {
             std::string pathName = payload.value("pathName", "shape/profiles/unnamedPrimitive");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             std::string primitiveType = payload.value("primitiveType", "rectangle");
-            std::string featureEffect = payload.value("featureEffect", "add");
-            FeatureEffect featureEffectEnum = featureEffect == "add" ? FeatureEffect::ADD :
-                                            featureEffect == "subtract" ? FeatureEffect::SUBTRACT :
-                                            FeatureEffect::MODIFY;
+            FeatureEffect featureEffect = parseFeatureEffectString(payload.value("featureEffect", "add"));
             std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
                 payload.value("position", json::array({0,0,0})),
                 payload.value("rotation", json::array({0,0,0}))
@@ -114,11 +120,11 @@ namespace e2 {
                 double width = payload.value("width", 3.0);
                 double height = payload.value("height", 2.0);
 
-                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, posRot2D, width, height, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, width, height, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* rectangleFeature = new Rectangle2D(
-                        pathName, displayName, featureEffectEnum, 
+                        pathName, displayName, featureEffect, 
                         posRot3D.first, posRot3D.second, 
                         posRot2D.first, posRot2D.second,
                         width, height);
@@ -137,11 +143,11 @@ namespace e2 {
             else if (primitiveType == "circle") {
                 double radius = payload.value("radius", 1.0);
 
-                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, posRot2D, radius, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, radius, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* circleFeature = new Circle2D(
-                        pathName, displayName, featureEffectEnum, 
+                        pathName, displayName, featureEffect, 
                         posRot3D.first, posRot3D.second, 
                         posRot2D.first, posRot2D.second,
                         radius);
@@ -160,11 +166,11 @@ namespace e2 {
                 double width = payload.value("width", 2.0);
                 double height = payload.value("height", 2.0);
                 double cornerRadius = payload.value("cornerRadius", 0.2);
-                store.changeState([pathName, displayName, featureEffectEnum, posRot3D, posRot2D, width, height, cornerRadius, &doc](Model* model) {
+                store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, width, height, cornerRadius, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* roundRectFeature = new RoundRect2D(
-                        pathName, displayName, featureEffectEnum,
+                        pathName, displayName, featureEffect,
                         posRot3D.first, posRot3D.second, 
                         posRot2D.first, posRot2D.second,
                         width, height, cornerRadius);
@@ -186,10 +192,7 @@ namespace e2 {
             Store& store = doc.storeAt("shape");
             std::string pathName = payload.value("pathName", "shape/features/unnamedExtrusion");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
-            std::string featureEffect = payload.value("featureEffect", "add");
-            FeatureEffect featureEffectEnum = 
-                featureEffect == "add" ? FeatureEffect::ADD :
-                featureEffect == "subtract" ? FeatureEffect::SUBTRACT : FeatureEffect::MODIFY;
+            FeatureEffect featureEffect = parseFeatureEffectString(payload.value("featureEffect", "add"));
             std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
                 payload.value("position", json::array({0,0,0})),
                 payload.value("rotation", json::array({0,0,0}))
@@ -199,10 +202,10 @@ namespace e2 {
             double depth = payload.value("depth", 1.0);
             bool doubleSided = payload.value("doubleSided", false);
 
-            store.changeState([pathName, displayName, featureEffectEnum, posRot3D, profilePathName, depth, doubleSided, &doc](Model* model) {
+            store.changeState([pathName, displayName, featureEffect, posRot3D, profilePathName, depth, doubleSided, &doc](Model* model) {
                 // update the model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, profilePathName, depth, doubleSided);
+                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, profilePathName, depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
             });     
