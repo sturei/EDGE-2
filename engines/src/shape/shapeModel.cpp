@@ -15,9 +15,9 @@ namespace e2 {
         if (m_profiles) {
             os << "  Profiles (BRepModel): " << *m_profiles  << std::endl;
         }
-        if (m_objects) {
-            os << "  Objects (FRepModel): " << *m_objects  << std::endl;
+        if (m_features) {
+            os << "  Features (FeatureModel): " << *m_features  << std::endl;
         }
-    }
+    }   
 };
 

@@ -38,9 +38,8 @@ int main(int argc, char* argv[]) {
     // Initialize the models
     BRepModel* sketches = new BRepModel();
     BRepModel* profiles = new BRepModel();
-    FRepModel* objects = new FRepModel();
     FeatureModel* features = new FeatureModel();
-    ShapeModel* shapeModel = new ShapeModel(sketches, profiles, objects, features);
+    ShapeModel* shapeModel = new ShapeModel(sketches, profiles, features);
 
     // Initialise the stores and the document.
     Document* document = new Document({{"shape", new Store(shapeModel)}});    // document takes ownership of the store
