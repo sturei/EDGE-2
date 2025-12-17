@@ -9,20 +9,17 @@
 using json = nlohmann::json;
 
 /**
- * Scene Actions are dispatched by action routines to keep the graphics scene in sync with the models.
- * The graphics scene is in fact managed in the client application. 
- * Hence these actions are so-called "client actions".
- * This module provides utilities to construct the payloads for those actions.
+ * Scene Actions are dispatched by action routines to keep the graphics scene (in the viewer) in sync with the model (in the server).
+ * The graphics scene consists of the following:
+ * - A product hierarchy tree, representing the features and profiles in the model.
+ * - A set of drawables, representing the profiles in the model.
+ * - A set of SDF nodes, representing the 3D features in the model.
  */
 
 namespace e2 {
 
+    // Ensure that the client has the necessary parent items in the product tree
     static void ensureProductParentsExist(Document& doc) {
-        // Ensure parent items exists in the client
-        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
-            {"pathName", "shape/workplanes"},
-            {"displayName", "workplanes"}
-        })});
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
             {"pathName", "shape/profiles"},
             {"displayName", "profiles"}
@@ -33,11 +30,12 @@ namespace e2 {
         })});
     }
 
-    static void ensureObjectParentsExist(Document& doc) {
+    // Ensure that the client has the necessary parent SDF nodes
+    static void ensureSdfNodeParentsExist(Document& doc) {
 
         // Ensure parent items exists in the client
     
-        std::cerr << "ensuring object parents exist" << std::endl;      // ---DEBUG---    
+        std::cerr << "ensuring sdf node parents exist" << std::endl;      // ---DEBUG---    
 
         const Store& store = doc.storeAt("shape");
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(store.model())->features();
@@ -92,10 +90,11 @@ namespace e2 {
         }
     }
 
+    // Ensures that the product tree in the client is updated to reflect the features in the model
     void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         //
-        // Features are listed in the viewer's product tree under "shape/features" or "shape/profiles" for 3D and 2D features (a.k.a. profiles) respectively.
+        // Features are listed in the viewer's product tree under "shape/features" or "shape/profiles" for 3D and 2D features respectively.
         // 
 
         // For now, clear the product items and rebuild from scratch (could be optimized later)
@@ -123,48 +122,54 @@ namespace e2 {
         }
     }
 
+    // Ensures that the graphics scene in the client is updated to reflect the profiles in the model
     void dispatchGraphicsActionsForNewProfile(Document& doc, size_t profileIndex) {
 
         //
         // Profiles are represented graphically in the viewer as planar wireframe.
         //
 
-        // TODO: rebuild from scratch (could be optimized later) - so that refreshing the browser, or using multiple browsers against the same service, stays more or less in sync. (Future - do it better!
+        // For now, clear the drawables and rebuild from scratch (could be optimized later)
+        doc.dispatchClientAction({"Gfx::clearDrawables", json::object({})});  
 
         const BRepModel& profiles = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->profiles();
-        const Body& profileBody = *profiles.body(profileIndex);
+        for (size_t profileIndex = 0; profileIndex < profiles.numBodies(); ++profileIndex) {
+            const Body& profileBody = *profiles.body(profileIndex);
 
-        // The payload is a collection of "paths", representing the outline of the profile body. 
-        // Paths are correctly oriented, but need not be contiguous.
+            // The payload is a collection of "paths", representing the outline of the profile body. 
+            // Paths are correctly oriented, but need not be contiguous.
 
-        CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
-        auto edges = getKBoundary(1, faceIndex, profileBody);
-        std::vector<json> paths;
-        for (const auto& edgePair : edges) {
-            CellIndex edgeIndex = edgePair.first;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
-            std::vector<json> path;
-            for (const auto& point : *tessellatedPointsPtr) {
-                path.push_back(json::array({point.x(), point.y()}));
+            CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
+            auto edges = getKBoundary(1, faceIndex, profileBody);
+            std::vector<json> paths;
+            for (const auto& edgePair : edges) {
+                CellIndex edgeIndex = edgePair.first;
+                auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
+                std::vector<json> path;
+                for (const auto& point : *tessellatedPointsPtr) {
+                    path.push_back(json::array({point.x(), point.y()}));
+                }
+                if (edgePair.second == -1) {
+                    std::reverse(path.begin(), path.end());
+                }
+                paths.push_back(path);
+                delete tessellatedPointsPtr;
             }
-            if (edgePair.second == -1) {
-                std::reverse(path.begin(), path.end());
-            }
-            paths.push_back(path);
-            delete tessellatedPointsPtr;
+
+            const Tfm3d& tfm3d = profiles.transform(profileIndex);
+            const Vec3d& p = tfm3d.position();
+            const Vec3d& r = tfm3d.angles();
+            json payload = json::object({
+                {"paths", paths},
+                {"position", json::array({p.x(), p.y(), p.z()})},
+                {"rotation", json::array({r.x(), r.y(), r.z()})}
+            });
+
+            doc.dispatchClientAction({"Gfx::addContour", payload});
         }
-
-        const Tfm3d& tfm3d = profiles.transform(profileIndex);
-        const Vec3d& p = tfm3d.position();
-        const Vec3d& r = tfm3d.angles();
-        json payload = json::object({
-            {"paths", paths},
-            {"position", json::array({p.x(), p.y(), p.z()})},
-            {"rotation", json::array({r.x(), r.y(), r.z()})}
-        });
-        doc.dispatchClientAction({"Gfx::addContour", payload});
     }
 
+    // Utility to add an SDF node for a given feature
     static void addSdfNodeForFeature(Document& doc, const Feature* feature, std::string objectPathName) {
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         
@@ -285,6 +290,7 @@ namespace e2 {
         }        
     }
 
+    // Utility to add tranformation nodes for a given feature
     static void addSdfNodeForTransformedFeature(Document& doc, const Feature* feature, std::string objectPathName) {
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         
@@ -325,7 +331,7 @@ namespace e2 {
         doc.dispatchClientAction({"Gfx::clearSdfScene", json::object({})});
 
         // ensure parent items "objects", "objects/blanks", "objects/tools/tools" (if needed) exist
-        ensureObjectParentsExist(doc);
+        ensureSdfNodeParentsExist(doc);
         
         // Build the SDF nodes for each feature and add to the scene
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();

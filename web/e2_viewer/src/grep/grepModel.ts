@@ -34,6 +34,11 @@ export class GRepModel extends Model {
         return this.m_drawList;
     }
 
+    clearDrawables(): void {
+        this.m_drawList = [];
+        console.log("GRepModel.clearDrawables: cleared all drawables.");
+    }
+
     addDrawable(item: IDrawable): number {
         const index = this.m_drawList.push(item) - 1;
         console.log(`GRepModel.addDrawable: item=${item.geometry?.type??"unknown"}, index=${index}`);

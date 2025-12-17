@@ -3,6 +3,8 @@ import { Model } from "../../document/model";
 import { GRepModel } from "../../grep/grepModel";
 import { Color, type IDrawable } from "../drawables/drawable";
 
+// Adds a point drawable to the GRepModel's drawlist.
+// Changes are reflected in the UI immediately.
 function addPoint(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -25,7 +27,7 @@ function addPoint(doc: Document, payload: any): void {
     });
     console.log("added Point");      // ---DEBUG---
 }
-
+// Adds a line drawable to the GRepModel's drawlist.
 function addLine(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -53,6 +55,7 @@ function addLine(doc: Document, payload: any): void {
     console.log("added Line");      // ---DEBUG---
 }
 
+// Adds a polyline drawable to the GRepModel's drawlist.
 function addPolyline(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -79,6 +82,7 @@ function addPolyline(doc: Document, payload: any): void {
 }
 
 
+// Adds a plane drawable to the GRepModel's drawlist.
 function addPlane(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -123,6 +127,7 @@ function addPlane(doc: Document, payload: any): void {
 }
 
 
+// Adds a sphere drawable to the GRepModel's drawlist.
 function addSphere(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -149,6 +154,7 @@ function addSphere(doc: Document, payload: any): void {
     console.log("added Sphere");      // ---DEBUG---
 }
 
+// Adds a block drawable to the GRepModel's drawlist.
 function addBlock(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -178,6 +184,7 @@ function addBlock(doc: Document, payload: any): void {
     });
 }
         
+// Adds a cylinder drawable to the GRepModel's drawlist.
 function addCylinder(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -205,6 +212,7 @@ function addCylinder(doc: Document, payload: any): void {
     });
 }
 
+// Adds a profile drawable to the GRepModel's drawlist.
 function addProfile(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -230,6 +238,7 @@ function addProfile(doc: Document, payload: any): void {
     console.log("added Profile");      // ---DEBUG---
 }
 
+// Adds a contour drawable to the GRepModel's drawlist.
 function addContour(doc: Document, payload: any): void {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -254,6 +263,17 @@ function addContour(doc: Document, payload: any): void {
     });
     console.log("added Profile");      // ---DEBUG---
 }
+
+// clears all drawables from the GRepModel's drawlist.
+function clearDrawables(doc: Document, _payload: any): void {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        grepModel.clearDrawables();
+    });
+    console.log("cleared all drawables");      // ---DEBUG---
+}
+
 export const addPointActionDef = { type: "Gfx::addPoint", function: addPoint };
 export const addLineActionDef = { type: "Gfx::addLine", function: addLine };
 export const addPolylineActionDef = { type: "Gfx::addPolyline", function: addPolyline };
@@ -263,3 +283,5 @@ export const addBlockActionDef = { type: "Gfx::addBlock", function: addBlock };
 export const addCylinderActionDef = { type: "Gfx::addCylinder", function: addCylinder };
 export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
 export const addContourActionDef = { type: "Gfx::addContour", function: addContour };
+
+export const clearDrawablesActionDef = { type: "Gfx::clearDrawables", function: clearDrawables };

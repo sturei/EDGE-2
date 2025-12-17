@@ -3,6 +3,9 @@ import { Model } from '../document/model';
 import { PRepModel } from '../prep/prepModel';
 import { type IProductItem } from '../prep/item';
 
+// Adds a product item to the Product Structure tree.
+// It is recommended to build the tree top-down.
+// Changes are reflected in the UI immediately.
 function addProductItem(doc: Document, payload: any): void {
 
     const displayName = payload.displayName ?? "Unnamed Item";
@@ -21,6 +24,7 @@ function addProductItem(doc: Document, payload: any): void {
     console.log(`Added Product Item: ${displayName}`);          //--- DEBUG ---
 }
 
+// Clears all product items from the Product Structure tree.
 function clearProductItems(doc: Document, _payload: any): void {
     const store = doc.getStore("structure");
     store.changeState((model: Model) => {
