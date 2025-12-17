@@ -3,6 +3,7 @@
 #include "document/document.actions.h"
 #include "shape/shapeModel.h"
 #include "shape/shape.actions.h"
+#include "scene/sceneActions.h"
 #include <fstream>
 
 using namespace e2;
@@ -39,10 +40,13 @@ int main(int argc, char* argv[]) {
     BRepModel* sketches = new BRepModel();
     BRepModel* profiles = new BRepModel();
     FeatureModel* features = new FeatureModel();
-    ShapeModel* shapeModel = new ShapeModel(sketches, profiles, features);
+    ShapeModel* shapeModel = new ShapeModel(sketches, profiles, features);    // model takes ownership of its sub-models
 
-    // Initialise the stores and the document.
-    Document* document = new Document({{"shape", new Store(shapeModel)}});    // document takes ownership of the store
+    // Initialize the stores
+    Store* shapeStore = new Store(shapeModel);                     // store takes ownership of the model
+
+    // Initialise the document
+    Document* document = new Document({{"shape", shapeStore}});    // document takes ownership of the store
 
     // Register action functions
     for(auto& action: e2::DocumentActions::allDocumentActions) {
@@ -52,7 +56,14 @@ int main(int argc, char* argv[]) {
         document->registerActionFunction(action);
     }
 
-    // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout (by default)
+    // Register post-state-change callbacks
+    shapeStore->setPostStateChangeCallback([document]() {
+        // This callback is called whenever the shape store's model is modified.
+        // It ensures that the graphics scene in the client is updated to reflect the changes in the model.
+        dispatchGraphicsActionsForModifiedScene(*document);
+    });
+
+    // Run the DocumentService loop forever. This communicates with other processes via stdin and stdout (or the specified input/output streams).
     DocumentService::run(*document, *input, *output);
 
     // Clean up and exit

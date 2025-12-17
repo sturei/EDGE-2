@@ -9,6 +9,8 @@ namespace e2 {
             ~Store();
             virtual void changeState(std::function<void(Model*)> stateChangeCallback);    // virtual to make it easy to mock out in tests
             const Model* model() const { return m_model; }
+            const std::function<void()>& postStateChangeCallback() const { return m_postStateChangeCallback; }  
+            void setPostStateChangeCallback(std::function<void()> callback) { m_postStateChangeCallback = callback; }
             friend std::ostream& operator<<(std::ostream& os, const Store& store);
         private:
             Model* m_model = nullptr;    // Store owns the model

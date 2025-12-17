@@ -1,10 +1,10 @@
 #include <nlohmann/json.hpp>
 #include "brep/brep.fixtures.h"
 #include "shape/shapeModel.h"
+#include "shape/shape.actions.h"
 #include "document/document.h"
 #include "document/store.h"
 #include "utils/vec3d.h"
-#include "scene/sceneActions.h"
 
 using json = nlohmann::json;
 
@@ -65,9 +65,6 @@ namespace e2 {
                     Feature* blockFeature = new Block(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, width, height, depth);
                     size_t index = features.addFeature(blockFeature);
                     std::cerr << "added Block Primitive" << std::endl;      // ---LOGGING---
-
-                    // update the viewer
-                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "sphere") {
@@ -79,9 +76,6 @@ namespace e2 {
                     Feature* sphereFeature = new Sphere(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, radius);
                     size_t index = features.addFeature(sphereFeature);
                     std::cerr << "added Sphere Primitive" << std::endl;      // ---LOGGING---
-
-                    // update the viewer
-                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "cylinder") {
@@ -93,10 +87,6 @@ namespace e2 {
                     Feature* cylinderFeature = new Cylinder(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, radius, depth);
                     size_t index = features.addFeature(cylinderFeature);
                     std::cerr << "added Cylinder Primitive" << std::endl;      // ---LOGGING---
-
-                    // update the viewer
-                    dispatchGraphicsActionsForModifiedScene(doc);
-
                 });
             }
         }
@@ -142,9 +132,6 @@ namespace e2 {
                     size_t profileIndex = profiles.addBody(rectangleBody, tfm3d);        
 
                     std::cerr << "added Rectangle2D Primitive" << std::endl;      // ---LOGGING---
-
-                    // update the viewer
-                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "circle") {
@@ -167,9 +154,6 @@ namespace e2 {
                     size_t profileIndex = profiles.addBody(circleBody, tfm3d); 
 
                     std::cerr << "added Circle2D Primitive" << std::endl;      // ---LOGGING---
-
-                    // update the viewer
-                    dispatchGraphicsActionsForModifiedScene(doc);
                 });
             }
             else if (primitiveType == "roundRect") {
@@ -193,9 +177,6 @@ namespace e2 {
                     size_t profileIndex = profiles.addBody(roundRectBody, tfm3d);
 
                     std::cerr << "added RoundRect2D Primitive" << std::endl;      // ---LOGGING---
-
-                    // update the viewer
-                    dispatchGraphicsActionsForModifiedScene(doc);
                });
             }
         }
@@ -224,9 +205,6 @@ namespace e2 {
                 Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffectEnum, posRot3D.first, posRot3D.second, profilePathName, depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
-
-                // update the viewer
-                dispatchGraphicsActionsForModifiedScene(doc);
             });     
         }
     }
