@@ -47,7 +47,8 @@ const actionSuggestions = [
     '{"type":"Gfx::addProductItem", "payload":{"displayName":"cell[0] (plane)", "pathName":"Unnamed (shape)/workplanes/body[0] (workplane)/cell[0]"}}',
     '------------ OTHER ACTIONS (for testing) ------------',
     '{"type":"Gfx::ping", "payload": {} }',
-    '{"type":"Modeller::ping", "payload": {} }'
+    '{"type":"Modeller::ping", "payload": {} }',
+    '{"type":"Features::ping", "payload": {} }',
   ];
   
   export function Actions() {
@@ -73,7 +74,7 @@ const actionSuggestions = [
                 document.registerActionFunction(actionDef);
             }
         }
-        
+
     }, []);
 
     /** This method takes a JSON string from an input form, converts it to an object representing an action, and dispatches the action to 

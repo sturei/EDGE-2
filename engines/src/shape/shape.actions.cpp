@@ -231,6 +231,16 @@ namespace e2 {
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
             });     
         }
+
+        // This action does a no-op to trigger firing the client actions
+        void triggerClientUpdate(Document& doc, const json& payload) {
+            Store& store = doc.storeAt("shape");
+            // update the model
+            store.changeState([&doc](Model* _model) {
+                // no-op change to trigger post-state-change callback
+                std::cerr << "did a no-op on the shape store to trigger a client update" << std::endl;      // ---LOGGING---
+            });       
+        }
     }
 };
 
