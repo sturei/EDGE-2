@@ -144,7 +144,16 @@ export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => 
     return min(w_max, 0.0).add( w_length );
 })
 
-// half-space defined by plane position and normal
-export const halfSpace = Fn(([position, planePosition, planeNormal]: [any, any, any]) => {
-    return position.sub(planePosition).dot(planeNormal);
+// gyroid with given lambda factor (lamba = 2pi / cellLength)
+export const gyroid = Fn(([position, lambda]: [any, any]) => {
+    // See Ramirez et al., "Design parameter effects on relative density of triply periodic minimal surfaces for additive manufacturing", 2019
+    const xyTerm = lambda.x.mul(position.x).cos().mul( lambda.y.mul(position.y).sin() );
+    const yzTerm = lambda.y.mul(position.y).cos().mul( lambda.z.mul(position.z).sin() );
+    const zxTerm = lambda.z.mul(position.z).cos().mul( lambda.x.mul(position.x).sin() );
+    return xyTerm.add( yzTerm ).add( zxTerm );
+})
+
+// half-space (+z)
+export const halfSpace = Fn(([position]: [any]) => {
+    return position.z;
 })

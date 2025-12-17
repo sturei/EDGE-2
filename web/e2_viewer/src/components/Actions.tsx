@@ -20,6 +20,7 @@ const actionSuggestions = [
     '{"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "radius":1, "depth":3, "pathName":"shape/features/cylinder1"}}',
     '{"type":"Features::addExtrusion", "payload":{"depth":1, "profilePathName":"shape/profiles/roundRect1", "pathName":"shape/features/extrusion1"}}',
     '{"type":"Features::addExtrusion", "payload":{"featureEffect":"subtract", "depth":6, "doubleSided": true, "profilePathName":"shape/profiles/circle1", "pathName":"shape/features/hole1"}}',
+    '{"type":"Features::ping", "payload":{}}',
     '------------ DRAWABLE ACTIONS (for testing) ---',
     '{"type":"Gfx::addPoint", "payload":{"size":5, "position":[1,1,1], "color":"red"}}',
     '{"type":"Gfx::addLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":"blue"}}',
@@ -31,11 +32,15 @@ const actionSuggestions = [
     '{"type":"Gfx::addCylinder", "payload":{"radius":1.0,"depth":6.0, "color":"yellow"}}',
     '{"type":"Gfx::addProfile", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":"red"}}',
     '{"type":"Gfx::addContour", "payload":{"paths":[[[0,0],[1,0]],[[1,0],[1,1]],[[1,1],[0,1]],[[0,1],[0,0]]], "color":"red"}}',
+    '{"type":"Gfx::clearDrawables", "payload":{}}',
     '------------ NODE ACTIONS (for testing) ------------',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"union", "pathName":"objects"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"intersection", "pathName":"objects"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"block", "width":3.0, "height":2.0, "depth":5.0, "pathName":"objects/block1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"sphere", "radius":1.5, "pathName":"objects/sphere1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/cylinder1"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"gyroid", "cellLength":5, "pathName":"objects/gyroid1"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"halfSpace", "pathName":"objects/plane1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"translation", "position":[0.5,0,0], "pathName":"objects/translation"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/translation/cylinder2"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"rotation", "angles":[1.57079632679,0,0], "pathName":"objects/rotation"}}',
@@ -43,15 +48,16 @@ const actionSuggestions = [
     '{"type":"Gfx::addSdfNode", "payload":{"type":"extrusion", "depth":6.0, "pathName":"objects/extrusion1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"roundRect", "width":3.0, "height":2.0, "cornerRadius":0.2, "pathName":"objects/extrusion1/roundRect1"}}',
     '{"type":"Gfx::updateSdfScene", "payload":{}}',
+    '{"type":"Gfx::clearSdfScene", "payload":{}}',
     '------------- PRODUCT STRUCTURE ACTIONS (for testing) -------------',
     '{"type":"Gfx::addProductItem", "payload":{"displayName":"cell[0] (plane)", "pathName":"Unnamed (shape)/workplanes/body[0] (workplane)/cell[0]"}}',
+    '{"type":"Gfx::clearProductItems", "payload":{}}',
     '------------ OTHER ACTIONS (for testing) ------------',
     '{"type":"Gfx::ping", "payload": {} }',
-    '{"type":"Modeller::ping", "payload": {} }',
-    '{"type":"Features::ping", "payload": {} }',
-  ];
+    '{"type":"Modeller::ping", "payload": {} }'
+];
   
-  export function Actions() {
+export function Actions() {
     const document = useContext(DocumentContext);
 
     useEffect(() => {
@@ -115,15 +121,15 @@ const actionSuggestions = [
     }
 
     return (
-      <>
+        <>
         <form onSubmit={handleSubmit}>
-          <input name="actionInput" type="text" className="flex w-full input" placeholder="Next action?" list="suggestions" />
-          <datalist id="suggestions">
+            <input name="actionInput" type="text" className="flex w-full input" placeholder="Next action?" list="suggestions" />
+            <datalist id="suggestions">
             {actionSuggestions.map((suggestion, index) => (
-              <option key={index} value={suggestion}></option>
+                <option key={index} value={suggestion}></option>
             ))}
-          </datalist>
+            </datalist>
         </form>   
-      </>
+        </>
     )
-  }
+}

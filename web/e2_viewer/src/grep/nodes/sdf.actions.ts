@@ -90,8 +90,6 @@ function addSdfNode(doc: Document, payload: any): void {
             const node : ISdfNode = {
                 type: 'halfSpace',
                 pathName: payload.pathName ?? 'halfSpace',
-                position: payload.position ?? [0, 0, 0],
-                normal: payload.normal ?? [0, 0, 1]
             };
             grepModel.addSdfNode(node);
         }
@@ -129,6 +127,14 @@ function addSdfNode(doc: Document, payload: any): void {
                 type: 'rotation',
                 pathName: payload.pathName ?? 'rotation',
                 angles: payload.angles ?? [0, 0, 0]
+            };
+            grepModel.addSdfNode(node);
+        }
+        else if (type === 'gyroid') {
+            const node : ISdfNode = {
+                type: 'gyroid',
+                pathName: payload.pathName ?? 'gyroid',
+                cellLength: payload.cellLength ?? 1.0
             };
             grepModel.addSdfNode(node);
         }

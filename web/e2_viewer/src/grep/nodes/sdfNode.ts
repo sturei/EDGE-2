@@ -2,7 +2,7 @@
 
 export type SdfNodeType = 
     'sphere' | 'block' | 'cylinder' | 'circle' | 'rectangle' | 'roundRect' | 'profile' | 'extrusion' | 
-    'halfSpace' | 'union' | 'intersection' | 'complement' | 'translation' | 'rotation';
+    'halfSpace' | 'union' | 'intersection' | 'complement' | 'translation' | 'rotation' | 'gyroid';
 
 export interface IBaseSdfNode {
     type: SdfNodeType;
@@ -58,8 +58,6 @@ export interface IExtrusionSdfNode extends IBaseSdfNode {
 
 export interface IHalfSpaceSdfNode extends IBaseSdfNode {
     type: 'halfSpace';
-    position: [number, number, number];
-    normal: [number, number, number];
 };
 
 export interface IUnionSdfNode extends IBaseSdfNode {
@@ -84,6 +82,11 @@ export interface IRotationSdfNode extends IBaseSdfNode {
     angles: [number, number, number]; // Euler angles in radians
 };
 
+export interface IGyroidSdfNode extends IBaseSdfNode {
+    type: 'gyroid';
+    cellLength: number;
+};
+
 export type ISdfNode = 
     ISphereSdfNode | IBlockSdfNode | ICylinderSdfNode | ICircleSdfNode | IRectangleSdfNode | IRoundRectSdfNode | IProfileSdfNode |  IExtrusionSdfNode | 
-    IHalfSpaceSdfNode | IUnionSdfNode | IIntersectionSdfNode | IComplementSdfNode | ITranslationSdfNode | IRotationSdfNode;
+    IHalfSpaceSdfNode | IUnionSdfNode | IIntersectionSdfNode | IComplementSdfNode | ITranslationSdfNode | IRotationSdfNode | IGyroidSdfNode;

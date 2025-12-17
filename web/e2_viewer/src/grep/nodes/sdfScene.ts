@@ -1,4 +1,4 @@
-import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion } from './sdfPrimitives';
+import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion, gyroid } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
 import { Fn, int, min, max, negate, rotate, vec2, vec3, array } from 'three/tsl';    
 
@@ -127,12 +127,8 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }   
     else if (node.type === 'halfSpace') {
-        const p = node.position;
-        const n = node.normal;
-        const tslP = vec3(p[0], p[1], p[2]);
-        const tslN = vec3(n[0], n[1], n[2]);
         return Fn(([position] : [any]) => {
-            return halfSpace(position, tslP, tslN);
+            return halfSpace(position);
         });
     }
     else if (node.type === 'union') {
@@ -211,6 +207,16 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         return Fn(([position] : [any]) => {
             const rotatedPos = rotate(position, r);
             return generateNode(childIndices[0], nodes)(rotatedPos);
+        });
+    }
+    else if (node.type === 'gyroid') {
+        const cellLength = node.cellLength;
+        const l_x = Math.PI * 2 / cellLength;
+        const l_y = Math.PI * 2 / cellLength;
+        const l_z = Math.PI * 2 / cellLength;
+        const lambda = vec3(l_x, l_y, l_z);
+        return Fn(([position] : [any]) => {
+            return gyroid(position, lambda);
         });
     }
     else {
