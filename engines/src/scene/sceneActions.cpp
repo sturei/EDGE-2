@@ -17,89 +17,6 @@ using json = nlohmann::json;
 
 namespace e2 {
 
-    void dispatchGraphicsActionsForAcorn(Document& doc, const Body& acornBody) {
-        // The payload is a point
-        const Vec3d& position = acornBody.cell(0).support().position();
-        json payload = json::object({{"position", json::array({position.x(), position.y(), position.z()})}});
-        doc.dispatchClientAction({"Gfx::addPoint", payload});
-    }
-
-    void dispatchGraphicsActionsForSketch(Document& doc, const Body& sketchBody) {
-        // The payload for each edge is a polyline
-        auto edges = getKSkeleton(1, sketchBody);
-        for (const auto& edgeIndex : edges) {
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, sketchBody);
-            std::vector<json> positions;
-            for (const auto& point : *tessellatedPointsPtr) {
-                positions.push_back(json::array({point.x(), point.y(), point.z()}));
-            }
-            json payload = json::object({{"positions", positions}});
-            doc.dispatchClientAction({"Gfx::addPolyline", payload});
-            delete tessellatedPointsPtr;
-        }
-    }
-
-    void dispatchGraphicsActionsForProfile(Document& doc, const Body& profileBody) {
-        // The payload is a collection of "paths", representing the outline of the given body.
-        CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
-        auto edges = getKBoundary(1, faceIndex, profileBody);
-        std::vector<json> paths;
-        for (const auto& edgePair : edges) {
-            CellIndex edgeIndex = edgePair.first;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
-            std::vector<json> path;
-            for (const auto& point : *tessellatedPointsPtr) {
-                    path.push_back(json::array({point.x(), point.y()}));
-            }
-            if (edgePair.second == -1) {
-                std::reverse(path.begin(), path.end());
-            }
-            paths.push_back(path);
-            delete tessellatedPointsPtr;
-        }
-
-        json payload = json::object({{"paths", paths}});
-        doc.dispatchClientAction({"Gfx::addProfile", payload});
-    }
-
-    static std::array<int, 4> lerp(const std::array<int,4>& colorA, const std::array<int,4>& colorB, double t) {
-        int r = static_cast<int>((1 - t) * colorA[0] + t * colorB[0]);
-        int g = static_cast<int>((1 - t) * colorA[1] + t * colorB[1]);
-        int b = static_cast<int>((1 - t) * colorA[2] + t * colorB[2]);
-        int a = static_cast<int>((1 - t) * colorA[3] + t * colorB[3]);
-        return {r, g, b, a};
-    }
-
-    static std::array<int, 4> distanceToRgb(double d, double range=5.0) {
-    
-        // Map a signed distance value to an RGB integer.
-
-        // Distances <= -range map to opaque black
-        // Distances >= range map to transparent white
-        // Distance between -range and 0 map to a gradient from opaque black to light blue at the zero level surface
-        // Distances between 0 and +range map to a gradient from pink at the zero level surface to transparent white
-
-        const auto black = std::array<int,4>{0,0,0,255};
-        const auto white = std::array<int,4>{255,255,255,0};
-        const auto lightBlue = std::array<int,4>{173,216,230,255};
-        const auto pink = std::array<int,4>{255,105,180,255};
-
-        if (d <= -range) {
-            return black;
-        } 
-        else if (d >= range) {
-            return white;
-        } 
-        else if (d < 0) {
-            double t = (d + range) / range;
-            return lerp(black, lightBlue, t);
-        } 
-        else {
-            double t = d / range;
-            return lerp(pink, white, t);
-        }
-    }
-
     static void ensureProductParentsExist(Document& doc) {
         // Ensure parent items exists in the client
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
@@ -175,41 +92,6 @@ namespace e2 {
         }
     }
 
-    void dispatchGraphicsActionsForScene(Document& doc) {
-
-        ensureObjectParentsExist(doc);
-
-        // hard-coded for now
-
-        doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
-            {"pathName", "objects/blanks/block1"},
-            {"type", "block"},
-            {"width", 10.0},
-            {"height", 10.0},
-            {"depth", 5.0}
-        })});
-
-        doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
-
-    }
-
-    void dispatchProductActionsForBody(Document& doc, const Body& body, size_t bodyIndex, const std::string& bodyType, const std::string& parentPathName) {
-
-        ensureProductParentsExist(doc);
-
-        // Add an item for the body
-        std::string bodyPathName = parentPathName + "/" + "body[" + std::to_string(bodyIndex) + "]";
-        std::string bodyDisplayName = "body[" + std::to_string(bodyIndex) + "] " + " (" + bodyType + ")";
-        json bodyPayload = json::object({
-            {"pathName", bodyPathName},
-            {"displayName", bodyDisplayName}
-        });
-        doc.dispatchClientAction({"Gfx::addProductItem", bodyPayload});
-
-        // TODO: add items for cells within the body?
-        
-    }
-
     void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         //
@@ -241,38 +123,10 @@ namespace e2 {
         }
     }
 
-    // TOGO
-    static void dispatchGraphicsActionsForSdfProfile(Document& doc, const std::string& pathName, const Body& profileBody) {
-        // The payload is a collection of "paths", representing the outline of the given body.
-        CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
-        auto edges = getKBoundary(1, faceIndex, profileBody);
-        std::vector<json> paths;
-        for (const auto& edgePair : edges) {
-            CellIndex edgeIndex = edgePair.first;
-            auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
-            std::vector<json> path;
-            for (const auto& point : *tessellatedPointsPtr) {
-                    path.push_back(json::array({point.x(), point.y()}));
-            }
-            if (edgePair.second == -1) {
-                std::reverse(path.begin(), path.end());
-            }
-            paths.push_back(path);
-            delete tessellatedPointsPtr;
-        }
-
-        json payload = json::object({
-            {"pathName", pathName},
-            {"type", "profile"},
-            {"paths", paths}
-        });
-        doc.dispatchClientAction({"Gfx::addSdfNode", payload});
-    }
-
     void dispatchGraphicsActionsForNewProfile(Document& doc, size_t profileIndex) {
 
         //
-        // Profiles are represented graphically in the viewer as planar meshes.
+        // Profiles are represented graphically in the viewer as planar wireframe.
         //
 
         // TODO: rebuild from scratch (could be optimized later) - so that refreshing the browser, or using multiple browsers against the same service, stays more or less in sync. (Future - do it better!
