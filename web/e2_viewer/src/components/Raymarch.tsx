@@ -25,6 +25,7 @@ import {
     dot,
     reflect,
     mix,
+    step,
     max,
     normalize,
     positionLocal
@@ -57,10 +58,6 @@ function generateRaymarchedScene(nodes: ISdfNode[]) {
         const rayVec = r.sub(ro)
         const viewDir = normalize(rayVec)
         const t = length(rayVec);
-
-        If(t.greaterThan(500), () => {
-            return vec3(0,0,0)
-        })
 
         // Step 1: Ambient light
         const ambient = vec3(0.2)
@@ -108,8 +105,12 @@ function generateRaymarchedScene(nodes: ISdfNode[]) {
         const baseColor = vec3(0.1, 0.2, 0.3)
         const finalColor = baseColor.mul(lighting).toVar()
 
-        // Step 4 & 5
+        // Step 4
         finalColor.addAssign(specular)
+
+        // Revert to background color for distant points (ray misses)
+        const backgroundColor = vec3(0.0, 0.0, 0.0)
+        finalColor.assign(mix(finalColor, backgroundColor, step(50, t)));
 
         return finalColor
     })

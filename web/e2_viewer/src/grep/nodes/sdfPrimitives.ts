@@ -144,13 +144,29 @@ export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => 
     return min(w_max, 0.0).add( w_length );
 })
 
-// gyroid with given lambda factor (lamba = 2pi / cellLength)
+// gyroid with given lambda factor (lamba = 2pi / cellLength, can have different cell lengths in x,y,z)
 export const gyroid = Fn(([position, lambda]: [any, any]) => {
-    // See Ramirez et al., "Design parameter effects on relative density of triply periodic minimal surfaces for additive manufacturing", 2019
-    const xyTerm = lambda.x.mul(position.x).cos().mul( lambda.y.mul(position.y).sin() );
-    const yzTerm = lambda.y.mul(position.y).cos().mul( lambda.z.mul(position.z).sin() );
-    const zxTerm = lambda.z.mul(position.z).cos().mul( lambda.x.mul(position.x).sin() );
-    return xyTerm.add( yzTerm ).add( zxTerm );
+
+    // See, for example, Ramirez et al., "Design parameter effects on relative density of triply periodic minimal surfaces for additive manufacturing", 2019
+    const cosx = lambda.x.mul(position.x).cos();
+    const cosy = lambda.y.mul(position.y).cos();
+    const cosz = lambda.z.mul(position.z).cos();
+    const sinx = lambda.x.mul(position.x).sin();
+    const siny = lambda.y.mul(position.y).sin();
+    const sinz = lambda.z.mul(position.z).sin();
+
+    const xyTerm = cosx.mul(siny);
+    const yzTerm = cosy.mul(sinz);
+    const zxTerm = cosz.mul(sinx);
+    const f = xyTerm.add( yzTerm ).add( zxTerm );;
+
+    // divide by the magnitude of the gradient to get a function that is distance-like close to the surface.
+    const dfdx = cosx.mul(cosy).sub(sinz.mul(sinx)).mul(lambda.x);
+    const dfdy = cosy.mul(cosz).sub(sinx.mul(siny)).mul(lambda.y);
+    const dfdz = cosz.mul(cosx).sub(siny.mul(sinz)).mul(lambda.z);
+    const gradfMag = sqrt(dfdx.mul(dfdx).add(dfdy.mul(dfdy)).add(dfdz.mul(dfdz)));
+
+    return f.div(gradfMag);
 })
 
 // half-space (+z)
