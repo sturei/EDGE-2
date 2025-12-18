@@ -2,7 +2,7 @@
 
 export type SdfNodeType = 
     'sphere' | 'block' | 'cylinder' | 'circle' | 'rectangle' | 'roundRect' | 'profile' | 'extrusion' | 
-    'halfSpace' | 'union' | 'intersection' | 'complement' | 'translation' | 'rotation' | 'gyroid';
+    'halfSpace' | 'union' | 'intersection' | 'complement' | 'translation' | 'rotation' | 'gyroid' | 'repetition';
 
 export interface IBaseSdfNode {
     type: SdfNodeType;
@@ -87,6 +87,11 @@ export interface IGyroidSdfNode extends IBaseSdfNode {
     cellLength: number;
 };
 
+export interface IRepetitionSdfNode extends IBaseSdfNode {
+    type: 'repetition';
+    cellLength: number;
+};
+
 export type ISdfNode = 
     ISphereSdfNode | IBlockSdfNode | ICylinderSdfNode | ICircleSdfNode | IRectangleSdfNode | IRoundRectSdfNode | IProfileSdfNode |  IExtrusionSdfNode | 
-    IHalfSpaceSdfNode | IUnionSdfNode | IIntersectionSdfNode | IComplementSdfNode | ITranslationSdfNode | IRotationSdfNode | IGyroidSdfNode;
+    IHalfSpaceSdfNode | IUnionSdfNode | IIntersectionSdfNode | IComplementSdfNode | ITranslationSdfNode | IRotationSdfNode | IGyroidSdfNode | IRepetitionSdfNode;

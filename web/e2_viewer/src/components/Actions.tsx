@@ -40,6 +40,7 @@ const actionSuggestions = [
     '{"type":"Gfx::addSdfNode", "payload":{"type":"sphere", "radius":1.5, "pathName":"objects/sphere1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/cylinder1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"gyroid", "cellLength":5, "pathName":"objects/gyroid1"}}',
+    '{"type":"Gfx::addSdfNode", "payload":{"type":"repetition", "cellLength":0.5, "pathName":"objects/repetition1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"halfSpace", "pathName":"objects/plane1"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"translation", "position":[0.5,0,0], "pathName":"objects/translation"}}',
     '{"type":"Gfx::addSdfNode", "payload":{"type":"cylinder", "radius":1.0, "depth":6.0, "pathName":"objects/translation/cylinder2"}}',

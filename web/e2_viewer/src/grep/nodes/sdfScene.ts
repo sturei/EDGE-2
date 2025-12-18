@@ -1,6 +1,6 @@
 import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion, gyroid } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
-import { Fn, int, min, max, negate, rotate, vec2, vec3, array } from 'three/tsl';    
+import { Fn, int, min, max, mod, negate, rotate, vec2, vec3, array } from 'three/tsl';    
 
 // compute outward-pointing normals for profile
 function computeProfileNormals(paths: Array<Array<[number, number]>>): Array<Array<[number,number]>> {
@@ -217,6 +217,25 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         const lambda = vec3(l_x, l_y, l_z);
         return Fn(([position] : [any]) => {
             return gyroid(position, lambda);
+        });
+    }
+    else if (node.type === 'repetition') {
+        const childIndices = node.childIndices;
+        if (!childIndices || childIndices.length == 0) {
+            throw new Error("Repetition node missing childIndices");
+        }
+        if (childIndices.length != 1) {
+            throw new Error("Repetition node must have exactly one child");
+        }
+
+        const cellLength = node.cellLength;
+        const cellSize = vec3(cellLength);
+        return Fn(([position] : [any]) => {
+            // This works just fine if the repeating primitive is symmetric about the x, y, and z planes and contained in its cell,
+            // so that the closest point in the cell is always the closest point overall. Otherwse, see iniquez's article on repeating SDFs.
+
+            const repeatingPos = mod(position.add(cellSize.mul(0.5)), cellSize).sub(cellSize.mul(0.5));
+            return generateNode(childIndices[0], nodes)(repeatingPos);
         });
     }
     else {

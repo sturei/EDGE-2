@@ -138,6 +138,14 @@ function addSdfNode(doc: Document, payload: any): void {
             };
             grepModel.addSdfNode(node);
         }
+        else if (type === 'repetition') {
+            const node : ISdfNode = {
+                type: 'repetition',
+                pathName: payload.pathName ?? 'repetition',
+                cellLength: payload.cellLength ?? 1.0
+            };
+            grepModel.addSdfNode(node);
+        }
         else {
             console.error(`addSdfNode action: unknown type '${type}'`);
         }
