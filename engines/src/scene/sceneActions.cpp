@@ -325,33 +325,41 @@ namespace e2 {
             FillType fillType = fillFeature->fillType();
             double cellSize = fillFeature->cellSize();
 
-            if (fillType != FillType::SPHERE) {
-                std::cerr << "Warning: Unsupported fill type for Fill feature at " << fillFeature->pathname() << std::endl;
-                addSdfNodeForFeature(doc, targetFeature, objectPathName);
-                return;
-            }
-
             json featureNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "intersection"},
             });
-
-            json repetitionNode = json::object({
-                {"pathName", objectPathName + "/repetition"},
-                {"type", "repetition"},
-                {"cellSize", cellSize}
-            });
-
-            json cellNode = json::object({
-                {"pathName", objectPathName + "/repetition/cell"},
-                {"type", "sphere"},
-                {"radius", cellSize / 3.0}
-            });
-
             doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
-            doc.dispatchClientAction({"Gfx::addSdfNode", repetitionNode});
-            doc.dispatchClientAction({"Gfx::addSdfNode", cellNode});
+
+            if (fillType == FillType::SPHERE) {
+            
+                json repetitionNode = json::object({
+                    {"pathName", objectPathName + "/repetition"},
+                    {"type", "repetition"},
+                    {"cellSize", cellSize}
+                });
+
+                json cellNode = json::object({
+                    {"pathName", objectPathName + "/repetition/cell"},
+                    {"type", "sphere"},
+                    {"radius", cellSize / 3.0}              /// hard-coded for now - could be a parameter of the Fill feature
+                });
+
+                doc.dispatchClientAction({"Gfx::addSdfNode", repetitionNode});
+                doc.dispatchClientAction({"Gfx::addSdfNode", cellNode});
+            }
+            else if (fillType == FillType::GYROID) { 
+                json gyroidNode = json::object({
+                    {"pathName", objectPathName + "/gyroid"},
+                    {"type", "gyroid"},
+                    {"cellSize", cellSize}
+                });
+
+                doc.dispatchClientAction({"Gfx::addSdfNode", gyroidNode});
+            }
+
             addSdfNodeForFeature(doc, targetFeature, objectPathName + "/targetFeature");
+
         }
         else {
             addSdfNodeForFeature(doc, targetFeature, objectPathName);   

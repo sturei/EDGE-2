@@ -48,7 +48,19 @@ namespace e2 {
             else {
                 return FeatureEffect::MODIFY;
             }
-        }   
+        }
+        
+        static FillType parseFillTypeString(const std::string& fillTypeStr) {
+            if (fillTypeStr == "sphere") {
+                return FillType::SPHERE;
+            }
+            else if (fillTypeStr == "gyroid") {
+                return FillType::GYROID;
+            }
+            else {
+                return FillType::SPHERE;   // default
+            }
+        }
 
         // This action adds a primitive feature
         void addPrimitive(Document& doc, const json& payload) {
@@ -248,7 +260,7 @@ namespace e2 {
             );
             std::string targetPathName = payload.value("targetPathName", "shape/profiles/unnamedTarget");
             double cellSize = payload.value("cellSize", 1.0);     // Future - make it an array for different sizes in different directions
-            FillType fillType = FillType::SPHERE;                 // Future - parse from payload
+            FillType fillType = parseFillTypeString(payload.value("fillType", "sphere")); 
 
             // update the model
             store.changeState([pathName, displayName, featureEffect, posRot3D, targetPathName, cellSize, fillType, &doc](Model* model) {
