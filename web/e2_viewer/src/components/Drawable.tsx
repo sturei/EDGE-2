@@ -101,6 +101,7 @@ function LineAppearance({color} : {color?: number}) {
 export function jsxFromDrawable(drawable: IDrawable) {
     const geometry = drawable.geometry;
     const appearance = drawable.appearance;
+
     const position = geometry?.position??[0,0,0];
     const rotation = geometry?.rotation??[0,0,0];
 
@@ -147,9 +148,10 @@ export function jsxFromDrawable(drawable: IDrawable) {
         );
     }
     else if (geometry.type === 'cylinder') {
-        console.log(`Creating cylinder with radius: ${geometry.radius}, height: ${geometry.depth}`);
+        console.log(`Creating cylinder with radius: ${geometry.radius}, depth: ${geometry.depth}`);
+        const threeRotation = new THREE.Euler(rotation[0]+Math.PI/2, rotation[1], rotation[2]);    // align cylinder axis with Z by default
         return (
-            <Cylinder args={[geometry.radius, geometry.radius, geometry.depth, 32]} position={position} rotation={rotation}>
+            <Cylinder args={[geometry.radius, geometry.radius, geometry.depth, 32]} position={position} rotation={threeRotation}>
                 <meshStandardMaterial color={appearance?.color??Color.get("yellow")} />
             </Cylinder>
         );

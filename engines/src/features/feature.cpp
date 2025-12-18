@@ -198,4 +198,26 @@ namespace e2 {
            << ", doubleSided=" << (m_doubleSided ? "true" : "false") <<  ")";
     }   
 
+    //
+    // Fill
+    //
+
+    Fill::Fill(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect,
+        const Vec3d& position, const Vec3d& rotation,
+        const std::string& targetPathName, FillType fillType, double cellSize)
+        : Feature(pathname, displayName, featureEffect, position, rotation), 
+          m_targetPathName(targetPathName), m_fillType(fillType), m_cellSize(cellSize) {
+    }
+
+    void Fill::print(std::ostream& os) const {
+        os << "Fill(pathname=" << pathname()
+           << ", displayName=" << displayName()
+           << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation()
+           << ", targetPathName=" << m_targetPathName
+           << ", fillType=" << m_fillType
+           << ", cellSize=" << m_cellSize <<  ")";
+    }   
+
 } // namespace e2

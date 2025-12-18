@@ -249,7 +249,7 @@ namespace e2 {
                 return;
             }
 
-            // to avoid z-fighting when subtracting. TODO: think of a better way!
+            // to avoid z-fighting when subtracting. TODO: small offset would be a better way!
             double epsilon = extrusionFeature->featureEffect() == FeatureEffect::SUBTRACT ? 0.01 : 0.0;
             bool doubleSided = extrusionFeature->doubleSided();
 
@@ -282,15 +282,83 @@ namespace e2 {
                 {"depth", depth+epsilon}
             });
 
+            // TODO: figure out where fill, offset, twist etc go
             doc.dispatchClientAction({"Gfx::addSdfNode", profileTranslationNode});
             doc.dispatchClientAction({"Gfx::addSdfNode", profileRotationNode});
+            // probably fill goes in here
             doc.dispatchClientAction({"Gfx::addSdfNode", zOffsetNode});
             doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
             addSdfNodeForFeature(doc, profile, objectPathName + "/profile");
         }        
     }
 
-    // Utility to add tranformation nodes for a given feature
+    // Finds any modify feature that target the given feature
+    static std::vector<const Feature*> findModifyingFeatures(const FeatureModel& features, const Feature* targetFeature) {
+        std::vector<const Feature*> modifyingFeatures;
+        for (const Feature* feature : features.features()) {
+            if (feature->featureEffect() == FeatureEffect::MODIFY) {
+                if (const Fill* fillFeature = dynamic_cast<const Fill*>(feature)) {
+                    if (fillFeature->targetPathName() == targetFeature->pathname()) {
+                        modifyingFeatures.push_back(feature);
+                    }
+                }
+            }
+        }
+        return modifyingFeatures;
+    }
+
+    // Utility to add modification nodes for a given feature
+    static void addSdfNodeForModifiedFeature(Document& doc, const Feature* targetFeature, std::string objectPathName) {
+        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
+
+        std::vector<const Feature*> modifyingFeatures = findModifyingFeatures(features, targetFeature);
+        if (modifyingFeatures.empty()) {
+            // no modifying features - just add the feature as is
+            addSdfNodeForFeature(doc, targetFeature, objectPathName);
+            return;
+        }
+        
+        // Currently, only Fill features modify other features
+        if (const Fill* fillFeature = dynamic_cast<const Fill*>(modifyingFeatures[0])) {
+            const std::string targetPathName = fillFeature->targetPathName();
+
+            FillType fillType = fillFeature->fillType();
+            double cellSize = fillFeature->cellSize();
+
+            if (fillType != FillType::SPHERE) {
+                std::cerr << "Warning: Unsupported fill type for Fill feature at " << fillFeature->pathname() << std::endl;
+                addSdfNodeForFeature(doc, targetFeature, objectPathName);
+                return;
+            }
+
+            json featureNode = json::object({
+                {"pathName", objectPathName},
+                {"type", "intersection"},
+            });
+
+            json repetitionNode = json::object({
+                {"pathName", objectPathName + "/repetition"},
+                {"type", "repetition"},
+                {"cellSize", cellSize}
+            });
+
+            json cellNode = json::object({
+                {"pathName", objectPathName + "/repetition/cell"},
+                {"type", "sphere"},
+                {"radius", cellSize / 3.0}
+            });
+
+            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Gfx::addSdfNode", repetitionNode});
+            doc.dispatchClientAction({"Gfx::addSdfNode", cellNode});
+            addSdfNodeForFeature(doc, targetFeature, objectPathName + "/targetFeature");
+        }
+        else {
+            addSdfNodeForFeature(doc, targetFeature, objectPathName);   
+        }
+    }
+
+    // Utility to add transformation nodes for a given feature
     static void addSdfNodeForTransformedFeature(Document& doc, const Feature* feature, std::string objectPathName) {
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         
@@ -311,7 +379,7 @@ namespace e2 {
         }); 
         doc.dispatchClientAction({"Gfx::addSdfNode", rotationNode});
 
-        addSdfNodeForFeature(doc, feature, objectPathName + "/feature");
+        addSdfNodeForModifiedFeature(doc, feature, objectPathName + "/feature");
     }
 
     static void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
@@ -348,7 +416,7 @@ namespace e2 {
             } else if (feature.featureEffect() == FeatureEffect::SUBTRACT) {
                 objectPathName += "tools/tools/";
             } else {
-                // TODO: MODIFY features. We currently do not add anything to the graphics scene for them
+                // skip MODIFY feature - those are processed when their target feature gets processed.
                 continue;
             }
 

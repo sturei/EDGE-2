@@ -8,12 +8,14 @@ namespace e2 {
         void addPrimitive2D(Document& doc, const nlohmann::json& payload);
         void addPrimitive(Document& doc, const nlohmann::json& payload);
         void addExtrusion(Document& doc, const nlohmann::json& payload);
+        void addFill(Document& doc, const nlohmann::json& payload);
         void triggerClientUpdate(Document& doc, const nlohmann::json& payload);
 
-        inline static std::array<ActionDef, 4> allShapeActions = {{
+        inline static std::array<ActionDef, 5> allShapeActions = {{
             {"Profiles::addPrimitive", addPrimitive2D},
             {"Features::addPrimitive", addPrimitive},
             {"Features::addExtrusion", addExtrusion},
+            {"Features::addFill", addFill},
             {"Features::ping", triggerClientUpdate}
         }};
     }

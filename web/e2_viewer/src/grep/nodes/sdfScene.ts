@@ -210,10 +210,10 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'gyroid') {
-        const cellLength = node.cellLength;
-        const l_x = Math.PI * 2 / cellLength;
-        const l_y = Math.PI * 2 / cellLength;
-        const l_z = Math.PI * 2 / cellLength;
+        const cellSize = node.cellSize;
+        const l_x = Math.PI * 2 / cellSize;
+        const l_y = Math.PI * 2 / cellSize;
+        const l_z = Math.PI * 2 / cellSize;
         const lambda = vec3(l_x, l_y, l_z);
         return Fn(([position] : [any]) => {
             return gyroid(position, lambda);
@@ -224,17 +224,17 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         if (!childIndices || childIndices.length == 0) {
             throw new Error("Repetition node missing childIndices");
         }
-        if (childIndices.length != 1) {
+        if (childIndices.length != 1) {     
             throw new Error("Repetition node must have exactly one child");
         }
 
-        const cellLength = node.cellLength;
-        const cellSize = vec3(cellLength);
+        const cellSize = node.cellSize;
+        const size = vec3(cellSize);
         return Fn(([position] : [any]) => {
             // This works just fine if the repeating primitive is symmetric about the x, y, and z planes and contained in its cell,
             // so that the closest point in the cell is always the closest point overall. Otherwse, see iniquez's article on repeating SDFs.
 
-            const repeatingPos = mod(position.add(cellSize.mul(0.5)), cellSize).sub(cellSize.mul(0.5));
+            const repeatingPos = mod(position.add(size.mul(0.5)), size).sub(size.mul(0.5));
             return generateNode(childIndices[0], nodes)(repeatingPos);
         });
     }

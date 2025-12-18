@@ -13,7 +13,6 @@ import {
     min,
     abs,
     max,
-    mod,
     mul,
     sign,
     sqrt,
@@ -23,7 +22,7 @@ import {
     If
 } from 'three/tsl'
 
-import * as THREE from 'three/webgpu';
+//import * as THREE from 'three/webgpu';
 // Implementation note: the above line brings in the types, including the types for THREE.Node etc. 
 // Unfortunately, at time of writing, the types are out-of-date and cannot be used, hence the widespread use of 'any' in this file.
 // The arguments and return types are THREE.Node, in general, or more specific types such as THREE.ArrayNode.
@@ -45,16 +44,8 @@ export const block = Fn(([position, width, height, depth] : [any, any, any, any]
 })
 
 // cylinder centered on origin with given radius and depth along Z
-export const cylinder = Fn(([position, radius, depth]: [any, THREE.Node | number, THREE.Node | number]) => {
-    const distance = float(0).toVar();
-    const delta = vec2(
-      length(position.xy).sub(radius),
-      position.z.abs().sub(mul(depth, 0.5))
-    )
-    distance.assign(min(max(delta.x, delta.z), 0.0).add(
-        length(max(delta, 0.0))
-    ));
-    return distance;
+export const cylinder = Fn(([position, radius, depth]: [any, any, any]) => {
+    return extrusion(position, circle(position, radius), depth);
 })
 
 // circle centered on origin with given radius. Returns distance in XY plane.
@@ -145,7 +136,7 @@ export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => 
     return min(w_max, 0.0).add( w_length );
 })
 
-// gyroid with given lambda factor (lamba = 2pi / cellLength, can have different cell lengths in x,y,z)
+// gyroid with given lambda factor (lamba = 2pi / cellSize, can have different cell lengths in x,y,z)
 export const gyroid = Fn(([position, lambda]: [any, any]) => {
 
     // See, for example, Ramirez et al., "Design parameter effects on relative density of triply periodic minimal surfaces for additive manufacturing", 2019

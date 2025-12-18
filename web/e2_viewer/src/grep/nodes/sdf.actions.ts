@@ -134,7 +134,7 @@ function addSdfNode(doc: Document, payload: any): void {
             const node : ISdfNode = {
                 type: 'gyroid',
                 pathName: payload.pathName ?? 'gyroid',
-                cellLength: payload.cellLength ?? 1.0
+                cellSize: payload.cellSize ?? 1.0
             };
             grepModel.addSdfNode(node);
         }
@@ -142,7 +142,7 @@ function addSdfNode(doc: Document, payload: any): void {
             const node : ISdfNode = {
                 type: 'repetition',
                 pathName: payload.pathName ?? 'repetition',
-                cellLength: payload.cellLength ?? 1.0
+                cellSize: payload.cellSize ?? 1.0
             };
             grepModel.addSdfNode(node);
         }

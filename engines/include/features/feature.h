@@ -13,7 +13,7 @@ namespace e2 {
         MODIFY
     };
 
-    inline std::ostream& operator<<(std::ostream& os, FeatureEffect featureEffect) {
+    static inline std::ostream& operator<<(std::ostream& os, FeatureEffect featureEffect) {
         switch (featureEffect) {
             case FeatureEffect::ADD: return os << "{+}";
             case FeatureEffect::SUBTRACT: return os << "{-}";
@@ -22,11 +22,24 @@ namespace e2 {
         }
     }
 
-    inline std::string toString(FeatureEffect featureEffect) {
+    static inline std::string toString(FeatureEffect featureEffect) {
         std::stringstream ss;
         ss << featureEffect;
         return ss.str();
     }
+
+    enum class FillType {
+        SPHERE,             // an example of a repeating primmitive - in practical applications it would be more likely a lattice cell
+        GYROID              // an example of a continuous pattern
+    };
+
+    static inline std::ostream& operator<<(std::ostream& os, FillType fillType) {
+        switch (fillType) {
+            case FillType::SPHERE: return os << "SPHERE";
+            case FillType::GYROID: return os << "GYROID";
+            default: return os << "UNKNOWN";
+        }
+    }   
 
     class Feature {
         public:
@@ -213,5 +226,26 @@ namespace e2 {
             std::string m_profilePathName;
             double m_depth;                     // extrusion depth along the profile normal.
             bool m_doubleSided;                 // in case the extrusion is double-sided, the extrusion is depth/2 in both directions along the profile normal.
+    };
+
+    class Fill : public Feature {
+        public:
+            Fill() = default;
+            virtual ~Fill() = default;
+            Fill(const Fill&) = delete;
+            void operator=(const Fill&) = delete;
+            Fill(
+                const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect,
+                const Vec3d& position, const Vec3d& rotation,
+                const std::string& targetPathName, FillType fillType, double cellSize);
+            const std::string& targetPathName() const { return m_targetPathName; }
+            double cellSize() const { return m_cellSize; }
+            FillType fillType() const { return m_fillType; }
+            std::string displayType() const override { return "Fill"; }
+            void print(std::ostream& os) const override;
+        private:
+            std::string m_targetPathName;
+            double m_cellSize;
+            FillType m_fillType;
     };
 }

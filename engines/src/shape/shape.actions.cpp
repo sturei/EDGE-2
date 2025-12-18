@@ -50,7 +50,7 @@ namespace e2 {
             }
         }   
 
-        // This action adds a primitive feature as a feature
+        // This action adds a primitive feature
         void addPrimitive(Document& doc, const json& payload) {
             Store& store = doc.storeAt("shape");
 
@@ -110,7 +110,7 @@ namespace e2 {
             }
         }
 
-        // This action adds a profile feature as a feature
+        // This action adds a profile feature
         void addPrimitive2D(Document& doc, const json& payload) {
             Store& store = doc.storeAt("shape");
 
@@ -207,7 +207,7 @@ namespace e2 {
             }
         }
 
-        // This action adds an extrusion feature as a feature
+        // This action adds an extrusion feature
         void addExtrusion(Document& doc, const json& payload) {
             Store& store = doc.storeAt("shape");
 
@@ -229,6 +229,33 @@ namespace e2 {
                 Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, profilePathName, depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
+            });     
+        }
+
+        // This action adds an fill feature
+        void addFill(Document& doc, const json& payload) {
+            Store& store = doc.storeAt("shape");
+
+            // unpack the payload
+            std::string pathName = payload.value("pathName", "shape/features/unnamedFill");
+            std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
+            // right now it's always a "modify" at the feature level (it always has a target).
+            // In future it could perhaps have options to a) be global and/or b) have a "cell effect"
+            FeatureEffect featureEffect = FeatureEffect::MODIFY;        //parseFeatureEffectString(payload.value("featureEffect", "modify"));
+            std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
+                payload.value("position", json::array({0,0,0})),
+                payload.value("rotation", json::array({0,0,0}))
+            );
+            std::string targetPathName = payload.value("targetPathName", "shape/profiles/unnamedTarget");
+            double cellSize = payload.value("cellSize", 1.0);     // Future - make it an array for different sizes in different directions
+            FillType fillType = FillType::SPHERE;                 // Future - parse from payload
+
+            // update the model
+            store.changeState([pathName, displayName, featureEffect, posRot3D, targetPathName, cellSize, fillType, &doc](Model* model) {
+                FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                Feature* fillFeature = new Fill(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, targetPathName, fillType, cellSize);
+                size_t index = features.addFeature(fillFeature);
+                std::cerr << "added Fill Feature" << std::endl;      // ---LOGGING---
             });     
         }
 

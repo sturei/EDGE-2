@@ -84,12 +84,12 @@ export interface IRotationSdfNode extends IBaseSdfNode {
 
 export interface IGyroidSdfNode extends IBaseSdfNode {
     type: 'gyroid';
-    cellLength: number;
+    cellSize: number;
 };
 
 export interface IRepetitionSdfNode extends IBaseSdfNode {
     type: 'repetition';
-    cellLength: number;
+    cellSize: number;
 };
 
 export type ISdfNode = 

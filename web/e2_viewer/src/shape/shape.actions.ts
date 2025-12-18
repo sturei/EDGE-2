@@ -47,6 +47,10 @@ async function addExtrusion(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Features::addExtrusion", payload);
 }
 
+async function addFill(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Features::addFill", payload);
+}
+
 async function triggerClientUpdate(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Features::ping", payload);
 }
@@ -56,6 +60,7 @@ export const pingModellerActionDef = { type: "Modeller::ping", function: pingMod
 export const addProfileActionDef = { type: "Profiles::addPrimitive", function: addProfile };
 export const addPrimitiveActionDef = { type: "Features::addPrimitive", function: addPrimitive };
 export const addExtrusionActionDef = { type: "Features::addExtrusion", function: addExtrusion };
+export const addFillActionDef = { type: "Features::addFill", function: addFill };
 export const triggerClientUpdateActionDef = { type: "Features::ping", function: triggerClientUpdate };
 
 
