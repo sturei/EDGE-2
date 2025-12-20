@@ -36,6 +36,15 @@ namespace e2 {
             m_transforms.erase(m_transforms.begin() + index);   
         }
     }
+
+    void BRepModel::clearBodies() {
+        for (Body* body : m_bodies) {
+            delete body;
+        }
+        m_bodies.clear();
+        m_transforms.clear();
+    }
+    
     void BRepModel::print(std::ostream& os) const {
         os << "BRepModel with " << m_bodies.size() << " bodies." << std::endl;
         for (size_t i = 0; i < m_bodies.size(); ++i) {

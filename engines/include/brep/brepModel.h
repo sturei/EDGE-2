@@ -17,6 +17,7 @@ namespace e2 {
         size_t addBody(Body* body, const Tfm3d& transform);
         const Tfm3d& transform(size_t index) const { return m_transforms[index]; }
         void removeBody(size_t index);
+        void clearBodies();
         void print(std::ostream& os) const override;
     private:
         std::vector<Body*> m_bodies; 

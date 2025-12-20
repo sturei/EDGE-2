@@ -22,6 +22,7 @@ const actionSuggestions = [
     '{"type":"Features::addExtrusion", "payload":{"depth":1, "profilePathName":"shape/profiles/roundRect1", "pathName":"shape/features/extrusion1"}}',
     '{"type":"Features::addExtrusion", "payload":{"featureEffect":"subtract", "depth":6, "doubleSided": true, "profilePathName":"shape/profiles/circle1", "pathName":"shape/features/hole1"}}',
     '{"type":"Features::ping", "payload":{}}',
+    '{"type":"Features::clearFeatures", "payload":{}}',
     '------------ DRAWABLE ACTIONS (for testing) ---',
     '{"type":"Gfx::addPoint", "payload":{"size":5, "position":[1,1,1], "color":"red"}}',
     '{"type":"Gfx::addLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":"blue"}}',

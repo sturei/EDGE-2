@@ -37,6 +37,13 @@ namespace e2 {
         return nullptr;
     }
 
+    void FeatureModel::clearFeatures() {
+        for (Feature* feature : m_features) {
+            delete feature;
+        }
+        m_features.clear();
+    }
+
     void FeatureModel::print(std::ostream& os) const {
         os << "FFeatureModel with " << m_features.size() << " features." << std::endl;
         for (size_t i = 0; i < m_features.size(); ++i) {

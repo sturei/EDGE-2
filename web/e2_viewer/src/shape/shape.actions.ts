@@ -55,6 +55,10 @@ async function triggerClientUpdate(doc: Document, payload: any): Promise<void> {
     await postAction(doc, "Features::ping", payload);
 }
 
+async function clearAllFeatures(doc: Document, payload: any): Promise<void> {
+    await postAction(doc, "Features::clearFeatures", payload);
+}
+
 export const pingModellerActionDef = { type: "Modeller::ping", function: pingModeller };
 
 export const addProfileActionDef = { type: "Profiles::addPrimitive", function: addProfile };
@@ -62,5 +66,7 @@ export const addPrimitiveActionDef = { type: "Features::addPrimitive", function:
 export const addExtrusionActionDef = { type: "Features::addExtrusion", function: addExtrusion };
 export const addFillActionDef = { type: "Features::addFill", function: addFill };
 export const triggerClientUpdateActionDef = { type: "Features::ping", function: triggerClientUpdate };
+export const clearAllFeaturesActionDef = { type: "Features::clearFeatures", function: clearAllFeatures };
+
 
 

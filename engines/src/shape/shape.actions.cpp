@@ -280,6 +280,19 @@ namespace e2 {
                 std::cerr << "did a no-op on the shape store to trigger a client update" << std::endl;      // ---LOGGING---
             });       
         }
+
+        // This action removes all the features, including profiles, from the shape model
+        void clearAllFeatures(Document& doc, const json& payload) {
+            Store& store = doc.storeAt("shape");
+            // update the model
+            store.changeState([&doc](Model* model) {
+                FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                features.clearFeatures();
+                BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
+                profiles.clearBodies();
+                std::cerr << "cleared all features from the shape model" << std::endl;      // ---LOGGING---    
+            });
+        }
     }
-};
+}   
 
