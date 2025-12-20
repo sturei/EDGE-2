@@ -7,7 +7,7 @@ import * as prepActions from '../prep/prep.actions.ts'
 import * as shapeActions from '../shape/shape.actions.ts'  
 import * as drawableActions from '../grep/drawables/drawable.actions.ts'
 import * as sdfActions from '../grep/nodes/sdf.actions.ts'
-import { Document, type ActionSpec } from "../document/document.ts";
+import { Document } from "../document/document.ts";
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
@@ -16,13 +16,18 @@ const actionSuggestions = [
     '{"type":"Profiles::addPrimitive", "payload":{"primitiveType":"circle", "radius":0.5, "pathName":"shape/profiles/circle1"}}',
     '{"type":"Profiles::addPrimitive", "payload":{"primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2, "pathName":"shape/profiles/roundRect1"}}',
     '{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}',
-    '{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "featureEffect":"subtract", "width":1, "height":1, "depth":2, "pathName":"shape/features/cut1"}}',
+    '{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "featureEffect":"subtract", "width":1, "height":1, "depth":7, "pathName":"shape/features/cut1"}}',
     '{"type":"Features::addPrimitive", "payload":{"primitiveType":"sphere", "radius":1.5, "pathName":"shape/features/sphere1"}}',
     '{"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "radius":1, "depth":3, "pathName":"shape/features/cylinder1"}}',
     '{"type":"Features::addExtrusion", "payload":{"depth":1, "profilePathName":"shape/profiles/roundRect1", "pathName":"shape/features/extrusion1"}}',
     '{"type":"Features::addExtrusion", "payload":{"featureEffect":"subtract", "depth":6, "doubleSided": true, "profilePathName":"shape/profiles/circle1", "pathName":"shape/features/hole1"}}',
     '{"type":"Features::ping", "payload":{}}',
     '{"type":"Features::clearFeatures", "payload":{}}',
+    '------------ MACROS ------------',
+    '{"type":"Macros::run", "payload":{"filePath":"scratch.txt"}}',
+    '{"type":"Macros::run", "payload":{"filePath":"primitives.txt"}}',
+    '{"type":"Macros::run", "payload":{"filePath":"fills.txt"}}',
+    '{"type":"Macros::run", "payload":{"filePath":"extrusions.txt"}}',
     '------------ DRAWABLE ACTIONS (for testing) ---',
     '{"type":"Gfx::addPoint", "payload":{"size":5, "position":[1,1,1], "color":"red"}}',
     '{"type":"Gfx::addLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":"blue"}}',
@@ -55,10 +60,7 @@ const actionSuggestions = [
     '------------- PRODUCT STRUCTURE ACTIONS (for testing) -------------',
     '{"type":"Gfx::addProductItem", "payload":{"displayName":"cell[0] (plane)", "pathName":"Unnamed (shape)/workplanes/body[0] (workplane)/cell[0]"}}',
     '{"type":"Gfx::clearProductItems", "payload":{}}',
-    '------------ MACROS AND OTHER ACTIONS (for testing) ------------',
-    '{"type":"Macros::run", "payload":{"filePath":"scratch.txt"}}',
-    '{"type":"Macros::run", "payload":{"filePath":"sphereFill.txt"}}',
-    '{"type":"Macros::run", "payload":{"filePath":"gyroidFill.txt"}}',
+    '------------ OTHER ACTIONS ------------',
     '{"type":"Gfx::ping", "payload": {} }',
     '{"type":"Modeller::ping", "payload": {} }'
 ];
@@ -113,17 +115,19 @@ export function Actions() {
 
         // split data.content at each newline into separate actions
         const lines = data.content.split('\n').filter((line:string) => line.trim() !== "");
-        const actions: ActionSpec[] = lines.map((line: string) => JSON.parse(line));
-
-        // execute each action
-        for (const action of actions) {
-            console.log("Dispatching macro action:", action);
-            await doc.dispatchAction(action);
-            await sleep(delayMillis);
+        for (const line of lines) {
+            console.log("Macro line:", line);
+            try {
+                const action = JSON.parse(line);
+                await doc.dispatchAction(action);
+                await sleep(delayMillis);
+            } catch (e: unknown) {
+                console.error(`Error parsing macro line: ${line}`);
+                throw(e);
+            }   
         }
     }
     
-
     /** This method takes a JSON string from an input form, converts it to an object representing an action, and dispatches the action to 
      * the global document (which is passed in as context) 
      * The format for an action is {"type": <string>, "payload": <any valid json>}. 

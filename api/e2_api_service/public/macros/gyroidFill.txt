@@ -1,2 +1,0 @@
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "pathName":"shape/features/block1"}}
-{"type":"Features::addFill", "payload":{"fillType":"gyroid", "cellSize": 0.2, "targetPathName":"shape/features/block1", "pathName":"shape/features/fill1"}}

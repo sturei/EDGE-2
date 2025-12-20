@@ -1,0 +1,6 @@
+
+{"type":"Features::clearFeatures", "payload":{}}
+{"type":"Profiles::addPrimitive", "payload":{"primitiveType":"circle", "radius":0.5, "pathName":"shape/profiles/circle1"}}
+{"type":"Profiles::addPrimitive", "payload":{"primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2, "pathName":"shape/profiles/roundRect1"}}
+{"type":"Features::addExtrusion", "payload":{"depth":1, "profilePathName":"shape/profiles/roundRect1", "pathName":"shape/features/extrusion1"}}
+{"type":"Features::addExtrusion", "payload":{"featureEffect":"subtract", "depth":1, "profilePathName":"shape/profiles/circle1", "pathName":"shape/features/hole1"}}
