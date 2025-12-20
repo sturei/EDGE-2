@@ -5,7 +5,7 @@ import { Color, type IDrawable } from "../drawables/drawable";
 
 // Adds a point drawable to the GRepModel's drawlist.
 // Changes are reflected in the UI immediately.
-function addPoint(doc: Document, payload: any): void {
+async function addPoint(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -28,7 +28,7 @@ function addPoint(doc: Document, payload: any): void {
     console.log("added Point");      // ---DEBUG---
 }
 // Adds a line drawable to the GRepModel's drawlist.
-function addLine(doc: Document, payload: any): void {
+async function addLine(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -56,7 +56,7 @@ function addLine(doc: Document, payload: any): void {
 }
 
 // Adds a polyline drawable to the GRepModel's drawlist.
-function addPolyline(doc: Document, payload: any): void {
+async function addPolyline(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -83,7 +83,7 @@ function addPolyline(doc: Document, payload: any): void {
 
 
 // Adds a plane drawable to the GRepModel's drawlist.
-function addPlane(doc: Document, payload: any): void {
+async function addPlane(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -128,7 +128,7 @@ function addPlane(doc: Document, payload: any): void {
 
 
 // Adds a sphere drawable to the GRepModel's drawlist.
-function addSphere(doc: Document, payload: any): void {
+async function addSphere(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -155,7 +155,7 @@ function addSphere(doc: Document, payload: any): void {
 }
 
 // Adds a block drawable to the GRepModel's drawlist.
-function addBlock(doc: Document, payload: any): void {
+async function addBlock(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -185,7 +185,7 @@ function addBlock(doc: Document, payload: any): void {
 }
         
 // Adds a cylinder drawable to the GRepModel's drawlist.
-function addCylinder(doc: Document, payload: any): void {
+async function addCylinder(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -213,7 +213,7 @@ function addCylinder(doc: Document, payload: any): void {
 }
 
 // Adds a profile drawable to the GRepModel's drawlist.
-function addProfile(doc: Document, payload: any): void {
+async function addProfile(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -239,7 +239,7 @@ function addProfile(doc: Document, payload: any): void {
 }
 
 // Adds a contour drawable to the GRepModel's drawlist.
-function addContour(doc: Document, payload: any): void {
+async function addContour(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
@@ -265,7 +265,7 @@ function addContour(doc: Document, payload: any): void {
 }
 
 // clears all drawables from the GRepModel's drawlist.
-function clearDrawables(doc: Document, _payload: any): void {
+async function clearDrawables(doc: Document, _payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         let grepModel = model as GRepModel;

@@ -6,7 +6,7 @@ import type { ISdfNode } from "./sdfNode";
 // Adds the specified SDF node to the GRepModel's SDF scene. 
 // The application must build the node tree top-down. Children are attached to their parents automatically.
 // The application must call updateSdfScene() once the modifications to the tree are complete. 
-function addSdfNode(doc: Document, payload: any): void {
+async function addSdfNode(doc: Document, payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         let grepModel = model as GRepModel;
@@ -154,7 +154,7 @@ function addSdfNode(doc: Document, payload: any): void {
 }
 
 // This triggers the regeneration of the SDF scene in Threejs and thence in the GPU.
-function updateSdfScene(doc: Document, _payload: any): void {
+async function updateSdfScene(doc: Document, _payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         let grepModel = model as GRepModel;
@@ -167,7 +167,7 @@ function updateSdfScene(doc: Document, _payload: any): void {
 }
 
 // This clears all SDF nodes from the GRepModel's SDF scene.
-function clearSdfScene(doc: Document, _payload: any): void {
+async function clearSdfScene(doc: Document, _payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
         let grepModel = model as GRepModel;

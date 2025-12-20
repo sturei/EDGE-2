@@ -8,7 +8,6 @@ import * as shapeActions from '../shape/shape.actions.ts'
 import * as drawableActions from '../grep/drawables/drawable.actions.ts'
 import * as sdfActions from '../grep/nodes/sdf.actions.ts'
 import { Document, type ActionSpec } from "../document/document.ts";
-import type { String } from "three/examples/jsm/transpiler/AST.js";
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
@@ -95,10 +94,14 @@ export function Actions() {
     }
 
     /** Fetches the specified macro file from the modeller server and executes the actions in it */
-    async function runMacro(doc: Document, filePath:String): Promise<void> {
+    async function runMacro(doc: Document, payload:any): Promise<void> {
         const apiServer = 'http://localhost:3000';
         const macros = apiServer + '/macros';
-        const fullPath = macros + '/' + filePath;
+
+        const filePath = payload.filePath;
+        const delayMillis = payload.delayMillis ?? 10;
+
+        const fullPath = macros + '/' + payload.filePath;
 
         const response = await fetch(fullPath);
         if (response.status !== 200) {
@@ -114,8 +117,8 @@ export function Actions() {
         // execute each action
         for (const action of actions) {
             console.log("Dispatching macro action:", action);
-            await sleep(100);  // TODO: add "delayMillis" to the payload, so that replays can be done in slomo. Also, probably, dispatchAction should be asyncs
-            doc.dispatchAction(action);
+            await doc.dispatchAction(action);
+            await sleep(delayMillis);
         }
     }
     
@@ -135,7 +138,7 @@ export function Actions() {
             console.log(`Dispatching action: ${actionText}`);
             const action = JSON.parse(actionText);
             if (action.type === "Macros::run") {
-                await runMacro(document, action.payload.filePath);
+                await runMacro(document, action.payload);
             }
             else {
                 document.dispatchAction(action);

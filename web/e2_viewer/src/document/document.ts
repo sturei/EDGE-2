@@ -32,12 +32,12 @@ export interface ActionSpec {
 
 export interface ActionDef {
     type: string;
-    function: (document: Document, payload: any) => void;
+    function: (document: Document, payload: any) => Promise<void>;
 }
 
 export class Document {
     private stores: Map<string, Store> = new Map();
-    private actionFunctions: Map<string, (document: Document, payload: any) => void> = new Map();
+    private actionFunctions: Map<string, (document: Document, payload: any) => Promise<void>> = new Map();
 
     constructor(stores?: Map<string, Store>) {
         if (stores) {
@@ -61,7 +61,7 @@ export class Document {
         this.actionFunctions.set(action.type, action.function);
     }
 
-    dispatchAction(action: ActionSpec): void {
+    async dispatchAction(action: ActionSpec): Promise<void> {
 
         // Look up the action function based on the action type
         const actionFunction = this.actionFunctions.get(action.type);
@@ -70,7 +70,7 @@ export class Document {
         }
         
         // and execute it...
-        actionFunction(this, action.payload);
+        await actionFunction(this, action.payload);
     }
 
     toString(): string {
