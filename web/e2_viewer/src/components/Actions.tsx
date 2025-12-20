@@ -7,6 +7,8 @@ import * as prepActions from '../prep/prep.actions.ts'
 import * as shapeActions from '../shape/shape.actions.ts'  
 import * as drawableActions from '../grep/drawables/drawable.actions.ts'
 import * as sdfActions from '../grep/nodes/sdf.actions.ts'
+import { Document, type ActionSpec } from "../document/document.ts";
+import type { String } from "three/examples/jsm/transpiler/AST.js";
 
 /** these strings are displayed in the dropdown list of the actions input form */
 const actionSuggestions = [
@@ -53,7 +55,10 @@ const actionSuggestions = [
     '------------- PRODUCT STRUCTURE ACTIONS (for testing) -------------',
     '{"type":"Gfx::addProductItem", "payload":{"displayName":"cell[0] (plane)", "pathName":"Unnamed (shape)/workplanes/body[0] (workplane)/cell[0]"}}',
     '{"type":"Gfx::clearProductItems", "payload":{}}',
-    '------------ OTHER ACTIONS (for testing) ------------',
+    '------------ MACROS AND OTHER ACTIONS (for testing) ------------',
+    '{"type":"Macros::run", "payload":{"filePath":"scratch.txt"}}',
+    '{"type":"Macros::run", "payload":{"filePath":"sphereFill.txt"}}',
+    '{"type":"Macros::run", "payload":{"filePath":"gyroidFill.txt"}}',
     '{"type":"Gfx::ping", "payload": {} }',
     '{"type":"Modeller::ping", "payload": {} }'
 ];
@@ -84,12 +89,43 @@ export function Actions() {
 
     }, []);
 
+    // TODO: move this to utils?
+    async function sleep(ms:number = 0) {
+        return new Promise(r => setTimeout(r, ms));
+    }
+
+    /** Fetches the specified macro file from the modeller server and executes the actions in it */
+    async function runMacro(doc: Document, filePath:String): Promise<void> {
+        const apiServer = 'http://localhost:3000';
+        const macros = apiServer + '/macros';
+        const fullPath = macros + '/' + filePath;
+
+        const response = await fetch(fullPath);
+        if (response.status !== 200) {
+            throw new Error(`Error fetching macro file '${filePath}': ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // split data.content at each newline into separate actions
+        const lines = data.content.split('\n').filter((line:string) => line.trim() !== "");
+        const actions: ActionSpec[] = lines.map((line: string) => JSON.parse(line));
+
+        // execute each action
+        for (const action of actions) {
+            console.log("Dispatching macro action:", action);
+            await sleep(100);  // TODO: add "delayMillis" to the payload, so that replays can be done in slomo. Also, probably, dispatchAction should be asyncs
+            doc.dispatchAction(action);
+        }
+    }
+    
+
     /** This method takes a JSON string from an input form, converts it to an object representing an action, and dispatches the action to 
      * the global document (which is passed in as context) 
      * The format for an action is {"type": <string>, "payload": <any valid json>}. 
      * Any errors are caught here and logged, and then execution continues normally.
      */
-    function dispatchAction(formData: FormData) {
+    async function dispatchAction(formData: FormData) {
         const actionText = formData.get("actionInput") as string;
         if (actionText.trim() === "") {
             console.log("Blank line - no action dispatched.");
@@ -98,7 +134,12 @@ export function Actions() {
         try {
             console.log(`Dispatching action: ${actionText}`);
             const action = JSON.parse(actionText);
-            document.dispatchAction(action);
+            if (action.type === "Macros::run") {
+                await runMacro(document, action.payload.filePath);
+            }
+            else {
+                document.dispatchAction(action);
+            }
         } catch (e: unknown) {
             let errorMessage = "";
             if (typeof e === "string") {
