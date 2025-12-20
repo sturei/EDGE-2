@@ -216,7 +216,8 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         const l_z = Math.PI * 2 / cellSize;
         const lambda = vec3(l_x, l_y, l_z);
         return Fn(([position] : [any]) => {
-            return gyroid(position, lambda);
+            // clamp because it's not a true SDF especially not at large distances
+            return gyroid(position, lambda).clamp(-cellSize/3, cellSize/3);
         });
     }
     else if (node.type === 'repetition') {

@@ -21,6 +21,7 @@ import {
     Break,
     length,
     vec3,
+    select,
     vec2,
     dot,
     reflect,
@@ -103,16 +104,24 @@ function generateRaymarchedScene(nodes: ISdfNode[]) {
         lighting.addAssign(hemi.mul(0.2))
 
         const baseColor = vec3(0.1, 0.2, 0.3)
+
+        // For debugging:
+        // green: it went too far (inside the object by more than the threshold, although note that anything inside is "wrong" - remove the abs to test for that)
+        // blue: it didn't go far enough (outside the object by more than the threshold, although note that this is expected in case of shallow angle between ray and object)
+        //const f = sceneNode(r);
+        //const debugColor = select( f.lessThan(0), vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0));
+        //baseColor.assign(mix(baseColor, debugColor, step(0.001, f.abs())));
+
         const finalColor = baseColor.mul(lighting).toVar()
 
         // Step 4
-        finalColor.addAssign(specular)
+        finalColor.addAssign(specular);
 
         // Revert to background color for distant points (ray misses)
         const backgroundColor = vec3(0.0, 0.0, 0.0)
         finalColor.assign(mix(finalColor, backgroundColor, step(50, t)));
 
-        return finalColor
+        return finalColor;
     })
 
     const raymarch = Fn(() => {
@@ -133,7 +142,9 @@ function generateRaymarchedScene(nodes: ISdfNode[]) {
             ray.assign(rayOrigin.add(rayDirection.mul(t))) // position along the ray
 
             // If we're close enough, it's a hit, so we can do an early return
-            If(d.lessThan(0.001), () => {
+            // Note: We test the abs because it enables the loop to go around again (stepping backwards along the ray) if we end up inside (which can
+            // only happen for non true sdfs, e.g. gyroid)
+            If(d.abs().lessThan(0.001), () => {
                 Break()
             })
 

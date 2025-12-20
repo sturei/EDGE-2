@@ -150,7 +150,7 @@ export const gyroid = Fn(([position, lambda]: [any, any]) => {
     const xyTerm = cosx.mul(siny);
     const yzTerm = cosy.mul(sinz);
     const zxTerm = cosz.mul(sinx);
-    const f = xyTerm.add( yzTerm ).add( zxTerm );;
+    const f = xyTerm.add( yzTerm ).add( zxTerm );
 
     // divide by the magnitude of the gradient to get a function that is distance-like close to the surface.
     const dfdx = cosx.mul(cosy).sub(sinz.mul(sinx)).mul(lambda.x);
