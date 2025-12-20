@@ -17,4 +17,4 @@
 {"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "featureEffect":"subtract", "radius":1, "depth":3, "position":[4,0,0], "pathName":"shape/features/cut3"}}
 {"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "featureEffect":"subtract", "radius":1, "depth":3, "position":[-4,3,0], "pathName":"shape/features/cut4"}}
 {"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "featureEffect":"subtract", "radius":1, "depth":3, "position":[0,3,0], "pathName":"shape/features/cut5"}}
-{"type":"Features::addPrimitive", "payload"{"primitiveType":"cylinder", "featureEffect":"subtract", "radius":1, "depth":3, "position":[4,3,0], "pathName":"shape/features/cut6"}}
+{"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "featureEffect":"subtract", "radius":1, "depth":3, "position":[4,3,0], "pathName":"shape/features/cut6"}}
