@@ -142,8 +142,8 @@ function generateRaymarchedScene(nodes: ISdfNode[]) {
             ray.assign(rayOrigin.add(rayDirection.mul(t))) // position along the ray
 
             // If we're close enough, it's a hit, so we can do an early return
-            // Note: We test the abs because it enables the loop to go around again (stepping backwards along the ray) if we end up inside (which can
-            // only happen for non true sdfs, e.g. gyroid)
+            // We test the abs because it enables the loop to go around again (stepping backwards along the ray) if we end up inside (which should not happen,
+            // but might if the distance function is not at least a bound.
             If(d.abs().lessThan(0.001), () => {
                 Break()
             })

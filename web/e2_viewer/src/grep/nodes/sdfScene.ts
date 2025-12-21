@@ -1,6 +1,6 @@
 import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion, gyroid } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
-import { Fn, int, min, max, mod, negate, rotate, vec2, vec3, array } from 'three/tsl';    
+import { Fn, int, min, max, mod, negate, rotate, float, vec2, vec3, array } from 'three/tsl';    
 
 // compute outward-pointing normals for profile
 function computeProfileNormals(paths: Array<Array<[number, number]>>): Array<Array<[number,number]>> {
@@ -152,7 +152,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         }
         // Implementation note: 2 different approaches seem to be possible here:
         // 1. Loop through children in TSL code
-        // 2. Loop through children here at generation time
+        // 2. Loop through children here at generation time, unrolling the loop.
         // Approach 1 is taken here because Loop is slow, at least it was for Profile SDF. 
         // FWIW. approach 2 is taken for extrusion above - there is only one child there, so no loop needed.
         return Fn(([position] : [any]) => {
@@ -210,14 +210,9 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         });
     }
     else if (node.type === 'gyroid') {
-        const cellSize = node.cellSize;
-        const l_x = Math.PI * 2 / cellSize;
-        const l_y = Math.PI * 2 / cellSize;
-        const l_z = Math.PI * 2 / cellSize;
-        const lambda = vec3(l_x, l_y, l_z);
+        const lambda = float(Math.PI * 2 / node.cellSize);
         return Fn(([position] : [any]) => {
-            // clamp because it's not a true SDF especially not at large distances
-            return gyroid(position, lambda).clamp(-cellSize/3, cellSize/3);
+            return gyroid(position, lambda);
         });
     }
     else if (node.type === 'repetition') {
@@ -234,7 +229,6 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         return Fn(([position] : [any]) => {
             // This works just fine if the repeating primitive is symmetric about the x, y, and z planes and contained in its cell,
             // so that the closest point in the cell is always the closest point overall. Otherwse, see iniquez's article on repeating SDFs.
-
             const repeatingPos = mod(position.add(size.mul(0.5)), size).sub(size.mul(0.5));
             return generateNode(childIndices[0], nodes)(repeatingPos);
         });

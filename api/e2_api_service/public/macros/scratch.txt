@@ -1,13 +1,4 @@
 {"type":"Features::clearFeatures", "payload":{}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[-4,0,0], "pathName":"shape/features/block1"}}
-{"type":"Features::addFill", "payload":{"fillType":"sphere", "cellSize": 1.0, "targetPathName":"shape/features/block1", "pathName":"shape/features/fill1"}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[0,0,0], "pathName":"shape/features/block2"}}
-{"type":"Features::addFill", "payload":{"fillType":"sphere", "cellSize": 0.2, "targetPathName":"shape/features/block2", "pathName":"shape/features/fill2"}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[4,0,0], "pathName":"shape/features/block3"}}
-{"type":"Features::addFill", "payload":{"fillType":"sphere", "cellSize": 0.04, "targetPathName":"shape/features/block3", "pathName":"shape/features/fill3"}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[-4,3,0], "pathName":"shape/features/block4"}}
-{"type":"Features::addFill", "payload":{"fillType":"gyroid", "cellSize": 1.0, "targetPathName":"shape/features/block4", "pathName":"shape/features/fill4"}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[0,3,0], "pathName":"shape/features/block5"}}
-{"type":"Features::addFill", "payload":{"fillType":"gyroid", "cellSize": 0.2, "targetPathName":"shape/features/block5", "pathName":"shape/features/fill5"}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[4,3,0], "pathName":"shape/features/block6"}}
-{"type":"Features::addFill", "payload":{"fillType":"gyroid", "cellSize": 0.04, "targetPathName":"shape/features/block6", "pathName":"shape/features/fill6"}}
+{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[0,0,0], "pathName":"shape/features/block1"}}
+{"type":"Features::addFill", "payload":{"fillType":"gyroid", "cellSize": 0.2, "targetPathName":"shape/features/block1", "pathName":"shape/features/fill1"}}
+{"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "featureEffect":"subtract", "radius":1, "depth":3, "position":[0,0,0], "pathName":"shape/features/cut2"}}
