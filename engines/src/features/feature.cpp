@@ -86,29 +86,39 @@ namespace e2 {
     }
 
     //
-    // Profile
+    // Workplane
     //
 
-    Profile::Profile(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation )
-        : Feature(pathname, displayName, featureEffect, position, rotation) {
+    Workplane::Workplane(const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation)
+        : Feature(pathname, displayName, FeatureEffect::ADD, position, rotation) {
+    }   
 
-        // at the moment, only ADD profiles are supported. Modify and subtract would probably work from functional standpoint, but the profile graphics (which is based on brep) is not done yet
-        if (featureEffect == FeatureEffect::MODIFY) {
-            std::cerr << "Profile feature with MODIFY effect not supported."    ;
-        }
-        if (featureEffect == FeatureEffect::SUBTRACT) {
-            std::cerr << "Profile feature with SUBTRACT effect not supported.";
-        }
+    void Workplane::print(std::ostream& os) const {
+        os << "Workplane(pathname=" << pathname()
+           << ", displayName=" << displayName()
+           << ", featureEffect=" << featureEffect()
+           << ", position=" << position()
+           << ", rotation=" << rotation() << ")";
+    }
+
+    //
+    // Feature2D
+    //
+
+    Feature2D::Feature2D(
+        const std::string& pathname, const std::string& displayName, 
+        const std::string& workplanePathName, const Vec3d& position2D, double rotation2D)
+        : Feature(pathname, displayName, FeatureEffect::ADD, Vec3d(), Vec3d()), 
+        m_workplanePathName(workplanePathName), m_position2D(position2D), m_rotation2D(rotation2D) {
     }
 
     //
     // Primitive2D
     //
 
-    Primitive2D::Primitive2D(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
+    Primitive2D::Primitive2D(const std::string& pathname, const std::string& displayName, const std::string& workplanePathName,
         const Vec3d& position2D, double rotation2D)
-        : Profile(pathname, displayName, featureEffect, position, rotation), 
-          m_position2D(position2D), m_rotation2D(rotation2D) {
+        : Feature2D(pathname, displayName, workplanePathName, position2D, rotation2D) {
     }
 
     //
@@ -116,10 +126,10 @@ namespace e2 {
     //
 
     Rectangle2D::Rectangle2D(
-        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
-        const Vec3d& position2D, double rotation2D, 
+        const std::string& pathname, const std::string& displayName, 
+        const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
         double width, double height)
-        : Primitive2D(pathname, displayName, featureEffect, position, rotation, position2D, rotation2D), 
+        : Primitive2D(pathname, displayName, workplanePathName, position2D, rotation2D), 
           m_width(width), m_height(height) {
     }
 
@@ -129,6 +139,9 @@ namespace e2 {
            << ", featureEffect=" << featureEffect()
            << ", position=" << position()
            << ", rotation=" << rotation()
+           << ", workplanePathName=" << workplanePathName()
+           << ", position2D=" << position2D()
+           << ", rotation2D=" << rotation2D()
            << ", width=" << m_width
            << ", height=" << m_height << ")";
     }   
@@ -138,10 +151,10 @@ namespace e2 {
     //
 
     Circle2D::Circle2D(
-        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
-        const Vec3d& position2D, double rotation2D, 
-        double radius)
-        : Primitive2D(pathname, displayName, featureEffect, position, rotation, position2D, rotation2D), 
+        const std::string& pathname, const std::string& displayName,
+        const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
+        double radius)  
+        : Primitive2D(pathname, displayName, workplanePathName, position2D, rotation2D), 
           m_radius(radius) {
     }
 
@@ -151,6 +164,9 @@ namespace e2 {
            << ", featureEffect=" << featureEffect()
            << ", position=" << position()
            << ", rotation=" << rotation()
+           << ", workplanePathName=" << workplanePathName()
+           << ", position2D=" << position2D()
+           << ", rotation2D=" << rotation2D()
            << ", radius=" << m_radius << ")";
     }   
 
@@ -159,10 +175,10 @@ namespace e2 {
     //
     
     RoundRect2D::RoundRect2D(
-        const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, 
-        const Vec3d& position2D, double rotation2D, 
+        const std::string& pathname, const std::string& displayName, 
+        const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
         double width, double height, double cornerRadius)
-        : Primitive2D(pathname, displayName, featureEffect, position, rotation, position2D, rotation2D), 
+        : Primitive2D(pathname, displayName, workplanePathName, position2D, rotation2D), 
           m_width(width), m_height(height), m_cornerRadius(cornerRadius) {
     }   
 
@@ -172,6 +188,9 @@ namespace e2 {
            << ", featureEffect=" << featureEffect()
            << ", position=" << position()
            << ", rotation=" << rotation()
+           << ", workplanePathName=" << workplanePathName()
+           << ", position2D=" << position2D()
+           << ", rotation2D=" << rotation2D()
            << ", width=" << m_width
            << ", height=" << m_height
            << ", cornerRadius=" << m_cornerRadius << ")";

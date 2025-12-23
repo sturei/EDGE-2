@@ -45,7 +45,7 @@ namespace e2 {
     }
 
     void FeatureModel::print(std::ostream& os) const {
-        os << "FFeatureModel with " << m_features.size() << " features." << std::endl;
+        os << "FeatureModel with " << m_features.size() << " features." << std::endl;
         for (size_t i = 0; i < m_features.size(); ++i) {
             os << "  Feature " << i << ": " << *m_features[i] << std::endl;
         }

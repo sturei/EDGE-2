@@ -21,8 +21,8 @@ namespace e2 {
     // Ensure that the client has the necessary parent items in the product tree
     static void ensureProductParentsExist(Document& doc) {
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
-            {"pathName", "shape/profiles"},
-            {"displayName", "profiles"}
+            {"pathName", "shape/workplanes"},
+            {"displayName", "workplanes"}
         })});
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
             {"pathName", "shape/features"},
@@ -35,12 +35,10 @@ namespace e2 {
 
         // Ensure parent items exists in the client
     
-        std::cerr << "ensuring sdf node parents exist" << std::endl;      // ---DEBUG---    
-
         const Store& store = doc.storeAt("shape");
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(store.model())->features();
 
-        std::cerr << "got features " << features << std::endl;      // ---DEBUG---
+        std::cerr << "Ensuring sdf node parents exist for features: " << features << std::endl;      // ---DEBUG---
 
         int numBlanks = 0;
         int numTools = 0;
@@ -48,8 +46,11 @@ namespace e2 {
             if (!f) {
                 continue;
             }
-            if (dynamic_cast<const Profile*>(f)) {
-                continue;   // skip 2D features (profiles) - those are represented as planar meshes, not SDF nodes
+            if (dynamic_cast<const Feature2D*>(f) || dynamic_cast<const Workplane*>(f)) {
+                // skip 2D features and workplanes. 
+                // TODO: rather than relying on type, it would be better to have a method that returned the 
+                // dimensionality of the feature, and count blanks and tools iff dim==3
+                continue;
             }
             if (f->featureEffect() == FeatureEffect::ADD) {
                 numBlanks++;
@@ -249,19 +250,28 @@ namespace e2 {
                 return;
             }
 
+            Feature* workplane = features.findFeature(dynamic_cast<Feature2D*>(profile)->workplanePathName());
+            if (!workplane) {
+                std::cerr << "Warning: Extrusion feature at " << objectPathName << " references profile at " << extrusionFeature->profilePathName() 
+                          << " which references missing workplane at " << dynamic_cast<Feature2D*>(profile)->workplanePathName() << std::endl;
+                return;
+            }
+
             // to avoid z-fighting when subtracting. TODO: small offset would be a better way!
             double epsilon = extrusionFeature->featureEffect() == FeatureEffect::SUBTRACT ? 0.01 : 0.0;
             bool doubleSided = extrusionFeature->doubleSided();
 
-            const Vec3d& profilePosition = profile->position();
+            // TODO: take into account the 2D transformations on the profile
+
+            const Vec3d& workplanePosition = workplane->position();
             json profileTranslationNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "translation"},
-                {"position", json::array({profilePosition.x(), profilePosition.y(), profilePosition.z()})}
+                {"position", json::array({workplanePosition.x(), workplanePosition.y(), workplanePosition.z()})}
             });
             
             objectPathName += "/profileRotation";
-            const Vec3d& profileRotation = profile->rotation();
+            const Vec3d& profileRotation = workplane->rotation();
             json profileRotationNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "rotation"},
@@ -415,8 +425,8 @@ namespace e2 {
             const Feature& feature = features.feature(featureIndex);
             std::string objectPathName = "objects/";
 
-            if (dynamic_cast<const Profile*>(&feature)) {
-                // skip 2D features (profiles) - those are represented as planar meshes, not SDF nodes
+            if (dynamic_cast<const Feature2D*>(&feature) || dynamic_cast<const Workplane*>(&feature)) {
+                // skip 2D features - TODO: add feature dimensionality method rather than relying on type
                 continue;
             } 
             else if (feature.featureEffect() == FeatureEffect::ADD) {

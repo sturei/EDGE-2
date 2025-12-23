@@ -124,26 +124,43 @@ namespace e2 {
             double m_depth;
     };
 
-    class Profile : public Feature {
+    class Workplane : public Feature {
         public:
-            Profile() = default;
-            virtual ~Profile() = default;
-            Profile(const Profile&) = delete;
-            void operator=(const Profile&) = delete;
-            Profile(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation);
+            Workplane() = default;
+            virtual ~Workplane() = default;
+            Workplane(const Workplane&) = delete;
+            void operator=(const Workplane&) = delete;
+            Workplane(const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation);
+            std::string displayType() const override { return "Workplane"; }
+            void print(std::ostream& os) const override;
         private:
+    };  
+
+    class Feature2D : public Feature {
+        public:
+            Feature2D() = default;
+            virtual ~Feature2D() = default;
+            Feature2D(const Feature2D&) = delete;
+            void operator=(const Feature2D  &) = delete;
+            Feature2D (const std::string& pathname, const std::string& displayName, const std::string& workplanePathName, const Vec3d& position2D, double rotation2D);
+            const std::string& workplanePathName() const { return m_workplanePathName; }
+            const Vec3d& position2D() const { return m_position2D; }
+            double rotation2D() const { return m_rotation2D; }
+        private:
+            std::string m_workplanePathName;
+            Vec3d m_position2D;      // 2D position in the profile's workplane 
+            double m_rotation2D;     // rotation (in radians) in the profile's workplane
+
     };
 
-    class Primitive2D : public Profile {
+    class Primitive2D : public Feature2D {
         public:
             Primitive2D() = default;
             virtual ~Primitive2D() = default;
             Primitive2D(const Primitive2D&) = delete;
             void operator=(const Primitive2D&) = delete;
-            Primitive2D(const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, const Vec3d& position, const Vec3d& rotation, const Vec3d& position2D, double rotation2D);
+            Primitive2D(const std::string& pathname, const std::string& displayName, const std::string& workplanePathName, const Vec3d& position2D, double rotation2D);
         private:
-            Vec3d m_position2D;      // 2D position in the profile plane
-            double m_rotation2D;     // rotation (in radians) in the profile plane
     };
 
     class Rectangle2D : public Primitive2D {
@@ -153,9 +170,8 @@ namespace e2 {
             Rectangle2D(const Rectangle2D&) = delete;
             void operator=(const Rectangle2D&) = delete;
             Rectangle2D(
-                const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-                const Vec3d& position, const Vec3d& rotation, 
-                const Vec3d& position2D, double rotation2D, 
+                const std::string& pathname, const std::string& displayName, 
+                const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
                 double width, double height);
 
             double width() const { return m_width; }
@@ -174,9 +190,8 @@ namespace e2 {
             Circle2D(const Circle2D&) = delete;
             void operator=(const Circle2D&) = delete;
             Circle2D(
-                const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-                const Vec3d& position, const Vec3d& rotation, 
-                const Vec3d& position2D, double rotation2D, 
+                const std::string& pathname, const std::string& displayName, 
+                const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
                 double radius);
             double radius() const { return m_radius; }
             std::string displayType() const override { return "Circle2D"; }  
@@ -192,9 +207,8 @@ namespace e2 {
             RoundRect2D(const RoundRect2D&) = delete;
             void operator=(const RoundRect2D&) = delete;
             RoundRect2D(
-                const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-                const Vec3d& position, const Vec3d& rotation, 
-                const Vec3d& position2D, double rotation2D, 
+                const std::string& pathname, const std::string& displayName,
+                const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
                 double width, double height, double cornerRadius);
             double width() const { return m_width; }
             double height() const { return m_height; }
@@ -206,6 +220,9 @@ namespace e2 {
             double m_height;
             double m_cornerRadius;
     };
+
+    // Future: Profile2D feature could go here (extends Feature2D)?
+    // Maybe also Sketch2D feature could go here (extends Feature2D)?
 
     class Extrusion : public Feature {
         public:

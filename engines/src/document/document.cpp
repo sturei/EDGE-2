@@ -61,7 +61,8 @@ namespace e2 {
 
     ActionResult Document::dispatchAction(const ActionSpec& action) {
         try {
-            //std::cerr << "Dispatching action of type: " << action.type << " with payload: " << action.payload.dump() << std::endl;  //--- DEBUG ---
+            std::cerr << "+++ NEXT ACTION ++++++++++++++++++++++++++" << std::endl;  //--- DEBUG ---
+            std::cerr << "Dispatching action of type: " << action.type << " with payload: " << action.payload.dump() << std::endl;  //--- DEBUG ---
             auto it = m_actionFunctions.find(action.type);
             if (it == m_actionFunctions.end()) {
                 // std::cerr << "Unknown action type: " << action.type << std::endl;   <--- DEBUG ---

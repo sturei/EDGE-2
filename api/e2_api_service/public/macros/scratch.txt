@@ -1,4 +1,16 @@
 {"type":"Features::clearFeatures", "payload":{}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"block", "width":3, "height":2, "depth":1, "position":[0,0,0], "pathName":"shape/features/block1"}}
-{"type":"Features::addFill", "payload":{"fillType":"gyroid", "cellSize": 0.2, "targetPathName":"shape/features/block1", "pathName":"shape/features/fill1"}}
-{"type":"Features::addPrimitive", "payload":{"primitiveType":"cylinder", "featureEffect":"subtract", "radius":1, "depth":3, "position":[0,0,0], "pathName":"shape/features/cut2"}}
+{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane1"}}
+{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane1/circle1", "primitiveType":"circle", "radius":0.5}}
+{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane1/roundRect1", "primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2 }}
+{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/extrusion1", "profilePathName":"shape/workplanes/workplane1/roundRect1","depth":1 }}
+{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole1",  "profilePathName":"shape/workplanes/workplane1/circle1","featureEffect":"subtract", "depth":1 }}
+{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane2", "position":[1.5,0,0.5], "rotation":[0,-1.57079632679,0]}}
+{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane2/circle1","primitiveType":"circle", "radius":0.1 }}
+{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole2", "profilePathName":"shape/workplanes/workplane2/circle1", "featureEffect":"subtract", "depth":3 }}
+{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane3", "position":[0,1,0.5], "rotation":[1.57079632679,0,0]}}
+{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane3/circle1","primitiveType":"circle", "radius":0.1 }}
+{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole3", "profilePathName":"shape/workplanes/workplane3/circle1", "featureEffect":"subtract", "depth":3 }}
+
+
+
+

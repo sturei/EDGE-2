@@ -122,15 +122,34 @@ namespace e2 {
             }
         }
 
-        // This action adds a profile feature
+        // This action adds a workplane feature
+        void addWorkplane(Document& doc, const json& payload) {
+            Store& store = doc.storeAt("shape");    
+            // unpack the payload
+            std::string pathName = payload.value("pathName", "shape/workplanes/unnamedWorkplane");
+            std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
+            std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
+                payload.value("position", json::array({0,0,0})),
+                payload.value("rotation", json::array({0,0,0}))
+            );
+            // update the model
+            store.changeState([pathName, displayName, posRot3D, &doc](Model* model) {
+                FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                Feature* workplaneFeature = new Workplane(pathName, displayName, posRot3D.first, posRot3D.second);
+                size_t index = features.addFeature(workplaneFeature);
+                std::cerr << "added Workplane Feature" << std::endl;      // ---LOGGING---
+            });
+        }
+
+        // This action adds a 2D Primitive feature
         void addPrimitive2D(Document& doc, const json& payload) {
             Store& store = doc.storeAt("shape");
 
             // unpack the payload
-            std::string pathName = payload.value("pathName", "shape/profiles/unnamedPrimitive");
+            std::string pathName = payload.value("pathName", "shape/workplanes/unnamedPrimitive");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
+            std::string workplanePathName = pathName.substr(0, pathName.find_last_of('/'));
             std::string primitiveType = payload.value("primitiveType", "rectangle");
-            FeatureEffect featureEffect = parseFeatureEffectString(payload.value("featureEffect", "add"));
             std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
                 payload.value("position", json::array({0,0,0})),
                 payload.value("rotation", json::array({0,0,0}))
@@ -147,20 +166,21 @@ namespace e2 {
                 double height = payload.value("height", 2.0);
 
                 // update the model
-                store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, width, height, &doc](Model* model) {
+                store.changeState([pathName, displayName, workplanePathName, posRot2D, width, height, &doc](Model* model) {
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* rectangleFeature = new Rectangle2D(
-                        pathName, displayName, featureEffect, 
-                        posRot3D.first, posRot3D.second, 
-                        posRot2D.first, posRot2D.second,
+                        pathName, displayName, 
+                        workplanePathName, posRot2D.first, posRot2D.second,
                         width, height);
                     size_t featureIndex = features.addFeature(rectangleFeature);
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* rectangleBody = BRepFixtures::rectangle2DSheet(width, height);     // TODO: take 2D position/rotation into account. Ditto for other 2D primitives
-                    Vec3d position = posRot3D.first;
 
-                    Tfm3d tfm3d(posRot3D.first, posRot3D.second);
+                    // 3d position/rotation is inherited from workplane.
+                    Feature* workplane = features.findFeature(workplanePathName);
+                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
+
                     size_t profileIndex = profiles.addBody(rectangleBody, tfm3d);        
 
                     std::cerr << "added Rectangle2D Primitive" << std::endl;      // ---LOGGING---
@@ -172,20 +192,22 @@ namespace e2 {
                 double radius = payload.value("radius", 1.0);
 
                 // update the model
-                store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, radius, &doc](Model* model) {
+                store.changeState([pathName, displayName, workplanePathName, posRot2D, radius, &doc](Model* model) {
                     // update the model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* circleFeature = new Circle2D(
-                        pathName, displayName, featureEffect, 
-                        posRot3D.first, posRot3D.second, 
-                        posRot2D.first, posRot2D.second,
+                        pathName, displayName,
+                        workplanePathName, posRot2D.first, posRot2D.second,
                         radius);
                     size_t featureIndex = features.addFeature(circleFeature);
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* circleBody = BRepFixtures::circle2DSheet(radius);
 
-                    Tfm3d tfm3d(posRot3D.first, posRot3D.second);
+                    // 3d position/rotation is inherited from workplane.
+                    Feature* workplane = features.findFeature(workplanePathName);
+                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
+
                     size_t profileIndex = profiles.addBody(circleBody, tfm3d); 
 
                     std::cerr << "added Circle2D Primitive" << std::endl;      // ---LOGGING---
@@ -199,19 +221,21 @@ namespace e2 {
                 double cornerRadius = payload.value("cornerRadius", 0.2);
 
                 // update the model
-                store.changeState([pathName, displayName, featureEffect, posRot3D, posRot2D, width, height, cornerRadius, &doc](Model* model) {
+                store.changeState([pathName, displayName, workplanePathName, posRot2D, width, height, cornerRadius, &doc](Model* model) {
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* roundRectFeature = new RoundRect2D(
-                        pathName, displayName, featureEffect,
-                        posRot3D.first, posRot3D.second, 
-                        posRot2D.first, posRot2D.second,
+                        pathName, displayName, 
+                        workplanePathName, posRot2D.first, posRot2D.second,
                         width, height, cornerRadius);
                     size_t featureIndex = features.addFeature(roundRectFeature);
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* roundRectBody = BRepFixtures::roundRect2DSheet(width, height, cornerRadius);
 
-                    Tfm3d tfm3d(posRot3D.first, posRot3D.second);
+                    // 3d position/rotation is inherited from workplane.
+                    Feature* workplane = features.findFeature(workplanePathName);
+                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
+
                     size_t profileIndex = profiles.addBody(roundRectBody, tfm3d);
 
                     std::cerr << "added RoundRect2D Primitive" << std::endl;      // ---LOGGING---
@@ -238,7 +262,10 @@ namespace e2 {
             // update the model
             store.changeState([pathName, displayName, featureEffect, posRot3D, profilePathName, depth, doubleSided, &doc](Model* model) {
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
-                Feature* extrusionFeature = new Extrusion(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, profilePathName, depth, doubleSided);
+                Feature* extrusionFeature = new Extrusion(
+                    pathName, displayName, featureEffect, 
+                    posRot3D.first, posRot3D.second, profilePathName,     // normally the 3D position/rotation comes from the workplane of the profile, but it can be overridden
+                    depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
             });     

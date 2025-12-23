@@ -5,6 +5,7 @@
 
 namespace e2 {
     namespace ShapeActions {
+        void addWorkplane(Document& doc, const nlohmann::json& payload);
         void addPrimitive2D(Document& doc, const nlohmann::json& payload);
         void addPrimitive(Document& doc, const nlohmann::json& payload);
         void addExtrusion(Document& doc, const nlohmann::json& payload);
@@ -12,7 +13,8 @@ namespace e2 {
         void triggerClientUpdate(Document& doc, const nlohmann::json& payload);
         void clearAllFeatures(Document& doc, const nlohmann::json& payload);
 
-        inline static std::array<ActionDef, 6> allShapeActions = {{
+        inline static std::array<ActionDef, 7> allShapeActions = {{
+            {"Profiles::addWorkplane", addWorkplane},  
             {"Profiles::addPrimitive", addPrimitive2D},
             {"Features::addPrimitive", addPrimitive},
             {"Features::addExtrusion", addExtrusion},
