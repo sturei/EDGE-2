@@ -62,6 +62,10 @@ namespace e2 {
                 m_graphNeedsUpdate = false;     // graph is empty but up to date
             }
             Body(const Body& other) {
+                // copy the name and display name
+                m_pathName = other.m_pathName;
+                m_displayName = other.m_displayName;
+
                 // deep copy the cells and cocells
                 m_cells = other.m_cells;
                 m_cocells = other.m_cocells;
@@ -98,10 +102,15 @@ namespace e2 {
                     }
                 }
             }
-            Body(const std::vector<Cell>& cells, const std::vector<Cocell>& cocells = {}) : m_cells(cells), m_cocells(cocells) {
+            Body(const std::string& pathName, const std::string& displayName, const std::vector<Cell>& cells, const std::vector<Cocell>& cocells = {}) 
+                : m_pathName(pathName), m_displayName(displayName), m_cells(cells), m_cocells(cocells) {    
                 updateGraph();
             }
 
+            const std::string& pathName() const { return m_pathName; }
+            void setPathName(const std::string& pathName) { m_pathName = pathName; }
+            const std::string& displayName() const { return m_displayName; }
+            void setDisplayName(const std::string& displayName) { m_displayName = displayName; }    
             const std::vector<Cell>& cells() const { return m_cells; }
             const std::vector<Cocell>& cocells() const { return m_cocells; }
             CellIndex addCell(const Cell& cell);
@@ -120,7 +129,9 @@ namespace e2 {
 
             friend std::ostream& operator<<(std::ostream& os, const Body& body);
         private:
-            std::vector<Cell> m_cells; // all the cells in the body
+            std::string m_pathName;        // the pathname serves as a unique identifier for the body
+            std::string m_displayName;     // user-friendly name for the body
+            std::vector<Cell> m_cells;     // all the cells in the body
             std::vector<Cocell> m_cocells; // all the cocells in the body
             std::map<std::string, std::map<CellIndex, Attribute*>> m_cellAttributes; // attributes attached to cells
             e2::Graph m_graph; // graph representing the connectivity of cells via cocells

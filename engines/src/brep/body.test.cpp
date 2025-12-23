@@ -96,15 +96,19 @@ TEST_F(BodyTest, BodyDefaultConstructor) {
 }
 
 TEST_F(BodyTest, BodyCopyConstructor) {
+    std::string pathName = "/test/body";
+    std::string displayName = "Test Body";
     // circle with one interior point
     std::vector<Cell> cells = { 
         Cell(Cir3d(Vec3d(0, 0, 0), 2, Vec3d(0, 0, 1))), 
         Cell(Vec3d(2, 0, 0)) 
     };
     std::vector<Cocell> cocells = { Cocell(0, 1, 0) };
-    Body originalBody(cells, cocells);
+    Body originalBody(pathName, displayName, cells, cocells);
     Body copiedBody(originalBody);
 
+    EXPECT_EQ(copiedBody.pathName(), originalBody.pathName());
+    EXPECT_EQ(copiedBody.displayName(), originalBody.displayName());
     EXPECT_EQ(copiedBody.cells().size(), 2);
     EXPECT_EQ(copiedBody.cocells().size(), 1);
     EXPECT_EQ(copiedBody.cells()[0].support().position(), Vec3d(0,0,0));
@@ -115,14 +119,18 @@ TEST_F(BodyTest, BodyCopyConstructor) {
 }
 
 TEST_F(BodyTest, BodyParameterizedConstructor) {
+    std::string pathName = "/test/body";
+    std::string displayName = "Test Body";
     // circle with one interior point
     std::vector<Cell> cells = { 
         Cell(Cir3d(Vec3d(0, 0, 0), 2, Vec3d(0, 0, 1))), 
         Cell(Vec3d(2, 0, 0)) 
     };
     std::vector<Cocell> cocells = { Cocell(0, 1, 0) };
-    Body body(cells, cocells);
+    Body body(pathName, displayName, cells, cocells);
 
+    EXPECT_EQ(body.pathName(), pathName);
+    EXPECT_EQ(body.displayName(), displayName);
     EXPECT_EQ(body.cells().size(), 2);
     EXPECT_EQ(body.cocells().size(), 1);
     EXPECT_EQ(body.cells()[0].support().position(), Vec3d(0,0,0));
@@ -142,13 +150,16 @@ TEST_F(BodyTest, AddCell) {
 }
 
 TEST_F(BodyTest, AddCocell) {
+    
+    std::string pathName = "/test/body";
+    std::string displayName = "Test Body";
     // circle with one interior point
     std::vector<Cell> cells = { 
         Cell(Cir3d(Vec3d(0, 0, 0), 2, Vec3d(0, 0, 1))), 
         Cell(Vec3d(2, 0, 0)) 
     };
     std::vector<Cocell> cocells = { Cocell(0, 1, 0) };
-    Body body(cells);
+    Body body(pathName, displayName, cells);
     body.addCocell(cocells[0]);
 
     EXPECT_EQ(body.cocells().size(), 1);

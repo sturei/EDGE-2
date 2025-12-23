@@ -175,7 +175,7 @@ namespace e2 {
                     size_t featureIndex = features.addFeature(rectangleFeature);
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
-                    Body* rectangleBody = BRepFixtures::rectangle2DSheet(width, height);     // TODO: take 2D position/rotation into account. Ditto for other 2D primitives
+                    Body* rectangleBody = BRepFixtures::rectangle2DSheet(pathName, displayName, width, height);     // TODO: take 2D position/rotation into account. Ditto for other 2D primitives
 
                     // 3d position/rotation is inherited from workplane.
                     Feature* workplane = features.findFeature(workplanePathName);
@@ -202,7 +202,7 @@ namespace e2 {
                     size_t featureIndex = features.addFeature(circleFeature);
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
-                    Body* circleBody = BRepFixtures::circle2DSheet(radius);
+                    Body* circleBody = BRepFixtures::circle2DSheet(pathName, displayName, radius);
 
                     // 3d position/rotation is inherited from workplane.
                     Feature* workplane = features.findFeature(workplanePathName);
@@ -211,7 +211,7 @@ namespace e2 {
                     size_t profileIndex = profiles.addBody(circleBody, tfm3d); 
 
                     std::cerr << "added Circle2D Primitive" << std::endl;      // ---LOGGING---
-                });
+                }); 
             }
             else if (primitiveType == "roundRect") {
 
@@ -230,7 +230,7 @@ namespace e2 {
                     size_t featureIndex = features.addFeature(roundRectFeature);
 
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
-                    Body* roundRectBody = BRepFixtures::roundRect2DSheet(width, height, cornerRadius);
+                    Body* roundRectBody = BRepFixtures::roundRect2DSheet(pathName, displayName, width, height, cornerRadius);
 
                     // 3d position/rotation is inherited from workplane.
                     Feature* workplane = features.findFeature(workplanePathName);
@@ -267,6 +267,36 @@ namespace e2 {
                     posRot3D.first, posRot3D.second, profilePathName,     // normally the 3D position/rotation comes from the workplane of the profile, but it can be overridden
                     depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
+
+                BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
+                size_t profileIndex;
+                if (!profiles.findBodyIndex(profilePathName, profileIndex)) {
+                    std::cerr << "Warning: could not find profile body for extrusion feature at path "<< profilePathName << std::endl;
+                }
+                else {
+                    // add a copy of the profile body at the end(s) of the extrusion
+                    // (TODO: once Tfm3d is implemented)
+                    Body* profileBody = profiles.body(profileIndex);
+                    Tfm3d tfm3d = profiles.transform(profileIndex);
+                    double zOffset = doubleSided ? depth / 2.0 : depth;
+                    //if (doubleSided) {
+                    //    // add at -depth/2
+                    //    Tfm3d tfmStart = Tfm3d(tfm3d.position() - Vec3d(0,0,zOffset), tfm3d.angles());
+                    //    Body* startBody = new Body(*profileBody);   // TODO: set pathName and displayName?
+                    //    startBody->setPathName(profilePathName + "_start");
+                    //    startBody->setDisplayName(displayName + " Start");
+                    //    size_t startIndex = profiles.addBody(startBody, tfmStart);
+                   // }
+                    // add at +depth/2
+                    //Tfm3d tfmEnd = Tfm3d(tfm3d.position() + Vec3d(0,0,zOffset), tfm3d.angles());
+                    //Tfm3d tfmEnd = Tfm3d(tfm3d.position(), tfm3d.angles());
+
+                    //Body* endBody = new Body(*profileBody);   // copy constructor
+                    //endBody->setPathName(profilePathName + "_end");
+                    //endBody->setDisplayName(displayName + " End");
+                    //size_t endIndex = profiles.addBody(endBody, tfmEnd);
+                }       
+                    
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---
             });     
         }

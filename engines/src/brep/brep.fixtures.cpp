@@ -10,22 +10,28 @@ namespace e2 {
 
         /** A body with no cells */
         Body* emptyBody() {
-            Body* body = new Body;
+            std::string pathName = "/fixtures/emptyBody";
+            std::string displayName = "Empty Body";
+            Body* body = new Body(pathName, displayName, {});
             return body;
         }
 
         /** A 0-D body with a single point cell */      
         Body* acornBody(const Vec3d& position) {
-            Body* body = new Body({
+            std::string pathName = "/fixtures/acornBody";
+            std::string displayName = "Acorn Body";
+            Body* body = new Body(pathName, displayName, {
                 Cell(position)
-            });
+            });     
             return body;
         }
 
         /** A wireframe body with a single circle, z=0 plane */
         Body* wireCircle(const Vec3d& center, double radius) {
+            std::string pathName = "/fixtures/wireCircle";
+            std::string displayName = "Wireframe Circle";
             Cir3d circle(center, radius, Vec3d(0,0,1), Vec3d(1,0,0));
-            Body* body = new Body({
+            Body* body = new Body(pathName, displayName,    {
                 Cell(circle)
             });
             return body;
@@ -33,7 +39,11 @@ namespace e2 {
 
         /** A sheet body with a single disk, z=0 plane */
         Body* sheetCircle(const Vec3d& center, double radius) {
+            std::string pathName = "/fixtures/sheetCircle";
+            std::string displayName = "Sheet Circle";
             Body* body = wireCircle(center, radius);
+            body->setPathName(pathName);
+            body->setDisplayName(displayName);
 
             // Add a face cell for the interior
             Cell faceCell(Pla3d(Vec3d(0,0,0), Vec3d(0,0,1)));
@@ -85,13 +95,19 @@ namespace e2 {
                 Cocell(7, 0, +1)   // left edge bounded by lower-left vertex
             };
 
-            Body* body = new Body(cells, cocells);
+            std::string pathName = "/fixtures/wireRectangle";
+            std::string displayName = "Wireframe Rectangle";
+            Body* body = new Body(pathName, displayName, cells, cocells);
             return body;
         }
 
         /** A sheet body consisting of a 4-sided rectangular sheet, z=0 plane */
         Body* sheetRectangle(const Vec3d& lowerLeft, const Vec3d& upperRight) {
+            std::string pathName = "/fixtures/sheetRectangle";
+            std::string displayName = "Sheet Rectangle";
             Body* body = wireRectangle(lowerLeft, upperRight);
+            body->setPathName(pathName);
+            body->setDisplayName(displayName);
             // Add a face cell for the interior
             Cell faceCell(Pla3d(Vec3d(0,0,0), Vec3d(0,0,1))); // face on z=0 plane
             size_t faceCellIndex = body->addCell(faceCell);
@@ -107,6 +123,9 @@ namespace e2 {
 
         /** A wireframe body consisting of a 4-sided rectangular with rounded corners, z=0 plane, no interior */
         Body* wireRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
+
+            std::string pathName = "/fixtures/wireRoundRect";
+            std::string displayName = "Wireframe Rounded Rectangle";
 
             double r = cornerRadius; // corner radius
 
@@ -183,13 +202,17 @@ namespace e2 {
                 Cocell(15, 6, +1)
             };
 
-            Body* body = new Body(cells, cocells);
+            Body* body = new Body(pathName, displayName, cells, cocells);
             return body;
         }
 
         /** A sheet body consisting of a 4-sided rectangular sheet with rounded corners, z=0 plane */
         Body* sheetRoundRect(const Vec3d& lowerLeft, const Vec3d& upperRight, double cornerRadius) {
+            std::string pathName = "/fixtures/sheetRoundRect";
+            std::string displayName = "Sheet Rounded Rectangle";
             Body* body = wireRoundRect(lowerLeft, upperRight, cornerRadius);
+            body->setPathName(pathName);
+            body->setDisplayName(displayName);
             // Add a face cell for the interior
             Cell faceCell(Pla3d(Vec3d(0,0,0), Vec3d(0,0,1))); // face on z=0 plane
             size_t faceCellIndex = body->addCell(faceCell);
@@ -208,25 +231,31 @@ namespace e2 {
         }
 
         /** Canonical disk */
-        Body* circle2DSheet(double radius) {
+        Body* circle2DSheet(const std::string& pathName, const std::string& displayName, double radius) {
             Vec3d center(0,0,0);
             Body* body = sheetCircle(center, radius);
+            body->setPathName(pathName);
+            body->setDisplayName(displayName);
             return body;
         }
 
         /** Canonical filled rectangle */
-        Body* rectangle2DSheet(double width, double height) {
+        Body* rectangle2DSheet(const std::string& pathName, const std::string& displayName, double width, double height) {
             Vec3d lowerLeft(-width/2, -height/2, 0);
             Vec3d upperRight(width/2, height/2, 0);
             Body* body = sheetRectangle(lowerLeft, upperRight);
+            body->setPathName(pathName);
+            body->setDisplayName(displayName);
             return body;
         }
 
         /** Canonical filled roundRect */
-        Body* roundRect2DSheet(double width, double height, double cornerRadius) {
+        Body* roundRect2DSheet(const std::string& pathName, const std::string& displayName, double width, double height, double cornerRadius) {
             Vec3d lowerLeft(-width/2, -height/2, 0);
             Vec3d upperRight(width/2, height/2, 0);
             Body* body = sheetRoundRect(lowerLeft, upperRight, cornerRadius);
+            body->setPathName(pathName);
+            body->setDisplayName(displayName);
             return body;
         }
     };

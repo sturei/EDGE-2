@@ -18,6 +18,8 @@ namespace e2 {
         const Tfm3d& transform(size_t index) const { return m_transforms[index]; }
         void removeBody(size_t index);
         void clearBodies();
+        bool findBodyIndex(const std::string& pathName, size_t& index) const;
+
         void print(std::ostream& os) const override;
     private:
         std::vector<Body*> m_bodies; 

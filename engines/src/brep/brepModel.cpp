@@ -44,7 +44,17 @@ namespace e2 {
         m_bodies.clear();
         m_transforms.clear();
     }
-    
+
+    bool BRepModel::findBodyIndex(const std::string& pathName, size_t& index) const {
+        for (size_t i = 0; i < m_bodies.size(); ++i) {
+            if (m_bodies[i]->pathName() == pathName) {
+                index = i;
+                return true;
+            }
+        }
+        return false;
+    }
+
     void BRepModel::print(std::ostream& os) const {
         os << "BRepModel with " << m_bodies.size() << " bodies." << std::endl;
         for (size_t i = 0; i < m_bodies.size(); ++i) {

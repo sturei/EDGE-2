@@ -58,7 +58,7 @@ namespace e2 {
             friend std::ostream& operator<<(std::ostream& os, const Feature& feature);
             virtual void print(std::ostream& os) const = 0;
         private:
-            std::string m_pathname;                     // the pathname serves as a unique identifier
+            std::string m_pathname;                     // the pathname serves as a unique identifier for the feature
             std::string m_displayName;                  // user-friendly name for the feature
             FeatureEffect m_featureEffect;              // whether this feature adds, subtracts, or modifies geometry
             Vec3d m_position;
