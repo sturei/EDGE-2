@@ -97,12 +97,12 @@ namespace e2 {
         m_cellAttributes[attributeType][cellIndex] = attribute;
         
     }
-    bool Body::findCellAttribute(CellIndex cellIndex, std::string attributeType, Attribute& outAttribute) const {
+    bool Body::findCellAttribute(CellIndex cellIndex, std::string attributeType, const Attribute*& outAttribute) const {
         auto it = m_cellAttributes.find(attributeType);
         if (it != m_cellAttributes.end()) {
             auto attrIt = it->second.find(cellIndex);
             if (attrIt != it->second.end()) {
-                outAttribute = *attrIt->second;
+                outAttribute = attrIt->second;
                 return true;
             }
         }

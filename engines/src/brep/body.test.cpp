@@ -95,6 +95,25 @@ TEST_F(BodyTest, BodyDefaultConstructor) {
     EXPECT_EQ(body.graphNeedsUpdate(), false);
 }
 
+TEST_F(BodyTest, BodyCopyConstructor) {
+    // circle with one interior point
+    std::vector<Cell> cells = { 
+        Cell(Cir3d(Vec3d(0, 0, 0), 2, Vec3d(0, 0, 1))), 
+        Cell(Vec3d(2, 0, 0)) 
+    };
+    std::vector<Cocell> cocells = { Cocell(0, 1, 0) };
+    Body originalBody(cells, cocells);
+    Body copiedBody(originalBody);
+
+    EXPECT_EQ(copiedBody.cells().size(), 2);
+    EXPECT_EQ(copiedBody.cocells().size(), 1);
+    EXPECT_EQ(copiedBody.cells()[0].support().position(), Vec3d(0,0,0));
+    EXPECT_EQ(copiedBody.cells()[1].support().position(), Vec3d(2,0,0));
+    EXPECT_EQ(copiedBody.cocells()[0].starCell(), 0);
+    EXPECT_EQ(copiedBody.cocells()[0].boundaryCell(), 1);
+    EXPECT_EQ(copiedBody.graphNeedsUpdate(), false);
+}
+
 TEST_F(BodyTest, BodyParameterizedConstructor) {
     // circle with one interior point
     std::vector<Cell> cells = { 

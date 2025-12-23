@@ -15,7 +15,10 @@ namespace e2 {
 
     class Cell {
         public:
-            Cell() {}
+            Cell() = default;
+            Cell(const Cell&) = default;
+            Cell& operator=(const Cell&) = default;
+            ~Cell() = default;  
             Cell(const Geom3d& support, bool active = true) : m_support(support), m_active(active) {}
             bool isActive() const { return m_active; }
             const Geom3d& support() const { return m_support; }
@@ -27,7 +30,10 @@ namespace e2 {
 
     class Cocell {
         public:
-            Cocell() {}
+            Cocell() = default;
+            Cocell(const Cocell&) = default;
+            Cocell& operator=(const Cocell&) = default;
+            ~Cocell() = default;
             Cocell(CellIndex starCell, CellIndex boundaryCell, CocellSense sense ) : m_starCell(starCell), m_boundaryCell(boundaryCell), m_sense(sense) {}
             CocellSense sense() const { return m_sense; }
             CellIndex starCell() const { return m_starCell; }
@@ -40,15 +46,51 @@ namespace e2 {
     };
 
     class Attribute {
-        public:
-            virtual ~Attribute() {};
+        public:;
+            Attribute() = default;
+            Attribute(const Attribute&) = delete;
+            Attribute& operator=(const Attribute&) = delete;
+            virtual ~Attribute() = default;
+            virtual Attribute* clone() const = 0;   
             virtual void print(std::ostream& os) const = 0;
             friend std::ostream& operator<<(std::ostream& os, const Attribute& a);
-        };
+    };
 
     class Body {
         public:
-            Body() : m_graphNeedsUpdate(false) {
+            Body() {
+                m_graphNeedsUpdate = false;     // graph is empty but up to date
+            }
+            Body(const Body& other) {
+                // deep copy the cells and cocells
+                m_cells = other.m_cells;
+                m_cocells = other.m_cocells;
+
+                // deep copy the attributes
+                for (auto& pair : other.m_cellAttributes) {
+                    for (auto& attrPair : pair.second) {
+                        m_cellAttributes[pair.first][attrPair.first] = attrPair.second->clone();
+                    }
+                
+                }
+
+                // rebuild the graph. TODO: could clone the graph if the graph supported clone()
+                updateGraph();
+            }
+            Body& operator=(const Body& other) {
+                if (this != &other) {
+                    // destroy the attributes
+                    for (auto& pair : m_cellAttributes) {
+                        for (auto& attrPair : pair.second) {
+                            delete attrPair.second;
+                        }
+                    }
+                    // copy the contents
+                    *this = other;
+                }
+                return *this;
+            }
+            ~Body() {
                 // destroy the attributes.
                 for (auto& pair : m_cellAttributes) {
                     for (auto& attrPair : pair.second) {
@@ -74,7 +116,7 @@ namespace e2 {
             void updateGraph();
 
             void attachCellAttribute(CellIndex cellIndex, std::string attributeType, Attribute* attribute);   // body takes ownership of attribute pointer
-            bool findCellAttribute(CellIndex cellIndex, std::string attributeType, Attribute& outAttribute) const;
+            bool findCellAttribute(CellIndex cellIndex, std::string attributeType, const Attribute*& outAttribute) const;
 
             friend std::ostream& operator<<(std::ostream& os, const Body& body);
         private:
