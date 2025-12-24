@@ -275,26 +275,24 @@ namespace e2 {
                 }
                 else {
                     // add a copy of the profile body at the end(s) of the extrusion
-                    // (TODO: once Tfm3d is implemented)
                     Body* profileBody = profiles.body(profileIndex);
                     Tfm3d tfm3d = profiles.transform(profileIndex);
                     double zOffset = doubleSided ? depth / 2.0 : depth;
-                    //if (doubleSided) {
-                    //    // add at -depth/2
-                    //    Tfm3d tfmStart = Tfm3d(tfm3d.position() - Vec3d(0,0,zOffset), tfm3d.angles());
-                    //    Body* startBody = new Body(*profileBody);   // TODO: set pathName and displayName?
-                    //    startBody->setPathName(profilePathName + "_start");
-                    //    startBody->setDisplayName(displayName + " Start");
-                    //    size_t startIndex = profiles.addBody(startBody, tfmStart);
-                   // }
-                    // add at +depth/2
-                    //Tfm3d tfmEnd = Tfm3d(tfm3d.position() + Vec3d(0,0,zOffset), tfm3d.angles());
-                    //Tfm3d tfmEnd = Tfm3d(tfm3d.position(), tfm3d.angles());
-
-                    //Body* endBody = new Body(*profileBody);   // copy constructor
-                    //endBody->setPathName(profilePathName + "_end");
-                    //endBody->setDisplayName(displayName + " End");
-                    //size_t endIndex = profiles.addBody(endBody, tfmEnd);
+                    bool isConstruction = true;         // the auto-generated profiles are created as construction geometry
+                    if (doubleSided) {
+                        // add at -depth/2
+                        Body* startBody = new Body(*profileBody);
+                        startBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(isConstruction, -zOffset)); 
+                        startBody->setPathName(profilePathName + "_start");
+                        startBody->setDisplayName(displayName + " Start");
+                        size_t startIndex = profiles.addBody(startBody, tfm3d);
+                    }
+                    
+                    Body* endBody = new Body(*profileBody);
+                    endBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(isConstruction, zOffset));
+                    endBody->setPathName(profilePathName + "_end");
+                    endBody->setDisplayName(displayName + " End");
+                    size_t endIndex = profiles.addBody(endBody, tfm3d);
                 }       
                     
                 std::cerr << "added Extrusion Feature" << std::endl;      // ---LOGGING---

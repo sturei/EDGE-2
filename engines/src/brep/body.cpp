@@ -109,6 +109,18 @@ namespace e2 {
         return false;
     }
 
+    void Body::attachBodyAttribute(std::string attributeType, Attribute* attribute){
+        m_bodyAttributes[attributeType] = attribute;
+    }
+    bool Body::findBodyAttribute(std::string attributeType, const Attribute*& outAttribute) const {
+        auto it = m_bodyAttributes.find(attributeType);
+        if (it != m_bodyAttributes.end()) {
+            outAttribute = it->second;
+            return true;
+        }
+        return false;
+    }
+
     void Body::updateGraph() {
         if (m_graphNeedsUpdate) {
             // For now, just rebuild the graph from scratch. Incremental update can come later.

@@ -168,7 +168,7 @@ export function jsxFromDrawable(drawable: IDrawable) {
         console.log(`Creating polyline with ${geometry.positions.length} positions`);
         return (
             <Polyline args={[geometry.positions]} position={position} rotation={rotation}>
-                <LineAppearance color={appearance?.color??Color.get("Blue")} />
+                <LineAppearance color={appearance?.color??Color.get("blue")} />
             </Polyline>
         );
     }        
@@ -198,9 +198,19 @@ export function jsxFromDrawable(drawable: IDrawable) {
         for (let p = 0; p < geometry.paths.length; p++) {
             console.log(`  Path ${p} with ${geometry.paths[p].length} points`);   // --- DEBUG ---
         }
+        console.log(`  zOffset: ${geometry.zOffset}`);   // --- DEBUG ---
+        // Offset the contour along its local Z axis by the specified amount
+        const offset = new THREE.Vector3(0, 0, geometry.zOffset);
+        const euler = new THREE.Euler(rotation[0], rotation[1], rotation[2], 'XYZ');
+        offset.applyEuler(euler);
+        const offsetPosition:[number, number, number] = [...position];
+        offsetPosition[0] += offset.x;
+        offsetPosition[1] += offset.y;
+        offsetPosition[2] += offset.z;
+        THREE.Vector3
         return(
-            <Contour args={[geometry.paths]} position={position} rotation={rotation}>
-                <LineAppearance color={appearance?.color??Color.get("Blue")} />
+            <Contour args={[geometry.paths]} position={offsetPosition} rotation={rotation}>
+                <LineAppearance color={appearance?.color??Color.get("blue")} />
             </Contour>
         )
     }

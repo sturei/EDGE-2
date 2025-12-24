@@ -127,6 +127,7 @@ export interface IProfileGeometry extends IBaseGeometry {
 export interface IContourGeometry extends IBaseGeometry {
     type: 'contour';
     paths: Array<Array<[number, number]>>;
+    zOffset: number;
 }
 
 export type IGeometry = ISphereGeometry | IBlockGeometry | ICylinderGeometry | IPlaneGeometry | ILineGeometry | IPolylineGeometry | IPointGeometry | IProfileGeometry | IContourGeometry;

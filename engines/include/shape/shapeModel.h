@@ -3,6 +3,32 @@
 #include "features/featureModel.h"
 
 namespace e2 {
+
+    class ProfileAttribute : public Attribute {
+    public:
+        ProfileAttribute() = default;
+        ProfileAttribute(const ProfileAttribute& other) {
+            m_isConstruction = other.m_isConstruction;
+            m_zOffset = other.m_zOffset;
+        };
+        void operator=(const ProfileAttribute&) = delete;
+        virtual ~ProfileAttribute() = default;
+        ProfileAttribute( bool isConstruction, double zOffset ) : m_isConstruction(isConstruction), m_zOffset(zOffset) {}  
+        double zOffset() const { return m_zOffset; }
+        void setZOffset(double zOffset) { m_zOffset = zOffset; }
+        bool isConstruction() const { return m_isConstruction; }
+        void setIsConstruction(bool isConstruction) { m_isConstruction = isConstruction; }
+        Attribute* clone() const override {
+            return new ProfileAttribute(*this);
+        }
+        void print(std::ostream& os) const override {
+            os << "ProfileAttribute(isConstruction=" << (m_isConstruction ? "true" : "false") << ", zOffset=" << m_zOffset << ")";
+        }
+    private:
+        bool m_isConstruction = false;
+        double m_zOffset = 0.0;
+    };
+
     class ShapeModel : public Model {
     public:
         ShapeModel(BRepModel* sketches, BRepModel* profiles, FeatureModel* features) 

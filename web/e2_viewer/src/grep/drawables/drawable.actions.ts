@@ -244,6 +244,7 @@ async function addContour(doc: Document, payload: any): Promise<void> {
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
         const rotation = payload.rotation ?? [0, 0, 0];
+        const zOffset = payload.zOffset ?? 0.0;
         const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
         const color = Color.get(payload.color ?? "green");
         let grepModel = model as GRepModel;
@@ -252,7 +253,8 @@ async function addContour(doc: Document, payload: any): Promise<void> {
                 type: 'contour',
                 paths: paths,
                 position: position,
-                rotation: rotation
+                rotation: rotation,
+                zOffset: zOffset
             },
             appearance: {
                 type: 'mesh',

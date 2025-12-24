@@ -1,4 +1,10 @@
 {"type":"Features::clearFeatures", "payload":{}}
 {"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane1"}}
+{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane1/circle1", "primitiveType":"circle", "radius":0.5}}
 {"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane1/roundRect1", "primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2 }}
 {"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/extrusion1", "profilePathName":"shape/workplanes/workplane1/roundRect1","depth":1 }}
+{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole1",  "profilePathName":"shape/workplanes/workplane1/circle1","featureEffect":"subtract", "depth":1 }}
+{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane2", "position":[1.5,0,0.5], "rotation":[0,-1.57079632679,0]}}
+{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane2/circle1","primitiveType":"circle", "radius":0.1 }}
+{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole2", "profilePathName":"shape/workplanes/workplane2/circle1", "featureEffect":"subtract", "depth":3 }}
+

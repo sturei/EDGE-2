@@ -71,6 +71,9 @@ namespace e2 {
                 m_cocells = other.m_cocells;
 
                 // deep copy the attributes
+                for (auto& pair : other.m_bodyAttributes) {
+                    m_bodyAttributes[pair.first] = pair.second->clone();
+                }
                 for (auto& pair : other.m_cellAttributes) {
                     for (auto& attrPair : pair.second) {
                         m_cellAttributes[pair.first][attrPair.first] = attrPair.second->clone();
@@ -84,11 +87,16 @@ namespace e2 {
             Body& operator=(const Body& other) {
                 if (this != &other) {
                     // destroy the attributes
+                    for (auto& pair : m_bodyAttributes) {
+                        delete pair.second;
+                    }
+                    m_bodyAttributes.clear();
                     for (auto& pair : m_cellAttributes) {
                         for (auto& attrPair : pair.second) {
                             delete attrPair.second;
                         }
                     }
+                    m_cellAttributes.clear();
                     // copy the contents
                     *this = other;
                 }
@@ -96,6 +104,9 @@ namespace e2 {
             }
             ~Body() {
                 // destroy the attributes.
+                for (auto& pair : m_bodyAttributes) {
+                    delete pair.second;
+                }
                 for (auto& pair : m_cellAttributes) {
                     for (auto& attrPair : pair.second) {
                         delete attrPair.second;
@@ -127,6 +138,9 @@ namespace e2 {
             void attachCellAttribute(CellIndex cellIndex, std::string attributeType, Attribute* attribute);   // body takes ownership of attribute pointer
             bool findCellAttribute(CellIndex cellIndex, std::string attributeType, const Attribute*& outAttribute) const;
 
+            void attachBodyAttribute(std::string attributeType, Attribute* attribute);   // body takes ownership of attribute pointer
+            bool findBodyAttribute(std::string attributeType, const Attribute*& outAttribute) const;
+
             friend std::ostream& operator<<(std::ostream& os, const Body& body);
         private:
             std::string m_pathName;        // the pathname serves as a unique identifier for the body
@@ -134,6 +148,7 @@ namespace e2 {
             std::vector<Cell> m_cells;     // all the cells in the body
             std::vector<Cocell> m_cocells; // all the cocells in the body
             std::map<std::string, std::map<CellIndex, Attribute*>> m_cellAttributes; // attributes attached to cells
+            std::map<std::string, Attribute*> m_bodyAttributes; // attributes attached to the body
             e2::Graph m_graph; // graph representing the connectivity of cells via cocells
             bool m_graphNeedsUpdate = true; // whether the graph needs to be rebuilt from the cells and cocells
     };

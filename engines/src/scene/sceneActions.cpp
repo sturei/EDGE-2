@@ -157,13 +157,24 @@ namespace e2 {
                 delete tessellatedPointsPtr;
             }
 
+            double zOffset = 0.0;
+            const Attribute* attr = nullptr;
+            const ProfileAttribute* profileAttr = nullptr;
+            std::string color = "green";
+            if (profileBody.findBodyAttribute("profileAttribute", attr) && (profileAttr = dynamic_cast<const ProfileAttribute*>(attr))) {
+                zOffset = profileAttr->zOffset();
+                color = profileAttr->isConstruction() ? "gray" : "green";
+            }
             const Tfm3d& tfm3d = profiles.transform(profileIndex);
             const Vec3d& p = tfm3d.position();
             const Vec3d& r = tfm3d.angles();
+
             json payload = json::object({
                 {"paths", paths},
                 {"position", json::array({p.x(), p.y(), p.z()})},
-                {"rotation", json::array({r.x(), r.y(), r.z()})}
+                {"rotation", json::array({r.x(), r.y(), r.z()})},
+                {"zOffset", zOffset},
+                {"color", color}
             });
 
             doc.dispatchClientAction({"Gfx::addContour", payload});
