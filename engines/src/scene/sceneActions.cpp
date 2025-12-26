@@ -20,6 +20,10 @@ namespace e2 {
 
     // Ensure that the client has the necessary parent items in the product tree
     static void ensureProductParentsExist(Document& doc) {
+
+        // The root item is "shape"
+        // Under "shape" are "workplanes" (for 2D features) and "features" (for 3D features)
+
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
             {"pathName", "shape/workplanes"},
             {"displayName", "workplanes"}
@@ -28,17 +32,17 @@ namespace e2 {
             {"pathName", "shape/features"},
             {"displayName", "features"}
         })});
+
     }
 
     // Ensure that the client has the necessary parent SDF nodes
     static void ensureSdfNodeParentsExist(Document& doc) {
 
-        // Ensure parent items exists in the client
+        // The root node is "objects"
+        // Under "objects" are "blanks" (for additive features) and "tools/tools" (for subtractive features)
     
         const Store& store = doc.storeAt("shape");
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(store.model())->features();
-
-        std::cerr << "Ensuring sdf node parents exist for features: " << features << std::endl;      // ---DEBUG---
 
         int numBlanks = 0;
         int numTools = 0;
@@ -95,17 +99,21 @@ namespace e2 {
     static void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
 
         //
-        // Features are listed in the viewer's product tree under "shape/features" or "shape/profiles" for 3D and 2D features respectively.
+        // Features are listed in the product tree under "shape/features" or "shape/workplanes" for 3D and 2D features respectively.
         // 
+
+        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
+
+        std::cerr << "---" << std::endl;
+        std::cerr << "Dispatching Product Actions (Items) for Features: " << features << std::endl;      // ---DEBUG---   
 
         // For now, clear the product items and rebuild from scratch (could be optimized later)
         doc.dispatchClientAction({"Gfx::clearProductItems", json::object({})});  
 
-        // Ensure parent items, especially "shape/features" and "shape/profiles" exist
+        // Ensure parent items exist
         ensureProductParentsExist(doc);
         
         // Add an item for each feature
-        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         for (size_t featureIndex = 0; featureIndex < features.numFeatures(); ++featureIndex) {  
             const Feature& feature = features.feature(featureIndex);
             std::string featurePathName = feature.pathname();
@@ -134,6 +142,10 @@ namespace e2 {
         doc.dispatchClientAction({"Gfx::clearDrawables", json::object({})});  
 
         const BRepModel& profiles = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->profiles();
+
+        std::cerr << "---" << std::endl;
+        std::cerr << "Dispatching Graphics Actions (drawables) for Profiles: " << profiles << std::endl;      // ---DEBUG---   
+
         for (size_t profileIndex = 0; profileIndex < profiles.numBodies(); ++profileIndex) {
             const Body& profileBody = *profiles.body(profileIndex);
 
@@ -313,7 +325,7 @@ namespace e2 {
         }        
     }
 
-    // Finds any modify feature that target the given feature
+    // Finds any modify features that target the given feature
     static std::vector<const Feature*> findModifyingFeatures(const FeatureModel& features, const Feature* targetFeature) {
         std::vector<const Feature*> modifyingFeatures;
         for (const Feature* feature : features.features()) {
@@ -424,6 +436,11 @@ namespace e2 {
         //    - features can be suppressed or filtered out without breaking other features
         //    - features can be added by several users simultaneously without conflict
 
+        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
+
+        std::cerr << "---" << std::endl;
+        std::cerr << "Dispatching Graphics Actions (sdf nodes) for Features: " << features << std::endl;      // ---DEBUG---   
+
         // For now, clear the scene and rebuild it from scratch (could be optimized later)
         doc.dispatchClientAction({"Gfx::clearSdfScene", json::object({})});
 
@@ -431,7 +448,6 @@ namespace e2 {
         ensureSdfNodeParentsExist(doc);
         
         // Build the SDF nodes for each feature and add to the scene
-        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         for (size_t featureIndex = 0; featureIndex < features.numFeatures(); ++featureIndex) {  
             const Feature& feature = features.feature(featureIndex);
             std::string objectPathName = "objects/";

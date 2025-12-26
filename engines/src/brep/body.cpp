@@ -138,12 +138,16 @@ namespace e2 {
 
     std::ostream& operator<<(std::ostream& os, const Body& body) {
         os << "Body with " << body.m_cells.size() << " cells and " << body.m_cocells.size() << " cocells." << std::endl;
-        for (CellIndex i = 0; i < body.m_cells.size(); ++i) {
-            os << "  Cell " << i << ": " << body.m_cells[i] << std::endl;
+        for (auto& pair : body.m_bodyAttributes) {
+            pair.second->print(os);
         }
-        for (CocellIndex i = 0; i < body.m_cocells.size(); ++i) {
-            os << "  Cocell " << i << ": " << body.m_cocells[i] << std::endl;
-        }
+        //
+        ///for (CellIndex i = 0; i < body.m_cells.size(); ++i) {
+        //    os << "  Cell " << i << ": " << body.m_cells[i] << std::endl;
+        //}
+        //for (CocellIndex i = 0; i < body.m_cocells.size(); ++i) {
+        //    os << "  Cocell " << i << ": " << body.m_cocells[i] << std::endl;
+        //}
         return os;
     }
 

@@ -258,6 +258,15 @@ namespace e2 {
             body->setDisplayName(displayName);
             return body;
         }
+
+        /** A simple workplane indicator: a rectangle*/
+        Body* workplaneIndicator(const std::string& pathName, const std::string& displayName) {
+            Body* body = sheetRectangle(Vec3d(-1,-1,0), Vec3d(1,1,0));
+            body->setPathName(pathName);
+            body->setDisplayName(displayName);
+            // TODO: add some attributes to indicate this is a workplane indicator
+            return body;
+        }
     };
 };
 

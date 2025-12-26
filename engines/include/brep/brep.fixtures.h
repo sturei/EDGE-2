@@ -13,6 +13,7 @@ namespace e2 {
         Body* circle2DSheet(const std::string& pathName = "fixtures/circle2DSheet", const std::string& displayName = "Circle 2D Sheet", double radius = 1.0);
         Body* rectangle2DSheet(const std::string& pathName = "fixtures/rectangle2DSheet", const std::string& displayName = "Rectangle 2D Sheet", double width = 3.0, double height = 2.0);
         Body* roundRect2DSheet(const std::string& pathName = "fixtures/roundRect2DSheet", const std::string& displayName = "Round Rect 2D Sheet", double width = 3.0, double height = 2.0, double cornerRadius = 0.2);
+        Body* workplaneIndicator(const std::string& pathName = "fixtures/workplaneIndicator", const std::string& displayName = "Workplane Indicator");
 
     };
 };

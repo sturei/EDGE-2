@@ -58,7 +58,7 @@ namespace e2 {
     void BRepModel::print(std::ostream& os) const {
         os << "BRepModel with " << m_bodies.size() << " bodies." << std::endl;
         for (size_t i = 0; i < m_bodies.size(); ++i) {
-            os << "  Body " << i << ": " << *m_bodies[i] << ", Transform: " << m_transforms[i] << std::endl;
+            os << "  Body " << i << ": " << *m_bodies[i] << ", Transform " << i  << ":" << m_transforms[i] << std::endl;
         }
     }
 };

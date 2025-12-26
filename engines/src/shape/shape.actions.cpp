@@ -137,6 +137,12 @@ namespace e2 {
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                 Feature* workplaneFeature = new Workplane(pathName, displayName, posRot3D.first, posRot3D.second);
                 size_t index = features.addFeature(workplaneFeature);
+
+                // add a fake profile so we can see it in the scene (TODO: improve this later)
+                //BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
+                //Body* workplaneBody = BRepFixtures::workplaneIndicator(pathName, displayName);
+                //size_t profileIndex = profiles.addBody(workplaneBody, Tfm3d(posRot3D.first, posRot3D.second));  
+
                 std::cerr << "added Workplane Feature" << std::endl;      // ---LOGGING---
             });
         }
