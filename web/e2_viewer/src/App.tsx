@@ -36,10 +36,10 @@ function App() {
         <div><Actions /></div>
       </div>
       <div className="flex flex-row">
-        <div className="left-sidebar w-15rem flex-none bg-blue-100">
+        <div className="left-sidebar w-1/4 h-140 flex-none bg-blue-100">
           <div className="flex flex-col justify-between h-full">
-            <div>
-              <Structure />
+            <div className="text-nowrap overflow-auto">
+              <Structure/>
             </div>
             <div>
               <Acknowledgements />
@@ -63,7 +63,7 @@ function App() {
             <Stats />
           </Canvas>
         </div>
-        <div className="right-sidebar w-10remflex-none bg-blue-100">
+        <div className="right-sidebar w-1/6 h-140 flex-none bg-blue-100">
           <ToolbarPlaceholder />
         </div> 
       </div>      

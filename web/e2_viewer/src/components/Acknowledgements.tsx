@@ -13,13 +13,13 @@ export function Acknowledgements() {
 
     return (
       <>
-        <div className="container m-auto grid grid-cols-1">
+        <div className="container m-auto grid grid-cols-1 border-t border-gray-600">
           <div>
-            <p className="text-gray-500 text-center">
+            <p className="text-gray-500 text-left text-xs font-medium">
               Acknowledgements:
             </p>
           </div>
-          <div className="container grid grid-cols-2 px-8">
+          <div className="container grid grid-cols-5 px-8">
             <a className="join-item" href="https://vite.dev" target="_blank">
               <div className="tooltip" data-tip="Vite">
                 <img src={viteLogo} className="logo" alt="Vite logo" />

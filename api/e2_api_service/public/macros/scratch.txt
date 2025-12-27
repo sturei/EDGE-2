@@ -1,10 +1,34 @@
-{"type":"Features::clearFeatures", "payload":{}}
-{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane1"}}
-{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane1/circle1", "primitiveType":"circle", "radius":0.5}}
-{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane1/roundRect1", "primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2 }}
-{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/extrusion1", "profilePathName":"shape/workplanes/workplane1/roundRect1","depth":1 }}
-{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole1",  "profilePathName":"shape/workplanes/workplane1/circle1","featureEffect":"subtract", "depth":1 }}
-{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane2", "position":[1.5,0,0.5], "rotation":[0,-1.57079632679,0]}}
-{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane2/circle1","primitiveType":"circle", "radius":0.1 }}
-{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole2", "profilePathName":"shape/workplanes/workplane2/circle1", "featureEffect":"subtract", "depth":3 }}
+{"type":"Gfx::clearProductItems", "payload":{}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item0", "pathName":"shape/item0"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item1", "pathName":"shape/item1"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item2", "pathName":"shape/item1/item2"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item3", "pathName":"shape/item1/item2/item3"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item4", "pathName":"shape/item4"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item5", "pathName":"shape/item5"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item6", "pathName":"shape/item6"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item7", "pathName":"shape/item7"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item8", "pathName":"shape/item8"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item9", "pathName":"shape/item9"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item10", "pathName":"shape/item10"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item11", "pathName":"shape/item11"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item12", "pathName":"shape/item12"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item13 is a long item, maybe too long to fit in the panel, despite the panel being rather wide", "pathName":"shape/item13"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item14", "pathName":"shape/item14"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item15", "pathName":"shape/item15"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item16", "pathName":"shape/item16"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item17", "pathName":"shape/item17"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item18", "pathName":"shape/item18"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item19", "pathName":"shape/item19"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item20", "pathName":"shape/item20"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item21", "pathName":"shape/item21"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item22", "pathName":"shape/item22"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item23", "pathName":"shape/item23"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item24", "pathName":"shape/item24"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item25", "pathName":"shape/item25"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item26", "pathName":"shape/item26"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item27", "pathName":"shape/item27"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item28", "pathName":"shape/item28"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item29", "pathName":"shape/item29"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item30", "pathName":"shape/item30"}}
+{"type":"Gfx::addProductItem", "payload":{"displayName":"item31", "pathName":"shape/item31"}}
 
