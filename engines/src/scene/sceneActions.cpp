@@ -149,34 +149,45 @@ namespace e2 {
         for (size_t profileIndex = 0; profileIndex < profiles.numBodies(); ++profileIndex) {
             const Body& profileBody = *profiles.body(profileIndex);
 
-            // The payload is a collection of "paths", representing the outline of the profile body. 
-            // Paths are correctly oriented, but need not be contiguous.
+            const Attribute* attr = nullptr;
+            double zOffset = 0.0;
+            std::string color = "green";
 
-            CellIndex faceIndex = getKSkeleton(2, profileBody)[0];
-            auto edges = getKBoundary(1, faceIndex, profileBody);
+
+            if (profileBody.findBodyAttribute("workplaneAttribute", attr)) {
+                const WorkplaneAttribute* workplaneAttr = dynamic_cast<const WorkplaneAttribute*>(attr);
+                if (!workplaneAttr) {
+                    std::cerr << "ERROR - attribute of wrong type attached as workplane attribute" << std::endl;
+                    continue;
+                }
+                zOffset = workplaneAttr->zOffset();
+                color = "blue";
+            }
+            else if (profileBody.findBodyAttribute("profileAttribute", attr)) {
+                const ProfileAttribute* profileAttr = dynamic_cast<const ProfileAttribute*>(attr);
+                if (!profileAttr) {
+                    std::cerr << "ERROR - attribute of wrong type attached as profile attribute" << std::endl;
+                    continue;
+                }
+                zOffset = profileAttr->zOffset();
+                color = profileAttr->isConstruction() ? "gray" : "green";
+            }   
+
+            // For workplane and regular profile, the payload is a collection of "paths", representing the outline of the profile body. 
+            // ATM profiles are drawn as contours (just the outline), so the orientation doesn't matter.
+
+            auto edges = getKSkeleton(1, profileBody);
             std::vector<json> paths;
-            for (const auto& edgePair : edges) {
-                CellIndex edgeIndex = edgePair.first;
+            for (const auto& edgeIndex : edges) {
                 auto tessellatedPointsPtr = tessellateEdge(edgeIndex, profileBody);
                 std::vector<json> path;
                 for (const auto& point : *tessellatedPointsPtr) {
                     path.push_back(json::array({point.x(), point.y()}));
                 }
-                if (edgePair.second == -1) {
-                    std::reverse(path.begin(), path.end());
-                }
                 paths.push_back(path);
                 delete tessellatedPointsPtr;
             }
 
-            double zOffset = 0.0;
-            const Attribute* attr = nullptr;
-            const ProfileAttribute* profileAttr = nullptr;
-            std::string color = "green";
-            if (profileBody.findBodyAttribute("profileAttribute", attr) && (profileAttr = dynamic_cast<const ProfileAttribute*>(attr))) {
-                zOffset = profileAttr->zOffset();
-                color = profileAttr->isConstruction() ? "gray" : "green";
-            }
             const Tfm3d& tfm3d = profiles.transform(profileIndex);
             const Vec3d& p = tfm3d.position();
             const Vec3d& r = tfm3d.angles();

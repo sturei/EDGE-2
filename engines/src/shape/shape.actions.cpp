@@ -9,7 +9,16 @@
 using json = nlohmann::json;
 
 /**
- * ShapeActions provides a set of actions that enable clients to create and manipulate shapes.
+ * Shapes are made up of features.
+ * 2D features have a dual representation - as a feature, and as a (2D) Brep. 
+ * 3D features are represented eventually in the viewer as SDF Nodes.
+ * 2D features are represented eventually in the viewer as Drawables (and sometimes also as an SDF Node within a 3D feature such as an extrusion, that depends on a 2D feature).
+ * Both 2D and 3D features are also represented, eventually, as items in the product tree in the viewer.
+ * See sceneActions.cpp for details of how the feature model and brep model are converted to viewer representations.
+ * 3D features can be additive, subtractive or modifiers. Additive and subtractive features do not depend on other 3D features. 
+ * They can be added in any order; and activated/deactivated independently. Also, many changes to the shape model can be made by modifying 2D features, and allowing the 3D features to 
+ * update automatically. The intention is that the global properties of the shape can be driven by a "layout", expressed in terms of sketches, workplanes and dimensions between them.
+ * Modifier features depend on other 3D features. Thus they must specify which feature they modify; and if that feature is deactivated, the modifier is also deactivated.
  */
 
 namespace e2 {
@@ -84,8 +93,8 @@ namespace e2 {
                 double height = payload.value("height", 2.0);
                 double depth = payload.value("depth", 2.0);
 
-                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, width, height, depth, &doc](Model* model) {
+                    // update the feature model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* blockFeature = new Block(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, width, height, depth);
                     size_t index = features.addFeature(blockFeature);
@@ -97,8 +106,8 @@ namespace e2 {
                 // unpack the payload
                 double radius = payload.value("radius", 1.0);
 
-                // update the model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, radius, &doc](Model* model) {
+                    // update the feature model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* sphereFeature = new Sphere(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, radius);
                     size_t index = features.addFeature(sphereFeature);
@@ -111,9 +120,9 @@ namespace e2 {
                 double radius = payload.value("radius", 1.0);
                 double depth = payload.value("depth", 2.0);
 
-                // update the model
+                // update the feature model
                 store.changeState([pathName, displayName, featureEffect, posRot3D, radius, depth, &doc](Model* model) {
-                    // update the model
+                    // update the feature model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* cylinderFeature = new Cylinder(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, radius, depth);
                     size_t index = features.addFeature(cylinderFeature);
@@ -132,16 +141,18 @@ namespace e2 {
                 payload.value("position", json::array({0,0,0})),
                 payload.value("rotation", json::array({0,0,0}))
             );
-            // update the model
             store.changeState([pathName, displayName, posRot3D, &doc](Model* model) {
+                
+                // update the feature model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                 Feature* workplaneFeature = new Workplane(pathName, displayName, posRot3D.first, posRot3D.second);
                 size_t index = features.addFeature(workplaneFeature);
 
-                // add a fake profile so we can see it in the scene (TODO: improve this later)
-                //BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
-                //Body* workplaneBody = BRepFixtures::workplaneIndicator(pathName, displayName);
-                //size_t profileIndex = profiles.addBody(workplaneBody, Tfm3d(posRot3D.first, posRot3D.second));  
+                // update the brep model
+                BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
+                Body* workplaneBody = BRepFixtures::workplaneIndicator(pathName, displayName);
+                workplaneBody->attachBodyAttribute("workplaneAttribute", new WorkplaneAttribute());
+                size_t profileIndex = profiles.addBody(workplaneBody, Tfm3d(posRot3D.first, posRot3D.second));  
 
                 std::cerr << "added Workplane Feature" << std::endl;      // ---LOGGING---
             });
@@ -171,8 +182,8 @@ namespace e2 {
                 double width = payload.value("width", 3.0);
                 double height = payload.value("height", 2.0);
 
-                // update the model
                 store.changeState([pathName, displayName, workplanePathName, posRot2D, width, height, &doc](Model* model) {
+                    // update the feature model 
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* rectangleFeature = new Rectangle2D(
                         pathName, displayName, 
@@ -180,6 +191,7 @@ namespace e2 {
                         width, height);
                     size_t featureIndex = features.addFeature(rectangleFeature);
 
+                    // update the brep model
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* rectangleBody = BRepFixtures::rectangle2DSheet(pathName, displayName, width, height);     // TODO: take 2D position/rotation into account. Ditto for other 2D primitives
 
@@ -197,9 +209,8 @@ namespace e2 {
                 // unpack the payload
                 double radius = payload.value("radius", 1.0);
 
-                // update the model
                 store.changeState([pathName, displayName, workplanePathName, posRot2D, radius, &doc](Model* model) {
-                    // update the model
+                    // update the feature model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* circleFeature = new Circle2D(
                         pathName, displayName,
@@ -207,6 +218,7 @@ namespace e2 {
                         radius);
                     size_t featureIndex = features.addFeature(circleFeature);
 
+                    // update the brep model
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* circleBody = BRepFixtures::circle2DSheet(pathName, displayName, radius);
 
@@ -226,8 +238,9 @@ namespace e2 {
                 double height = payload.value("height", 2.0);
                 double cornerRadius = payload.value("cornerRadius", 0.2);
 
-                // update the model
                 store.changeState([pathName, displayName, workplanePathName, posRot2D, width, height, cornerRadius, &doc](Model* model) {
+                    
+                    // update the feature model
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                     Feature* roundRectFeature = new RoundRect2D(
                         pathName, displayName, 
@@ -235,10 +248,11 @@ namespace e2 {
                         width, height, cornerRadius);
                     size_t featureIndex = features.addFeature(roundRectFeature);
 
+                    // update the brep model
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* roundRectBody = BRepFixtures::roundRect2DSheet(pathName, displayName, width, height, cornerRadius);
 
-                    // 3d position/rotation is inherited from workplane.
+                    // 3d position/rotation is inherited from workplane. TODO: also inherit zoffset if any and add it to the ProfileAttribute. And/or record the workplanePath in the profile body.
                     Feature* workplane = features.findFeature(workplanePathName);
                     Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
 
@@ -267,6 +281,8 @@ namespace e2 {
 
             // update the model
             store.changeState([pathName, displayName, featureEffect, posRot3D, profilePathName, depth, doubleSided, &doc](Model* model) {
+                
+                // update the feature model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                 Feature* extrusionFeature = new Extrusion(
                     pathName, displayName, featureEffect, 
@@ -274,13 +290,14 @@ namespace e2 {
                     depth, doubleSided);
                 size_t index = features.addFeature(extrusionFeature);
 
+                // update the brep model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                 size_t profileIndex;
                 if (!profiles.findBodyIndex(profilePathName, profileIndex)) {
                     std::cerr << "Warning: could not find profile body for extrusion feature at path "<< profilePathName << std::endl;
                 }
                 else {
-                    // add a copy of the profile body at the end(s) of the extrusion
+                    // add a copy of the profile body at the end(s) of the extrusion. // TODO: add workplanes as well..
                     Body* profileBody = profiles.body(profileIndex);
                     Tfm3d tfm3d = profiles.transform(profileIndex);
                     double zOffset = doubleSided ? depth / 2.0 : depth;
@@ -323,8 +340,8 @@ namespace e2 {
             double cellSize = payload.value("cellSize", 1.0);     // Future - make it an array for different sizes in different directions
             FillType fillType = parseFillTypeString(payload.value("fillType", "sphere")); 
 
-            // update the model
             store.changeState([pathName, displayName, featureEffect, posRot3D, targetPathName, cellSize, fillType, &doc](Model* model) {
+                // update the feature model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                 Feature* fillFeature = new Fill(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, targetPathName, fillType, cellSize);
                 size_t index = features.addFeature(fillFeature);
@@ -342,16 +359,17 @@ namespace e2 {
             });       
         }
 
-        // This action removes all the features, including profiles, from the shape model
+        // This action removes all the features from the shape model
         void clearAllFeatures(Document& doc, const json& payload) {
             Store& store = doc.storeAt("shape");
-            // update the model
             store.changeState([&doc](Model* model) {
+                //clear the feature model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
                 features.clearFeatures();
+                //clear the brep model
                 BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                 profiles.clearBodies();
-                std::cerr << "cleared all features from the shape model" << std::endl;      // ---LOGGING---    
+                std::cerr << "cleared all features and breps from the shape model" << std::endl;      // ---LOGGING---    
             });
         }
     }

@@ -29,6 +29,27 @@ namespace e2 {
         double m_zOffset = 0.0;
     };
 
+    class WorkplaneAttribute : public Attribute {
+    public:
+        WorkplaneAttribute() = default;
+        WorkplaneAttribute(const WorkplaneAttribute& other) {
+            m_zOffset = other.m_zOffset;
+        };
+        void operator=(const WorkplaneAttribute&) = delete;
+        virtual ~WorkplaneAttribute() = default;
+        WorkplaneAttribute(double zOffset) : m_zOffset(zOffset) {}  
+        double zOffset() const { return m_zOffset; }
+        void setZOffset(double zOffset) { m_zOffset = zOffset; }
+        Attribute* clone() const override {
+            return new WorkplaneAttribute(*this);
+        }
+        void print(std::ostream& os) const override {
+            os << "WorkplaneAttribute(zOffset=" << m_zOffset << ")";
+        }
+    private:
+        double m_zOffset = 0.0;
+    };
+
     class ShapeModel : public Model {
     public:
         ShapeModel(BRepModel* sketches, BRepModel* profiles, FeatureModel* features) 
