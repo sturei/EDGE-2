@@ -20,7 +20,7 @@ const actionSuggestions = [
     '{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane1/circle1", "primitiveType":"circle", "radius":0.5}}',
     '{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole1",  "profilePathName":"shape/workplanes/workplane1/circle1","featureEffect":"subtract", "depth":1 }}',
     '{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane2", "position":[1.5,0,0.5], "rotation":[0,-1.57079632679,0]}}',
-    '{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane2/circle1","primitiveType":"circle", "radius":0.1 }}',
+    '{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane2/circle1","primitiveType":"circle", "radius":0.25 }}',
     '{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole2", "profilePathName":"shape/workplanes/workplane2/circle1", "featureEffect":"subtract", "depth":3 }}',
     '{"type":"Profiles::addWorkplane", "payload":{"pathName":"shape/workplanes/workplane3", "position":[0,1,0.5], "rotation":[1.57079632679,0,0]}}',
     '{"type":"Profiles::addPrimitive", "payload":{"pathName":"shape/workplanes/workplane3/circle1","primitiveType":"circle", "radius":0.1 }}',
