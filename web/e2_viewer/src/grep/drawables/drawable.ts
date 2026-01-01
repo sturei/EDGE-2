@@ -127,6 +127,8 @@ export interface IProfileGeometry extends IBaseGeometry {
 export interface IContourGeometry extends IBaseGeometry {
     type: 'contour';
     paths: Array<Array<[number, number]>>;
+    position2D: [number, number];
+    rotation2D: number;   // in radians
     zOffset: number;
 }
 

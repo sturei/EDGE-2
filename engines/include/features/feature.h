@@ -142,7 +142,7 @@ namespace e2 {
             virtual ~Feature2D() = default;
             Feature2D(const Feature2D&) = delete;
             void operator=(const Feature2D  &) = delete;
-            Feature2D (const std::string& pathname, const std::string& displayName, const std::string& workplanePathName, const Vec3d& position2D, double rotation2D);
+            Feature2D (const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation, const std::string& workplanePathName, const Vec3d& position2D, double rotation2D);
             const std::string& workplanePathName() const { return m_workplanePathName; }
             const Vec3d& position2D() const { return m_position2D; }
             double rotation2D() const { return m_rotation2D; }
@@ -159,7 +159,7 @@ namespace e2 {
             virtual ~Primitive2D() = default;
             Primitive2D(const Primitive2D&) = delete;
             void operator=(const Primitive2D&) = delete;
-            Primitive2D(const std::string& pathname, const std::string& displayName, const std::string& workplanePathName, const Vec3d& position2D, double rotation2D);
+            Primitive2D(const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,const std::string& workplanePathName, const Vec3d& position2D, double rotation2D);
         private:
     };
 
@@ -170,7 +170,7 @@ namespace e2 {
             Rectangle2D(const Rectangle2D&) = delete;
             void operator=(const Rectangle2D&) = delete;
             Rectangle2D(
-                const std::string& pathname, const std::string& displayName, 
+                const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
                 const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
                 double width, double height);
 
@@ -190,7 +190,7 @@ namespace e2 {
             Circle2D(const Circle2D&) = delete;
             void operator=(const Circle2D&) = delete;
             Circle2D(
-                const std::string& pathname, const std::string& displayName, 
+                const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
                 const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
                 double radius);
             double radius() const { return m_radius; }
@@ -206,8 +206,8 @@ namespace e2 {
             virtual ~RoundRect2D() = default;
             RoundRect2D(const RoundRect2D&) = delete;
             void operator=(const RoundRect2D&) = delete;
-            RoundRect2D(
-                const std::string& pathname, const std::string& displayName,
+            RoundRect2D( 
+                const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
                 const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
                 double width, double height, double cornerRadius);
             double width() const { return m_width; }

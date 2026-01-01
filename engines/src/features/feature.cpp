@@ -106,9 +106,9 @@ namespace e2 {
     //
 
     Feature2D::Feature2D(
-        const std::string& pathname, const std::string& displayName, 
+        const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
         const std::string& workplanePathName, const Vec3d& position2D, double rotation2D)
-        : Feature(pathname, displayName, FeatureEffect::ADD, Vec3d(), Vec3d()), 
+        : Feature(pathname, displayName, FeatureEffect::ADD, position, rotation), 
         m_workplanePathName(workplanePathName), m_position2D(position2D), m_rotation2D(rotation2D) {
     }
 
@@ -116,9 +116,9 @@ namespace e2 {
     // Primitive2D
     //
 
-    Primitive2D::Primitive2D(const std::string& pathname, const std::string& displayName, const std::string& workplanePathName,
-        const Vec3d& position2D, double rotation2D)
-        : Feature2D(pathname, displayName, workplanePathName, position2D, rotation2D) {
+    Primitive2D::Primitive2D(const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
+        const std::string& workplanePathName,const Vec3d& position2D, double rotation2D)
+        : Feature2D(pathname, displayName, position, rotation, workplanePathName, position2D, rotation2D) {
     }
 
     //
@@ -126,10 +126,10 @@ namespace e2 {
     //
 
     Rectangle2D::Rectangle2D(
-        const std::string& pathname, const std::string& displayName, 
+        const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
         const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
         double width, double height)
-        : Primitive2D(pathname, displayName, workplanePathName, position2D, rotation2D), 
+        : Primitive2D(pathname, displayName, position, rotation, workplanePathName, position2D, rotation2D), 
           m_width(width), m_height(height) {
     }
 
@@ -151,10 +151,10 @@ namespace e2 {
     //
 
     Circle2D::Circle2D(
-        const std::string& pathname, const std::string& displayName,
+        const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
         const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
         double radius)  
-        : Primitive2D(pathname, displayName, workplanePathName, position2D, rotation2D), 
+        : Primitive2D(pathname, displayName, position, rotation, workplanePathName, position2D, rotation2D), 
           m_radius(radius) {
     }
 
@@ -175,10 +175,10 @@ namespace e2 {
     //
     
     RoundRect2D::RoundRect2D(
-        const std::string& pathname, const std::string& displayName, 
+        const std::string& pathname, const std::string& displayName, const Vec3d& position, const Vec3d& rotation,
         const std::string& workplanePathName, const Vec3d& position2D, double rotation2D, 
         double width, double height, double cornerRadius)
-        : Primitive2D(pathname, displayName, workplanePathName, position2D, rotation2D), 
+        : Primitive2D(pathname, displayName, position, rotation, workplanePathName, position2D, rotation2D), 
           m_width(width), m_height(height), m_cornerRadius(cornerRadius) {
     }   
 

@@ -244,6 +244,8 @@ async function addContour(doc: Document, payload: any): Promise<void> {
     store.changeState((model: Model) => {
         const position = payload.position ?? [0, 0, 0];
         const rotation = payload.rotation ?? [0, 0, 0];
+        const position2D = payload.position2D ?? [0, 0];
+        const rotation2D = payload.rotation2D ?? 0.0;
         const zOffset = payload.zOffset ?? 0.0;
         const paths = payload.paths ?? [[[-1, -1], [1, -1], [1, 1], [-1, 1], [-1, -1]]];
         const color = Color.get(payload.color ?? "green");
@@ -254,6 +256,8 @@ async function addContour(doc: Document, payload: any): Promise<void> {
                 paths: paths,
                 position: position,
                 rotation: rotation,
+                position2D: position2D,
+                rotation2D: rotation2D,
                 zOffset: zOffset
             },
             appearance: {

@@ -39,6 +39,7 @@ const actionSuggestions = [
     '{"type":"Macros::run", "payload":{"filePath":"primitives.txt"}}',
     '{"type":"Macros::run", "payload":{"filePath":"fills.txt"}}',
     '{"type":"Macros::run", "payload":{"filePath":"extrusions.txt"}}',
+    '{"type":"Macros::run", "payload":{"filePath":"moreExtrusions.txt"}}',
     '------------ DRAWABLE ACTIONS (for testing) ---',
     '{"type":"Gfx::addPoint", "payload":{"size":5, "position":[1,1,1], "color":"red"}}',
     '{"type":"Gfx::addLine", "payload":{"start":[-2,0,0], "end":[2,0,0], "color":"blue"}}',

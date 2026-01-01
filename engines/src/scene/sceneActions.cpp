@@ -150,6 +150,8 @@ namespace e2 {
             const Body& profileBody = *profiles.body(profileIndex);
 
             const Attribute* attr = nullptr;
+            Vec3d position2D(0.0, 0.0, 0.0);
+            double rotation2D = 0.0;
             double zOffset = 0.0;
             std::string color = "green";
 
@@ -168,6 +170,8 @@ namespace e2 {
                     std::cerr << "ERROR - attribute of wrong type attached as profile attribute" << std::endl;
                     continue;
                 }
+                position2D = profileAttr->position2D();
+                rotation2D = profileAttr->rotation2D();
                 zOffset = profileAttr->zOffset();
                 color = profileAttr->isConstruction() ? "gray" : "green";
             }   
@@ -195,6 +199,8 @@ namespace e2 {
                 {"paths", paths},
                 {"position", json::array({p.x(), p.y(), p.z()})},
                 {"rotation", json::array({r.x(), r.y(), r.z()})},
+                {"position2D", json::array({position2D.x(), position2D.y()})},
+                {"rotation2D", rotation2D},
                 {"zOffset", zOffset},
                 {"color", color}
             });
@@ -202,6 +208,9 @@ namespace e2 {
             doc.dispatchClientAction({"Gfx::addContour", payload});
         }
     }
+
+    // forward declaration 
+    static void addSdfNodeForTransformedFeature(Document& doc, const Feature* feature, std::string objectPathName);
 
     // Utility to add an SDF node for a given feature
     static void addSdfNodeForFeature(Document& doc, const Feature* feature, std::string objectPathName) {
@@ -287,8 +296,6 @@ namespace e2 {
             double epsilon = extrusionFeature->featureEffect() == FeatureEffect::SUBTRACT ? 0.01 : 0.0;
             bool doubleSided = extrusionFeature->doubleSided();
 
-            // TODO: take into account the 2D transformations on the profile
-
             const Vec3d& profilePosition = profile->position();
             json profileTranslationNode = json::object({
                 {"pathName", objectPathName},
@@ -318,13 +325,11 @@ namespace e2 {
                 {"depth", depth+epsilon}
             });
 
-            // TODO: figure out where fill, offset, twist etc go
             doc.dispatchClientAction({"Gfx::addSdfNode", profileTranslationNode});
             doc.dispatchClientAction({"Gfx::addSdfNode", profileRotationNode});
-            // probably fill goes in here
             doc.dispatchClientAction({"Gfx::addSdfNode", zOffsetNode});
             doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
-            addSdfNodeForFeature(doc, profile, objectPathName + "/profile");
+            addSdfNodeForTransformedFeature(doc, profile, objectPathName + "/profile");
         }        
     }
 
@@ -404,26 +409,45 @@ namespace e2 {
 
     // Utility to add transformation nodes for a given feature
     static void addSdfNodeForTransformedFeature(Document& doc, const Feature* feature, std::string objectPathName) {
-        const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
         
-        const Vec3d& position = feature->position();
-        json translationNode = json::object({
-            {"pathName", objectPathName},
-            {"type", "translation"},
-            {"position", json::array({position.x(), position.y(), position.z()})}
-        });
-        doc.dispatchClientAction({"Gfx::addSdfNode", translationNode});
+        if (Feature2D const* feature2D = dynamic_cast<const Feature2D*>(feature)) {
+            const Vec3d& position2D = feature2D->position2D();
+            json translationNode2D = json::object({
+                {"pathName", objectPathName},
+                {"type", "translation"},
+                {"position", json::array({position2D.x(), position2D.y(), 0.0})}
+            });
+            doc.dispatchClientAction({"Gfx::addSdfNode", translationNode2D});
 
-        const Vec3d& rotation = feature->rotation();
-        objectPathName += "/rotation";
-        json rotationNode = json::object({
-            {"pathName", objectPathName},
-            {"type", "rotation"},
-            {"angles", json::array({rotation.x(), rotation.y(), rotation.z()})}
-        }); 
-        doc.dispatchClientAction({"Gfx::addSdfNode", rotationNode});
+            double rotation2D = feature2D->rotation2D();
+            objectPathName += "/rotation2D";
+            json rotationNode2D = json::object({
+                {"pathName", objectPathName},
+                {"type", "rotation"},
+                {"angles", json::array({0.0, 0.0, rotation2D})}
+            }); 
+            doc.dispatchClientAction({"Gfx::addSdfNode", rotationNode2D});
+        } else {
+            const Vec3d& position = feature->position();
+            json translationNode = json::object({
+                {"pathName", objectPathName},
+                {"type", "translation"},
+                {"position", json::array({position.x(), position.y(), position.z()})}
+            });
+            doc.dispatchClientAction({"Gfx::addSdfNode", translationNode});
+
+            const Vec3d& rotation = feature->rotation();
+            objectPathName += "/rotation";
+            json rotationNode = json::object({
+                {"pathName", objectPathName},
+                {"type", "rotation"},
+                {"angles", json::array({rotation.x(), rotation.y(), rotation.z()})}
+            }); 
+            doc.dispatchClientAction({"Gfx::addSdfNode", rotationNode});
+        }
 
         addSdfNodeForModifiedFeature(doc, feature, objectPathName + "/feature");
+
     }
 
     static void dispatchGraphicsActionsForFeatures(Document& doc) {
@@ -456,7 +480,7 @@ namespace e2 {
             std::string objectPathName = "objects/";
 
             if (dynamic_cast<const Feature2D*>(&feature) || dynamic_cast<const Workplane*>(&feature)) {
-                // skip 2D features - TODO: add feature dimensionality method rather than relying on type
+                // skip 2D features here - they are added by the 3D features that depend on them. - TODO: add feature dimensionality method rather than relying on type
                 continue;
             } 
             else if (feature.featureEffect() == FeatureEffect::ADD) {

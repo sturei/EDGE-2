@@ -198,20 +198,20 @@ export function jsxFromDrawable(drawable: IDrawable) {
         for (let p = 0; p < geometry.paths.length; p++) {
             console.log(`  Path ${p} with ${geometry.paths[p].length} points`);   // --- DEBUG ---
         }
+        console.log(`  position2D: ${geometry.position2D}`);   // --- DEBUG ---
+        console.log(`  rotation2D: ${geometry.rotation2D}`);   // --- DEBUG ---
         console.log(`  zOffset: ${geometry.zOffset}`);   // --- DEBUG ---
-        // Offset the contour along its local Z axis by the specified amount
-        const offset = new THREE.Vector3(0, 0, geometry.zOffset);
-        const euler = new THREE.Euler(rotation[0], rotation[1], rotation[2], 'XYZ');
-        offset.applyEuler(euler);
-        const offsetPosition:[number, number, number] = [...position];
-        offsetPosition[0] += offset.x;
-        offsetPosition[1] += offset.y;
-        offsetPosition[2] += offset.z;
-        THREE.Vector3
+
+        // Apply 2D position, rotation and z-offset
+        const position2D:[number, number, number] = [geometry.position2D[0], geometry.position2D[1], geometry.zOffset];
+        const rotation2D:[number, number, number] = [0, 0, geometry.rotation2D];
+
         return(
-            <Contour args={[geometry.paths]} position={offsetPosition} rotation={rotation}>
-                <LineAppearance color={appearance?.color??Color.get("blue")} />
-            </Contour>
+            <group position={position} rotation={rotation}>
+                <Contour args={[geometry.paths]} position={position2D} rotation={rotation2D}>
+                    <LineAppearance color={appearance?.color??Color.get("blue")} />
+                </Contour>
+            </group>
         )
     }
     else {

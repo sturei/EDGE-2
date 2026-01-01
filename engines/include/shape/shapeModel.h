@@ -13,7 +13,12 @@ namespace e2 {
         };
         void operator=(const ProfileAttribute&) = delete;
         virtual ~ProfileAttribute() = default;
-        ProfileAttribute( bool isConstruction, double zOffset ) : m_isConstruction(isConstruction), m_zOffset(zOffset) {}  
+        ProfileAttribute( bool isConstruction, const Vec3d& position2D, double rotation2D, double zOffset ) 
+            : m_isConstruction(isConstruction), m_position2D(position2D), m_rotation2D(rotation2D), m_zOffset(zOffset) {}  
+        const Vec3d& position2D() const { return m_position2D; }
+        void setPosition2D(const Vec3d& position2D) { m_position2D = position2D; }
+        double rotation2D() const { return m_rotation2D; }
+        void setRotation2D(double rotation2D) { m_rotation2D = rotation2D; }    
         double zOffset() const { return m_zOffset; }
         void setZOffset(double zOffset) { m_zOffset = zOffset; }
         bool isConstruction() const { return m_isConstruction; }
@@ -22,10 +27,15 @@ namespace e2 {
             return new ProfileAttribute(*this);
         }
         void print(std::ostream& os) const override {
-            os << "ProfileAttribute(isConstruction=" << (m_isConstruction ? "true" : "false") << ", zOffset=" << m_zOffset << ")";
+            os << "ProfileAttribute(isConstruction=" << (m_isConstruction ? "true" : "false")
+               << ", position2D=" << m_position2D
+               << ", rotation2D=" << m_rotation2D
+               << ", zOffset=" << m_zOffset << ")";
         }
     private:
         bool m_isConstruction = false;
+        Vec3d m_position2D = Vec3d(0,0,0);
+        double m_rotation2D = 0.0;
         double m_zOffset = 0.0;
     };
 

@@ -182,23 +182,24 @@ namespace e2 {
                 double width = payload.value("width", 3.0);
                 double height = payload.value("height", 2.0);
 
-                store.changeState([pathName, displayName, workplanePathName, posRot2D, width, height, &doc](Model* model) {
-                    // update the feature model 
+                store.changeState([pathName, displayName, workplanePathName, posRot3D, posRot2D, width, height, &doc](Model* model) {
+
+                    // 3d position/rotation is inherited from workplane if it exists, overriding any specified 3d position/rotation.
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* workplane = features.findFeature(workplanePathName);
+                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d(posRot3D.first, posRot3D.second);
+
+                    // update the feature model 
                     Feature* rectangleFeature = new Rectangle2D(
-                        pathName, displayName, 
+                        pathName, displayName, tfm3d.position(), tfm3d.angles(),
                         workplanePathName, posRot2D.first, posRot2D.second,
                         width, height);
                     size_t featureIndex = features.addFeature(rectangleFeature);
 
                     // update the brep model
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
-                    Body* rectangleBody = BRepFixtures::rectangle2DSheet(pathName, displayName, width, height);     // TODO: take 2D position/rotation into account. Ditto for other 2D primitives
-
-                    // 3d position/rotation is inherited from workplane.
-                    Feature* workplane = features.findFeature(workplanePathName);
-                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
-
+                    Body* rectangleBody = BRepFixtures::rectangle2DSheet(pathName, displayName, width, height);
+                    rectangleBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(false, posRot2D.first, posRot2D.second, 0.0)); 
                     size_t profileIndex = profiles.addBody(rectangleBody, tfm3d);        
 
                     std::cerr << "added Rectangle2D Primitive" << std::endl;      // ---LOGGING---
@@ -209,11 +210,16 @@ namespace e2 {
                 // unpack the payload
                 double radius = payload.value("radius", 1.0);
 
-                store.changeState([pathName, displayName, workplanePathName, posRot2D, radius, &doc](Model* model) {
-                    // update the feature model
+                store.changeState([pathName, displayName, workplanePathName, posRot3D, posRot2D, radius, &doc](Model* model) {
+
+                    // 3d position/rotation is inherited from workplane if it exists, overriding any specified 3d position/rotation.
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* workplane = features.findFeature(workplanePathName);
+                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d(posRot3D.first, posRot3D.second);
+
+                    // update the feature model
                     Feature* circleFeature = new Circle2D(
-                        pathName, displayName,
+                        pathName, displayName, tfm3d.position(), tfm3d.angles(),
                         workplanePathName, posRot2D.first, posRot2D.second,
                         radius);
                     size_t featureIndex = features.addFeature(circleFeature);
@@ -221,11 +227,7 @@ namespace e2 {
                     // update the brep model
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* circleBody = BRepFixtures::circle2DSheet(pathName, displayName, radius);
-
-                    // 3d position/rotation is inherited from workplane.
-                    Feature* workplane = features.findFeature(workplanePathName);
-                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
-
+                    circleBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(false, posRot2D.first, posRot2D.second, 0.0)); 
                     size_t profileIndex = profiles.addBody(circleBody, tfm3d); 
 
                     std::cerr << "added Circle2D Primitive" << std::endl;      // ---LOGGING---
@@ -238,12 +240,16 @@ namespace e2 {
                 double height = payload.value("height", 2.0);
                 double cornerRadius = payload.value("cornerRadius", 0.2);
 
-                store.changeState([pathName, displayName, workplanePathName, posRot2D, width, height, cornerRadius, &doc](Model* model) {
+                store.changeState([pathName, displayName, workplanePathName, posRot3D, posRot2D, width, height, cornerRadius, &doc](Model* model) {
                     
-                    // update the feature model
+                    // 3d position/rotation is inherited from workplane if it exists, overriding any specified 3d position/rotation.
                     FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+                    Feature* workplane = features.findFeature(workplanePathName);
+                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d(posRot3D.first, posRot3D.second);
+
+                    // update the feature model
                     Feature* roundRectFeature = new RoundRect2D(
-                        pathName, displayName, 
+                        pathName, displayName, tfm3d.position(), tfm3d.angles(),
                         workplanePathName, posRot2D.first, posRot2D.second,
                         width, height, cornerRadius);
                     size_t featureIndex = features.addFeature(roundRectFeature);
@@ -251,11 +257,7 @@ namespace e2 {
                     // update the brep model
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* roundRectBody = BRepFixtures::roundRect2DSheet(pathName, displayName, width, height, cornerRadius);
-
-                    // 3d position/rotation is inherited from workplane.
-                    Feature* workplane = features.findFeature(workplanePathName);
-                    Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
-
+                    roundRectBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(false, posRot2D.first, posRot2D.second, 0.0)); 
                     size_t profileIndex = profiles.addBody(roundRectBody, tfm3d);
 
                     std::cerr << "added RoundRect2D Primitive" << std::endl;      // ---LOGGING---
@@ -297,22 +299,34 @@ namespace e2 {
                     std::cerr << "Warning: could not find profile body for extrusion feature at path "<< profilePathName << std::endl;
                 }
                 else {
-                    // add a copy of the profile body at the end(s) of the extrusion. // TODO: add workplanes as well..
+                    // add a copy of the profile body as construction geometry at the end(s) of the extrusion.
                     Body* profileBody = profiles.body(profileIndex);
                     Tfm3d tfm3d = profiles.transform(profileIndex);
+                    
+                    const Attribute* attr = nullptr;
+                    Vec3d position2D;
+                    double rotation2D = 0.0;
+                    if (profileBody->findBodyAttribute("profileAttribute", attr)) {
+                        const ProfileAttribute* profileAttr = dynamic_cast<const ProfileAttribute*>(attr);
+                        if (profileAttr) {
+                            position2D = profileAttr->position2D();
+                            rotation2D = profileAttr->rotation2D();
+                        }
+                    }
+
                     double zOffset = doubleSided ? depth / 2.0 : depth;
                     bool isConstruction = true;         // the auto-generated profiles are created as construction geometry
                     if (doubleSided) {
                         // add at -depth/2
                         Body* startBody = new Body(*profileBody);
-                        startBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(isConstruction, -zOffset)); 
+                        startBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(isConstruction, position2D, rotation2D, -zOffset)); 
                         startBody->setPathName(profilePathName + "_start");
                         startBody->setDisplayName(displayName + " Start");
                         size_t startIndex = profiles.addBody(startBody, tfm3d);
                     }
                     
                     Body* endBody = new Body(*profileBody);
-                    endBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(isConstruction, zOffset));
+                    endBody->attachBodyAttribute("profileAttribute", new ProfileAttribute(isConstruction, position2D, rotation2D, zOffset));
                     endBody->setPathName(profilePathName + "_end");
                     endBody->setDisplayName(displayName + " End");
                     size_t endIndex = profiles.addBody(endBody, tfm3d);
