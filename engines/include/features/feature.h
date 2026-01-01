@@ -61,8 +61,8 @@ namespace e2 {
             std::string m_pathname;                     // the pathname serves as a unique identifier for the feature
             std::string m_displayName;                  // user-friendly name for the feature
             FeatureEffect m_featureEffect;              // whether this feature adds, subtracts, or modifies geometry
-            Vec3d m_position;
-            Vec3d m_rotation;                           // Euler angles (in radians) representing rotation about the X, Y, and Z axes     
+            Vec3d m_position;                           // Translation vector from the canonical position of the feature. 
+            Vec3d m_rotation;                           // Euler angles (in radians) representing rotation about the X, Y, and Z axes repsectively, from the canonical orientation of the feature.    
 
     };
 
@@ -232,7 +232,7 @@ namespace e2 {
             void operator=(const Extrusion&) = delete;
             Extrusion(
                 const std::string& pathname, const std::string& displayName, FeatureEffect featureEffect, 
-                const Vec3d& position, const Vec3d& rotation,
+                const Vec3d& position, const Vec3d& rotation,   // TOGO? Not used - would allow positioning of the extrusion feature disconnected from its profile, which seems always wrong.
                 const std::string& profilePathName, double depth, bool doubleSided);
             const std::string& profilePathName() const { return m_profilePathName; }
             double depth() const { return m_depth; }

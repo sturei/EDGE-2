@@ -252,7 +252,7 @@ namespace e2 {
                     BRepModel& profiles = dynamic_cast<ShapeModel*>(model)->profiles();
                     Body* roundRectBody = BRepFixtures::roundRect2DSheet(pathName, displayName, width, height, cornerRadius);
 
-                    // 3d position/rotation is inherited from workplane. TODO: also inherit zoffset if any and add it to the ProfileAttribute. And/or record the workplanePath in the profile body.
+                    // 3d position/rotation is inherited from workplane.
                     Feature* workplane = features.findFeature(workplanePathName);
                     Tfm3d tfm3d = workplane ? Tfm3d(workplane->position(), workplane->rotation()) : Tfm3d();
 

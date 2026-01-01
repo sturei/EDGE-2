@@ -96,7 +96,7 @@ namespace e2 {
     }
 
     // Ensures that the product tree in the client is updated to reflect the features in the model
-    static void dispatchProductActionsForNewFeature(Document& doc, size_t featureIndex) {
+    static void dispatchProductActionsForFeatures(Document& doc) {
 
         //
         // Features are listed in the product tree under "shape/features" or "shape/workplanes" for 3D and 2D features respectively.
@@ -132,7 +132,7 @@ namespace e2 {
     }
 
     // Ensures that the graphics scene in the client is updated to reflect the profiles in the model
-    static void dispatchGraphicsActionsForNewProfile(Document& doc, size_t profileIndex) {
+    static void dispatchGraphicsActionsForProfiles(Document& doc) {
 
         //
         // Profiles are represented graphically in the viewer as planar wireframe.
@@ -152,7 +152,6 @@ namespace e2 {
             const Attribute* attr = nullptr;
             double zOffset = 0.0;
             std::string color = "green";
-
 
             if (profileBody.findBodyAttribute("workplaneAttribute", attr)) {
                 const WorkplaneAttribute* workplaneAttr = dynamic_cast<const WorkplaneAttribute*>(attr);
@@ -284,28 +283,21 @@ namespace e2 {
                 return;
             }
 
-            Feature* workplane = features.findFeature(dynamic_cast<Feature2D*>(profile)->workplanePathName());
-            if (!workplane) {
-                std::cerr << "Warning: Extrusion feature at " << objectPathName << " references profile at " << extrusionFeature->profilePathName() 
-                          << " which references missing workplane at " << dynamic_cast<Feature2D*>(profile)->workplanePathName() << std::endl;
-                return;
-            }
-
             // to avoid z-fighting when subtracting. TODO: small offset would be a better way!
             double epsilon = extrusionFeature->featureEffect() == FeatureEffect::SUBTRACT ? 0.01 : 0.0;
             bool doubleSided = extrusionFeature->doubleSided();
 
             // TODO: take into account the 2D transformations on the profile
 
-            const Vec3d& workplanePosition = workplane->position();
+            const Vec3d& profilePosition = profile->position();
             json profileTranslationNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "translation"},
-                {"position", json::array({workplanePosition.x(), workplanePosition.y(), workplanePosition.z()})}
+                {"position", json::array({profilePosition.x(), profilePosition.y(), profilePosition.z()})}
             });
             
             objectPathName += "/profileRotation";
-            const Vec3d& profileRotation = workplane->rotation();
+            const Vec3d& profileRotation = profile->rotation();
             json profileRotationNode = json::object({
                 {"pathName", objectPathName},
                 {"type", "rotation"},
@@ -434,7 +426,7 @@ namespace e2 {
         addSdfNodeForModifiedFeature(doc, feature, objectPathName + "/feature");
     }
 
-    static void dispatchGraphicsActionsForNewFeature(Document& doc, size_t featureIndex) {
+    static void dispatchGraphicsActionsForFeatures(Document& doc) {
 
         // 3D Features are represented graphically in the viewer as the f=0 level set of a signed distance function (SDF).
 
@@ -489,10 +481,10 @@ namespace e2 {
     }
 
     void dispatchGraphicsActionsForModifiedScene(Document& doc) {
-        // For now, just rebuild the entire graphics scene from scratch
-        dispatchProductActionsForNewFeature(doc, 0);    // productIndex is ignored in the current implementation
-        dispatchGraphicsActionsForNewProfile(doc, 0);   // profileIndex is ignored in the current implementation
-        dispatchGraphicsActionsForNewFeature(doc, 0);   // featureIndex is ignored in the current implementation
+        // For now, we just rebuild the entire graphics scene from scratch for every modification.
+        dispatchProductActionsForFeatures(doc);    // productIndex is ignored in the current implementation
+        dispatchGraphicsActionsForProfiles(doc);
+        dispatchGraphicsActionsForFeatures(doc);   // featureIndex is ignored in the current implementation
     }
 };
 
