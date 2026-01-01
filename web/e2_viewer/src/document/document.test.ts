@@ -65,7 +65,7 @@ describe('Document', () => {
             type: "nonExistentAction",
             payload: {}
         };
-        expect(() => document.dispatchAction(action)).toThrowError("No action function registered for action type: nonExistentAction");
+        expect(() => document.dispatchAction(action)).rejects.toThrowError("No action function registered for action type: nonExistentAction");
     });
     
     it('should throw error for bad payload', () => {
@@ -74,7 +74,7 @@ describe('Document', () => {
             type: "addAnimal",
             payload: { anythingBut: "Giraffe" }
         };
-        expect(() => document.dispatchAction(action)).toThrowError("Payload must contain 'species' field");
+        expect(() => document.dispatchAction(action)).rejects.toThrowError("Payload must contain 'species' field");
     });
 
     it('should output correct string representation', () => {
