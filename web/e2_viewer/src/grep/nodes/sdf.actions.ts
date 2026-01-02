@@ -195,9 +195,8 @@ async function clearSdfScene(doc: Document, _payload: any): Promise<void> {
     });
 }
 
-export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
-export const updateSdfSceneActionDef = { type: "Gfx::updateSdfScene", function: updateSdfScene };
-export const clearSdfSceneActionDef = { type: "Gfx::clearSdfScene", function: clearSdfScene };
-export const hideSdfSceneActionDef = { type: "Gfx::hideSdfScene", function: hideSdfScene };
-export const showSdfSceneActionDef = { type: "Gfx::showSdfScene", function: showSdfScene };
-      
+export const addSdfNodeActionDef = { type: "Nodes::addSdfNode", function: addSdfNode };
+export const updateSdfSceneActionDef = { type: "Nodes::updateSdfScene", function: updateSdfScene };
+export const clearSdfSceneActionDef = { type: "Nodes::clearSdfScene", function: clearSdfScene };
+export const hideSdfSceneActionDef = { type: "Nodes::hideSdfScene", function: hideSdfScene };
+export const showSdfSceneActionDef = { type: "Nodes::showSdfScene", function: showSdfScene };

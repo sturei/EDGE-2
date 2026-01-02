@@ -34,5 +34,5 @@ async function clearProductItems(doc: Document, _payload: any): Promise<void> {
     console.log("Cleared all Product Items");          //--- DEBUG ---
 }
 
-export const addProductItemActionDef = { type: "Gfx::addProductItem", function: addProductItem };
-export const clearProductItemsActionDef = { type: "Gfx::clearProductItems", function: clearProductItems };  
+export const addProductItemActionDef = { type: "Structure::addProductItem", function: addProductItem };
+export const clearProductItemsActionDef = { type: "Structure::clearProductItems", function: clearProductItems };  

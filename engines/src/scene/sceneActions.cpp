@@ -24,11 +24,11 @@ namespace e2 {
         // The root item is "shape"
         // Under "shape" are "layout" (for sketches, profiles and workplanes) and "features" (for 3D features)
 
-        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+        doc.dispatchClientAction({"Structure::addProductItem", json::object({
             {"pathName", "shape/layout"},
             {"displayName", "layout"}
         })});
-        doc.dispatchClientAction({"Gfx::addProductItem", json::object({
+        doc.dispatchClientAction({"Structure::addProductItem", json::object({
             {"pathName", "shape/features"},
             {"displayName", "features"}
         })});
@@ -68,7 +68,7 @@ namespace e2 {
 
         if (numBlanks + numTools > 0) {
             // add the root node: "objects"
-            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+            doc.dispatchClientAction({"Nodes::addSdfNode", json::object({
                 {"pathName", "objects"},
                 {"type", "intersection"}
             })});
@@ -76,7 +76,7 @@ namespace e2 {
 
         if (numBlanks > 0) {
             // add the "blanks" node to hold all the additive features
-            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+            doc.dispatchClientAction({"Nodes::addSdfNode", json::object({
                 {"pathName", "objects/blanks"},
                 {"type", "union"}
             })});
@@ -84,11 +84,11 @@ namespace e2 {
 
         if (numTools > 0) {
             // add the "tools/tools" node to hold all the subtractive features
-            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+            doc.dispatchClientAction({"Nodes::addSdfNode", json::object({
                 {"pathName", "objects/tools"},
                 {"type", numBlanks == 0 ? "union" : "complement"}     // if there are no blanks, union the tools so we can see them
             })});
-            doc.dispatchClientAction({"Gfx::addSdfNode", json::object({
+            doc.dispatchClientAction({"Nodes::addSdfNode", json::object({
                 {"pathName", "objects/tools/tools"},
                 {"type", "union"}
             })});
@@ -108,7 +108,7 @@ namespace e2 {
         std::cerr << "Dispatching Product Actions (Items) for Features: " << features << std::endl;      // ---DEBUG---   
 
         // For now, clear the product items and rebuild from scratch (could be optimized later)
-        doc.dispatchClientAction({"Gfx::clearProductItems", json::object({})});  
+        doc.dispatchClientAction({"Structure::clearProductItems", json::object({})});  
 
         // Ensure parent items exist
         ensureProductParentsExist(doc);
@@ -127,7 +127,7 @@ namespace e2 {
                 {"displayName", featureDisplayName}
             });
 
-            doc.dispatchClientAction({"Gfx::addProductItem", featurePayload});
+            doc.dispatchClientAction({"Structure::addProductItem", featurePayload});
         }
     }
 
@@ -227,7 +227,7 @@ namespace e2 {
                 {"height", height},
                 {"depth", depth}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
         }
         else if (const Sphere* sphereFeature = dynamic_cast<const Sphere*>(feature)) {
             double radius = sphereFeature->radius();
@@ -236,7 +236,7 @@ namespace e2 {
                 {"type", "sphere"},
                 {"radius", radius}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
         }
         else if (const Cylinder* cylinderFeature = dynamic_cast<const Cylinder*>(feature)) {
             double radius = cylinderFeature->radius();
@@ -247,7 +247,7 @@ namespace e2 {
                 {"radius", radius},
                 {"depth", depth}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
         }
         else if (const Rectangle2D* rectangle2DFeature = dynamic_cast<const Rectangle2D*>(feature)) {
             double width = rectangle2DFeature->width();
@@ -258,7 +258,7 @@ namespace e2 {
                 {"width", width},
                 {"height", height}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
         }
         else if (const Circle2D* circleFeature = dynamic_cast<const Circle2D*>(feature)) {
             double radius = circleFeature->radius();
@@ -268,7 +268,7 @@ namespace e2 {
                 {"radius", radius}
             });
 
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
         }
         else if (const RoundRect2D* roundRectFeature = dynamic_cast<const RoundRect2D*>(feature)) {
             double width = roundRectFeature->width();
@@ -281,7 +281,7 @@ namespace e2 {
                 {"height", height},
                 {"cornerRadius", cornerRadius}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
         }
         else if (const Extrusion* extrusionFeature = dynamic_cast<const Extrusion*>(feature)) {
             double depth = extrusionFeature->depth();
@@ -325,10 +325,10 @@ namespace e2 {
                 {"depth", depth+epsilon}
             });
 
-            doc.dispatchClientAction({"Gfx::addSdfNode", profileTranslationNode});
-            doc.dispatchClientAction({"Gfx::addSdfNode", profileRotationNode});
-            doc.dispatchClientAction({"Gfx::addSdfNode", zOffsetNode});
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", profileTranslationNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", profileRotationNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", zOffsetNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
             addSdfNodeForTransformedFeature(doc, profile, objectPathName + "/profile");
         }        
     }
@@ -370,7 +370,7 @@ namespace e2 {
                 {"pathName", objectPathName},
                 {"type", "intersection"},
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", featureNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", featureNode});
 
             if (fillType == FillType::SPHERE) {
             
@@ -386,8 +386,8 @@ namespace e2 {
                     {"radius", cellSize / 3.0}              /// hard-coded for now - could be a parameter of the Fill feature
                 });
 
-                doc.dispatchClientAction({"Gfx::addSdfNode", repetitionNode});
-                doc.dispatchClientAction({"Gfx::addSdfNode", cellNode});
+                doc.dispatchClientAction({"Nodes::addSdfNode", repetitionNode});
+                doc.dispatchClientAction({"Nodes::addSdfNode", cellNode});
             }
             else if (fillType == FillType::GYROID) { 
                 json gyroidNode = json::object({
@@ -396,7 +396,7 @@ namespace e2 {
                     {"cellSize", cellSize}
                 });
 
-                doc.dispatchClientAction({"Gfx::addSdfNode", gyroidNode});
+                doc.dispatchClientAction({"Nodes::addSdfNode", gyroidNode});
             }
 
             addSdfNodeForFeature(doc, targetFeature, objectPathName + "/targetFeature");
@@ -417,7 +417,7 @@ namespace e2 {
                 {"type", "translation"},
                 {"position", json::array({position2D.x(), position2D.y(), 0.0})}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", translationNode2D});
+            doc.dispatchClientAction({"Nodes::addSdfNode", translationNode2D});
 
             double rotation2D = feature2D->rotation2D();
             objectPathName += "/rotation2D";
@@ -426,7 +426,7 @@ namespace e2 {
                 {"type", "rotation"},
                 {"angles", json::array({0.0, 0.0, rotation2D})}
             }); 
-            doc.dispatchClientAction({"Gfx::addSdfNode", rotationNode2D});
+            doc.dispatchClientAction({"Nodes::addSdfNode", rotationNode2D});
         } else {
             const Vec3d& position = feature->position();
             json translationNode = json::object({
@@ -434,7 +434,7 @@ namespace e2 {
                 {"type", "translation"},
                 {"position", json::array({position.x(), position.y(), position.z()})}
             });
-            doc.dispatchClientAction({"Gfx::addSdfNode", translationNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", translationNode});
 
             const Vec3d& rotation = feature->rotation();
             objectPathName += "/rotation";
@@ -443,7 +443,7 @@ namespace e2 {
                 {"type", "rotation"},
                 {"angles", json::array({rotation.x(), rotation.y(), rotation.z()})}
             }); 
-            doc.dispatchClientAction({"Gfx::addSdfNode", rotationNode});
+            doc.dispatchClientAction({"Nodes::addSdfNode", rotationNode});
         }
 
         addSdfNodeForModifiedFeature(doc, feature, objectPathName + "/feature");
@@ -469,7 +469,7 @@ namespace e2 {
         std::cerr << "Dispatching Graphics Actions (sdf nodes) for Features: " << features << std::endl;      // ---DEBUG---   
 
         // For now, clear the scene and rebuild it from scratch (could be optimized later)
-        doc.dispatchClientAction({"Gfx::clearSdfScene", json::object({})});
+        doc.dispatchClientAction({"Nodes::clearSdfScene", json::object({})});
 
         // ensure parent items "objects", "objects/blanks", "objects/tools/tools" (if needed) exist
         ensureSdfNodeParentsExist(doc);
@@ -501,7 +501,7 @@ namespace e2 {
         }
 
         // Finally, update the SDF scene
-        doc.dispatchClientAction({"Gfx::updateSdfScene", json::object({})});
+        doc.dispatchClientAction({"Nodes::updateSdfScene", json::object({})});
     }
 
     void dispatchGraphicsActionsForModifiedScene(Document& doc) {
