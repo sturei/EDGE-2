@@ -135,7 +135,7 @@ namespace e2 {
         void addWorkplane(Document& doc, const json& payload) {
             Store& store = doc.storeAt("shape");    
             // unpack the payload
-            std::string pathName = payload.value("pathName", "shape/workplanes/unnamedWorkplane");
+            std::string pathName = payload.value("pathName", "shape/layout/unnamedWorkplane");
             std::string displayName = payload.value("displayName", pathName.substr(pathName.find_last_of("/") + 1));
             std::pair<Vec3d, Vec3d> posRot3D = parsePositionRotationJson(
                 payload.value("position", json::array({0,0,0})),

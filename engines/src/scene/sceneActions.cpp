@@ -22,11 +22,11 @@ namespace e2 {
     static void ensureProductParentsExist(Document& doc) {
 
         // The root item is "shape"
-        // Under "shape" are "workplanes" (for 2D features) and "features" (for 3D features)
+        // Under "shape" are "layout" (for sketches, profiles and workplanes) and "features" (for 3D features)
 
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
-            {"pathName", "shape/workplanes"},
-            {"displayName", "workplanes"}
+            {"pathName", "shape/layout"},
+            {"displayName", "layout"}
         })});
         doc.dispatchClientAction({"Gfx::addProductItem", json::object({
             {"pathName", "shape/features"},

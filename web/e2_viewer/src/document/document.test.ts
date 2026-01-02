@@ -11,7 +11,7 @@ class ZooModelFixture implements Model {
     }
 }
 
-function addAnimal(doc: Document, payload: { species: string }): void {
+async function addAnimal(doc: Document, payload: { species: string }): Promise<void> {
         const species = payload.species;
         if (!species) {
             throw new Error("Payload must contain 'species' field");
