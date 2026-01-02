@@ -36,11 +36,11 @@ async function pingModeller(doc: Document, _payload: any): Promise<void> {
 }
 
 async function addWorkplane(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Profiles::addWorkplane", payload);
+    await postAction(doc, "Layout::addWorkplane", payload);
 }
 
 async function addProfile(doc: Document, payload: any): Promise<void> {
-    await postAction(doc, "Profiles::addPrimitive", payload);
+    await postAction(doc, "Layout::addPrimitive", payload);
 }
 
 async function addPrimitive(doc: Document, payload: any): Promise<void> {
@@ -65,8 +65,8 @@ async function clearAllFeatures(doc: Document, payload: any): Promise<void> {
 
 export const pingModellerActionDef = { type: "Modeller::ping", function: pingModeller };
 
-export const addWorkplaneActionDef = { type: "Profiles::addWorkplane", function: addWorkplane };
-export const addProfileActionDef = { type: "Profiles::addPrimitive", function: addProfile };
+export const addWorkplaneActionDef = { type: "Layout::addWorkplane", function: addWorkplane };
+export const addProfileActionDef = { type: "Layout::addPrimitive", function: addProfile };
 export const addPrimitiveActionDef = { type: "Features::addPrimitive", function: addPrimitive };
 export const addExtrusionActionDef = { type: "Features::addExtrusion", function: addExtrusion };
 export const addFillActionDef = { type: "Features::addFill", function: addFill };

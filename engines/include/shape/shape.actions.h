@@ -14,8 +14,8 @@ namespace e2 {
         void clearAllFeatures(Document& doc, const nlohmann::json& payload);
 
         inline static std::array<ActionDef, 7> allShapeActions = {{
-            {"Profiles::addWorkplane", addWorkplane},  
-            {"Profiles::addPrimitive", addPrimitive2D},
+            {"Layout::addWorkplane", addWorkplane},  
+            {"Layout::addPrimitive", addPrimitive2D},
             {"Features::addPrimitive", addPrimitive},
             {"Features::addExtrusion", addExtrusion},
             {"Features::addFill", addFill},
