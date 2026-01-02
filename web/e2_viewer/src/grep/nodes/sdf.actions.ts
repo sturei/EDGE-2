@@ -162,8 +162,7 @@ async function updateSdfScene(doc: Document, _payload: any): Promise<void> {
         const newGuid = crypto.randomUUID();
         grepModel.setSdfGuid(newGuid);
         console.log("Updated SDF scene GUID to:", newGuid);
-    }
-    );
+    });
 }
 
 // This clears all SDF nodes from the GRepModel's SDF scene.
@@ -172,9 +171,10 @@ async function clearSdfScene(doc: Document, _payload: any): Promise<void> {
     store.changeState((model: Model) => {
         let grepModel = model as GRepModel;
         grepModel.clearSdfNodes();
+        const newGuid = crypto.randomUUID();
+        grepModel.setSdfGuid(newGuid);    // also update the scene to reflect the cleared nodes (for convenience)
         console.log("Cleared SDF scene nodes.");
-    }
-    );
+    });
 }
 
 export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
