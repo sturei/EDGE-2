@@ -120,31 +120,31 @@ describe("drawable.actions", () => {
     describe("action definitions", () => {
 
         it("should have correct type for addPoint action", () => {
-            expect(addPointActionDef.type).toBe("Gfx::addPoint");
+            expect(addPointActionDef.type).toBe("Drawables::addPoint");
         });
 
         it("should have correct type for addLine action", () => {
-            expect(addLineActionDef.type).toBe("Gfx::addLine");
+            expect(addLineActionDef.type).toBe("Drawables::addLine");
         });
 
         it("should have correct type for addPolyline action", () => {
-            expect(addPolylineActionDef.type).toBe("Gfx::addPolyline");
+            expect(addPolylineActionDef.type).toBe("Drawables::addPolyline");
         });
 
         it("should have correct type for addPlane action", () => {
-            expect(addPlaneActionDef.type).toBe("Gfx::addPlane");
+            expect(addPlaneActionDef.type).toBe("Drawables::addPlane");
         });
 
         it("should have correct type for addSphere action", () => {
-            expect(addSphereActionDef.type).toBe("Gfx::addSphere");
+            expect(addSphereActionDef.type).toBe("Drawables::addSphere");
         });
 
         it("should have correct type for addBlock action", () => {
-            expect(addBlockActionDef.type).toBe("Gfx::addBlock");
+            expect(addBlockActionDef.type).toBe("Drawables::addBlock");
         });
 
         it("should have correct type for addProfile action", () => {
-            expect(addProfileActionDef.type).toBe("Gfx::addProfile");
+            expect(addProfileActionDef.type).toBe("Drawables::addProfile");
         });
     });
 });

@@ -139,7 +139,7 @@ namespace e2 {
         //
 
         // For now, clear the drawables and rebuild from scratch (could be optimized later)
-        doc.dispatchClientAction({"Gfx::clearDrawables", json::object({})});  
+        doc.dispatchClientAction({"Drawables::clearDrawables", json::object({})});  
 
         const BRepModel& profiles = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->profiles();
 
@@ -205,7 +205,7 @@ namespace e2 {
                 {"color", color}
             });
 
-            doc.dispatchClientAction({"Gfx::addContour", payload});
+            doc.dispatchClientAction({"Drawables::addContour", payload});
         }
     }
 

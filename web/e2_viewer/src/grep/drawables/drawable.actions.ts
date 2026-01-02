@@ -299,16 +299,16 @@ async function clearDrawables(doc: Document, _payload: any): Promise<void> {
     console.log("cleared all drawables");      // ---DEBUG---
 }
 
-export const addPointActionDef = { type: "Gfx::addPoint", function: addPoint };
-export const addLineActionDef = { type: "Gfx::addLine", function: addLine };
-export const addPolylineActionDef = { type: "Gfx::addPolyline", function: addPolyline };
-export const addPlaneActionDef = { type: "Gfx::addPlane", function: addPlane };
-export const addSphereActionDef = { type: "Gfx::addSphere", function: addSphere };
-export const addBlockActionDef = { type: "Gfx::addBlock", function: addBlock };
-export const addCylinderActionDef = { type: "Gfx::addCylinder", function: addCylinder };
-export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
-export const addContourActionDef = { type: "Gfx::addContour", function: addContour };
+export const addPointActionDef = { type: "Drawables::addPoint", function: addPoint };
+export const addLineActionDef = { type: "Drawables::addLine", function: addLine };
+export const addPolylineActionDef = { type: "Drawables::addPolyline", function: addPolyline };
+export const addPlaneActionDef = { type: "Drawables::addPlane", function: addPlane };
+export const addSphereActionDef = { type: "Drawables::addSphere", function: addSphere };
+export const addBlockActionDef = { type: "Drawables::addBlock", function: addBlock };
+export const addCylinderActionDef = { type: "Drawables::addCylinder", function: addCylinder };
+export const addProfileActionDef = { type: "Drawables::addProfile", function: addProfile };
+export const addContourActionDef = { type: "Drawables::addContour", function: addContour };
 
-export const hideDrawablesActionDef = { type: "Gfx::hideDrawables", function: hideDrawables };
-export const showDrawablesActionDef = { type: "Gfx::showDrawables", function: showDrawables };
-export const clearDrawablesActionDef = { type: "Gfx::clearDrawables", function: clearDrawables };
+export const hideDrawablesActionDef = { type: "Drawables::hideDrawables", function: hideDrawables };
+export const showDrawablesActionDef = { type: "Drawables::showDrawables", function: showDrawables };
+export const clearDrawablesActionDef = { type: "Drawables::clearDrawables", function: clearDrawables };
