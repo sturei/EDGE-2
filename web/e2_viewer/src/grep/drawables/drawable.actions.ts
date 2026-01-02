@@ -270,7 +270,26 @@ async function addContour(doc: Document, payload: any): Promise<void> {
     console.log("added Profile");      // ---DEBUG---
 }
 
-// clears all drawables from the GRepModel's drawlist.
+// Hides all drawables in the GRepModel's drawlist.
+async function hideDrawables(doc: Document, _payload: any): Promise<void> {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        grepModel.hideDrawables();
+    });
+    console.log("hid all drawables");      // ---DEBUG---
+}
+
+async function showDrawables(doc: Document, _payload: any): Promise<void> {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        grepModel.showDrawables();
+    });
+    console.log("showed all drawables");      // ---DEBUG---
+}
+
+// Clears all drawables from the GRepModel's drawlist.
 async function clearDrawables(doc: Document, _payload: any): Promise<void> {
     const store = doc.getStore("scene");
     store.changeState((model: Model) => {
@@ -290,4 +309,6 @@ export const addCylinderActionDef = { type: "Gfx::addCylinder", function: addCyl
 export const addProfileActionDef = { type: "Gfx::addProfile", function: addProfile };
 export const addContourActionDef = { type: "Gfx::addContour", function: addContour };
 
+export const hideDrawablesActionDef = { type: "Gfx::hideDrawables", function: hideDrawables };
+export const showDrawablesActionDef = { type: "Gfx::showDrawables", function: showDrawables };
 export const clearDrawablesActionDef = { type: "Gfx::clearDrawables", function: clearDrawables };

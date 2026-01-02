@@ -15,10 +15,15 @@ import type { ISdfNode } from '../grep/nodes/sdfNode.ts'
 
 interface ISceneReactState {
     drawlist: IDrawable[],
+    isDrawlistVisible?: boolean,
     nodes: ISdfNode[],
+    isSdfSceneVisible?: boolean,
     guid: string
 }
-const initialState:ISceneReactState = {drawlist: new Array<IDrawable>(), nodes: new Array<ISdfNode>(), guid: "Initial State"};
+const initialState:ISceneReactState = {
+    drawlist: new Array<IDrawable>(), isDrawlistVisible: true, 
+    nodes: new Array<ISdfNode>(), isSdfSceneVisible: true, 
+    guid: "Initial State"};
 
 export function Scene(){
     const document = useContext(DocumentContext);
@@ -44,6 +49,8 @@ export function Scene(){
             newState.nodes = sceneModel.sdfNodes();   // Don't need to copy because the Guid has changed.
             console.log(" SDF scene updated, new GUID:", newState.guid);
         }
+        newState.isDrawlistVisible = sceneModel.isDrawlistVisible();
+        newState.isSdfSceneVisible = sceneModel.isSdfSceneVisible();
         console.log(" New state:", newState);
         setReactState(newState);
     }
@@ -53,8 +60,8 @@ export function Scene(){
         <ambientLight color={0x505050} />
         <directionalLight intensity={0.5} position={[0.75, 0.25, 0.25]} />
         <directionalLight intensity={0.5} position={[-0.75, 0.25, 0.25]} />
-        <Drawlist drawlist={reactState.drawlist} />
-        <RaymarchedScene nodes={reactState.nodes} guid={reactState.guid} />
+        {reactState.isDrawlistVisible && <Drawlist drawlist={reactState.drawlist} />}
+        {reactState.isSdfSceneVisible && <RaymarchedScene nodes={reactState.nodes} guid={reactState.guid} />}
         <OrbitControls />
         </>
     )

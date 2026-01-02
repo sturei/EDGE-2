@@ -165,6 +165,24 @@ async function updateSdfScene(doc: Document, _payload: any): Promise<void> {
     });
 }
 
+// This hides all SDF nodes in the GRepModel.
+async function hideSdfScene(doc: Document, _payload: any): Promise<void> {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        grepModel.hideSdfNodes();
+    });
+}
+
+// This shows all SDF nodes in the GRepModel.
+async function showSdfScene(doc: Document, _payload: any): Promise<void> {
+    const store = doc.getStore("scene");
+    store.changeState((model: Model) => {
+        let grepModel = model as GRepModel;
+        grepModel.showSdfNodes();
+    });
+}
+
 // This clears all SDF nodes from the GRepModel's SDF scene.
 async function clearSdfScene(doc: Document, _payload: any): Promise<void> {
     const store = doc.getStore("scene");
@@ -179,4 +197,7 @@ async function clearSdfScene(doc: Document, _payload: any): Promise<void> {
 
 export const addSdfNodeActionDef = { type: "Gfx::addSdfNode", function: addSdfNode };
 export const updateSdfSceneActionDef = { type: "Gfx::updateSdfScene", function: updateSdfScene };
-export const clearSdfSceneActionDef = { type: "Gfx::clearSdfScene", function: clearSdfScene };      
+export const clearSdfSceneActionDef = { type: "Gfx::clearSdfScene", function: clearSdfScene };
+export const hideSdfSceneActionDef = { type: "Gfx::hideSdfScene", function: hideSdfScene };
+export const showSdfSceneActionDef = { type: "Gfx::showSdfScene", function: showSdfScene };
+      

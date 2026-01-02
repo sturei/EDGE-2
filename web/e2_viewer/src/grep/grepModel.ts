@@ -11,7 +11,9 @@ import { type ISdfNode } from './nodes/sdfNode';
 
 export class GRepModel extends Model {
     private m_drawList: IDrawable[] = [];
+    private m_drawListIsVisible: boolean = true;
     private m_sdfScene: ISdfNode[] = []; // SDF scene as a list of shader nodes, root node at index 0.
+    private m_sdfSceneIsVisible: boolean = true;
     private m_sdfGuid: string = "Initial State";  // GUID gets updated to indicate that the SDF scene should be updated;
 
     constructor() {
@@ -32,6 +34,20 @@ export class GRepModel extends Model {
 
     drawlist(): IDrawable[] {
         return this.m_drawList;
+    }
+
+    isDrawlistVisible(): boolean {
+        return this.m_drawListIsVisible;
+    }
+
+    hideDrawables(): void {
+        this.m_drawListIsVisible = false;
+        console.log("GRepModel.hideDrawables: drawables are now hidden.");
+    }
+
+    showDrawables(): void {
+        this.m_drawListIsVisible = true;
+        console.log("GRepModel.showDrawables: drawables are now visible.");
     }
 
     clearDrawables(): void {
@@ -60,6 +76,20 @@ export class GRepModel extends Model {
     sdfNodes(): ISdfNode[] {
         return this.m_sdfScene;
     }
+
+    isSdfSceneVisible(): boolean {
+        return this.m_sdfSceneIsVisible;
+    }
+
+    hideSdfNodes(): void {
+        this.m_sdfSceneIsVisible = false;
+        console.log("GRepModel.hideSdfNodes: SDF nodes are now hidden.");
+    }
+
+    showSdfNodes(): void {
+        this.m_sdfSceneIsVisible = true;
+        console.log("GRepModel.showSdfNodes: SDF nodes are now visible.");
+    }   
 
     clearSdfNodes(): void {
         this.m_sdfScene = [];
