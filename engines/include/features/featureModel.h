@@ -15,6 +15,7 @@ namespace e2 {
         size_t addFeature(Feature* feature);
         void removeFeature(size_t index);
         Feature* findFeature(const std::string& pathname) const;
+        std::vector<const Feature*> findModifyingFeatures(const Feature* targetFeature) const;
         void clearFeatures();
         void print(std::ostream& os) const override;
     private:

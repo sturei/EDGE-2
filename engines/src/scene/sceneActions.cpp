@@ -333,26 +333,11 @@ namespace e2 {
         }        
     }
 
-    // Finds any modify features that target the given feature
-    static std::vector<const Feature*> findModifyingFeatures(const FeatureModel& features, const Feature* targetFeature) {
-        std::vector<const Feature*> modifyingFeatures;
-        for (const Feature* feature : features.features()) {
-            if (feature->featureEffect() == FeatureEffect::MODIFY) {
-                if (const Fill* fillFeature = dynamic_cast<const Fill*>(feature)) {
-                    if (fillFeature->targetPathName() == targetFeature->pathname()) {
-                        modifyingFeatures.push_back(feature);
-                    }
-                }
-            }
-        }
-        return modifyingFeatures;
-    }
-
     // Utility to add modification nodes for a given feature
     static void addSdfNodeForModifiedFeature(Document& doc, const Feature* targetFeature, std::string objectPathName) {
         const FeatureModel& features = dynamic_cast<const ShapeModel*>(doc.storeAt("shape").model())->features();
 
-        std::vector<const Feature*> modifyingFeatures = findModifyingFeatures(features, targetFeature);
+        std::vector<const Feature*> modifyingFeatures = features.findModifyingFeatures(targetFeature);
         if (modifyingFeatures.empty()) {
             // no modifying features - just add the feature as is
             addSdfNodeForFeature(doc, targetFeature, objectPathName);

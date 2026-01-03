@@ -37,6 +37,21 @@ namespace e2 {
         return nullptr;
     }
 
+    std::vector<const Feature*> FeatureModel::findModifyingFeatures(const Feature* targetFeature) const {
+        std::vector<const Feature*> modifyingFeatures;
+        for (const Feature* feature : m_features) {
+            if (feature->featureEffect() == FeatureEffect::MODIFY) {
+                if (const Fill* fillFeature = dynamic_cast<const Fill*>(feature)) {
+                    if (fillFeature->targetPathName() == targetFeature->pathname()) {
+                        modifyingFeatures.push_back(feature);
+                    }
+                }
+            }
+        }
+        return modifyingFeatures;
+    }
+
+
     void FeatureModel::clearFeatures() {
         for (Feature* feature : m_features) {
             delete feature;

@@ -357,6 +357,23 @@ namespace e2 {
             store.changeState([pathName, displayName, featureEffect, posRot3D, targetPathName, cellSize, fillType, &doc](Model* model) {
                 // update the feature model
                 FeatureModel& features = dynamic_cast<ShapeModel*>(model)->features();
+
+                // check to see if the target feature exists
+                Feature* targetFeature = features.findFeature(targetPathName);
+                if (!targetFeature) {
+                    std::cerr << "Warning: could not find target feature for fill feature at path "<< targetPathName << std::endl;
+                    return;
+                }
+
+                // check to see if target feature already has a fill modifier. TODO: potentially replace the existing one...
+                std::vector<const Feature*> modifyingFeatures = features.findModifyingFeatures(targetFeature);
+                for (const Feature* modFeature : modifyingFeatures) {
+                    if (dynamic_cast<const Fill*>(modFeature)) {
+                        std::cerr << "Warning: target feature "<< targetPathName << " already has a Fill modifier. Only one Fill modifier is supported per target." << std::endl;
+                        return;
+                    }   
+                }
+                
                 Feature* fillFeature = new Fill(pathName, displayName, featureEffect, posRot3D.first, posRot3D.second, targetPathName, fillType, cellSize);
                 size_t index = features.addFeature(fillFeature);
                 std::cerr << "added Fill Feature" << std::endl;      // ---LOGGING---
