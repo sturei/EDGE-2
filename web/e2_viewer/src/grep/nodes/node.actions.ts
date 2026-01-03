@@ -86,6 +86,15 @@ async function addSdfNode(doc: Document, payload: any): Promise<void> {
             };
             grepModel.addSdfNode(node);
         }
+        else if (type === 'rounded_extrusion') {
+            const node : ISdfNode = {
+                type: 'rounded_extrusion',
+                pathName: payload.pathName ?? 'rounded_extrusion',
+                depth: payload.depth ?? 2.0,
+                cornerRadius: payload.cornerRadius ?? 0.1
+            };
+            grepModel.addSdfNode(node);
+        }
         else if (type === 'halfSpace') {
             const node : ISdfNode = {
                 type: 'halfSpace',

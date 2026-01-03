@@ -1,4 +1,4 @@
-import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion, gyroid } from './sdfPrimitives';
+import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion, gyroid, rounded_extrusion } from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
 import { Fn, int, min, max, mod, negate, rotate, float, vec2, vec3, array } from 'three/tsl';    
 
@@ -124,6 +124,22 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
         return Fn(([position] : [any]) => {
             const tslProfile = generateNode(childIndices[0], nodes)(position);
             return extrusion(position, tslProfile, node.depth);
+        });
+    }   
+    else if (node.type === 'rounded_extrusion') {
+        const childIndices = node.childIndices;
+
+        // Implementation note; We do the error checking here, at generation time, rather than deferring to render time when the error would be impossible to recover from.
+        if (!childIndices || childIndices.length == 0) {
+            throw new Error("Rounded extrusion node missing childIndices");
+        }
+        if (childIndices.length != 1) {
+            throw new Error("Rounded extrusion node must have exactly one child");
+        }
+
+        return Fn(([position] : [any]) => {
+            const tslProfile = generateNode(childIndices[0], nodes)(position);
+            return rounded_extrusion(position, tslProfile, node.depth, node.cornerRadius);
         });
     }   
     else if (node.type === 'halfSpace') {

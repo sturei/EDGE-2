@@ -136,6 +136,16 @@ export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => 
     return min(w_max, 0.0).add( w_length );
 })
 
+export const rounded_extrusion = Fn(([position, tslProfile, depth, cornerRadius]: [any, any, any, any]) => {
+    const w_x = tslProfile.sub(cornerRadius);
+    const w_y = position.z.abs().sub( mul(depth, 0.5).sub(cornerRadius) );
+    const w_max = max(w_x, w_y);
+    const w_x_pos = max(w_x, 0.0);
+    const w_y_pos = max(w_y, 0.0);
+    const w_length = sqrt( w_x_pos.mul(w_x_pos).add( w_y_pos.mul(w_y_pos) ) );
+    return min(w_max, 0.0).add( w_length ).sub(cornerRadius);
+})
+
 // gyroid with given lambda factor (lamba = 2pi / cellSize);
 export const gyroid = Fn(([position, lambda]: [any, any]) => {
 

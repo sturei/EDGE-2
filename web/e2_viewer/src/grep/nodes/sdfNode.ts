@@ -1,7 +1,7 @@
 /** Definition of nodes in the sdf scene */
 
 export type SdfNodeType = 
-    'sphere' | 'block' | 'cylinder' | 'circle' | 'rectangle' | 'roundRect' | 'profile' | 'extrusion' | 
+    'sphere' | 'block' | 'cylinder' | 'circle' | 'rectangle' | 'roundRect' | 'profile' | 'extrusion' | 'rounded_extrusion' |
     'halfSpace' | 'union' | 'intersection' | 'complement' | 'translation' | 'rotation' | 'gyroid' | 'repetition';
 
 export interface IBaseSdfNode {
@@ -56,6 +56,12 @@ export interface IExtrusionSdfNode extends IBaseSdfNode {
     depth: number;
 };
 
+export interface IRoundedExtrusionSdfNode extends IBaseSdfNode {
+    type: 'rounded_extrusion';
+    depth: number;
+    cornerRadius: number;
+};
+
 export interface IHalfSpaceSdfNode extends IBaseSdfNode {
     type: 'halfSpace';
 };
@@ -93,5 +99,5 @@ export interface IRepetitionSdfNode extends IBaseSdfNode {
 };
 
 export type ISdfNode = 
-    ISphereSdfNode | IBlockSdfNode | ICylinderSdfNode | ICircleSdfNode | IRectangleSdfNode | IRoundRectSdfNode | IProfileSdfNode |  IExtrusionSdfNode | 
+    ISphereSdfNode | IBlockSdfNode | ICylinderSdfNode | ICircleSdfNode | IRectangleSdfNode | IRoundRectSdfNode | IProfileSdfNode |  IExtrusionSdfNode | IRoundedExtrusionSdfNode |
     IHalfSpaceSdfNode | IUnionSdfNode | IIntersectionSdfNode | IComplementSdfNode | ITranslationSdfNode | IRotationSdfNode | IGyroidSdfNode | IRepetitionSdfNode;
