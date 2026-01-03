@@ -6,7 +6,7 @@ import * as grepActions from '../grep/grep.actions.ts'
 import * as prepActions from '../prep/prep.actions.ts'
 import * as shapeActions from '../shape/shape.actions.ts'  
 import * as drawableActions from '../grep/drawables/drawable.actions.ts'
-import * as sdfActions from '../grep/nodes/sdf.actions.ts'
+import * as sdfActions from '../grep/nodes/node.actions.ts'
 import { Document } from "../document/document.ts";
 
 /** these strings are displayed in the dropdown list of the actions input form */
