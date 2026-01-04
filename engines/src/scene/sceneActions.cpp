@@ -254,7 +254,7 @@ namespace e2 {
             double height = rectangle2DFeature->height();
             json featureNode = json::object({
                 {"pathName", objectPathName},
-                {"type", "rectangle2D"},
+                {"type", "rectangle"},
                 {"width", width},
                 {"height", height}
             });

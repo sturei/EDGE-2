@@ -1,12 +1,4 @@
 {"type":"Features::clearFeatures", "payload":{}}
 {"type":"Layout::addWorkplane", "payload":{"pathName":"shape/layout/workplane1"}}
-{"type":"Layout::addPrimitive", "payload":{"pathName":"shape/layout/workplane1/circle1", "primitiveType":"circle", "radius":0.5}}
-{"type":"Layout::addPrimitive", "payload":{"pathName":"shape/layout/workplane1/roundRect1", "primitiveType":"roundRect", "width":3, "height":2, "cornerRadius":0.2 }}
+{"type":"Layout::addPrimitive", "payload":{"pathName":"shape/layout/workplane1/roundRect1", "primitiveType":"rectangle", "width":3, "height":2, "cornerRadius":0.4 }}
 {"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/extrusion1", "profilePathName":"shape/layout/workplane1/roundRect1","depth":1 }}
-{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole1",  "profilePathName":"shape/layout/workplane1/circle1","featureEffect":"subtract", "depth":1 }}
-{"type":"Layout::addWorkplane", "payload":{"pathName":"shape/layout/workplane2", "position":[1.5,0,0.5], "rotation":[0,-1.57079632679,0]}}
-{"type":"Layout::addPrimitive", "payload":{"pathName":"shape/layout/workplane2/circle1","primitiveType":"circle", "radius":0.25 }}
-{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole2", "profilePathName":"shape/layout/workplane2/circle1", "featureEffect":"subtract", "depth":3 }}
-{"type":"Layout::addWorkplane", "payload":{"pathName":"shape/layout/workplane3", "position":[0,1,0.5], "rotation":[1.57079632679,0,0]}}
-{"type":"Layout::addPrimitive", "payload":{"pathName":"shape/layout/workplane3/circle1","primitiveType":"circle", "radius":0.1 }}
-{"type":"Features::addExtrusion", "payload":{"pathName":"shape/features/hole3", "profilePathName":"shape/layout/workplane3/circle1", "featureEffect":"subtract", "depth":2 }}

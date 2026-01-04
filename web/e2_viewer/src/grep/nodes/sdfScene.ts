@@ -1,4 +1,4 @@
-import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion, gyroid, rounded_extrusion } from './sdfPrimitives';
+import { sphere, block, cylinder, profile, halfSpace, circle, rectangle, roundRect, extrusion, gyroid, roundedExtrusion, roundedBlock, roundedCylinder, roundBlock} from './sdfPrimitives';
 import { type ISdfNode } from './sdfNode';
 import { Fn, int, min, max, mod, negate, rotate, float, vec2, vec3, array } from 'three/tsl';    
 
@@ -46,9 +46,24 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
             return block(position, node.width, node.height, node.depth);
         });
     }
+    else if (node.type === 'roundedBlock') {
+        return Fn(([position] : [any]) => {
+            return roundedBlock(position, node.width, node.height, node.depth, node.cornerRadius);
+        });
+    }
+    else if (node.type === 'roundBlock') {
+        return Fn(([position] : [any]) => {
+            return roundBlock(position, node.width, node.height, node.depth, node.cornerRadius);
+        });
+    }
     else if (node.type === 'cylinder') {
         return Fn(([position] : [any]) => {
             return cylinder(position, node.radius, node.depth);
+        });
+    }
+    else if (node.type === 'roundedCylinder') {
+        return Fn(([position] : [any]) => {
+            return roundedCylinder(position, node.radius, node.depth, node.cornerRadius);
         });
     }
     else if (node.type === 'circle'){
@@ -126,10 +141,9 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
             return extrusion(position, tslProfile, node.depth);
         });
     }   
-    else if (node.type === 'rounded_extrusion') {
+    else if (node.type === 'roundedExtrusion') {
         const childIndices = node.childIndices;
 
-        // Implementation note; We do the error checking here, at generation time, rather than deferring to render time when the error would be impossible to recover from.
         if (!childIndices || childIndices.length == 0) {
             throw new Error("Rounded extrusion node missing childIndices");
         }
@@ -139,7 +153,7 @@ function generateNode(nodeIndex: number, nodes: ISdfNode[]) {
 
         return Fn(([position] : [any]) => {
             const tslProfile = generateNode(childIndices[0], nodes)(position);
-            return rounded_extrusion(position, tslProfile, node.depth, node.cornerRadius);
+            return roundedExtrusion(position, tslProfile, node.depth, node.cornerRadius);
         });
     }   
     else if (node.type === 'halfSpace') {

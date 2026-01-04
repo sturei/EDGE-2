@@ -8,7 +8,6 @@ import {
     Fn,
     length,
     lengthSq,
-    vec3,
     vec2,
     min,
     abs,
@@ -36,16 +35,27 @@ export const sphere = Fn(([position, radius]: [any, any]) => {
 
 // block centered on origin with given dimensions in x, y, z
 export const block = Fn(([position, width, height, depth] : [any, any, any, any]) => {
-    const dimensions = vec3(mul(width, 0.5), mul(height, 0.5), mul(depth, 0.5))    ;
-    const distance = abs(position).sub(dimensions);
-    return length(max(distance, 0.0)).add(
-        min(max(distance.x, max(distance.y, distance.z)), 0.0)
-    )
+    return extrusion(position, rectangle(position, width, height), depth);
+})
+
+// block centered on origin with given dimensions in x, y, z and top/bottom edges rounded with given corner radius
+export const roundedBlock = Fn(([position, width, height, depth, cornerRadius] : [any, any, any, any, any]) => {
+    return roundedExtrusion(position, rectangle(position, width, height), depth, cornerRadius);
+})
+
+// block centered on origin with given dimensions in x, y, z and all edges rounded with given corner radius
+export const roundBlock = Fn(([position, width, height, depth, cornerRadius] : [any, any, any, any, any]) => {
+    return roundedExtrusion(position, roundRect(position, width, height, cornerRadius), depth, cornerRadius);
 })
 
 // cylinder centered on origin with given radius and depth along Z
 export const cylinder = Fn(([position, radius, depth]: [any, any, any]) => {
     return extrusion(position, circle(position, radius), depth);
+})
+
+// cylinder centered on origin with given radius, depth along Z, and corner radius for top and bottom edges
+export const roundedCylinder = Fn(([position, radius, depth, cornerRadius]: [any, any, any, any]) => {
+    return roundedExtrusion(position, circle(position, radius), depth, cornerRadius);
 })
 
 // circle centered on origin with given radius. Returns distance in XY plane.
@@ -69,6 +79,45 @@ export const roundRect = Fn(([position, width, height, cornerRadius]: [any, any,
     return length(max(distance, 0.0)).add(
         min(max(distance.x, distance.y), 0.0)
     ).sub(cornerRadius);
+})
+
+export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => {
+    const d = tslProfile;
+    const w = vec2( d, abs(position.z).sub(mul(depth, 0.5)) );
+    return min( max(w.x, w.y), 0.0 ).add( length( max(w, 0.0) ) );
+})
+
+// extrusion with top and bottom edges rounded
+export const roundedExtrusion = Fn(([position, tslProfile, depth, cornerRadius]: [any, any, any, any]) => {
+    const d = tslProfile.add(cornerRadius);
+    const w = vec2( d, abs(position.z).sub(mul(depth, 0.5).sub(cornerRadius)) );
+    return min( max(w.x, w.y), 0.0 ).add( length( max(w, 0.0) ) ).sub(cornerRadius);
+})
+
+// gyroid with given lambda factor (lamba = 2pi / cellSize);
+export const gyroid = Fn(([position, lambda]: [any, any]) => {
+
+    // See, for example, Ramirez et al., "Design parameter effects on relative density of triply periodic minimal surfaces for additive manufacturing", 2019
+    const cosx = lambda.mul(position.x).cos();
+    const cosy = lambda.mul(position.y).cos();
+    const cosz = lambda.mul(position.z).cos();
+    const sinx = lambda.mul(position.x).sin();
+    const siny = lambda.mul(position.y).sin();
+    const sinz = lambda.mul(position.z).sin();
+
+    const xyTerm = cosx.mul(siny);
+    const yzTerm = cosy.mul(sinz);
+    const zxTerm = cosz.mul(sinx);
+    const f = xyTerm.add( yzTerm ).add( zxTerm );
+
+    // divide by the maximum possible value of the gradient magnitude (sqrt(3)) to normalize the function. It's not distance, but at least it's a bound.
+    return f.div(1.7320508075688772).div(lambda);
+
+})
+
+// half-space (+z)
+export const halfSpace = Fn(([position]: [any]) => {
+    return position.z;
 })
 
 // profile (array of non-contiguous but oriented paths) in XY plane. The arguments are ArrayNodes.
@@ -126,48 +175,4 @@ export const profile = Fn(([position, profilePaths, profileNormals, profilePathL
     return minDistanceSq.sqrt().mul(minSign);
 })
 
-export const extrusion = Fn(([position, tslProfile, depth]: [any, any, any]) => {
-    const w_x = tslProfile;
-    const w_y = position.z.abs().sub(mul(depth, 0.5));
-    const w_max = max(w_x, w_y);
-    const w_x_pos = max(w_x, 0.0);
-    const w_y_pos = max(w_y, 0.0);
-    const w_length = sqrt( w_x_pos.mul(w_x_pos).add( w_y_pos.mul(w_y_pos) ) );
-    return min(w_max, 0.0).add( w_length );
-})
 
-export const rounded_extrusion = Fn(([position, tslProfile, depth, cornerRadius]: [any, any, any, any]) => {
-    const w_x = tslProfile.sub(cornerRadius);
-    const w_y = position.z.abs().sub( mul(depth, 0.5).sub(cornerRadius) );
-    const w_max = max(w_x, w_y);
-    const w_x_pos = max(w_x, 0.0);
-    const w_y_pos = max(w_y, 0.0);
-    const w_length = sqrt( w_x_pos.mul(w_x_pos).add( w_y_pos.mul(w_y_pos) ) );
-    return min(w_max, 0.0).add( w_length ).sub(cornerRadius);
-})
-
-// gyroid with given lambda factor (lamba = 2pi / cellSize);
-export const gyroid = Fn(([position, lambda]: [any, any]) => {
-
-    // See, for example, Ramirez et al., "Design parameter effects on relative density of triply periodic minimal surfaces for additive manufacturing", 2019
-    const cosx = lambda.mul(position.x).cos();
-    const cosy = lambda.mul(position.y).cos();
-    const cosz = lambda.mul(position.z).cos();
-    const sinx = lambda.mul(position.x).sin();
-    const siny = lambda.mul(position.y).sin();
-    const sinz = lambda.mul(position.z).sin();
-
-    const xyTerm = cosx.mul(siny);
-    const yzTerm = cosy.mul(sinz);
-    const zxTerm = cosz.mul(sinx);
-    const f = xyTerm.add( yzTerm ).add( zxTerm );
-
-    // divide by the maximum possible value of the gradient magnitude (sqrt(3)) to normalize the function. It's not distance, but at least it's a bound.
-    return f.div(1.7320508075688772).div(lambda);
-
-})
-
-// half-space (+z)
-export const halfSpace = Fn(([position]: [any]) => {
-    return position.z;
-})

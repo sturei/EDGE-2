@@ -34,12 +34,44 @@ async function addSdfNode(doc: Document, payload: any): Promise<void> {
             };
             grepModel.addSdfNode(node);
         }
+        else if (type === 'roundedBlock') {
+            const node: ISdfNode = {
+                type: 'roundedBlock',
+                pathName: payload.pathName ?? 'roundedBlock',
+                width: payload.width ?? 1.0,
+                height: payload.height ?? 1.0,
+                depth: payload.depth ?? 1.0,
+                cornerRadius: payload.cornerRadius ?? 0.1
+            };
+            grepModel.addSdfNode(node);
+        }
+        else if (type === 'roundBlock') {
+            const node: ISdfNode = {
+                type: 'roundBlock',
+                pathName: payload.pathName ?? 'roundBlock',
+                width: payload.width ?? 1.0,
+                height: payload.height ?? 1.0,
+                depth: payload.depth ?? 1.0,
+                cornerRadius: payload.cornerRadius ?? 0.1
+            };
+            grepModel.addSdfNode(node);
+        }
         else if (type === 'cylinder') {
             const node: ISdfNode = {
                 type: 'cylinder',
                 pathName: payload.pathName ?? 'cylinder',
                 radius: payload.radius ?? 1.0,
                 depth: payload.depth ?? 1.0
+            };
+            grepModel.addSdfNode(node);
+        }
+        else if (type === 'roundedCylinder') {
+            const node: ISdfNode = {
+                type: 'roundedCylinder',
+                pathName: payload.pathName ?? 'roundedCylinder',
+                radius: payload.radius ?? 1.0,
+                depth: payload.depth ?? 1.0,
+                cornerRadius: payload.cornerRadius ?? 0.1
             };
             grepModel.addSdfNode(node);
         }
@@ -86,10 +118,10 @@ async function addSdfNode(doc: Document, payload: any): Promise<void> {
             };
             grepModel.addSdfNode(node);
         }
-        else if (type === 'rounded_extrusion') {
+        else if (type === 'roundedExtrusion') {
             const node : ISdfNode = {
-                type: 'rounded_extrusion',
-                pathName: payload.pathName ?? 'rounded_extrusion',
+                type: 'roundedExtrusion',
+                pathName: payload.pathName ?? 'roundedExtrusion',
                 depth: payload.depth ?? 2.0,
                 cornerRadius: payload.cornerRadius ?? 0.1
             };

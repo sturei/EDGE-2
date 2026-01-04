@@ -1,7 +1,7 @@
 /** Definition of nodes in the sdf scene */
 
 export type SdfNodeType = 
-    'sphere' | 'block' | 'cylinder' | 'circle' | 'rectangle' | 'roundRect' | 'profile' | 'extrusion' | 'rounded_extrusion' |
+    'sphere' | 'block' | 'roundedBlock' | 'roundBlock' | 'cylinder' | 'roundedCylinder' | 'circle' | 'rectangle' | 'roundRect' | 'profile' | 'extrusion' | 'roundedExtrusion' |
     'halfSpace' | 'union' | 'intersection' | 'complement' | 'translation' | 'rotation' | 'gyroid' | 'repetition';
 
 export interface IBaseSdfNode {
@@ -22,10 +22,33 @@ export interface IBlockSdfNode extends IBaseSdfNode {
     depth: number;
 };
 
+export interface IRoundedBlockSdfNode extends IBaseSdfNode {
+    type: 'roundedBlock';
+    width: number;
+    height: number;
+    depth: number;
+    cornerRadius: number;
+};
+
+export interface IRoundBlockSdfNode extends IBaseSdfNode {
+    type: 'roundBlock';
+    width: number;
+    height: number;
+    depth: number;
+    cornerRadius: number;
+};
+
 export interface ICylinderSdfNode extends IBaseSdfNode {
     type: 'cylinder';
     radius: number;
     depth: number;
+};
+
+export interface IRoundedCylinderSdfNode extends IBaseSdfNode {
+    type: 'roundedCylinder';
+    radius: number;
+    depth: number;
+    cornerRadius: number;
 };
 
 export interface ICircleSdfNode extends IBaseSdfNode {
@@ -57,7 +80,7 @@ export interface IExtrusionSdfNode extends IBaseSdfNode {
 };
 
 export interface IRoundedExtrusionSdfNode extends IBaseSdfNode {
-    type: 'rounded_extrusion';
+    type: 'roundedExtrusion';
     depth: number;
     cornerRadius: number;
 };
@@ -99,5 +122,6 @@ export interface IRepetitionSdfNode extends IBaseSdfNode {
 };
 
 export type ISdfNode = 
-    ISphereSdfNode | IBlockSdfNode | ICylinderSdfNode | ICircleSdfNode | IRectangleSdfNode | IRoundRectSdfNode | IProfileSdfNode |  IExtrusionSdfNode | IRoundedExtrusionSdfNode |
+    ISphereSdfNode | IBlockSdfNode | IRoundedBlockSdfNode | IRoundBlockSdfNode | ICylinderSdfNode | IRoundedCylinderSdfNode | 
+    ICircleSdfNode | IRectangleSdfNode | IRoundRectSdfNode | IProfileSdfNode |  IExtrusionSdfNode | IRoundedExtrusionSdfNode |
     IHalfSpaceSdfNode | IUnionSdfNode | IIntersectionSdfNode | IComplementSdfNode | ITranslationSdfNode | IRotationSdfNode | IGyroidSdfNode | IRepetitionSdfNode;
