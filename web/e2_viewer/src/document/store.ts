@@ -1,4 +1,4 @@
-import { Model } from './model.ts';
+import { Model } from './model';
 
 export class Store {
     private model: Model;
